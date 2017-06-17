@@ -1,0 +1,44 @@
+{
+  "app": {
+    "name": "uuChat",
+    "address": "127.0.0.1",
+    "port": 9688,
+    "maxChatNum": 5,
+    "lineupRefreshTime": 3000,
+    "onlineInfoRefreshTime": 300000,
+    "cookieDomain": "",
+    "relative_path": "/",
+    "base_dir": ""
+  },
+  "database": {
+    "dialect": "sqlite",
+    "storage": "content/data/uuchat.db"
+  },
+  "socket.io": {
+    "secretKey": "show_me_the_money",
+    "sessionKey": "uuChat.cid",
+    "origins": "*",
+    "transports": ["websocket", "polling"],
+    "pingInterval": 20000,
+    "pingTimeout": 30000
+  },
+  "redis": {
+    "host": "",
+    "port": 6379,
+    "ttl": 86400,
+    "db": 0
+  },
+  "images": {
+    "width": 160,
+    "height": 160,
+    "fileSize": 2097152,
+    "monthlyMaxSize": 62914560,
+    "savePath": "content/upload/"
+  },
+  "avatars": {
+    "width": 100,
+    "height": 100,
+    "fileSize": 2097152,
+    "savePath": "content/avatar/"
+  }
+}

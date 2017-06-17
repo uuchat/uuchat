@@ -1,0 +1,82 @@
+#console-body .logo {
+    height: 32px;
+    background: #333;
+    border-radius: 6px;
+    margin: 16px;
+}
+
+#console-body .ant-layout-sider-collapsed .anticon {
+    font-size: 16px;
+    margin-left: 8px;
+}
+
+#console-body .ant-layout-sider-collapsed .nav-text {
+    display: none;
+}
+
+#console-body .ant-layout-sider-collapsed .ant-menu-submenu-vertical > .ant-menu-submenu-title:after {
+    display: none;
+}
+
+#console-body .ant-breadcrumb {
+    margin: 16px 0px;
+}
+
+#console-body .ant-layout-content
+{
+    min-height: calc(100vh - 113px);
+}
+
+.rightWarpper {
+    float: right;
+    display: flex;
+    padding-right: 16px;
+}
+
+.numberCard {
+    padding: 32px;
+    margin-bottom: 24px;
+    cursor: pointer;
+}
+
+.numberCard .iconWarp {
+    font-size: 54px;
+    float: left;
+}
+
+.numberCard .content {
+    width: 100%;
+    padding-left: 78px;
+}
+
+.numberCard .content .title {
+    line-height: 16px;
+    font-size: 16px;
+    margin-bottom: 16px;
+    height: 16px;
+}
+
+.numberCard .content .number {
+    line-height: 32px;
+    font-size: 24px;
+    height: 32px;
+}
+
+.table-deals {
+    margin-bottom: 16px;
+}
+
+.table-search {
+    width: 50%;
+    display: inline-block;
+}
+
+.table-operations {
+    width: 50%;
+    display: inline-block;
+    text-align: right;
+}
+
+.table-deals button {
+    margin-left: 8px;
+}
