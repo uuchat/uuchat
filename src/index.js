@@ -46,8 +46,6 @@ if (nconf.get('app:ssl')) {
 
 module.exports.server = server;
 
-global.env = process.env.NODE_ENV || 'production';
-
 server.on('error', function (err) {
     winston.error(err);
     if (err.code === 'EADDRINUSE') {

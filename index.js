@@ -10,7 +10,7 @@ var fs = require('fs');
 var webServer = require('./src/index');
 var utils = require('./src/server/utils');
 
-global.env = process.env.NODE_ENV || 'development';
+global.env = process.env.NODE_ENV || 'production';
 global.appRoot = path.resolve(__dirname);
 
 start();
