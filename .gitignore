@@ -1,0 +1,40 @@
+npm-debug.log
+dump.rdb
+node_modules/
+.project
+.*.sw[op]
+Vagrantfile
+.vagrant
+.DS_Store
+.eslintcache
+
+logs/*
+
+pidfile
+
+# templates
+
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
+*.iml
+
+## Directory-based project format:
+.idea/
+
+## File-based project format:
+*.ipr
+*.iws
+
+## sh file
+pull.sh
+start.sh
+
+##Coverage output
+coverage
+
+build
+*.log
+
+/content/data/*
+/content/avatar/*
+/content/upload/*
+!README.md
