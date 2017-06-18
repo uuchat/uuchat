@@ -141,3 +141,18 @@ ChatHistory.listAndCount = function (condition, order, pageSize, pageNum, callba
         callback(err);
     });
 };
+
+ChatHistory.Count = function (options, callback) {
+
+    options = options || {};
+
+    models.ChatHistory.count(options).then(function (data) {
+
+        return callback(null, data);
+
+    }).catch(function (err) {
+        logger.error(err);
+
+        return callback(err);
+    });
+};

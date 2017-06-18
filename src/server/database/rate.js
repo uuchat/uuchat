@@ -122,3 +122,18 @@ Rate.aggregate = function (attributes, condition, callback) {
         callback(err);
     });
 };
+
+Rate.Count = function (options, callback) {
+
+    options = options || {};
+
+    models.Rate.count(options).then(function (data) {
+
+        return callback(null, data);
+
+    }).catch(function (err) {
+        logger.error(err);
+
+        return callback(err);
+    });
+};

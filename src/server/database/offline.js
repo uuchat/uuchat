@@ -36,7 +36,6 @@ Offline.create = function (offline, callback) {
 };
 
 
-
 Offline.updateStatusByUUID = function (status, csid, uuid, fn) {
     models.Offline.update({'status': status, 'csid': csid}, {fields: ['status', 'csid'], 'where': {'uuid': uuid}})
         .then(function () {
@@ -77,8 +76,8 @@ Offline.delete = function (condition, callback) {
 Offline.listPending = function (callback) {
     var condition = {};
     condition.status = 0;
-    this.list(condition, null, null, null, function(err, data){
-        if(err) return;
+    this.list(condition, null, null, null, function (err, data) {
+        if (err) return;
         callback(data);
     });
 };
@@ -124,5 +123,20 @@ Offline.listAndCount = function (condition, order, pageSize, pageNum, callback) 
         logger.error(err);
 
         callback(err);
+    });
+};
+
+Offline.Count = function (options, callback) {
+
+    options = options || {};
+
+    models.Offline.count(options).then(function (data) {
+
+        return callback(null, data);
+
+    }).catch(function (err) {
+        logger.error(err);
+
+        return callback(err);
     });
 };

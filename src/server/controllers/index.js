@@ -11,3 +11,4 @@ Controllers.messageController = require('./messageController');
 Controllers.rateController = require('./rateController');
 Controllers.offlineController = require('./offlineController');
 Controllers.chatHistoryController = require('./chatHistoryController');
+Controllers.consoleController = require('./consoleController');

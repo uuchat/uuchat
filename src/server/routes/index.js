@@ -13,7 +13,6 @@ function customerSuccessRoutes(app, middleware, controllers) {
 
     app.post('/register', controllers.customerSuccessController.register);
     app.post('/login', controllers.customerSuccessController.login);
-    app.post('/console/login', controllers.customerSuccessController.loginConsole);
     app.post('/logout', controllers.customerSuccessController.logout);
 
     app.patch('/customersuccesses/:csid', controllers.customerSuccessController.update);
@@ -78,6 +77,14 @@ function chatHistoryRoutes(app, middleware, controllers) {
     app.get('/chathistories/cs/:csid/latestmonth', controllers.chatHistoryController.getLatestMonthChats);
 }
 
+
+function consoleRoutes(app, middleware, controllers) {
+    //var middlewares = [middleware.checkGlobalPrivacySettings];
+
+    app.post('/console/login', controllers.customerSuccessController.loginConsole);
+    app.get('/console/numbers', controllers.consoleController.getNumbers);
+}
+
 module.exports = function (app, middleware, callback) {
     var router = express.Router();
 
@@ -91,6 +98,7 @@ module.exports = function (app, middleware, callback) {
     rateRoutes(router, middleware, controllers);
     offlineRoutes(router, middleware, controllers);
     chatHistoryRoutes(router, middleware, controllers);
+    consoleRoutes(router, middleware, controllers);
 
     router.use(function (err, req, res, next) {
         winston.error(err);
