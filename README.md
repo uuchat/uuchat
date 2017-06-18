@@ -1,6 +1,8 @@
 ## uuchat
 A powerful customer success platform !
 
+you can see demo on [http://uuchat.io](http://uuchat.io)
+
 ## Requirements
 
 * Node version 4.0.0 or greater
@@ -25,10 +27,15 @@ A powerful customer success platform !
 
 set your own information in `src > config.json` . something like 'name' , 'ip address',
 'port', db configuration etc. if you set nothing, and start uuChat.
- + you can take customer success page in &nbsp;&nbsp; `http://127.0.0.1:9688/chat`
- + customer demo page in  &nbsp;&nbsp; `http://127.0.0.1:9688/demo` .
+ + you can take customer success page in &nbsp;&nbsp; `http://127.0.0.1:9688/chat` <br />
+ first, you need register with your email , and than login into uuchat.
+ + customer demo page in  &nbsp;&nbsp; `http://127.0.0.1:9688/demo` . <br />
+ click button on the bottom of page , chat with customer success.
+ + our console page is : `http://127.0.0.1:9688/console` . <br />
+ you can add other customer success with uuchat, see chat history, rate ,
+ some statistics information etc...
 
-> warning: we not test with ie browner!
+> warning: we did not test with IE browner! <br />
 
 ## Setup your database
 
