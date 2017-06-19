@@ -25,7 +25,7 @@ you can see demo on [http://uuchat.io](http://uuchat.io)
 
 ## Basic uuChat Configuration
 
-set your own information in `src > config.json` . something like 'name' , 'ip address',
+Set your own information in `src > config.json` . something like 'name' , 'ip address',
 'port', db configuration etc. if you set nothing, and start uuChat.
  + you can take customer success page in &nbsp;&nbsp; `http://127.0.0.1:9688/chat` <br />
  first, you need register with your email , and than login into uuchat.
@@ -35,7 +35,7 @@ set your own information in `src > config.json` . something like 'name' , 'ip ad
  you can add other customer success with uuchat, see chat history, rate ,
  some statistics information etc...
 
-> warning: we did not test with IE browner! <br />
+> warning: we did not test with IE browser! <br />
 
 ## Setup your database
 
@@ -59,11 +59,18 @@ more than 5, we suggest you use redis for session store.
       "min": 0,
       "idle": 10000
     }
- },
+},
 ```
 
-##
+## Install to your blog or website
 
+Copy and paste this code above the last `</body>` tag on your site.
+This code is fully asynchronous and won't delay the load time of your page.
+```
+<script type="text/javascript"
+        src="http://<ip>:<port>/static/js/uuchat.js">
+</script>
+```
 ## License
 
 BSD-3-Clause
