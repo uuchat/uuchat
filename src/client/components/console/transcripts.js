@@ -86,7 +86,7 @@ class Transcripts extends Component {
 
         const columns = [
             {title: 'customer', dataIndex: 'cid', key: 'cid', render: this.renderCustomer},
-            {title: 'customer success', dataIndex: 'csName', key: 'csName',},
+            {title: 'name', dataIndex: 'csName', key: 'csName',},
             {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
             {title: 'latest connect time', dataIndex: 'updatedAt', key: 'updatedAt', render: formatDate},
         ];

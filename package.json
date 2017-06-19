@@ -10,10 +10,11 @@
     "test": "mocha"
   },
   "keywords": [
-    "node.js",
-    "react",
     "customer success",
-    "customer service"
+    "customer service",
+    "customer success platform",
+    "customer service platform",
+    "客服系统"
   ],
   "bugs": "https://github.com/uuchat/uuchat/issues",
   "contributors": "https://github.com/uuchat/uuchat/graphs/contributors",
