@@ -2,9 +2,10 @@
   "name": "uuchat",
   "version": "0.1.0",
   "description": "a customer service platform",
+  "author": "UUChat Foundation",
   "private": false,
   "scripts": {
-    "start": "NODE_ENV=production node index.js",
+    "start": "node index.js",
     "build": "node tools/build.js",
     "test": "mocha"
   },
@@ -12,10 +13,10 @@
     "node.js",
     "react",
     "customer success",
-    "customer service",
-    "YB technology"
+    "customer service"
   ],
-  "author": "longhao@uuchat.io, jzq@uuchat.io, lwc@uuchat.io ",
+  "bugs": "https://github.com/uuchat/uuchat/issues",
+  "contributors": "https://github.com/uuchat/uuchat/graphs/contributors",
   "license": "BSD-3-Clause",
   "dependencies": {
     "antd": "^2.10.2",
@@ -66,7 +67,6 @@
     "copy-webpack-plugin": "^4.0.1",
     "cross-spawn": "4.0.2",
     "css-loader": "0.26.1",
-    "dotenv": "2.0.0",
     "eslint": "3.16.1",
     "eslint-config-react-app": "^0.6.2",
     "eslint-loader": "1.6.0",
