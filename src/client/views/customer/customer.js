@@ -54,8 +54,12 @@
             csName: ''
         },
         init: function(){
-            this.loadStyle(['../..'+'/static/css/common.css', '../..'+'/static/css/customer.css']);
-            this.loadScript(UUCT.domain+'/socket.io/socket.io.js');
+            this.loadStyle([UUCT.domain+'/static/css/common.css', UUCT.domain+'/static/css/customer.css']);
+            if(this.isLtIe8()){
+                this.loadScript(UUCT.domain+'/static/images/socket.io.js');
+            }else{
+                this.loadScript(UUCT.domain+'/socket.io/socket.io.js');
+            }
             this.createCT();
         },
         loadStyle: function(arr){
@@ -68,13 +72,23 @@
             }
         },
         loadScript: function(url){
-            var script = doc.createElement('script');
-            script.src = url;
-            doc.getElementsByTagName('HEAD')[0].appendChild(script);
+            var spt = doc.createElement('script');
+            spt.src = url;
+            doc.getElementsByTagName('HEAD')[0].appendChild(spt);
 
-            script.onload = function(){
-                UUCT.ctrol();
+            spt.onload = spt.onreadystatechange = function(){
+                if (!this.readyState || this.readyState === "loaded" || this.readyState === "complete" ) {
+                    UUCT.ctrol();
+                    spt.onload = spt.onreadystatechange = null;
+                }
+
             };
+        },
+        isLtIe8: function(){
+            var UA = navigator.userAgent,
+                isIE = UA.indexOf('MSIE') > -1,
+                v = isIE ? /\d+/.exec(UA.split(';')[1]) : 'no ie';
+            return v <= 8;
         },
         createCT: function(){
             var ct = this.template(),
@@ -97,8 +111,93 @@
                 if(!UUCT.socket){
                     UUCT.createSocket();
                 }
-
             });
+        },
+        ajax: function(params){
+            var params = params || {};
+            params.data = params.data || {};
+            var json = params.jsonp ? jsonp(params) : json(params);
+
+
+            function json(params){
+                params.type = (params.type || 'GET').toUpperCase();
+                params.data = formatParams(params.data);
+                var xhr = null;
+                if(window.XMLHttpRequest) {
+                    xhr = new XMLHttpRequest();
+                } else {
+                    xhr = new ActiveXObjcet('Microsoft.XMLHTTP');
+                };
+
+                xhr.onreadystatechange = function() {
+                    if(xhr.readyState == 4) {
+                        var status = xhr.status;
+                        if(status >= 200 && status < 300) {
+                            var response = '';
+                            var type = xhr.getResponseHeader('Content-type');
+                            if(type.indexOf('xml') !== -1 && xhr.responseXML) {
+                                response = xhr.responseXML;
+                            } else if(type === 'application/json') {
+                                response = JSON.parse(xhr.responseText);
+                            } else {
+                                response = xhr.responseText;
+                            };
+
+                            params.success && params.success(response);
+                        } else {
+                            params.error && params.error(status);
+                        }
+                    };
+                };
+
+                if(params.type == 'GET') {
+                    xhr.open(params.type, params.url + '?' + params.data, true);
+                    xhr.send(null);
+                } else {
+                    xhr.open(params.type, params.url, true);
+                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+                    xhr.send(params.data);
+                }
+            }
+
+            function jsonp(params) {
+                var callbackName = params.jsonp;
+                var head = document.getElementsByTagName('head')[0];
+                params.data['callback'] = callbackName;
+                var data = formatParams(params.data);
+                var script = document.createElement('script');
+                head.appendChild(script);
+                window[callbackName] = function(json) {
+                    head.removeChild(script);
+                    clearTimeout(script.timer);
+                    window[callbackName] = null;
+                    params.success && params.success(json);
+                };
+                script.src = params.url + '?' + data;
+                if(params.time) {
+                    script.timer = setTimeout(function() {
+                        window[callbackName] = null;
+                        head.removeChild(script);
+                        params.error && params.error({
+                            message: '超时'
+                        });
+                    }, time);
+                }
+            };
+
+            function formatParams(data) {
+                var arr = [];
+                for(var name in data) {
+                    arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
+                };
+                arr.push('v=' + random());
+                return arr.join('&');
+            }
+            function random() {
+                return Math.floor(Math.random() * 10000 + 500);
+            }
+
+
         },
         createSocket: function(){
             var io = window.io || io || {};
@@ -117,7 +216,7 @@
         },
         template: function(){
             var str = '<div class="chat-body chat-body-hidden">';
-            str +='<div class="chat-header"><div class="chat-avatar"><img class="avatar-img" src="../../static/images/ua.png" /></div><div class="chat-name"></div></div>';
+            str +='<div class="chat-header"><div class="chat-avatar"><img class="avatar-img" src="'+UUCT.domain+'/static/images/ua.png" /></div><div class="chat-name"></div></div>';
             str +='</div>';
             str +='<div class="chat-btn chat-btn-open"> <div class="chat-nums" style="display: none;">0</div> </div>';
             return str;
@@ -247,7 +346,7 @@
                                     UUCT.socket.close();
                                     $('.chat-send')[0].parentNode.removeChild($('.chat-send')[0]);
                                     $('.chat-msg')[0].style.height = '560px';
-                                    $('.chat-msg')[0].innerHTML = '<div class="reconnect-btn"><img width="32" src="../../static/images/write.png">New Conversation</div>';
+                                    $('.chat-msg')[0].innerHTML = '<div class="reconnect-btn"><img width="32" src="'+UUCT.domain+'/static/images/write.png">New Conversation</div>';
                                     addEvent($('.reconnect-btn')[0], 'click', function(){
                                         $('.chat-msg')[0].parentNode.removeChild($('.chat-msg')[0]);
                                         UUCT.createSocket();
@@ -259,17 +358,17 @@
                 }
 
             }else{
-                chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, new Date());
+                chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, new Date()));
             }
 
-            chatMsg.scrollTop = chatMsg.scrollHeight;
+            chatMsg && (chatMsg.scrollTop = chatMsg.scrollHeight);
 
         },
         initCustomer: function(data){
             var msg = UUCT.tempMsg(),
                 send = UUCT.tempSend(),
                 msgList = '',
-                src = (data.photo !== '') ? data.photo : '../../static/images/ua.png';
+                src = (data.photo !== '') ? data.photo : UUCT.domain+'/static/images/ua.png';
 
             UUCT.chat.cid = data.cid;
             UUCT.chat.csid = data.csid;
@@ -354,7 +453,6 @@
         socketCsSelect: function(type, data){
             if(1 === type){
                 UUCT.initCustomer(data);
-
                 addEvent($('.chat-emoji-btn')[0], 'click', function(e){
                     toggleClass($('.emoji-lists')[0], 'emoji-lists-hidden');
                 });
@@ -430,45 +528,23 @@
 
                     var name = $('.offline-name')[0].value,
                         email = $('.offline-email')[0].value,
-                        context = $('.offline-text')[0].value;
+                        content = $('.offline-text')[0].value;
 
-                    if(window.fetch){
-                        window.fetch(UUCT.domain+'/offlines', {
-                            credentials: 'include',
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded'
-                            },
-                            mode: 'no-cors',
-                            body: 'name='+name+'&email='+email+'&content='+context
-                        })
-                            .then(function(d){
-                                return d.json();
-                            })
-                            .then(function(d){
-                                if(200 === d.code){
-                                    $('.chat-offline')[0].innerHTML = '<div className="offline-text-success"> Thank you for your message!We\'ll get back to you as soon as possible！</div>';
-                                }
-                            });
-                    }else{
-                        var xhr = new XMLHttpRequest(),
-                            data = {
-                                "name": name,
-                                "email": email,
-                                "content": context
-                            };
-
-                        xhr.open('POST', UUCT.domain+'/offlines', true);
-                        xhr.setRequestHeader("Content-type","application/x-www-form-urlencoded");
-                        xhr.onreadystatechange = function(d){
-                            if (xhr.readyState === 4) {
-                                if (xhr.status === 200) {
-                                }
+                    UUCT.ajax({
+                        url:UUCT.domain+'/offlines',
+                        type:'GET',
+                        jsonp: 'jsonpCallback',
+                        data: {
+                            "name": name,
+                            "email": email,
+                            "content": content
+                        },
+                        success: function(d){
+                            if(d.code === 200){
+                                $('.chat-offline')[0].innerHTML = '<div className="offline-text-success"> Thank you for your message!We\'ll get back to you as soon as possible！</div>';
                             }
-                        };
-                        xhr.send(data);
-                    }
-
+                        }
+                    });
                 });
             }
         },

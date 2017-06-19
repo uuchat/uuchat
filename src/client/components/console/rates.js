@@ -2,13 +2,17 @@
  * Created by jianzhiqiang on 2017/6/14.
  */
 import React,{Component} from 'react';
-import { Breadcrumb, Table, Button, message } from 'antd';
+import { Breadcrumb, Table, Button, message, DatePicker } from 'antd';
+import moment from 'moment';
 import { sortFilterByProps } from './utils';
+
+const { MonthPicker } = DatePicker;
 
 class Rates extends Component {
     state = {
         dataSource: [],
         sortedInfo: null,
+        month: '',
     };
 
     clearSorters = () => {
@@ -17,10 +21,15 @@ class Rates extends Component {
         });
     }
 
-    refreshTable = ()=> {
+    getDataSource = ()=> {
         const _component = this;
 
-        fetch('/rates/report')
+        let { month } = this.state;
+
+        let reportUrl = '/rates/report?1=1';
+        if (month) reportUrl += '&month=' + month;
+
+        fetch(reportUrl)
             .then((res)=>res.json())
             .then(function (data) {
 
@@ -37,12 +46,12 @@ class Rates extends Component {
                     message.error(data.msg, 4);
                 }
             }).catch(function (e) {
-                message.error(e, 4);
+                message.error(e.message, 4);
             });
     }
 
     componentDidMount = () => {
-        this.refreshTable();
+        this.getDataSource();
     }
 
     handleChange = (pagination, filters, sorter) => {
@@ -51,8 +60,10 @@ class Rates extends Component {
         });
     }
 
-    handleMonthPickerChange = () => {
-
+    handleMonthPickerChange = (date, dateString) => {
+        this.setState({
+            month: dateString,
+        }, this.getDataSource);
     }
 
     render() {
@@ -105,6 +116,8 @@ class Rates extends Component {
             );
         }
 
+        moment.locale('en');
+
         return (
             <div>
                 <Breadcrumb separator=">">
@@ -114,7 +127,8 @@ class Rates extends Component {
                 <div style={{ padding: 24, background: '#fff' }}>
                     <div className="table-deals">
                         <div className="table-search">
-
+                            <MonthPicker onChange={ this.handleMonthPickerChange } defaultValue={ moment() }
+                                         placeholder="Select month"/>
                         </div>
                         <div className="table-operations">
 

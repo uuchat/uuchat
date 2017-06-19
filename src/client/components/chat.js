@@ -20,8 +20,9 @@ class Chat extends Component{
 
     msgFilter(msg){
         var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png)/g,
-            m = msg.replace(/#/gi, "<br />");
-        if(imgReg.test(m)){
+            m = msg.replace && msg.replace(/#/gi, "<br />");
+
+        if(msg.replace && imgReg.test(m)){
             return  <img src={'/'+msg.split('|')[0]} alt="" />;
         }
         return <span dangerouslySetInnerHTML={{__html: m}}></span>;

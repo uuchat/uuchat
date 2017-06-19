@@ -105,7 +105,7 @@ customerSessionController.checkMonthlyUploadSize = function (req, res, next) {
         function (customer, callback) {
             if (!customer) return res.json({code: 2000, message: 'customer not found'});
 
-            var today = new Date().toLocaleDateString();
+            var today = new Date().toDateString();
             var monthlyUploadSize = 0, fileSize = req.file.size || 0;
             var day = today;
 
