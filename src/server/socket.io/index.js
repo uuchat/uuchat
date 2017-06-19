@@ -169,7 +169,7 @@ function authorize(socket, callback) {
                     request.session = sessionData;  //set db session to request.session
                     //TODO need distinguish user or admin
                     //winston.info(request.headers);
-                    winston.info(request.cookie);
+                    //winston.info(request.cookie);
                 } else {
                     winston.error("session is null");
                     return next('[[error: session is null]]');

@@ -99,7 +99,7 @@ function getMarkedByCid(cid, csid, fn) {
     data.cid = cid;
     data.csid = csid;
     chatHistory.findOne(data, function (err, data) {
-        if (err || _.isUndefined(data)) {
+        if (err || _.isUndefined(data) || _.isEmpty(data)) {
             fn(false, null);
         } else {
            if (_.isUndefined(data.marked)) {
