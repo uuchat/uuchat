@@ -65,6 +65,7 @@ function offlineRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
 
     app.post('/offlines', controllers.offlineController.create);
+    app.get('/offlines', controllers.offlineController.create);
 
 }
 
