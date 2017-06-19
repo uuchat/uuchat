@@ -3,7 +3,6 @@
  */
 import React,{Component} from 'react';
 import { Breadcrumb, Table, Button, message, DatePicker } from 'antd';
-import moment from 'moment';
 import { sortFilterByProps } from './utils';
 
 const { MonthPicker } = DatePicker;
@@ -116,7 +115,6 @@ class Rates extends Component {
             );
         }
 
-        moment.locale('en');
 
         return (
             <div>
@@ -127,7 +125,7 @@ class Rates extends Component {
                 <div style={{ padding: 24, background: '#fff' }}>
                     <div className="table-deals">
                         <div className="table-search">
-                            <MonthPicker onChange={ this.handleMonthPickerChange } defaultValue={ moment() }
+                            <MonthPicker onChange={ this.handleMonthPickerChange }
                                          placeholder="Select month"/>
                         </div>
                         <div className="table-operations">
