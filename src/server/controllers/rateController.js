@@ -99,18 +99,18 @@ rateController.report = function (req, res, next) {
             });
 
             var total = _.reduce(rates, function (sum, n) {
-                    return sum + n.rate;
+                    return sum + n.count;
                 }, 0) || 1;
 
             var favorable = _.reduce(rates, function (sum, n) {
-                    if (n.rate > 3) return sum + n.rate;
+                    if (n.rate > 3) return sum + n.count;
                     return sum;
                 }, 0) || 0;
 
             item.favorablePercent = Math.round(favorable * 100 / total);
 
             item.critical = _.reduce(rates, function (sum, n) {
-                    if (n.rate < 3) return sum + n.rate;
+                    if (n.rate < 3) return sum + n.count;
                     return sum;
                 }, 0) || 0;
         });
