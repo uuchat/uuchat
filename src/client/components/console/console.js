@@ -10,6 +10,7 @@ import Operators from './operators';
 import UpgradeNote from './upgradeNote';
 import Transcripts from './transcripts';
 import Rates from './rates';
+import RateDetails from './rateDetails';
 
 class Console extends Component {
     state = {
@@ -118,11 +119,12 @@ class Console extends Component {
                             <Router>
                                 <div style={{ height: '100%'}}>
                                     <Switch>
-                                        <Route exact path="/" component={Dashboard}/>
-                                        <Route exact path="/dashboard" component={Dashboard}/>
-                                        <Route exact path="/operators" component={Operators}/>
-                                        <Route exact path="/transcripts" component={Transcripts}/>
-                                        <Route exact path="/rates" component={Rates}/>
+                                        <Route exact path="/" component={ Dashboard }/>
+                                        <Route exact path="/dashboard" component={ Dashboard }/>
+                                        <Route exact path="/operators" component={ Operators }/>
+                                        <Route exact path="/transcripts" component={ Transcripts }/>
+                                        <Route exact path="/rates" component={ Rates }/>
+                                        <Route exact path="/rates/:csid" component={ RateDetails }/>
                                     </Switch>
                                 </div>
                             </Router>

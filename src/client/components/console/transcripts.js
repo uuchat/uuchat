@@ -7,6 +7,7 @@ import React, { Component } from 'react';
 import { Breadcrumb, Table, message, Input, Modal } from 'antd';
 
 import ChatList from './chatList';
+import { getCustomerName, formatDate } from './utils';
 
 const Search = Input.Search;
 
@@ -16,35 +17,27 @@ class Transcripts extends Component {
         dataSource: [],
     };
 
-    renderCustomer = (value) => {
-        let customer = 'U-' + value.slice(0, 6).toUpperCase();
+    renderCustomer = (text, record) => {
+        let customer = getCustomerName(text);
         //  input params using closure
-        return <a onClick={ (e) => this.handleChatList(e, value) }>{ customer }</a>;
+        return <a onClick={ (e) => this.handleChatList(e, record) }>{ customer }</a>;
     }
-
-    renderTime = (date) => date.slice(0, 10) + ' ' + date.slice(11, 16);
 
     handleSearchChange = (e) => {
         e.preventDefault();
     }
 
-    handleChatList = (e, cid) => {
+    handleChatList = (e, record) => {
         e.preventDefault();
 
-        let { dataSource } = this.state;
-
-        let dataFilters = dataSource.filter((item) => item.cid === cid);
-        let chatListProps = dataFilters.length ? dataFilters[0] : {};
-
-        if(chatListProps.cid) chatListProps.cIndex = parseInt(chatListProps.cid, 16) % 14;
+        if (record.cid) record.cIndex = parseInt(record.cid, 16) % 14;
 
         Modal.info({
-            title: 'U-' + (cid.substr(0, 6).toUpperCase()) + ' chats',
+            title: 'U-' + (record.cid.substr(0, 6).toUpperCase()) + ' chats',
             width: '600px',
             okText: 'Ok',
-            content: <ChatList { ...chatListProps } />,
-            onOk() {
-            },
+            content: <ChatList { ...record } />,
+            onOk() {},
         });
     }
 
@@ -95,7 +88,7 @@ class Transcripts extends Component {
             {title: 'customer', dataIndex: 'cid', key: 'cid', render: this.renderCustomer},
             {title: 'customer success', dataIndex: 'csName', key: 'csName',},
             {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
-            {title: 'latest connect time', dataIndex: 'updatedAt', key: 'updatedAt', render: this.renderTime},
+            {title: 'latest connect time', dataIndex: 'updatedAt', key: 'updatedAt', render: formatDate},
         ];
 
         return (

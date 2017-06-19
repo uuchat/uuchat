@@ -13,4 +13,8 @@ const sortFilterByProps = (a, b, props) => {
     }
 }
 
-export { sortFilterByProps };
+const getCustomerName = (value) => 'U-' + value.slice(0, 6).toUpperCase()
+
+const formatDate = (date) => date.slice(0, 10) + ' ' + date.slice(11, 16)
+
+export { sortFilterByProps, getCustomerName, formatDate };

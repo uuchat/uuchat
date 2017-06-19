@@ -65,6 +65,7 @@ class Rates extends Component {
             key: 'email',
             sorter: (a, b) => sortFilterByProps(a, b, 'email'),
             sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
+            render: (text, record) => (<a href={ '#/rates/'+record.csid  }>{ text }</a>),
         }, {
             title: 'name',
             dataIndex: 'name',
@@ -86,6 +87,24 @@ class Rates extends Component {
             sortOrder: sortedInfo.columnKey === 'critical' && sortedInfo.order,
         }];
 
+        const expandedRowRender = (record) => {
+            const expanderColumns = [
+                {title: 'rate', dataIndex: 'rate', key: 'rate'},
+                {title: 'count', dataIndex: 'count', key: 'count'},
+            ];
+
+            const expanderData = record.rates;
+
+            return (
+                <Table
+                    locale={{ emptyText: 'List is empty' }}
+                    columns={expanderColumns}
+                    dataSource={expanderData}
+                    pagination={false}
+                    />
+            );
+        }
+
         return (
             <div>
                 <Breadcrumb separator=">">
@@ -103,8 +122,13 @@ class Rates extends Component {
                         </div>
                     </div>
 
-                    <Table locale={{ emptyText: 'List is empty' }} dataSource={ dataSource } columns={ columns }
-                           onChange={ this.handleChange }/>
+                    <Table
+                        className="ant-table-expanded-nested"
+                        locale={{ emptyText: 'List is empty' }}
+                        dataSource={ dataSource }
+                        columns={ columns }
+                        expandedRowRender={ expandedRowRender }
+                        onChange={ this.handleChange }/>
                 </div>
             </div>
         );

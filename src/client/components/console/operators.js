@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Table, Breadcrumb, message, Button, Modal, Form, Input } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
 import ActionDropDown from './actionDropDown';
-import { sortFilterByProps } from './utils';
+import { sortFilterByProps, formatDate } from './utils';
 
 const Search = Input.Search;
 const Confirm = Modal.confirm;
@@ -112,7 +112,7 @@ class Operators extends Component {
                             avatar: item.photo,
                             name: item.name,
                             email: item.email,
-                            createTime: item.createdAt.slice(0, 10) + ' ' + item.createdAt.slice(11, 16)
+                            createTime: formatDate(item.createdAt)
                         });
                     });
                     let st = {
