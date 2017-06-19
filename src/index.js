@@ -108,43 +108,57 @@ module.exports.listen = function (callback) {
     });
 };
 
-//check redis has started;
+function baseHtmlRoute(app, middlewareDev) {
+    app.use(express.static(path.join(__dirname, '../build')));
+    //need filter css, js, images files
+    app.use(fileFilters);
+    app.use(session({
+        store: server.sessionStore(),
+        secret: nconf.get('socket.io:secretKey'),
+        key: nconf.get('socket.io:sessionKey'),
+        cookie: setupCookie(),
+        resave: false,
+        saveUninitialized: true
+    }));
 
-function checkRedisStarted(callback){
-    var redisHost = nconf.get('redis:host');
-    if (!_.isEmpty(redisHost)) {
-        utils.lsof(nconf.get('redis:port'), function (data) {
-            if (data.length > 0) {
-                winston.info('');
-                winston.info("[redis] has started");
-            } else {
-                callback(new Error('redis-need-start'));
-            }
-        });
-
-        //version print
-        if (global.env !== 'development') {
-            var _redis = require("../node_modules/connect-redis/node_modules/redis"),
-                client = _redis.createClient();
-            client.info(function () {
-                var info = client.server_info;
-                var versions = info.versions;
-                if (versions[0] < 3) {
-                    callback(new Error('redis-version-too-lower'));
-                } else {
-                    winston.info("[redis] version = %s", info.redis_version);
-                    winston.info("[redis] executable = %s", info.executable);
-                    winston.info("[redis] config file = %s", info.config_file);
-                    winston.info('');
-                }
-            });
+    app.get('/', function response(req, res) {
+        var html = path.join(__dirname, '../build/app.html');
+        htmlRender(middlewareDev, res, html);
+    });
+    app.get('/demo', function response(req, res) {
+        setupSession(req, res);
+        var html = path.join(__dirname, '../build/customer.html');
+        htmlRender(middlewareDev, res, html);
+    });
+    app.get('/console', function response(req, res) {
+        var html = path.join(__dirname, '../build/console.html');
+        htmlRender(middlewareDev, res, html);
+    });
+    app.get('/console/index', function response(req, res) {
+        if (!req.session.csid) {
+            res.redirect('/console');
         }
-    }
-
-
-    callback();
+        var html = path.join(__dirname, '../build/console.html');
+        htmlRender(middlewareDev, res, html);
+    });
+    app.get('/chat', function response(req, res) {
+        var html = path.join(__dirname, '../build/app.html');
+        htmlRender(middlewareDev, res, html);
+    });
+    app.get('/register', function response(req, res) {
+        var html = path.join(__dirname, '../build/app.html');
+        htmlRender(middlewareDev, res, html);
+    });
 }
 
+function htmlRender(middlewareDev, res, html) {
+    if (middlewareDev) {
+        res.write(middlewareDev.fileSystem.readFileSync(html));
+        res.end();
+    } else {
+        res.render(html);
+    }
+}
 
 function setupExpress(app, callback) {
     var middleware = require('./server/middleware');
@@ -153,18 +167,14 @@ function setupExpress(app, callback) {
     app.disable('x-powered-by'); // http://expressjs.com/zh-cn/advanced/best-practice-security.html
     app.set('json spaces', process.env.NODE_ENV === 'development' ? 4 : 0);
 
+    app.use('/static/images', express.static(path.join(__dirname, './client/static/images')));
+    app.use('/content/upload', express.static(path.join(__dirname, '../content/upload')));
+    app.use('/content/avatar', express.static(path.join(__dirname, '../content/avatar')));
+
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(cookieParser(nconf.get('socket.io:secretKey')));
 
-    app.use(session({
-        store: server.sessionStore(),
-        secret: nconf.get('socket.io:secretKey'),
-        key: nconf.get('socket.io:sessionKey'),
-        cookie: setupCookie(),
-        resave: true,
-        saveUninitialized: true
-    }));
     app.use(useragent.express());
 
     if (global.env === 'development') {
@@ -191,67 +201,9 @@ function setupExpress(app, callback) {
             log: console.log, path: '/__webpack_hmr', heartbeat: 10 * 1000
         }));
 
-        app.use(express.static(path.join(__dirname, '../build/static')));
-
-
-        app.get('/', function response(req, res) {
-            res.write(middlewareDev.fileSystem.readFileSync(path.join(__dirname, '../build/app.html')));
-            res.end();
-        });
-        app.get('/demo', function response(req, res) {
-            setupSession(req, res);
-            res.write(middlewareDev.fileSystem.readFileSync(path.join(__dirname, '../build/customer.html')));
-            res.end();
-        });
-        app.get('/console', function response(req, res) {
-            res.write(middlewareDev.fileSystem.readFileSync(path.join(__dirname, '../build/console.html')));
-            res.end();
-        });
-        app.get('/console/index', function response(req, res) {
-            if(!req.session.csid) {
-                res.redirect('/console');
-            }
-            res.write(middlewareDev.fileSystem.readFileSync(path.join(__dirname, '../build/console.html')));
-            res.end();
-        });
-        app.get('/chat', function response(req, res) {
-            res.write(middlewareDev.fileSystem.readFileSync(path.join(__dirname, '../build/app.html')));
-            res.end();
-        });
-        app.get('/register', function response(req, res) {
-            res.write(middlewareDev.fileSystem.readFileSync(path.join(__dirname, '../build/app.html')));
-            res.end();
-        });
-
+        baseHtmlRoute(app, middlewareDev);
     } else {
-        app.set('views', path.join(__dirname, '../build/views'));
-        app.use(express.static(path.join(__dirname, '../build/')));
-
-        app.get('/', function response(req, res) {
-            res.render(path.join(__dirname, '../build/app.html'));
-        });
-        app.get('/demo', function response(req, res) {
-            setupSession(req, res);
-            res.render(path.join(__dirname, '../build/customer.html'));
-        });
-        app.get('/chat', function response(req, res) {
-            if(!req.session.csid) {
-                res.redirect('/');
-            }
-            res.render(path.join(__dirname, '../build/app.html'));
-        });
-        app.get('/console', function response(req, res) {
-            res.render(path.join(__dirname, '../build/console.html'));
-        });
-        app.get('/console/index', function response(req, res) {
-            if(!req.session.csid) {
-                res.redirect('/console');
-            }
-            res.render(path.join(__dirname, '../build/console.html'));
-        });
-        app.get('/register', function response(req, res) {
-            res.render(path.join(__dirname, '../build/app.html'));
-        });
+        baseHtmlRoute(app, null);
     }
 
     app.set('view engine', 'html');
@@ -265,10 +217,6 @@ function setupExpress(app, callback) {
     }
 
     setupFavicon(app);
-
-    app.use('/static/images', express.static(path.join(__dirname, './client/static/images')));
-    app.use('/content/upload', express.static(path.join(__dirname, '../content/upload')));
-    app.use('/content/avatar', express.static(path.join(__dirname, '../content/avatar')));
 
     var routes = require('./server/routes');
     routes(app, middleware);
@@ -292,10 +240,9 @@ function setupExpress(app, callback) {
 }
 
 function setupFavicon(app) {
-    var faviconPath = 'favicon.ico';
-    faviconPath = path.join(nconf.get('app:base_dir'), 'public', faviconPath.replace(/assets\/uploads/, 'uploads'));
+    var faviconPath = path.join(nconf.get('app:base_dir'), 'static/images/uuchat.ico');
     if (utils.fileExistsSync(faviconPath)) {
-        app.use(nconf.get('app:relative_path'), favicon(faviconPath));
+        app.use(favicon(faviconPath));
     }
 }
 
@@ -340,9 +287,66 @@ function setupSession(req, res) {
     ua.cid = cid;
     ua.ip = ip;
     ua.host = host;
-    ua.url = referer;
+    ua.url = req.protocol + '://' + req.get('host') + req.originalUrl;
     userAgent.create(ua);
     winston.info('Customer session had set');
+}
+
+function fileFilters(req, res, next) {
+    //var url = req.protocol + '://' + req.get('host') + req.originalUrl;
+    var originalUrl = req.originalUrl;
+    winston.info(originalUrl);
+    var fileFilters = ['.css', '.js', '.png', '.jpg', '.jpeg', '.ico'];
+    var flag = false;
+    for (suffix in fileFilters) {
+        if (_.endsWith(originalUrl, fileFilters[suffix])) {
+            flag = true;
+            break;
+        }
+    }
+    if (flag) {
+        // return direct
+        res.render(path.join(__dirname, originalUrl));
+    } else {
+        next();
+    }
+}
+
+//check redis has started;
+
+function checkRedisStarted(callback){
+    var redisHost = nconf.get('redis:host');
+    if (!_.isEmpty(redisHost)) {
+        utils.lsof(nconf.get('redis:port'), function (data) {
+            if (data.length > 0) {
+                winston.info('');
+                winston.info("[redis] has started");
+            } else {
+                callback(new Error('redis-need-start'));
+            }
+        });
+
+        //version print
+        if (global.env !== 'development') {
+            var _redis = require("../node_modules/connect-redis/node_modules/redis"),
+                client = _redis.createClient();
+            client.info(function () {
+                var info = client.server_info;
+                var versions = info.versions;
+                if (versions[0] < 3) {
+                    callback(new Error('redis-version-too-lower'));
+                } else {
+                    winston.info("[redis] version = %s", info.redis_version);
+                    winston.info("[redis] executable = %s", info.executable);
+                    winston.info("[redis] config file = %s", info.config_file);
+                    winston.info('');
+                }
+            });
+        }
+    }
+
+
+    callback();
 }
 
 function setupAutoLocale(app, callback) {
