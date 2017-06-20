@@ -16,7 +16,7 @@ consoleController.getNumbers = function (req, res, next) {
     async.parallel([
         function (callback) {
             ChatHistory.Count({where: {createdAt: {$gte: today}}}, function (err, data) {
-                return callback(err, {todayChats: data});
+                return callback(err, {dailyChats: data});
             });
         },
         function (callback) {
@@ -26,7 +26,7 @@ consoleController.getNumbers = function (req, res, next) {
         },
         function (callback) {
             Rate.Count({where: {createdAt: {$gte: today}}}, function (err, data) {
-                return callback(err, {todayRates: data});
+                return callback(err, {dailyRates: data});
             });
         },
         function (callback) {

@@ -9,10 +9,10 @@ class Dashboard extends Component {
     state = {
         numbers: [
             {
-                key: 'todayChats',
+                key: 'dailyChats',
                 icon: 'customer-service',
                 color: '#f797d6',
-                title: 'Today Chats',
+                title: 'Daily Chats',
                 number: 0,
             }, {
                 key: 'offlineCustomers',
@@ -21,10 +21,10 @@ class Dashboard extends Component {
                 title: 'Offline Customers',
                 number: 0,
             }, {
-                key: 'todayRates',
+                key: 'dailyRates',
                 icon: 'star-o',
                 color: '#8fc9fb',
-                title: 'Today Rates',
+                title: 'Daily Rates',
                 number: 0,
             }, {
                 key: 'criticalRates',

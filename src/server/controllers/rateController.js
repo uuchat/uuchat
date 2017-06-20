@@ -96,33 +96,37 @@ rateController.report = function (req, res, next) {
     ], function (err, result) {
         if (err) return next(err);
 
+        var reports = _.filter(result[0], function (item) {
+            item.rates = _.filter(result[1], ['csid', item.csid]);
+            return item.rates.length;
+        });
+
         //aggregate results
-        _.forEach(result[0], function (item) {
-            var rates = _.filter(result[1], ['csid', item.csid]);
+        _.forEach(reports, function (item) {
 
             item.favorablePercent = 0;
-            item.rates = _.map(rates, function (item) {
-                return {rate: item.rate, count: item.count};
+            item.rates = _.map(item.rates, function (element) {
+                return {rate: element.rate, count: element.count};
             });
 
-            var total = _.reduce(rates, function (sum, n) {
+            var total = _.reduce(item.rates, function (sum, n) {
                     return sum + n.count;
                 }, 0) || 1;
 
-            var favorable = _.reduce(rates, function (sum, n) {
+            var favorable = _.reduce(item.rates, function (sum, n) {
                     if (n.rate > 3) return sum + n.count;
                     return sum;
                 }, 0) || 0;
 
             item.favorablePercent = Math.round(favorable * 100 / total);
 
-            item.critical = _.reduce(rates, function (sum, n) {
+            item.critical = _.reduce(item.rates, function (sum, n) {
                     if (n.rate < 3) return sum + n.count;
                     return sum;
                 }, 0) || 0;
         });
 
-        res.json({code: 200, msg: result[0]});
+        res.json({code: 200, msg: reports});
     });
 };
 
