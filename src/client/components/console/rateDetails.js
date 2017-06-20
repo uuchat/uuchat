@@ -2,17 +2,30 @@
  * Created by jianzhiqiang on 2017/6/19.
  */
 import React,{Component} from 'react';
-import { Breadcrumb, Table, Button, message } from 'antd';
+import { Breadcrumb, Table, Button, message, Radio } from 'antd';
+import moment from 'moment';
+import { Link } from 'react-router-dom';
 import { getCustomerName, formatDate } from './utils';
+
+const RadioGroup = Radio.Group;
 
 class Rates extends Component {
     state = {
         csSource: [],
         dataSource: [],
+        month: moment().format('YYYY-MM'),
+        rateValue: null,
     };
 
-    refreshTable = ()=> {
+    getDataSource = ()=> {
         const _component = this;
+
+        let queryUrl = '/console/rates/cs/';
+        queryUrl += this.props.match.params.csid + '/month/' + this.state.month;
+
+        queryUrl += "?1=1";
+
+        if (this.state.rateValue) queryUrl += "&rate=" + this.state.rateValue;
 
         fetch('/customersuccesses')
             .then((res) => res.json())
@@ -25,7 +38,7 @@ class Rates extends Component {
                     //message.error(data.msg, 4);
                     throw new Error(data.msg);
                 }
-            }).then(() => fetch('/rates/customersuccess/' + this.props.match.params.csid))
+            }).then(() => fetch(queryUrl))
             .then((res) => res.json())
             .then((data) => {
                 if (200 === data.code) {
@@ -47,18 +60,22 @@ class Rates extends Component {
     }
 
     componentDidMount = () => {
-        this.refreshTable();
+        const location = this.props.location;
+        let month = location.state ? location.state.month : moment().format('YYYY-MM');
+        this.setState({month}, this.getDataSource);
     }
 
     handleChange = (pagination, filters, sorter) => {
     }
 
-    handleMonthPickerChange = () => {
 
+    handleRadioChange = (e) => {
+        var rateValue = e.target.value;
+        this.setState({rateValue}, this.getDataSource);
     }
 
     render() {
-        let { dataSource } = this.state;
+        let { dataSource, month } = this.state;
 
         const columns = [
             {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
@@ -77,11 +94,19 @@ class Rates extends Component {
                 <div style={{ padding: 24, background: '#fff' }}>
                     <div className="table-deals">
                         <div className="table-search">
-
+                            <RadioGroup onChange={this.handleRadioChange} value={this.state.rateValue}>
+                                <Radio value={1}>1</Radio>
+                                <Radio value={2}>2</Radio>
+                                <Radio value={3}>3</Radio>
+                                <Radio value={4}>4</Radio>
+                                <Radio value={5}>5</Radio>
+                            </RadioGroup>
                         </div>
                         <div className="table-operations">
 
-                            <Button onClick={ () => window.location.href = "#/rates" }>Back</Button>
+                            <Button>
+                                <Link to={{pathname: '/rates', state:{month: month} }}>Back</Link>
+                            </Button>
                         </div>
                     </div>
 

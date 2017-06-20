@@ -4,6 +4,7 @@
 import React,{Component} from 'react';
 import { Breadcrumb, Table, Button, message, DatePicker } from 'antd';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import { sortFilterByProps } from './utils';
 
 const { MonthPicker } = DatePicker;
@@ -12,7 +13,7 @@ class Rates extends Component {
     state = {
         dataSource: [],
         sortedInfo: null,
-        month: '',
+        month: moment().format('YYYY-MM'),
     };
 
     clearSorters = () => {
@@ -26,8 +27,7 @@ class Rates extends Component {
 
         let { month } = this.state;
 
-        let reportUrl = '/rates/report?1=1';
-        if (month) reportUrl += '&month=' + month;
+        let reportUrl = '/console/rates/report/month/' + month;
 
         fetch(reportUrl)
             .then((res)=>res.json())
@@ -50,6 +50,13 @@ class Rates extends Component {
             });
     }
 
+    componentWillMount = () => {
+        const location = this.props.location;
+        if (location.state) {
+            this.setState({month: location.state.month});
+        }
+    }
+
     componentDidMount = () => {
         this.getDataSource();
     }
@@ -67,36 +74,50 @@ class Rates extends Component {
     }
 
     render() {
-        let { dataSource,sortedInfo } = this.state;
+        let { dataSource,sortedInfo, month } = this.state;
         sortedInfo = sortedInfo || {};
 
-        const columns = [{
-            title: 'email',
-            dataIndex: 'email',
-            key: 'email',
-            sorter: (a, b) => sortFilterByProps(a, b, 'email'),
-            sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
-            render: (text, record) => (<a href={ '#/rates/'+record.csid  }>{ text }</a>),
-        }, {
-            title: 'name',
-            dataIndex: 'name',
-            key: 'name',
-            sorter: (a, b) => sortFilterByProps(a, b, 'name'),
-            sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
-        }, {
-            title: 'favorable percent',
-            dataIndex: 'favorablePercent',
-            key: 'favorablePercent',
-            render: (value) => value + '%',
-            sorter: (a, b) => a.favorablePercent - b.favorablePercent,
-            sortOrder: sortedInfo.columnKey === 'favorablePercent' && sortedInfo.order,
-        }, {
-            title: 'critical',
-            dataIndex: 'critical',
-            key: 'critical',
-            sorter: (a, b) => a.critical - b.critical,
-            sortOrder: sortedInfo.columnKey === 'critical' && sortedInfo.order,
-        }];
+        let defaultPickerMonth = moment(month);
+
+        const columns = [
+            {
+                title: 'email',
+                dataIndex: 'email',
+                key: 'email',
+                sorter: (a, b) => sortFilterByProps(a, b, 'email'),
+                sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
+                render: (text, record) => (
+                    <Link to={{pathname: '/rates/'+record.csid, state:{month: month} }}>{ text }</Link> ),
+            },
+            {
+                title: 'name',
+                dataIndex: 'name',
+                key: 'name',
+                sorter: (a, b) => sortFilterByProps(a, b, 'name'),
+                sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+            },
+            {
+                title: 'rate times',
+                dataIndex: 'total',
+                key: 'total',
+                sorter: (a, b) => a.total - b.total,
+                sortOrder: sortedInfo.columnKey === 'total' && sortedInfo.order,
+            },
+            {
+                title: 'favorable percent',
+                dataIndex: 'favorablePercent',
+                key: 'favorablePercent',
+                render: (value) => value + '%',
+                sorter: (a, b) => a.favorablePercent - b.favorablePercent,
+                sortOrder: sortedInfo.columnKey === 'favorablePercent' && sortedInfo.order,
+            },
+            {
+                title: 'critical',
+                dataIndex: 'critical',
+                key: 'critical',
+                sorter: (a, b) => a.critical - b.critical,
+                sortOrder: sortedInfo.columnKey === 'critical' && sortedInfo.order,
+            }];
 
         const expandedRowRender = (record) => {
             const expanderColumns = [
@@ -130,7 +151,7 @@ class Rates extends Component {
                 <div style={{ padding: 24, background: '#fff' }}>
                     <div className="table-deals">
                         <div className="table-search">
-                            <MonthPicker onChange={ this.handleMonthPickerChange } defaultValue={ moment() }
+                            <MonthPicker onChange={ this.handleMonthPickerChange } defaultValue={ defaultPickerMonth }
                                          placeholder="Select month"/>
                         </div>
                         <div className="table-operations">
