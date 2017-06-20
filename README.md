@@ -23,6 +23,14 @@ you can see demo on [http://uuchat.io](http://uuchat.io)
 >&nbsp;&nbsp;&nbsp;&nbsp;node tools/build.js <br />
 >&nbsp;&nbsp;&nbsp;&nbsp;node index.js <br />
 
+##### Ubuntu
+```
+apt-get install sqlite3
+npm i sqlite3
+apt-get install g++
+npm i sharp
+```
+
 ## Basic uuChat Configuration
 
 Set your own information in `src > config.json` . something like 'name' , 'ip address',
