@@ -8,6 +8,7 @@ var path = require('path');
 var nconf = require('nconf');
 var async = require('async');
 var _ = require('lodash');
+var cors = require('cors');
 
 var express = require('express');
 var app = express();
@@ -17,6 +18,7 @@ var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var useragent = require('express-useragent');
+var favicon = require('serve-favicon');
 
 var connectRedis = require("connect-redis")(session);
 var storeRedis = new connectRedis({
@@ -176,6 +178,7 @@ function setupExpress(app, callback) {
     app.use(cookieParser(nconf.get('socket.io:secretKey')));
 
     app.use(useragent.express());
+    setupFavicon(app);
 
     if (global.env === 'development') {
         var webpack = require('webpack');
@@ -204,19 +207,18 @@ function setupExpress(app, callback) {
         baseHtmlRoute(app, middlewareDev);
     } else {
         baseHtmlRoute(app, null);
-    }
-
-    app.set('view engine', 'html');
-    app.engine('html', require('ejs').renderFile);
-
-    app.enable('view cache');
-
-    if (global.env !== 'development') {
         app.enable('cache');
         app.enable('minification');
     }
 
-    setupFavicon(app);
+    app.get('/s', cors(middleware.whiteListOpt()), function response(req, res) {
+        setupSession(req, res);
+        res.json({"r": true});
+    });
+
+    app.set('view engine', 'html');
+    app.engine('html', require('ejs').renderFile);
+    app.enable('view cache');
 
     var routes = require('./server/routes');
     routes(app, middleware);
@@ -225,14 +227,17 @@ function setupExpress(app, callback) {
 
     setupAutoLocale(app, callback);
 
-    // http://expressjs.com/zh-cn/starter/faq.html
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {
         logger.error("~~~~~~ has 404 error, please see browser console log!");
         res.status(404).send('can not find page!');
     });
     app.use(function(err, req, res, next) {
-        logger.error(err.stack);
+        if (global.env === 'development') {
+            logger.error(err.stack);
+        } else {
+            logger.error("~~~~~~ has 503 error!");
+        }
         res.status(503).send('system has problem.');
     });
 
@@ -240,10 +245,7 @@ function setupExpress(app, callback) {
 }
 
 function setupFavicon(app) {
-    var faviconPath = path.join(nconf.get('app:base_dir'), 'static/images/uuchat.ico');
-    if (utils.fileExistsSync(faviconPath)) {
-        app.use(favicon(faviconPath));
-    }
+    app.use(favicon(path.join(__dirname, 'client/static/images/uuchat.ico')));
 }
 
 function setupCookie() {
@@ -293,19 +295,15 @@ function setupSession(req, res) {
 }
 
 function fileFilters(req, res, next) {
-    //var url = req.protocol + '://' + req.get('host') + req.originalUrl;
     var originalUrl = req.originalUrl;
-    winston.info(originalUrl);
-    var fileFilters = ['.css', '.js', '.png', '.jpg', '.jpeg', '.ico'];
+    var fileFilters = ['css', 'js', 'png', 'jpg', 'jpeg', 'ico'];
     var flag = false;
-    for (suffix in fileFilters) {
-        if (_.endsWith(originalUrl, fileFilters[suffix])) {
-            flag = true;
-            break;
-        }
+    var suffix = originalUrl.split('.').pop();
+    winston.info(suffix);
+    if (fileFilters.indexOf(suffix) !== -1) {
+        flag = true;
     }
     if (flag) {
-        // return direct
         res.render(path.join(__dirname, originalUrl));
     } else {
         next();
@@ -344,7 +342,6 @@ function checkRedisStarted(callback){
             });
         }
     }
-
 
     callback();
 }

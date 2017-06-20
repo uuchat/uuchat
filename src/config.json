@@ -7,8 +7,8 @@
     "lineupRefreshTime": 3000,
     "onlineInfoRefreshTime": 300000,
     "cookieDomain": "",
-    "relative_path": "/",
-    "base_dir": ""
+    "image_upload_white_list": ["allow_domain, eg: http://uuchat.io"],
+    "relative_path": "/"
   },
   "database": {
     "dialect": "sqlite",

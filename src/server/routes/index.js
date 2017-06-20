@@ -4,9 +4,11 @@
 "use strict";
 
 var nconf = require('nconf');
+var _ = require('lodash');
 var winston = require('winston');
 var express = require('express');
 var controllers = require('../controllers');
+var cors = require('cors');
 
 function customerSuccessRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
@@ -45,7 +47,9 @@ function messageRoutes(app, middleware, controllers) {
     app.get('/messages/customer/:cid', controllers.messageController.list);
     app.get('/messages/customer/:cid/cs/:csid', controllers.messageController.list);
     app.post('/messages/customer/:cid/cs/:csid', controllers.messageController.create);
-    app.post('/messages/customer/:cid/cs/:csid/image', middleware.upload.uploadImage,
+
+
+    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.whiteListOpt()) , middleware.upload.uploadImage,
         controllers.customerSessionController.checkMonthlyUploadSize);
 }
 
@@ -53,7 +57,6 @@ function rateRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
 
     app.post('/rates', controllers.rateController.create);
-    app.get('/rates/report', controllers.rateController.report);
     app.get('/rates/:uuid', controllers.rateController.get);
     app.patch('/rates/:uuid', controllers.rateController.patch);
     app.delete('/rates/:uuid', controllers.rateController.delete);
@@ -84,6 +87,8 @@ function consoleRoutes(app, middleware, controllers) {
 
     app.post('/console/login', controllers.customerSuccessController.loginConsole);
     app.get('/console/numbers', controllers.consoleController.getNumbers);
+    app.get('/console/rates/report/month/:month', controllers.consoleController.getMonthlyRateReport);
+    app.get('/console/rates/cs/:csid/month/:month', controllers.consoleController.getMonthlyRateList);
 }
 
 module.exports = function (app, middleware, callback) {

@@ -37,10 +37,8 @@ var upload = multer({
     limits: {fileSize: nconf.get('images:fileSize')},
     fileFilter: function (req, file, next) {
 
-        var fileTypes = /jpeg|png|gif/;
+        var fileTypes = /jpeg|jpg|png|gif/;
         var mimeType = fileTypes.test(file.mimetype);
-
-        fileTypes = /jpg|png|gif/;
         var extName = fileTypes.test(path.extname(file.originalname).toLowerCase());
 
         if (mimeType && extName) return next(null, true);
@@ -52,9 +50,9 @@ var upload = multer({
 });
 
 function uploadImage(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-With");
-    res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+    //res.header("Access-Control-Allow-Origin", "*");
+    //res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    //res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
     async.waterfall([
         function(next){
             upload.single('image')(req, res, function (err) {
