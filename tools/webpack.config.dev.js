@@ -16,6 +16,10 @@ process.env.NODE_ENV = 'development';
 
 process.noDeprecation = true;
 
+nconf.argv().env().file({
+    file: path.join(__dirname, '../src/config.json')
+});
+
 // Webpack uses `publicPath` to determine where the app is being served from.
 // In development, we always serve from the root. This makes config easier.
 var publicPath = '/';
@@ -224,9 +228,6 @@ module.exports = {
                 from: paths.customerJS,
                 to: paths.appBuild + '/static/js/uuchat.js',
                 transform: function (content, absoluteFrom) {
-                    nconf.argv().env().file({
-                        file: path.join(__dirname, '../src/config.json')
-                    });
                     var result = content + '';
                     var data = result.replace(/'..\/..'\+/g, '');
                     return data.replace(/127.0.0.1:9688/g,
@@ -237,9 +238,6 @@ module.exports = {
                 from: paths.customerHtml,
                 to: paths.appBuild + '/customer.html',
                 transform: function (content, absoluteFrom) {
-                    nconf.argv().env().file({
-                        file: path.join(__dirname, '../src/config.json')
-                    });
                     var result = content + '';
                     return result.replace(/customerCDN/g, '\/static\/js\/uuchat');
                 }

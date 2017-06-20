@@ -284,6 +284,9 @@ module.exports = {
                         nconf.get('app:address') + ':' + nconf.get('app:port'));
                     console.log("start uglify");
                     var result = UglifyJS.minify(code, {fromString: true});
+                    if (result.error) {
+                        result = UglifyJS.minify(code); //UglifyJS3
+                    }
                     return result.code;
                 }
             },
