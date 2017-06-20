@@ -114,14 +114,15 @@
             });
         },
         ajax: function(params){
-            var params = params || {};
-            params.data = params.data || {};
-            var json = params.jsonp ? jsonp(params) : json(params);
+            var params = params || {}
+                params.data = params.data || {},
+                json = params.jsonp ? jsonp(params) : json(params);
 
 
             function json(params){
                 params.type = (params.type || 'GET').toUpperCase();
-                params.data = formatParams(params.data);
+                !params.fileType && (params.data = formatParams(params.data));
+
                 var xhr = null;
                 if(window.XMLHttpRequest) {
                     xhr = new XMLHttpRequest();
@@ -155,17 +156,19 @@
                     xhr.send(null);
                 } else {
                     xhr.open(params.type, params.url, true);
-                    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
                     xhr.send(params.data);
                 }
             }
 
             function jsonp(params) {
-                var callbackName = params.jsonp;
-                var head = document.getElementsByTagName('head')[0];
+                var callbackName = params.jsonp,
+                    head = document.getElementsByTagName('head')[0],
+                    data ,
+                    script = document.createElement('script');
+
                 params.data['callback'] = callbackName;
-                var data = formatParams(params.data);
-                var script = document.createElement('script');
+                data = formatParams(params.data);
+
                 head.appendChild(script);
                 window[callbackName] = function(json) {
                     head.removeChild(script);
@@ -179,7 +182,7 @@
                         window[callbackName] = null;
                         head.removeChild(script);
                         params.error && params.error({
-                            message: '超时'
+                            message: 'timeout'
                         });
                     }, time);
                 }
@@ -196,8 +199,6 @@
             function random() {
                 return Math.floor(Math.random() * 10000 + 500);
             }
-
-
         },
         createSocket: function(){
             var io = window.io || io || {};
@@ -247,8 +248,10 @@
             str += '<div class="chat-send-btns">';
             str += emj;
             str += '<label class="chat-send-btn chat-emoji-btn"></label>';
-            str += '<label class="chat-send-btn chat-file-btn" for="upload-file">';
-            str += '<input id="upload-file" type="file" class="chat-upload" accept="image/png, image/jpeg, image/gif,image/jpg" /></label>';
+            if(window.FormData){
+                str += '<label class="chat-send-btn chat-file-btn" for="upload-file">';
+                str += '<input id="upload-file" name="image" type="file" class="chat-upload" accept="image/png, image/jpeg, image/gif,image/jpg" /></label>';
+            }
             str += '</div> </div> </div>';
             return str;
         },
@@ -289,7 +292,7 @@
             return str;
         },
         msgFilter: function(msg){
-            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png)/g,
+            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
                 imgSrc = msg,
                 str = '';
 
@@ -378,7 +381,7 @@
             $('.chat-name')[0].innerHTML = data.name;
             $('.chat-body')[0].innerHTML += msg;
             $('.chat-body')[0].innerHTML += send;
-            $('.avatar-img')[0].setAttribute("src", src);
+            $('.avatar-img')[0].setAttribute("src", UUCT.domain+'/'+src);
 
             if(data.msg.length > 0){
                 for(var i = 0, l = data.msg.length; i < l; i++){
@@ -466,33 +469,38 @@
                     }
                 });
 
-                addEvent($('.chat-upload')[0], 'change', function(e){
 
-                    var data = new FormData();
+                $('.chat-upload')[0] && addEvent($('.chat-upload')[0], 'change', function(e){
+
+                   var data = new FormData();
                     data.append('image', e.target.files[0]);
 
-                   fetch(UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image', {
-                        method: 'post',
-                        body: data
-                    }).then(function(d){
-                        return d.json();
-                    }).then(function(d){
-                        if(200 === d.code){
-                            UUCT.socketSendMessage(d.msg.resized+'|'+d.msg.original);
-                        }else{
-                            UUCT.msgTranslate({
-                                role: 1,
-                                msg: 'Image upload is failed!'
-                            });
-                        }
-                    });
+                   UUCT.ajax({
+                       url: UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image',
+                       type:'POST',
+                       fileType: true,
+                       //jsonp: 'jsonpCallback',
+                       data: data,
+                       success: function(data){
+                           var d = JSON.parse(data);
+                           if(d.code === 200){
+                               UUCT.socketSendMessage(d.msg.resized+'|'+d.msg.original);
+                           }
+                       }
+                   });
 
                 });
 
                 addEvent($('.chat-send-area')[0], 'keyup', function(e){
                     var e = e || w.event,
                         val = this.value;
-                    e.preventDefault();
+
+                    if(doc.all){
+                        e.returnValue = false;
+                    }else{
+                        e.preventDefault();
+                    }
+
                     val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
                     if(val !== ''){
@@ -623,54 +631,10 @@
 
 
 })(window, document);
+var UUCTemo=[{name:"grinning-smile-eyes",text:"\ud83d\ude01",code:"U+1F601"},{name:"tears-of-joy",text:"\ud83d\ude02",code:"U+1F602"},{name:"smiling-open-mouth",text:"\ud83d\ude03",code:"U+1F603"},{name:"smiling-mouth-eyes",text:"\ud83d\ude04",code:"U+1F604"},{name:"smiling-cold-sweat",text:"\ud83d\ude05",code:"U+1F605"},{name:"smiling-closed-eyes",text:"\ud83d\ude06",code:"U+1F606"},{name:"winking",text:"\ud83d\ude09",code:"U+1F609"},{name:"smiling-eyes",text:"\ud83d\ude0a",code:"U+1F60A"},{name:"delicious-food",
+    text:"\ud83d\ude0b",code:"U+1F60B"},{name:"relieved",text:"\ud83d\ude0c",code:"U+1F60C"},{name:"heart-shaped",text:"\ud83d\ude0d",code:"U+1F60D"},{name:"smirking",text:"\ud83d\ude0f",code:"U+1F60F"},{name:"unamused",text:"\ud83d\ude12",code:"U+1F612"},{name:"cold-sweat",text:"\ud83d\ude13",code:"U+1F613"},{name:"pensive",text:"\ud83d\ude14",code:"U+1F614"},{name:"confounded",text:"\ud83d\ude16",code:"U+1F616"},{name:"throwing-kiss",text:"\ud83d\ude18",code:"U+1F618"},{name:"kissing-closed-eyes",text:"\ud83d\ude1a",
+    code:"U+1F61A"},{name:"stuck-out-tongue",text:"\ud83d\ude1c",code:"U+1F61C"},{name:"tightly-closed-eyes",text:"\ud83d\ude1d",code:""},{name:"disappointed",text:"\ud83d\ude1e",code:"U+1F61E"},{name:"angry",text:"\ud83d\ude20",code:"U+1F620"},{name:"pouting",text:"\ud83d\ude21",code:"U+1F621"},{name:"crying",text:"\ud83d\ude22",code:"U+1F622"},{name:"persevering",text:"\ud83d\ude23",code:"U+1F623"},{name:"look-of-triumph",text:"\ud83d\ude24",code:"U+1F624"},{name:"disappointed-relieved",text:"\ud83d\ude25",
+    code:"U+1F625"},{name:"fearful",text:"\ud83d\ude28",code:"U+1F628"},{name:"weary",text:"\ud83d\ude29",code:"U+1F629"},{name:"sleepy",text:"\ud83d\ude2a",code:"U+1F62A"},{name:"tired",text:"\ud83d\ude2b",code:"U+1F62B"},{name:"loudly-crying ",text:"\ud83d\ude2d",code:"U+1F62D"},{name:"mouth-cold-sweat",text:"\ud83d\ude30",code:"U+1F630"},{name:"screaming-in-fear",text:"\ud83d\ude31",code:"U+1F631"},{name:"astonished",text:"\ud83d\ude32",code:"U+1F632"},{name:"flushed",text:"\ud83d\ude33",code:"U+1F633"},
+    {name:"dizzy",text:"\ud83d\ude35",code:"U+1F635"},{name:"medical-mask",text:"\ud83d\ude37",code:"U+1F637"},{name:"hands-in-celebration",text:"\ud83d\ude4c",code:"U+1F64C"},{name:"folded-hands",text:"\ud83d\ude4f",code:"U+1F64F"},{name:"raised-first",text:"\u270a",code:"U+270A"},{name:"raised-hand",text:"\u270b",code:"U+270B"},{name:"victory-hand",text:"\u270c",code:"U+270C"},{name:"ok-hand-sign",text:"\ud83d\udc4c",code:"U+1F44C"},{name:"waving-hand-sign",text:"\ud83d\udc4b",code:"U+1F44B"},{name:"thumbs-up-sign",
+        text:"\ud83d\udc4d",code:"U+1F44D"},{name:"clapping-hands-sign",text:"\ud83d\udc4f",code:"U+1F44F"},{name:"kiss-mark",text:"\ud83d\udc8b",code:"U+1F48B"}];
 
-var UUCTemo = [
-    {name: 'grinning-smile-eyes', text: '😁', code: 'U+1F601'},
-    {name: 'tears-of-joy', text: '😂', code: 'U+1F602'},
-    {name: 'smiling-open-mouth', text: '😃', code: 'U+1F603'},
-    {name: 'smiling-mouth-eyes', text: '😄', code: 'U+1F604'},
-    {name: 'smiling-cold-sweat', text: '😅', code: 'U+1F605'},
-    {name: 'smiling-closed-eyes', text: '😆', code: 'U+1F606'},
-    {name: 'winking', text: '😉', code: 'U+1F609'},
-    {name: 'smiling-eyes', text: '😊', code: 'U+1F60A'},
-    {name: 'delicious-food', text: '😋', code: 'U+1F60B'},
-    {name: 'relieved', text: '😌', code: 'U+1F60C'},
-    {name: 'heart-shaped', text: '😍', code: 'U+1F60D'},
-    {name: 'smirking', text: '😏', code: 'U+1F60F'},
-    {name: 'unamused', text: '😒', code: 'U+1F612'},
-    {name: 'cold-sweat', text: '😓', code: 'U+1F613'},
-    {name: 'pensive', text: '😔', code: 'U+1F614'},
-    {name: 'confounded', text: '😖', code: 'U+1F616'},
-    {name: 'throwing-kiss', text: '😘', code: 'U+1F618'},
-    {name: 'kissing-closed-eyes', text: '😚', code: 'U+1F61A'},
-    {name: 'stuck-out-tongue', text: '😜', code: 'U+1F61C'},
-    {name: 'tightly-closed-eyes', text: '😝', code: ''},
-    {name: 'disappointed', text: '😞', code: 'U+1F61E'},
-    {name: 'angry', text: '😠', code: 'U+1F620'},
-    {name: 'pouting', text: '😡', code: 'U+1F621'},
-    {name: 'crying', text: '😢', code: 'U+1F622'},
-    {name: 'persevering', text: '😣', code: 'U+1F623'},
-    {name: 'look-of-triumph', text: '😤', code: 'U+1F624'},
-    {name: 'disappointed-relieved', text: '😥', code: 'U+1F625'},
-    {name: 'fearful', text: '😨', code: 'U+1F628'},
-    {name: 'weary', text: '😩', code: 'U+1F629'},
-    {name: 'sleepy', text: '😪', code: 'U+1F62A'},
-    {name: 'tired', text: '😫', code: 'U+1F62B'},
-    {name: 'loudly-crying ', text: '😭', code: 'U+1F62D'},
-    {name: 'mouth-cold-sweat', text: '😰', code: 'U+1F630'},
-    {name: 'screaming-in-fear', text: '😱', code: 'U+1F631'},
-    {name: 'astonished', text: '😲', code: 'U+1F632'},
-    {name: 'flushed', text: '😳', code: 'U+1F633'},
-    {name: 'dizzy', text: '😵', code: 'U+1F635'},
-    {name: 'medical-mask', text: '😷', code: 'U+1F637'},
-    {name: 'hands-in-celebration', text: '🙌', code: 'U+1F64C'},
-    {name: 'folded-hands', text: '🙏', code: 'U+1F64F'},
-    {name: 'raised-first', text: '✊', code: 'U+270A'},
-    {name: 'raised-hand', text: '✋', code: 'U+270B'},
-    {name: 'victory-hand', text: '✌', code: 'U+270C'},
-    {name: 'ok-hand-sign', text: '👌', code: 'U+1F44C'},
-    {name: 'waving-hand-sign', text: '👋', code: 'U+1F44B'},
-    {name: 'thumbs-up-sign', text: '👍', code: 'U+1F44D'},
-    {name: 'clapping-hands-sign', text: '👏', code: 'U+1F44F'},
-    {name: 'kiss-mark', text: '💋', code: 'U+1F48B'}
-];

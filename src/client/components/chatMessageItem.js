@@ -36,7 +36,7 @@ class ChatMessageItem extends Component{
         return str;
     }
     render(){
-        var imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png)/g,
+        var imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
             imgSrc = this.props.ownerText,
             isImg = false,
             img = '',

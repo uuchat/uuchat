@@ -4,8 +4,7 @@
     bottom: 80px;
     z-index:999;
     width: 400px;
-    min-height: 240px;
-    max-height: 624px;
+    background-color: #fff;
 }
 
 .chat-console .chat-body{
@@ -40,6 +39,7 @@
 .chat-header  .chat-avatar img{
     width: 100%;
     border-radius: 100%;
+    box-shadow:1px 1px 1px 1px #ededed;
 }
 
 .chat-console .chat-msg{
@@ -424,7 +424,7 @@
 .chat-offline .offline-tips{
     color: #ff0000;
 }
-@media screen and (max-height:600px){
+@media screen and (max-height:768px){
     .chat-console .chat-msg{
         height: 400px;
     }

@@ -149,6 +149,7 @@
     font-size: 20px;
     color: #fff;
 }
+.avatar-icon-0,
 .avatar-icon-1{
     background-color:#1abc9c;
 }
@@ -639,6 +640,9 @@
 
 .send-tools .tool-box .upload-icon{
     font-size: 20px;
+}
+.send-tools .tool-box .ant-upload-list{
+    display:none;
 }
 .send-tools .tool-box .rate-icon{
     display: inline-block;
