@@ -10,6 +10,7 @@ import Operators from './operators';
 import UpgradeNote from './upgradeNote';
 import Transcripts from './transcripts';
 import Rates from './rates';
+import RateList from './rateList';
 import RateDetails from './rateDetails';
 
 class Console extends Component {
@@ -98,7 +99,13 @@ class Console extends Component {
                             <Menu.Item key="rates">
                               <span>
                                 <Icon type="star-o"/>
-                                <span className="nav-text">Rates</span>
+                                <span className="nav-text">Rate Report</span>
+                              </span>
+                            </Menu.Item>
+                            <Menu.Item key="rateList">
+                              <span>
+                                <Icon type="star-o"/>
+                                <span className="nav-text">Rate List</span>
                               </span>
                             </Menu.Item>
                         </Menu>
@@ -124,6 +131,7 @@ class Console extends Component {
                                         <Route exact path="/operators" component={ Operators }/>
                                         <Route exact path="/transcripts" component={ Transcripts }/>
                                         <Route exact path="/rates" component={ Rates }/>
+                                        <Route exact path="/rateList" component={ RateList }/>
                                         <Route exact path="/rates/:csid" component={ RateDetails }/>
                                     </Switch>
                                 </div>

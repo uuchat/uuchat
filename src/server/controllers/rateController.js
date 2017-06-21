@@ -73,3 +73,30 @@ rateController.list = function (req, res, next) {
         res.json({code: 200, msg: data});
     });
 };
+
+rateController.search = function (req, res, next) {
+    var condition = {};
+
+    if (req.query.csid) condition.csid = req.query.csid;
+    if (req.query.rate) condition.rate = req.query.rate;
+    if (req.query.createdAtStart) condition.createdAt = {$gte: req.query.createdAtStart};
+    if (req.query.createdAtEnd) condition.createdAt = {$lte: req.query.createdAtEnd};
+    if (req.query.createdAtStart && req.query.createdAtEnd) {
+        condition.createdAt = {
+            $gte: req.query.createdAtStart,
+            $lte: req.query.createdAtEnd
+        };
+    }
+
+    var order = [['createdAt', 'DESC']];
+    if (req.query.sortField) order = [[req.query.sortField, req.query.sortOrder === 'ascend' ? 'ASC' : 'DESC']];
+
+    var pageNum = utils.parsePositiveInteger(req.query.pageNum);
+    var pageSize = 10;
+
+    Rate.listAndCount(condition, order, pageSize, pageNum, function (err, data) {
+        if (err) return next(err);
+
+        res.json({code: 200, msg: data});
+    });
+};

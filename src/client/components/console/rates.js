@@ -13,6 +13,7 @@ class Rates extends Component {
     state = {
         dataSource: [],
         sortedInfo: null,
+        loading: false,
         month: moment().format('YYYY-MM'),
     };
 
@@ -29,6 +30,8 @@ class Rates extends Component {
 
         let reportUrl = '/console/rates/report/month/' + month;
 
+        _component.setState({loading: true});
+
         fetch(reportUrl)
             .then((res)=>res.json())
             .then(function (data) {
@@ -41,11 +44,14 @@ class Rates extends Component {
 
                     _component.setState({
                         dataSource: data.msg,
+                        loading: false,
                     });
                 } else {
+                    _component.setState({loading: false});
                     message.error(data.msg, 4);
                 }
             }).catch(function (e) {
+                _component.setState({loading: false});
                 message.error(e.message, 4);
             });
     }
@@ -74,7 +80,7 @@ class Rates extends Component {
     }
 
     render() {
-        let { dataSource,sortedInfo, month } = this.state;
+        let { dataSource,sortedInfo, month, loading } = this.state;
         sortedInfo = sortedInfo || {};
 
         let defaultPickerMonth = moment(month);
@@ -145,7 +151,7 @@ class Rates extends Component {
         return (
             <div>
                 <Breadcrumb separator=">">
-                    <Breadcrumb.Item>Rates</Breadcrumb.Item>
+                    <Breadcrumb.Item>Rate Report</Breadcrumb.Item>
                 </Breadcrumb>
 
                 <div style={{ padding: 24, background: '#fff' }}>
@@ -165,6 +171,7 @@ class Rates extends Component {
                         locale={{ emptyText: 'List is empty' }}
                         dataSource={ dataSource }
                         columns={ columns }
+                        loading={ loading }
                         expandedRowRender={ expandedRowRender }
                         onChange={ this.handleChange }/>
                 </div>
