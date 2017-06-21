@@ -56,6 +56,7 @@ function messageRoutes(app, middleware, controllers) {
 function rateRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
 
+    app.get('/rates', controllers.rateController.search);
     app.post('/rates', controllers.rateController.create);
     app.get('/rates/:uuid', controllers.rateController.get);
     app.patch('/rates/:uuid', controllers.rateController.patch);

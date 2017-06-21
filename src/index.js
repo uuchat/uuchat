@@ -211,7 +211,10 @@ function setupExpress(app, callback) {
         app.enable('minification');
     }
 
-    app.get('/s', cors(middleware.whiteListOpt()), function response(req, res) {
+    var opts = middleware.whiteListOpt();
+    opts.credentials = true;
+    app.get('/s', cors(opts), function response(req, res) {
+        winston.info(req);
         setupSession(req, res);
         res.json({"r": true});
     });
