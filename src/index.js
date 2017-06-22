@@ -20,6 +20,8 @@ var session = require('express-session');
 var useragent = require('express-useragent');
 var favicon = require('serve-favicon');
 
+var middleware = require('./server/middleware');
+
 var connectRedis = require("connect-redis")(session);
 var storeRedis = new connectRedis({
     host: nconf.get('redis:host'),
@@ -151,6 +153,13 @@ function baseHtmlRoute(app, middlewareDev) {
         var html = path.join(__dirname, '../build/app.html');
         htmlRender(middlewareDev, res, html);
     });
+    var opts = middleware.whiteListOpt();
+    opts.credentials = true;
+    app.get('/s', cors(opts), function response(req, res) {
+        setupSession(req, res);
+        var html = path.join(__dirname, '../build/storage.html');
+        htmlRender(middlewareDev, res, html);
+    });
 }
 
 function htmlRender(middlewareDev, res, html) {
@@ -163,8 +172,6 @@ function htmlRender(middlewareDev, res, html) {
 }
 
 function setupExpress(app, callback) {
-    var middleware = require('./server/middleware');
-
     app.set('showStackError', true);
     app.disable('x-powered-by'); // http://expressjs.com/zh-cn/advanced/best-practice-security.html
     app.set('json spaces', process.env.NODE_ENV === 'development' ? 4 : 0);
@@ -210,14 +217,6 @@ function setupExpress(app, callback) {
         app.enable('cache');
         app.enable('minification');
     }
-
-    var opts = middleware.whiteListOpt();
-    opts.credentials = true;
-    app.get('/s', cors(opts), function response(req, res) {
-        winston.info(req);
-        setupSession(req, res);
-        res.json({"r": true});
-    });
 
     app.set('view engine', 'html');
     app.engine('html', require('ejs').renderFile);

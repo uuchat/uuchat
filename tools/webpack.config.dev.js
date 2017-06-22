@@ -225,6 +225,10 @@ module.exports = {
                 to: paths.appBuild + '/static/css/customer.css'
             },
             {
+                from: paths.appSrc + '/client/views/customer/storage.html',
+                to: paths.appBuild + '/storage.html'
+            },
+            {
                 from: paths.customerJS,
                 to: paths.appBuild + '/static/js/uuchat.js',
                 transform: function (content, absoluteFrom) {
@@ -235,11 +239,21 @@ module.exports = {
                 }
             },
             {
+                from: paths.customerLoaderJS,
+                to: paths.appBuild + '/static/js/loader.js',
+                transform: function (content, absoluteFrom) {
+                    var result = content + '';
+                    return result.replace(/127.0.0.1:9688/g,
+                        nconf.get('app:address') + ':' + nconf.get('app:port'));
+                }
+            },
+            {
                 from: paths.customerHtml,
                 to: paths.appBuild + '/customer.html',
                 transform: function (content, absoluteFrom) {
                     var result = content + '';
-                    return result.replace(/customerCDN/g, '\/static\/js\/uuchat');
+                    return result.replace(/127.0.0.1:9688/g,
+                        nconf.get('app:address') + ':' + nconf.get('app:port'));
                 }
             }
         ]),

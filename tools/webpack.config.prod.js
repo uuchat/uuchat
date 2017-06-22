@@ -276,13 +276,30 @@ module.exports = {
                 }
             },
             {
+                from: paths.appSrc + '/client/views/customer/storage.html',
+                to: paths.appBuild + '/storage.html'
+            },
+            {
                 from: paths.customerJS,
                 to: paths.appBuild + '/static/js/uuchat.js',
                 transform: function (content, absoluteFrom) {
                     var data = (content + '').replace(/'..\/..'\+/g, '');
                     var code = data.replace(/127.0.0.1:9688/g,
                         nconf.get('app:address') + ':' + nconf.get('app:port'));
-                    console.log("start uglify");
+                    var result = UglifyJS.minify(code, {fromString: true});
+                    if (result.error) {
+                        result = UglifyJS.minify(code); //UglifyJS3
+                    }
+                    return result.code;
+                }
+            },
+            {
+                from: paths.customerLoaderJS,
+                to: paths.appBuild + '/static/js/loader.js',
+                transform: function (content, absoluteFrom) {
+                    var data = (content + '');
+                    var code = data.replace(/127.0.0.1:9688/g,
+                        nconf.get('app:address') + ':' + nconf.get('app:port'));
                     var result = UglifyJS.minify(code, {fromString: true});
                     if (result.error) {
                         result = UglifyJS.minify(code); //UglifyJS3
@@ -294,7 +311,8 @@ module.exports = {
                 from: paths.customerHtml,
                 to: paths.appBuild + '/customer.html',
                 transform: function (content, absoluteFrom) {
-                    var result = (content + '').replace(/customerCDN/g, '\/static\/js\/uuchat');
+                    var result = (content + '').replace(/127.0.0.1:9688/g,
+                        nconf.get('app:address') + ':' + nconf.get('app:port'));
                     return result;
                 }
             }

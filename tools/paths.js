@@ -76,6 +76,7 @@ module.exports = {
     loginIndexJS: resolveApp('src/client/views/login/index.js'),
     customerHtml: resolveApp('src/client/views/customer/uuchat.html'),
     customerJS: resolveApp('src/client/views/customer/customer.js'),
+    customerLoaderJS: resolveApp('src/client/views/customer/loader.js'),
     yarnLockFile: resolveApp('yarn.lock'),
     testsSetup: resolveApp('src/setupTests.js'),
     appNodeModules: resolveApp('node_modules'),
