@@ -43,8 +43,8 @@
 }
 
 .chat-console .chat-msg{
-    padding: 0 20px;
-    height:510px;
+    padding: 0 20px 20px 20px;
+    height:470px;
     overflow-y: auto;
 }
 

@@ -371,7 +371,7 @@
             var msg = UUCT.tempMsg(),
                 send = UUCT.tempSend(),
                 msgList = '',
-                src = (data.photo !== '') ? data.photo : UUCT.domain+'/static/images/ua.png';
+                src = (data.photo !== '') ? data.photo : 'static/images/ua.png';
 
             UUCT.chat.cid = data.cid;
             UUCT.chat.csid = data.csid;
