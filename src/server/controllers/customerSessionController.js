@@ -148,4 +148,4 @@ customerSessionController.checkMonthlyUploadSize = function (req, res, next) {
 
         next();
     });
-}
+};

@@ -247,7 +247,7 @@ customerSuccessController.uploadAvatar = function (req, res, next) {
     CustomerSuccess.update(customerSuccess, condition, function (err, data) {
 
         if (err) return next(err);
-
+        req.session.photo = filePath;
         res.json({code: 200, msg: {photo: filePath}});
     });
 };

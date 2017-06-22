@@ -3,8 +3,8 @@
  */
 import React,{Component} from 'react';
 import moment from 'moment';
-import { Breadcrumb, Table, Button, message, Select } from 'antd';
-import { sortFilterByProps, getCustomerName, formatDate } from './utils';
+import { Breadcrumb, Table, message } from 'antd';
+import { getCustomerName, formatDate } from './utils';
 
 import RateSearchForm from './rateSearchForm';
 

@@ -2,10 +2,8 @@
  * Created by jianzhiqiang on 2017/6/20.
  */
 import React,{ Component } from 'react';
-import { Form, Button, Row, Col, DatePicker, Input, Select } from 'antd';
-import moment from 'moment';
+import { Form, Button, Row, Col, DatePicker, Select } from 'antd';
 
-const Search = Input.Search;
 const { RangePicker } = DatePicker;
 const Option = Select.Option;
 
