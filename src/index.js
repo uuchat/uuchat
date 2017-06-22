@@ -146,6 +146,9 @@ function baseHtmlRoute(app, middlewareDev) {
         htmlRender(middlewareDev, res, html);
     });
     app.get('/chat', function response(req, res) {
+        if (!req.session.csid) {
+            res.redirect('/');
+        }
         var html = path.join(__dirname, '../build/app.html');
         htmlRender(middlewareDev, res, html);
     });
