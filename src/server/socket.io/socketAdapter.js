@@ -101,6 +101,7 @@ function getMarkedByCid(cid, csid, fn) {
     chatHistory.findOne(data, function (err, data) {
         if (err) {
             fn(false, null);
+            return;
         }
         try {
             var marked = data.marked;
