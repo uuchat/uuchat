@@ -105,9 +105,11 @@ class ChatSetting extends Component{
                 var file = info.file;
                 if (file.status === 'done') {
                     if(200 === info.file.response.code){
-                        localStorage.setItem('uuchat.avatar', file.response.msg.photo);
+                        var photo = file.response.msg.photo;
+                        localStorage.setItem('uuchat.avatar', photo);
+                        that.props.avatarHandle(photo);
                         that.setState({
-                            avatar: file.response.msg.photo
+                            avatar: photo
                         });
                     }
                 } else if (info.file.status === 'error') {

@@ -96,14 +96,16 @@ class ChatList extends Component{
     }
 
     fetchHistory(cid, csid, cIndex){
-        var that = this;
+        var that = this,
+            csAvatar = that.props.csAvatar ? that.props.csAvatar : require('../static/images/contact.png') ;
+
         fetch('/messages/customer/'+cid+'/cs/'+csid)
             .then((data) => data.json())
             .then(d =>{
                 var historyMessage = [];
                 d.msg.map((dd) =>{
                     return historyMessage.push({
-                        msgAvatar: (dd.type === 1) ? require('../static/images/contact.png') : '',
+                        msgAvatar: (dd.type === 1) ? csAvatar : '',
                         msgText: dd.msg,
                         msgType: dd.type,
                         msgTime: new Date(dd.createdAt)

@@ -11,7 +11,8 @@
 .chat-console li,
 .chat-console a,
 .chat-console p,
-.chat-console iframe
+.chat-console textarea,
+.chat-console input
 {
     margin:0;
     padding:0;
@@ -23,7 +24,7 @@
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -ms-box-sizing: border-box;
-    box-size: border-box;
+    box-sizing: border-box;
     list-style: none;
 }
 .chat-console a{
@@ -38,14 +39,11 @@
     z-index:999;
     width: 400px;
     background-color: #fff;
-    border-radius: 10px;
-}
-
-
-.chat-console .chat-body{
     border-radius: 5px;
-    border:1px solid #e8e8e8;
-    box-shadow: 0 0 5px 1px #e8e8e8;
+}
+.chat-console .chat-body{
+    border-radius: 10px;
+    box-shadow: 0 5px 40px rgba(0,0,0,.16)!important;
 }
 .chat-console .chat-body.chat-body-hidden{
     display: none;
@@ -78,8 +76,8 @@
 }
 
 .chat-console .chat-msg{
-    padding: 0 20px 20px 20px;
-    height:470px;
+    padding: 0 20px;
+    height:490px;
     overflow-y: auto;
 }
 
@@ -134,6 +132,7 @@
     text-align:right;
 }
 .chat-console .chat-role i{
+    font-style: normal;
     margin-right: 5px;
 }
 
@@ -197,7 +196,6 @@
     border-radius: 0 0 10px 10px;
 }
 .chat-console  .chat-send pre{
-    box-sizing: border-box;
     padding: 10px 0 20px 0;
     visibility:hidden;
     white-space: pre-wrap;
@@ -220,7 +218,6 @@
 
 
 .chat-console  .chat-send-area{
-    box-sizing: border-box;
     position:absolute;
     top: 0;
     bottom:0;
@@ -248,7 +245,6 @@
     background-color: #fff;
     box-shadow: 0 -1px 10px #eaeaea;
     outline:none;
-    *background-color: #ededed;
 }
 
 

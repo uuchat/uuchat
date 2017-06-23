@@ -87,7 +87,7 @@ class ChatMessage extends Component{
                                         <span className="online-btn fr" data-csid={cs.name} onClick={this.transfer}>Transfer</span>
                                     </div>
                             ) :
-                                <h2>There has no online customerSuccess!</h2>
+                                <h2>There has no another online customerSuccess!</h2>
                             }
                        </div>
                     ),
@@ -188,7 +188,7 @@ class ChatMessage extends Component{
                 <div className="message-lists" ref="list">
                     {
                         this.props.messageLists && this.props.messageLists.map((msg, index) =>
-                            <ChatMessageItem key={index} ownerType={msg.msgType} ownerAvatar={ (msg.msgType === 1 ) ? msg.msgAvatar : avatar } ownerText={msg.msgText} time={msg.msgTime} />
+                            <ChatMessageItem key={index} ownerType={msg.msgType} ownerAvatar={ (msg.msgType === 1 ) ? this.props.csAvatar : avatar } ownerText={msg.msgText} time={msg.msgTime} />
                         )
                     }
                 </div>

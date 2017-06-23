@@ -10,8 +10,12 @@ class Chat extends Component{
 
     constructor(){
         super();
+        this.state = {
+            isCloseOffline: false
+        };
         this.chatClickHandler = this.chatClickHandler.bind(this);
         this.offlineShow = this.offlineShow.bind(this);
+        this.closeOffline = this.closeOffline.bind(this);
     }
 
     chatClickHandler(e){
@@ -38,6 +42,12 @@ class Chat extends Component{
                     <h3 className="chat-offline-t">Email: {this.props.email.email}</h3>
                 </div>
             )
+        });
+    }
+    closeOffline(e){
+        e.stopPropagation();
+        this.setState({
+            isCloseOffline: true
         });
     }
 
@@ -69,7 +79,7 @@ class Chat extends Component{
              );
         }else if(this.props.type){
             return (
-                <li onClick={this.offlineShow}>
+                <li onClick={this.offlineShow} style={{display: this.state.isCloseOffline ? 'none' : ''}}>
                     <div className="chat-avatar fl">
                         <span className={"avatar-icon avatar-icon-"+cIndex}>{this.props.cid.substr(0,1).toUpperCase()}</span>
                     </div>
@@ -77,6 +87,7 @@ class Chat extends Component{
                         <h2 className="text-overflow">U-{this.props.cid.substr(0,1).toUpperCase()}</h2>
                         <p className="text-overflow">Offline message </p>
                     </div>
+                    <div className="chat-close" onClick={this.closeOffline}>╳</div>
                     <div className="chat-notify">Offline message </div>
                </li>
             );

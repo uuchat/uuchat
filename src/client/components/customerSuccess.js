@@ -75,6 +75,7 @@ class CustomerSuccess extends Component{
         this.closeDialog = this.closeDialog.bind(this);
         this.socketTransfer = this.socketTransfer.bind(this);
         this.statusToggle = this.statusToggle.bind(this);
+        this.avatarHandle = this.avatarHandle.bind(this);
 
 
     }
@@ -658,6 +659,14 @@ class CustomerSuccess extends Component{
 
     }
 
+    /***
+     * avatarHandle
+     */
+    avatarHandle(avatar){
+        this.setState({
+            csAvatar: avatar
+        });
+    }
     render(){
 
         var state = this.state,
@@ -715,10 +724,10 @@ class CustomerSuccess extends Component{
                                             </ul>
                                     </TabPane>
                                     <TabPane tab={<ChatIcon name={state.menuIcons.contact} />} key="2">
-                                         <ChatList csid={state.csid} />
+                                         <ChatList csid={state.csid} csAvatar={state.csAvatar} />
                                     </TabPane>
                                     <TabPane tab={<ChatIcon name={state.menuIcons.setting} />} key="3">
-                                        <ChatSetting name={state.csName} csid={state.csid} />
+                                        <ChatSetting name={state.csName} csid={state.csid} avatarHandle={this.avatarHandle} />
                                     </TabPane>
                                 </Tabs>
                             </div>
@@ -731,6 +740,7 @@ class CustomerSuccess extends Component{
                                     socket={state.socket}
                                     cid={state.customerSelect.cid}
                                     csid={state.csid}
+                                    csAvatar={state.csAvatar}
                                     messageLists={state.messageLists[state.customerSelect.cid]}
                                     chatRoleName={state.customerSelect.name}
                                     transferHandle={this.socketTransfer}

@@ -461,7 +461,7 @@
                 });
                 addEvent($('.emoji-lists')[0], 'click', function(e){
                     var e = e || window.event,
-                        tg = e.target;
+                        tg = e.target || e.srcElement;
 
                     if(tg.tagName.toLowerCase() === 'span'){
                         $('.chat-send-area')[0].value += ' '+tg.innerHTML+' ';
@@ -509,7 +509,7 @@
                             addClass($('.emoji-lists')[0], 'emoji-lists-hidden');
                         }
                         e.returnValue = false;
-                        e.preventDefault();
+                        e.preventDefault && e.preventDefault();
                     }
 
                 });
