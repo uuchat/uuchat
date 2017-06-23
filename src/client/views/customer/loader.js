@@ -3,21 +3,22 @@
  */
 ;(function(u, c, h){
     var iframe = document.createElement('iframe');
-    iframe.style = "display: none;";
+    i = (iframe.frameElement || iframe).style,
+    i.cssText = "width:0px;height:0px;position:absolute;left:0px;bottom:0px;border:none;";
     iframe.setAttribute("src", "http://127.0.0.1:9688/s");
     c.body.appendChild(iframe);
 
     if(u.attachEvent){
-        u.attachEvent('onload', frameLoad);
+        iframe.attachEvent('onload', frameLoad);
     }else{
-        u.addEventListener('load', frameLoad, false);
+        iframe.addEventListener('load', frameLoad, false);
     }
 
     function frameLoad(){
         var s = document.createElement('script'),
             x = c.getElementsByTagName('script')[0];
 
-        s.type='text/javascript';
+        s.type = "text/javascript"
         s.async=true;
         s.src = h;
         x.parentNode.insertBefore(s,x);

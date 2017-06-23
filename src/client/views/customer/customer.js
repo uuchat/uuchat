@@ -54,7 +54,7 @@
             csName: ''
         },
         init: function(){
-            this.loadStyle([UUCT.domain+'/static/css/common.css', UUCT.domain+'/static/css/customer.css']);
+            this.loadStyle([UUCT.domain+'/static/css/customer.css']);
             if(this.isLtIe8()){
                 this.loadScript(UUCT.domain+'/static/images/socket.io.js');
             }else{
@@ -479,7 +479,6 @@
                        url: UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image',
                        type:'POST',
                        fileType: true,
-                       //jsonp: 'jsonpCallback',
                        data: data,
                        success: function(data){
                            var d = JSON.parse(data);
@@ -491,31 +490,26 @@
 
                 });
 
-                addEvent($('.chat-send-area')[0], 'keyup', function(e){
+                addEvent($('.chat-send-area')[0], 'keypress', function(e){
                     var e = e || w.event,
                         val = this.value;
-
-                    if(doc.all){
-                        e.returnValue = false;
-                    }else{
-                        e.preventDefault();
-                    }
 
                     val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
                     if(val !== ''){
                         $('.send-pre')[0].innerHTML = val;
                     }
-
                     if(13 === e.keyCode){
-                        if(val !== ''){
+                        if(val !== '') {
                             UUCT.socketSendMessage(val);
+                            $('.send-pre')[0].innerHTML = '';
+                            this.value = '';
+                            this.focus();
+                            this.setAttribute("placeholder", "");
+                            addClass($('.emoji-lists')[0], 'emoji-lists-hidden');
                         }
-                        $('.send-pre')[0].innerHTML = '';
-                        this.value = '';
-                        this.focus();
-                        this.setAttribute("placeholder", "");
-                        addClass($('.emoji-lists')[0], 'emoji-lists-hidden');
+                        e.returnValue = false;
+                        e.preventDefault();
                     }
 
                 });

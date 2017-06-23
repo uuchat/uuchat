@@ -1,3 +1,36 @@
+.chat-console div,
+.chat-console span,
+.chat-console h1,
+.chat-console h2,
+.chat-console h3,
+.chat-console h4,
+.chat-console h5,
+.chat-console h5,
+.chat-console h6,
+.chat-console ul,
+.chat-console li,
+.chat-console a,
+.chat-console p,
+.chat-console iframe
+{
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -ms-box-sizing: border-box;
+    box-size: border-box;
+    list-style: none;
+}
+.chat-console a{
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
 .chat-console{
     position: fixed;
     right: 20px;
@@ -5,7 +38,9 @@
     z-index:999;
     width: 400px;
     background-color: #fff;
+    border-radius: 10px;
 }
+
 
 .chat-console .chat-body{
     border-radius: 5px;
@@ -177,7 +212,7 @@
     bottom:0;
     padding: 10px 0;
     width: 400px;
-    min-height: 50px;
+    min-height: 30px;
     max-height: 100px;
     background-color: #e9eaeb;
     border-radius: 0 0 5px 5px;
@@ -187,6 +222,7 @@
 .chat-console  .chat-send-area{
     box-sizing: border-box;
     position:absolute;
+    top: 0;
     bottom:0;
     left:0;
     right:0;
@@ -212,6 +248,7 @@
     background-color: #fff;
     box-shadow: 0 -1px 10px #eaeaea;
     outline:none;
+    *background-color: #ededed;
 }
 
 
