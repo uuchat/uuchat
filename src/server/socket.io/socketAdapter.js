@@ -22,10 +22,7 @@ SocketAdapter.emitCustomerList = function (csid) {
         if (!_.isEmpty(users)) {
             async.map(users, function(value, callback) {
 
-                getMarkedByCid(value, csid, function (success, marked) {
-                    if (!success) {
-                        marked = -1;
-                    }
+                getMarkedByCid(value, csid, function (marked) {
                     var customer = customerList.get(value);
                     if (customer) {
                         callback(null, {cid: value, name: customer.name,
@@ -56,12 +53,8 @@ SocketAdapter.emitCustomer = function (csid, cid) {
             winston.info('emit cs.customer.one cid = %s and csid = %s', cid, csid);
             async.waterfall([
                 function (next) {
-                    getMarkedByCid(cid, csid, function (success, marked) {
-                        if (success) {
-                            next(null, marked);
-                        } else {
-                            next(null, '');
-                        }
+                    getMarkedByCid(cid, csid, function (marked) {
+                        next(marked);
                     })
                 },
                 function (marked) {
@@ -99,16 +92,14 @@ function getMarkedByCid(cid, csid, fn) {
     data.cid = cid;
     data.csid = csid;
     chatHistory.findOne(data, function (err, data) {
-        if (err) {
-            fn(false, null);
-            return;
+        var marked = -1;
+        if (!err) {
+            try {
+                marked = data.marked;
+            } catch (e) {
+            }
         }
-        try {
-            var marked = data.marked;
-            fn(true, marked);
-        } catch (e) {
-            fn(false, null);
-        }
+        fn(marked);
     });
 }
 
