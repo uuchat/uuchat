@@ -148,6 +148,13 @@ function baseHtmlRoute(app, middlewareDev) {
     app.get('/chat', function response(req, res) {
         if (!req.session.csid) {
             res.redirect('/');
+        }else {
+            var customerSuccess = require('./server/socket.io/customerSuccess');
+            var csid = req.session.csid;
+            winston.info(req.session);
+            if (_.isEmpty(customerSuccess.get(csid))) {
+                customerSuccess.create({csid: csid, name: req.session.csName, photo: req.session.photo});
+            }
         }
         var html = path.join(__dirname, '../build/app.html');
         htmlRender(middlewareDev, res, html);
