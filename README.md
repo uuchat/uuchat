@@ -75,16 +75,13 @@ more than 5, we suggest you use redis for session store.
 Copy and paste this code above the last `</body>` tag on your site.
 This code is fully asynchronous and won't delay the load time of your page.
 ```
-<script type="text/javascript>
+<script type="text/javascript">
     ;(function(u, c, h){
-
         var s = c.createElement('script'),
             r=c.getElementsByTagName('script')[0];
-
         s.async = 1;
         s.src = h;
         r.parentNode.insertBefore(s,r);
-
     })(window, document, "http://<ip>:<port>/static/js/loader.js");
 </script>
 ```
