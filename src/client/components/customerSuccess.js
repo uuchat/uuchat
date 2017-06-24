@@ -28,16 +28,8 @@ import '../static/css/customerSuccess.css';
 class CustomerSuccess extends Component{
     constructor(props){
         super(props);
-
-        var sio = io('/cs', {
-            forceNew: true,
-            reconnectionAttempts:5,
-            reconnectionDelay:2000 ,
-            timeout: 10000
-        });
-
         this.state = {
-            socket: sio,
+            socket: {},
             csid: localStorage['uuchat.csid'] || '',
             csName: localStorage['uuchat.name'] || '',
             csDisplayName: localStorage['uuchat.displayName'] || '',
@@ -57,7 +49,8 @@ class CustomerSuccess extends Component{
             },
             chatNotify: {},
             isClose: false,
-            isOnline: true
+            isOnline: true,
+            isConnectErr: false
         };
 
         this.customerSuccessConnect    = this.customerSuccessConnect.bind(this);
@@ -76,17 +69,14 @@ class CustomerSuccess extends Component{
         this.socketTransfer = this.socketTransfer.bind(this);
         this.statusToggle = this.statusToggle.bind(this);
         this.avatarHandle = this.avatarHandle.bind(this);
-
+        this.createSocket = this.createSocket.bind(this);
 
     }
+    componentWillMount(){
+        this.createSocket();
+    }
     componentDidMount(){
-
         var that = this;
-
-        this.state.socket.on('connect', this.customerSuccessConnect);
-        this.state.socket.on('connect_error', this.customerSuccessConectErr);
-        this.state.socket.on('disconnect', this.customerSuccessDisconnect);
-        this.state.socket.on('reconnect', this.socketReconnect);
 
         window.onbeforeunload = function(){
             if(that.isClose){
@@ -102,20 +92,48 @@ class CustomerSuccess extends Component{
     }
 
     /***
+     * createSocket
+     */
+    createSocket(){
+        var sio = io('/cs', {
+            forceNew: true,
+            reconnectionAttempts:5,
+            reconnectionDelay:2000 ,
+            timeout: 10000
+        });
+        sio.on('connect', this.customerSuccessConnect);
+        sio.on('connect_error', this.customerSuccessConectErr);
+        sio.on('disconnect', this.customerSuccessDisconnect);
+        sio.on('reconnect', this.socketReconnect);
+        this.setState({
+            socket: sio
+        });
+    }
+
+    /***
      *
      * customerSuccessConnect Socket Connected Server Handle
      *
      */
     customerSuccessConnect(){
+        var that = this,
+            isConnectErr = this.state.isConnectErr;
 
-        var that = this;
+
+        if(isConnectErr){
+            this.setState({
+                isConnectErr: false
+            });
+        }
+        if(!this.state.socket){
+            return false;
+        }
         /***
          * cs.customer.list
          *
          */
 
         this.state.socket.on('cs.customer.list', function(data){
-
             var customer = {};
             data.map((d)=>customer[d.cid] = []);
 
@@ -141,7 +159,6 @@ class CustomerSuccess extends Component{
          *
          */
         this.state.socket.on('cs.customer.one', function(data){
-
             var customerLists = that.state.customerLists,
                 messageLists = that.state.messageLists,
                 cid = that.state.customerSelect.cid,
@@ -204,16 +221,6 @@ class CustomerSuccess extends Component{
          *
          * Check customerSuccess whether Sign On Other Page
          *
-         *  @customerData {Object}
-         *
-         *
-         *  {
-         *      csid: csid,
-         *      onlineLists: onLineLists
-         *
-         *  }
-         *
-         *
          */
         this.state.socket.on('cs.need.login', function(fn){
             fn(true);
@@ -250,8 +257,9 @@ class CustomerSuccess extends Component{
                 }
             }
 
+            msgArr && msgArr.push(message);
             messageLists[cid] = msgArr;
-            msgArr.push(message);
+
 
             that.setState({
                 messageLists:  messageLists,
@@ -337,7 +345,17 @@ class CustomerSuccess extends Component{
             duration: null,
             description: 'The server has offline!!!!.',
         });
-        this.state.socket.close();
+        this.setState({
+            socket: null,
+            isConnectErr: true,
+            customerSelect:{
+                cid: '',
+                name: '',
+                marked: 0
+            },
+            messageLists: {},
+            customerLists: []
+        });
     }
 
     /***
@@ -633,29 +651,25 @@ class CustomerSuccess extends Component{
      *       statusToggle
      */
     statusToggle(){
-        var status = this.state.isOnline,
-            uuchat = document.querySelector('.uuchat-customerSuccess'),
-            uuchatHeader = document.querySelector('.customerSuccess-header'),
+        var state = this.state,
+            status = state.isOnline,
             stat = 1;
 
-        if(status){
-            uuchat.style.backgroundColor='#353359';
-            uuchatHeader.style.backgroundColor = '#353359';
-            uuchatHeader.style.boxShadow = '0 1px 2px #353359';
-            stat = 2;
-            status = false;
+        if(state.isConnectErr){
+           this.createSocket();
         }else{
-            uuchat.style.backgroundColor='#fff';
-            uuchatHeader.style.backgroundColor = '#fff';
-            uuchatHeader.style.boxShadow = '0 1px 2px #ccc';
-            stat = 1;
-            status = true;
+            if(status){
+                stat = 2;
+                status = false;
+            }else{
+                stat = 1;
+                status = true;
+            }
+            state.socket.emit('cs.changeOnOff', stat, function(isToggle){});
+            this.setState({
+                isOnline: status
+            });
         }
-
-        this.state.socket.emit('cs.changeOnOff', stat, function(isToggle){});
-        this.setState({
-            isOnline: status
-        });
 
     }
 
@@ -690,12 +704,19 @@ class CustomerSuccess extends Component{
         }
 
         return (
-            <div className="uuchat-customerSuccess">
+            <div className={"uuchat-customerSuccess " + ((!state.isOnline || state.isConnectErr) ? " off" : "")}>
                     <div className="customerSuccess-header">
                         <Row>
                             <Col span={6}>
-                                <div className="user-status" onClick={this.statusToggle}>
-                                    <div className="status-bar"><i className={this.state.isOnline ? '' : 'off'}></i>{this.state.isOnline ? '' : 'Not '}Accepting New Chats</div>
+                                <div className="user-status">
+                                    <div className="status-bar" onClick={this.statusToggle}>
+                                        {state.isConnectErr ?
+                                            <p><i className="off"></i> Disconnected, Please try Click to Reconnect later</p>
+                                            :
+                                            <p><i className={state.isOnline ? '' : 'off'}></i>{state.isOnline ? '' : 'Not '}Accepting New Chats</p>
+                                        }
+
+                                    </div>
                                 </div>
                             </Col>
                             <Col span={18} className="user-avatar">
@@ -737,7 +758,7 @@ class CustomerSuccess extends Component{
                             {
                                 state.customerSelect.cid !== '' &&
                                 <ChatMessage
-                                    socket={state.socket}
+                                    socket={state.socket && state.socket}
                                     cid={state.customerSelect.cid}
                                     csid={state.csid}
                                     csAvatar={state.csAvatar}

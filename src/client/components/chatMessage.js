@@ -38,10 +38,10 @@ class ChatMessage extends Component{
         this.setState({
             markedList: markedList
         });
-        this.props.socket.on('cs.online.info', this.csOnlineInfo);
+        this.props.socket && this.props.socket.on('cs.online.info', this.csOnlineInfo);
     }
     componentWillUnmount(){
-        this.props.socket.off('cs.online.info');
+        this.props.socket && this.props.socket.off('cs.online.info');
     }
     componentDidUpdate(){
         var msgList = this.refs.list;

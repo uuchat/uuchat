@@ -125,7 +125,8 @@ class ChatSend extends Component{
     }
 
     render(){
-        var sendMessage = this.props.sendMessage;
+        var sendMessage = this.props.sendMessage,
+            upload;
         const props = {
             name: 'image',
             action: '/messages/customer/'+this.props.cid+'/cs/'+this.props.csid+'/image',
@@ -134,12 +135,21 @@ class ChatSend extends Component{
                 authorization: 'authorization-text',
             },
             onChange(info) {
-                if (info.file.status === 'done') {
+                var status = info.file.status;
+
+                if(status === 'uploading'){
+                    if(!upload){
+                        console.log('|---- uploading ......!!!');
+                        upload = message.info('Uploading........!!!!');
+                    }
+                }else if (status === 'done') {
+                    //upload.destroy();
+
                     if(200 === info.file.response.code){
                         sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original);
                     }
                     message.success(info.file.name+' file uploaded successfully');
-                } else if (info.file.status === 'error') {
+                } else if (status === 'error') {
                     message.error(info.file.name+' file upload failed.');
                 }
             }
