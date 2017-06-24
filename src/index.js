@@ -130,7 +130,6 @@ function baseHtmlRoute(app, middlewareDev) {
         htmlRender(middlewareDev, res, html);
     });
     app.get('/demo', function response(req, res) {
-        setupSession(req, res);
         var html = path.join(__dirname, '../build/customer.html');
         htmlRender(middlewareDev, res, html);
     });
@@ -166,6 +165,7 @@ function baseHtmlRoute(app, middlewareDev) {
     var opts = middleware.whiteListOpt();
     opts.credentials = true;
     app.get('/s', cors(opts), function response(req, res) {
+        res.setHeader("P3P", "CP=CAO PSA OUR"); // For IE set cookie
         setupSession(req, res);
         var html = path.join(__dirname, '../build/storage.html');
         htmlRender(middlewareDev, res, html);
