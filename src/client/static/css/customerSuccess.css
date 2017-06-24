@@ -2,6 +2,9 @@
     height: 100%;
     background-color:#f6f5f5;
 }
+.uuchat-customerSuccess.off{
+    background-color:#353359;
+}
 .uuchat-customerSuccess .customerSuccess-main{
     margin: 30px;
     height: calc(88%);
@@ -18,6 +21,10 @@
     line-height: 30px;
     background-color: #f3f2f1;
     box-shadow: 0 1px 2px #ccc;
+}
+.uuchat-customerSuccess.off .customerSuccess-header{
+    background-color:#353359;
+    box-shadow: 0 1px 2px #353359;
 }
 .customerSuccess-header .header-menu{
     padding-left: 100px;
