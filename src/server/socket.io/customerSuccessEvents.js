@@ -21,7 +21,8 @@ SocketCustomerSuccessEvents.setup = function(socket) {
     var csid = session.csid;
     winston.info('customer success id is : %s', csid);
     if (_.isUndefined(csid)) {
-        winston.error('system is restart , need Login again!');
+        logger.error('csid is null , need Login again!');
+        socket.emit('uu error', 'csid is null, need login again!');
         return ;
     }
 
@@ -30,34 +31,33 @@ SocketCustomerSuccessEvents.setup = function(socket) {
     //system to start and reconnect
     if (_.isEmpty(customerSuccess)) {
         winston.info('system has restart');
-        customerSuccessList.create({csid: csid,
-            name: socket.request.session.csName, photo: socket.request.session.photo});
-        customerSuccess.socket = socket;
-        socketAdapter.emitCustomerList(csid);
+        // if synchronous create and customerSuccess.socket, there is no lock for customerSuccess
+        // so customerSuccess.socket not success;
+        customerSuccessList.create({csid: csid, socket: socket, name: session.csName, photo: session.photo});
+        dealCustomerOfflineMsg(csid);
         return ;
     }
 
-    /**
-     * add heart listener
-     */
     if (!_.isEmpty(customerSuccess.socket)) {
         customerSuccess.socket.emit('cs.need.login', function (success) {
                 if (success) {
                     setTimeout(function(){
-                        customerSuccess.socket = socket;
-                        socketAdapter.emitCustomerList(csid);
-                        dealCustomerOfflineMsg(csid);
+                        setupAfter(customerSuccess, socket, csid);
                     }, 1000);
                 }
             }
         );
     } else {
-        customerSuccess.socket = socket;
-        socketAdapter.emitCustomerList(csid);
-        dealCustomerOfflineMsg(csid);
+        setupAfter(customerSuccess, socket, csid);
     }
 
 };
+
+function setupAfter(customerSuccess, socket, csid) {
+    customerSuccess.socket = socket;
+    socketAdapter.emitCustomerList(socket, csid);
+    dealCustomerOfflineMsg(csid);
+}
 
 SocketCustomerSuccessEvents.refreshOnlineInfo = function() {
     if (global.env === 'development') {

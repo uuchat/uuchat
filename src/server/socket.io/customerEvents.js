@@ -28,10 +28,16 @@ var SocketCustomerEvents = {};
  */
 SocketCustomerEvents.select = function(socket, cid, name, fn) {
     var customer = customerList.get(cid);
-    if (!_.isEmpty(customer) && !_.isEmpty(customerSuccessList.get(customer.csid))) {
+    if (!_.isEmpty(customer)) { // has chat in other places;
+        var csid = customer.csid;
+        var customerSuccess = customerSuccessList.get(csid);
+        if (!_.isEmpty(customerSuccess)) {
+            customer.socket = socket;
+            selectAfter(cid, customerSuccess, csid, fn);
+        }
         logger.log("customer = %s has online on other page", cid);
-        fn(3, {"code": 1001, "msg": "has online on other page!"});
-        return
+        //fn(3, {"code": 1001, "msg": "has online on other page!"});
+        return;
     } else {
         customer = customerList.create({cid: cid, name: name});
     }
@@ -41,24 +47,9 @@ SocketCustomerEvents.select = function(socket, cid, name, fn) {
         fn(3, {"code": 1002, "msg": "all cs not online!"});
         return;
     }
-
-    var lastCsid = '';  //customer.csid; // TODO need read in database
-    var csid;
-    if (_.isEmpty(lastCsid)) {
-        csid = customerSuccessList.select();
-        customer.csid = csid;
-        logger.info('user = %s is first come , has selected new customer success and csid = %s', cid, csid);
-    } else {
-        if (!_.isEmpty(customerSuccessList.get(lastCsid))) {
-            csid = lastCsid;
-        } else {
-            csid = customerSuccessList.select();
-            customer.csid = csid;
-        }
-        logger.info('user = %s is return , has selected last customer success and csid = %s!', cid, csid);
-    }
-
-
+    //select customer success
+    var csid = customerSuccessList.select();
+    customer.csid = csid;
     customer.socket = socket;
 
     var customerSuccess = customerSuccessList.get(csid);
@@ -75,19 +66,23 @@ SocketCustomerEvents.select = function(socket, cid, name, fn) {
                 logger.error("chat history operation error. cid = %s and csid = %s", cid, csid);
             }
         });
-        //chat history and return message
-        message.listLastFive(cid, csid, function(data){
-            // avatar info from csid;
-            var photo = customerSuccess.photo || '';
-            if (data) {
-                fn(1, {"cid": cid, "csid": csid, "name": customerSuccess.name, "photo": photo, "msg": data})
-            } else {
-                fn(1, {"cid": cid, "csid": csid, "name": customerSuccess.name, "photo": photo, "msg": []})
-            }
-        });
+        selectAfter(cid, customerSuccess, csid, fn);
     }
-
 };
+
+
+function selectAfter(cid, customerSuccess, csid, fn) {
+    //chat history and return message
+    message.listLastFive(cid, csid, function (data) {
+        // avatar info from csid;
+        var photo = customerSuccess.photo || '';
+        if (data) {
+            fn(1, {"cid": cid, "csid": csid, "name": customerSuccess.name, "photo": photo, "msg": data})
+        } else {
+            fn(1, {"cid": cid, "csid": csid, "name": customerSuccess.name, "photo": photo, "msg": []})
+        }
+    });
+}
 
 SocketCustomerEvents.message = function(cid, msg, fn) {
     //null check

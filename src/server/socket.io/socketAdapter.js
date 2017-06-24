@@ -49,7 +49,6 @@ SocketAdapter.emitCustomer = function (csid, cid) {
         var customer = customerList.get(cid);
         if (!_.isEmpty(customer)) {
             var that = this.reqParamsFormSocket(cid) ;
-            winston.info(that);
             winston.info('emit cs.customer.one cid = %s and csid = %s', cid, csid);
             async.waterfall([
                 function (next) {
