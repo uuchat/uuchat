@@ -34,11 +34,6 @@ var utils = require('./server/utils');
 var logger = require('./server/logger');
 var userAgent = require('./server/socket.io/userAgent');
 
-// init config file
-nconf.argv().env().file({
-    file: path.join(__dirname, 'config.json')
-});
-
 if (nconf.get('app:ssl')) {
     server = require('https').createServer({
         key: fs.readFileSync(nconf.get('app:ssl').key),
