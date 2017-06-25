@@ -12,19 +12,6 @@ var logger = require('../logger');
 var utils = require('../utils');
 var CustomerSuccess = require('../database/customerSuccess');
 
-function validatePasswordLength(passwd) {
-    return validator.isLength(passwd || '', 6);
-}
-
-function validateEmail(email) {
-    // extend validator
-    return validator.isEmail(email || '');
-}
-
-function hashPasswdWithSalt(passwd, callback) {
-    bcrypt.hash(passwd, nconf.get('bcrypt_rounds') || 8, callback);
-}
-
 var customerSuccessController = module.exports;
 
 customerSuccessController.register = function (req, res, next) {
@@ -289,6 +276,19 @@ customerSuccessController.list = function (req, res, next) {
     });
 };
 
+function validatePasswordLength(passwd) {
+    return validator.isLength(passwd || '', 6);
+}
+
+function validateEmail(email) {
+    // extend validator
+    return validator.isEmail(email || '');
+}
+
+function hashPasswdWithSalt(passwd, callback) {
+    bcrypt.hash(passwd, nconf.get('bcrypt_rounds') || 8, callback);
+}
+
 function createCSSocket(req, user) {
     var customerSuccess = require('../socket.io/customerSuccess');
     var userName = user.displayName || user.email.split('@')[0];
@@ -299,3 +299,4 @@ function createCSSocket(req, user) {
         customerSuccess.create({csid: user.csid, name: userName, photo: user.photo});
     }
 }
+
