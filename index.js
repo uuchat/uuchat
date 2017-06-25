@@ -12,15 +12,22 @@ var fs = require('fs');
 var webServer = require('./src/index');
 var utils = require('./src/server/utils');
 
-global.env = process.env.NODE_ENV || 'production';
-global.appRoot = path.resolve(__dirname);
+var DEFAULT_ENV = 'production';
 
-// init config file
-nconf.argv().env().file({
-    file: path.join(__dirname, './src/config.json')
-});
+setupEnv();
 
 start();
+
+
+function setupEnv(){
+    global.env = process.env.NODE_ENV || DEFAULT_ENV ;
+    global.appRoot = path.resolve(__dirname);
+
+    // init config file
+    nconf.argv().env().file({
+        file: path.join(__dirname, './src/config.json')
+    });
+}
 
 function start() {
     if (nconf.get('database:dialect') === 'sqlite') {
