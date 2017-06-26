@@ -57,12 +57,16 @@ chatHistoryController.getLatestMonthChats = function (req, res, next) {
 
 chatHistoryController.search = function (req, res, next) {
     var condition = {};
+
+    if (req.query.csid) condition.csid = req.query.csid;
+
     var order = [['updatedAt', 'DESC']];
+    if (req.query.sortField) order = [[req.query.sortField, req.query.sortOrder === 'ascend' ? 'ASC' : 'DESC']];
 
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
     var pageSize = 10;
 
-    ChatHistory.list(condition, order, pageSize, pageNum, function (err, chatHistories) {
+    ChatHistory.listAndCount(condition, order, pageSize, pageNum, function (err, chatHistories) {
         if (err) return next(err);
 
         res.json({code: 200, msg: chatHistories});

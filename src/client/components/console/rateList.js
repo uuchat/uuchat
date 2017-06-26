@@ -19,7 +19,7 @@ class Rates extends Component {
         pagination: {},
         loading: false,
         filter: this.filter,
-        sorter: [],
+        sorter: {},
     };
 
     getDataSource = ()=> {
@@ -103,14 +103,23 @@ class Rates extends Component {
     }
 
     render() {
-        let { csSource, dataSource, pagination, loading } = this.state;
+        let { csSource, dataSource, pagination, loading, sorter } = this.state;
 
         const columns = [
             {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
             {title: 'name', dataIndex: 'csName', key: 'csName',},
-            {title: 'customer', dataIndex: 'cid', key: 'cid', sorter: true, render: getCustomerName,},
-            {title: 'rate', dataIndex: 'rate', key: 'rate', sorter: true,},
-            {title: 'createdAt', dataIndex: 'createdAt', key: 'createdAt', sorter: true, render: formatDate,},
+            {
+                title: 'customer', dataIndex: 'cid', key: 'cid', render: getCustomerName,
+                sorter: true, sortOrder: sorter.columnKey === 'customer' && sorter.order,
+            },
+            {
+                title: 'rate', dataIndex: 'rate', key: 'rate',
+                sorter: true, sortOrder: sorter.columnKey === 'rate' && sorter.order,
+            },
+            {
+                title: 'createdAt', dataIndex: 'createdAt', key: 'createdAt', render: formatDate,
+                sorter: true, sortOrder: sorter.columnKey === 'createdAt' && sorter.order,
+            },
         ];
         const searchProps = {
             filter: this.filter,

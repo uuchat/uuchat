@@ -18,7 +18,7 @@ class Dashboard extends Component {
                 key: 'offlineCustomers',
                 icon: 'user-delete',
                 color: '#f69899',
-                title: 'Offline Customers',
+                title: 'Offline Messages',
                 number: 0,
             }, {
                 key: 'dailyRates',

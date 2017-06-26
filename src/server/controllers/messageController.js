@@ -64,16 +64,18 @@ messageController.delete = function (req, res, next) {
 };
 
 messageController.search = function (req, res, next) {
+    if(!req.query.msg) return res.json({code:200, msg:[]});
     var condition = {
-        type: {
-            $in: [0, 1]
+        msg: {
+            '$like': '%' + req.query.msg + '%',
+            '$notLike': 'content/upload/%',
         }
     };
 
     var order = [['createdAt', 'DESC']];
 
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
-    var pageSize = 10;
+    var pageSize = 20;
 
     Message.list(condition, order, pageSize, pageNum, function (err, messages) {
         if (err) return next(err);
