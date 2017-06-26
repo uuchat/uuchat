@@ -6,7 +6,7 @@
         i = (iframe.frameElement || iframe).style;
 
     i.cssText = "width:0px;height:0px;position:absolute;left:0px;bottom:0px;border:none;";
-    iframe.setAttribute("src", "http://127.0.0.1:9688/s");
+    iframe.setAttribute("src", "http://127.0.0.1:9688/s" + '?r=' + top.location);
     c.body.appendChild(iframe);
 
     if(u.attachEvent){
@@ -24,4 +24,5 @@
         s.src = h;
         x.parentNode.insertBefore(s,x);
     }
+
 })(window, document, "http://127.0.0.1:9688/static/js/uuchat.js");

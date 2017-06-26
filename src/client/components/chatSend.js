@@ -3,7 +3,7 @@
  */
 
 import React, {Component} from 'react';
-import { Input, Icon, Upload, message, Modal } from 'antd';
+import { Input, Icon, Upload, message, Modal, Progress } from 'antd';
 import EmojiPicker from './chatEmoji';
 
 /**
@@ -16,10 +16,12 @@ class ChatSend extends Component{
     constructor(props){
         super(props);
         this.state = {
+            percent: 0,
             isSendReady: false,
             isEmojiShow: false,
             textereaValue: "",
-            socket: props.socket
+            socket: props.socket,
+            isShowProcess: false
         };
 
         this.sendMessage = this.sendMessage.bind(this);
@@ -119,14 +121,19 @@ class ChatSend extends Component{
             ),
             onOk(){
                 message.success('Invitation has been sent!', 4);
-                that.state.socket.emit('cs.rate', that.props.cid, function(success){});
+                that.props.socket && that.props.socket.emit('cs.rate', that.props.cid, function(success){
+                    if(success){
+                    }else{
+                    }
+                });
             }
         });
     }
 
     render(){
         var sendMessage = this.props.sendMessage,
-            upload;
+            that = this;
+
         const props = {
             name: 'image',
             action: '/messages/customer/'+this.props.cid+'/cs/'+this.props.csid+'/image',
@@ -138,24 +145,33 @@ class ChatSend extends Component{
                 var status = info.file.status;
 
                 if(status === 'uploading'){
-                    if(!upload){
-                        console.log('|---- uploading ......!!!');
-                        upload = message.info('Uploading........!!!!');
+                    if(info.event){
+                        that.setState({
+                            isShowProcess: true,
+                            percent: info.event.percent
+                        });
                     }
                 }else if (status === 'done') {
-                    //upload.destroy();
-
                     if(200 === info.file.response.code){
                         sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original);
                     }
-                    message.success(info.file.name+' file uploaded successfully');
+                    message.success(info.file.name+' file uploaded successfully', 2, function(){
+                        that.setState({
+                            isShowProcess: false
+                        });
+                    });
                 } else if (status === 'error') {
-                    message.error(info.file.name+' file upload failed.');
+                    message.error(info.file.name+' file upload failed.', 2, function(){
+                        that.setState({
+                            isShowProcess: false
+                        });
+                    });
                 }
             }
         };
         return (
             <div className="chat-send">
+                <Progress percent={this.state.percent} className="upload-process" style={{display: this.state.isShowProcess ? 'block' : 'none'}} />
                 <div className="send-tools">
                     <div className="tool-box tool-emoji">
                         <Icon onClick={this.emojiBtnHandle} className={"emoji-icon "+(this.state.isEmojiShow ? 'active' : '')} />

@@ -16,6 +16,7 @@ import ChatList from './chatLists';
 import ChatSetting from './chatSetting';
 
 const TabPane = Tabs.TabPane;
+var notifyKey = '';
 
 
 import '../static/css/customerSuccess.css';
@@ -119,6 +120,7 @@ class CustomerSuccess extends Component{
         var that = this,
             isConnectErr = this.state.isConnectErr;
 
+        notifyKey = '';
 
         if(isConnectErr){
             this.setState({
@@ -339,13 +341,17 @@ class CustomerSuccess extends Component{
      */
 
     customerSuccessConectErr(){
-        notification.open({
-            message: 'Server error',
-            top: 50,
-            duration: null,
-            description: 'The server has offline!!!!.',
-        });
-        this.setState({
+        if(notifyKey === ""){
+            notification.open({
+                message: 'Server error',
+                top: 50,
+                duration: null,
+                description: 'The server has offline!!!!.'
+            });
+            notifyKey = "nKey";
+        }
+
+        this.state.socket && this.setState({
             socket: null,
             isConnectErr: true,
             customerSelect:{
@@ -447,7 +453,6 @@ class CustomerSuccess extends Component{
      * socketReconnect
      */
     socketReconnect(){
-
     }
 
     /***
@@ -711,7 +716,7 @@ class CustomerSuccess extends Component{
                                 <div className="user-status">
                                     <div className="status-bar" onClick={this.statusToggle}>
                                         {state.isConnectErr ?
-                                            <p><i className="off"></i> Disconnected, Please try Click to Reconnect later</p>
+                                            <p><i className="off"></i> Disconnected, Click to reconnect</p>
                                             :
                                             <p><i className={state.isOnline ? '' : 'off'}></i>{state.isOnline ? '' : 'Not '}Accepting New Chats</p>
                                         }

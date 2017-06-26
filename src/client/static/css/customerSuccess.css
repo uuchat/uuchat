@@ -563,6 +563,7 @@
 }
 
 .chat-send{
+    position: relative;
     height: calc(37vh);
 }
 .send-tools{
@@ -603,6 +604,10 @@
     height: 20px;
     background: url(../images/image.png) no-repeat center center;
     background-size: 100% 100%;
+}
+.chat-send .upload-process{
+    position: absolute;
+    top: -15px;
 }
 .chat-send .send-tools .upload-icon:hover{
     background: url(../images/image_selected.png) no-repeat center center;

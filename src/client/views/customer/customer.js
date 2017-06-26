@@ -92,11 +92,11 @@
         },
         createCT: function(){
             var ct = this.template(),
-                ctNode = document.createElement('div');
+                ctNode = document.createElement('div'),
+                eventType = 'mousewheel';
 
             ctNode.setAttribute('class', 'chat-console');
             ctNode.innerHTML = ct;
-
             doc.body.appendChild(ctNode);
         },
         ctrol: function(){
@@ -150,6 +150,11 @@
                         }
                     };
                 };
+
+                params.progress && (xhr.onprogress = params.progress);
+                xhr.onload = function(event){
+
+                }
 
                 if(params.type == 'GET') {
                     xhr.open(params.type, params.url + '?' + params.data, true);
@@ -480,6 +485,18 @@
                        type:'POST',
                        fileType: true,
                        data: data,
+                       progress: function(d){
+
+
+                           if(!isProgress){
+
+                           }
+
+                           UUCT.msgTranslate({
+                               role: 0,
+                               msg: '<span class="status-title">Image uploading</span>'
+                           });
+                       },
                        success: function(data){
                            var d = JSON.parse(data);
                            if(d.code === 200){
@@ -512,6 +529,13 @@
                         e.preventDefault && e.preventDefault();
                     }
 
+                });
+                addEvent($('.chat-send-area')[0], 'blur', function(e){
+                    var e = e || w.event,
+                        val = this.value;
+                    if(val === ''){
+                        $('.send-pre')[0].innerHTML = '';
+                    }
                 });
 
                 localStorage.setItem('csid', data.csid);
