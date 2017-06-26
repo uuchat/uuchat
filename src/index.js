@@ -161,6 +161,7 @@ function baseHtmlRoute(app, middlewareDev) {
     opts.credentials = true;
     app.get('/s', cors(opts), function response(req, res) {
         res.setHeader("P3P", "CP=CAO PSA OUR"); // For IE set cookie
+        req.inframUrl = req.query.r;
         setupSession(req, res);
         var html = path.join(__dirname, '../build/storage.html');
         htmlRender(middlewareDev, res, html);
@@ -296,7 +297,11 @@ function setupSession(req, res) {
     ua.cid = cid;
     ua.ip = ip;
     ua.host = host;
-    ua.url = req.protocol + '://' + req.get('host') + req.originalUrl;
+    if (req.inframUrl) {
+        ua.url = req.inframUrl;
+    } else {
+        ua.url = req.protocol + '://' + req.get('host') + req.originalUrl;
+    }
     userAgent.create(ua);
     winston.info('Customer session had set');
 }
