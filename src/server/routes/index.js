@@ -48,7 +48,6 @@ function messageRoutes(app, middleware, controllers) {
     app.get('/messages/customer/:cid/cs/:csid', controllers.messageController.list);
     app.post('/messages/customer/:cid/cs/:csid', controllers.messageController.create);
 
-
     app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.whiteListOpt()) , middleware.upload.uploadImage,
         controllers.customerSessionController.checkMonthlyUploadSize);
 }
