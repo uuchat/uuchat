@@ -48,6 +48,7 @@ SocketCustomerSuccessEvents.setup = function(socket) {
             }
         );
     } else {
+        winston.info('customer success has refresh browser');
         setupAfter(customerSuccess, socket, csid);
     }
 
@@ -55,7 +56,7 @@ SocketCustomerSuccessEvents.setup = function(socket) {
 
 function setupAfter(customerSuccess, socket, csid) {
     customerSuccess.socket = socket;
-    socketAdapter.emitCustomerList(socket, csid);
+    socketAdapter.emitCustomerList(csid);
     dealCustomerOfflineMsg(csid);
 }
 
