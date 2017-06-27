@@ -89,19 +89,19 @@ Rate.listAndCount = function (condition, order, pageSize, pageNum, callback) {
     pageSize = pageSize || 10;
     pageNum = pageNum || 0;
 
-    models.Rate.findAndCountAll({
+    return models.Rate.findAndCountAll({
         where: condition,
         order: order,
         offset: pageSize * pageNum,
         limit: pageSize
     }).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
     }).catch(function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 

@@ -42,25 +42,25 @@ ChatHistory.createOrUpdate = function (cid, csid, fn) {
 
     models.ChatHistory.findOne({ where: {cid: cid, csid: csid} }).then(function (data) {
         if(data) {
-            models.ChatHistory.update({'updatedAt': new Date()}, {fields: ['updatedAt'], 'where': {'uuid': data.uuid}})
+            return models.ChatHistory.update({'updatedAt': new Date()}, {fields: ['updatedAt'], 'where': {'uuid': data.uuid}})
                 .then(function () {
-                    fn(true);
+                    return fn(true);
                 })
                 .catch(function (err) {
                     logger.error(err);
-                    fn(false);
+                    return fn(false);
                 });
         } else {
-            models.ChatHistory.create(chatHistory).then(function (data) {
-                fn(true);
+            return models.ChatHistory.create(chatHistory).then(function (data) {
+                return fn(true);
             }).catch(function (err) {
                 logger.error(err);
-                fn(false);
+                return fn(false);
             });
         }
     }).catch(function (err) {
         logger.error(err);
-        fn(false);
+        return fn(false);
     });
 };
 
@@ -105,19 +105,19 @@ ChatHistory.list = function (condition, order, pageSize, pageNum, callback) {
     pageSize = pageSize || 10;
     pageNum = pageNum || 0;
 
-    models.ChatHistory.findAll({
+    return models.ChatHistory.findAll({
         where: condition,
         order: order,
         offset: pageSize * pageNum,
         limit: pageSize
     }).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
     }).catch(function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -126,19 +126,19 @@ ChatHistory.listAndCount = function (condition, order, pageSize, pageNum, callba
     pageSize = pageSize || 10;
     pageNum = pageNum || 0;
 
-    models.ChatHistory.findAndCountAll({
+    return models.ChatHistory.findAndCountAll({
         where: condition,
         order: order,
         offset: pageSize * pageNum,
         limit: pageSize
     }).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
     }).catch(function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 

@@ -45,10 +45,10 @@ messageController.list = function (req, res, next) {
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
     var pageSize = 20;
 
-    Message.list(condition, order, pageSize, pageNum, function (err, messages) {
+    return Message.list(condition, order, pageSize, pageNum, function (err, messages) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: _.reverse(messages)});
+        return res.json({code: 200, msg: _.reverse(messages)});
     });
 };
 

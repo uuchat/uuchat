@@ -29,10 +29,10 @@ chatHistoryController.list = function (req, res, next) {
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
     var pageSize = 100;
 
-    ChatHistory.list(condition, order, pageSize, pageNum, function (err, chatHistories) {
+    return ChatHistory.list(condition, order, pageSize, pageNum, function (err, chatHistories) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: chatHistories});
+        return res.json({code: 200, msg: chatHistories});
     });
 };
 
@@ -48,10 +48,10 @@ chatHistoryController.getLatestMonthChats = function (req, res, next) {
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
     var pageSize = 100;
 
-    ChatHistory.list(condition, order, pageSize, pageNum, function (err, data) {
+    return ChatHistory.list(condition, order, pageSize, pageNum, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: data});
+        return res.json({code: 200, msg: data});
     });
 };
 
@@ -66,9 +66,9 @@ chatHistoryController.search = function (req, res, next) {
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
     var pageSize = 10;
 
-    ChatHistory.listAndCount(condition, order, pageSize, pageNum, function (err, chatHistories) {
+    return ChatHistory.listAndCount(condition, order, pageSize, pageNum, function (err, chatHistories) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: chatHistories});
+        return res.json({code: 200, msg: chatHistories});
     });
 };

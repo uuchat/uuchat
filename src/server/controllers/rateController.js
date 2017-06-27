@@ -94,9 +94,9 @@ rateController.search = function (req, res, next) {
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
     var pageSize = 10;
 
-    Rate.listAndCount(condition, order, pageSize, pageNum, function (err, data) {
+    return Rate.listAndCount(condition, order, pageSize, pageNum, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: data});
+        return res.json({code: 200, msg: data});
     });
 };

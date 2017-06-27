@@ -45,7 +45,7 @@ CustomerSuccess.findAll = function (attributes, condition, order, callback) {
 
     if (attributes && attributes.length) options.attributes = attributes;
 
-    models.CustomerSuccess.findAll(options).then(function (data) {
+    return models.CustomerSuccess.findAll(options).then(function (data) {
 
         var pureData = _.map(data, function (item) {
 
@@ -54,12 +54,12 @@ CustomerSuccess.findAll = function (attributes, condition, order, callback) {
             return tmp;
         });
 
-        callback(null, pureData);
+        return callback(null, pureData);
 
     }).catch(function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -77,14 +77,14 @@ CustomerSuccess.create = function (customerSuccess, callback) {
 
 CustomerSuccess.update = function (customerSuccess, condition, callback) {
 
-    models.CustomerSuccess.update(customerSuccess, {where: condition}).then(function (data) {
+    return models.CustomerSuccess.update(customerSuccess, {where: condition}).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
     }).catch(function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 

@@ -90,19 +90,19 @@ Message.list = function (condition, order, pageSize, pageNum, callback) {
     pageSize = pageSize || 10;
     pageNum = pageNum || 0;
 
-    models.Message.findAll({
+    return models.Message.findAll({
         where: condition,
         order: order,
         offset: pageSize * pageNum,
         limit: pageSize
     }).then(function (data) {
         jsonToObj(data);
-        callback(null, data);
+        return callback(null, data);
 
     }).catch(function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 

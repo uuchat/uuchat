@@ -196,11 +196,11 @@ customerSuccessController.update = function (req, res, next) {
 
     var condition = {csid: req.params.csid};
 
-    CustomerSuccess.update(customerSuccess, condition, function (err, data) {
+    return CustomerSuccess.update(customerSuccess, condition, function (err, data) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success update'});
+        return res.json({code: 200, msg: 'success update'});
     });
 };
 
@@ -231,11 +231,11 @@ customerSuccessController.uploadAvatar = function (req, res, next) {
     var customerSuccess = {photo: filePath};
     var condition = {csid: req.params.csid};
 
-    CustomerSuccess.update(customerSuccess, condition, function (err, data) {
+    return CustomerSuccess.update(customerSuccess, condition, function (err, data) {
 
         if (err) return next(err);
         req.session.photo = filePath;
-        res.json({code: 200, msg: {photo: filePath}});
+        return res.json({code: 200, msg: {photo: filePath}});
     });
 };
 
@@ -250,18 +250,18 @@ customerSuccessController.updatePasswd = function (req, res, next) {
 
     async.waterfall([
         function (callback) {
-            hashPasswdWithSalt(customerSuccess.passwd, callback);
+            return hashPasswdWithSalt(customerSuccess.passwd, callback);
         },
         function (hash, callback) {
             customerSuccess.passwd = hash;
             var condition = {csid: req.params.csid};
 
-            CustomerSuccess.update(customerSuccess, condition, callback);
+            return CustomerSuccess.update(customerSuccess, condition, callback);
         }
     ], function (err, result) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success update'});
+        return res.json({code: 200, msg: 'success update'});
     });
 };
 
@@ -269,10 +269,10 @@ customerSuccessController.list = function (req, res, next) {
 
     var order = [['createdAt', 'ASC']];
 
-    CustomerSuccess.findAll(null, {}, order, function (err, data) {
+    return CustomerSuccess.findAll(null, {}, order, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: data});
+        return res.json({code: 200, msg: data});
     });
 };
 
