@@ -116,3 +116,11 @@ input, select {
     text-overflow: ellipsis;
 }
 
+.upload-process{
+    position: fixed;
+    top: 100px;
+    right: 5px;
+    z-index: 9999;
+    background: #fff;
+    border-radius: 100%;
+}

@@ -430,6 +430,10 @@
              */
             this.on('c.queue.shift', UUCT.socketQueueShift);
             /***
+             * cs.close.dialog
+             */
+            this.on('cs.close.dialog', UUCT.socketCloseDialog)
+            /***
              *
              */
             this.on('c.dispatch', function(csid, name, avatar){
@@ -602,6 +606,12 @@
                 chatNums.innerHTML = n;
                 chatNums.style.display = 'block';
             }
+        },
+        socketCloseDialog: function(){
+            UUCT.msgTranslate({
+                role: 1,
+                msg: 'The customerSuccess is offline!'
+            });
         },
         socketCsStatus: function(status){
             if(1 === status){
