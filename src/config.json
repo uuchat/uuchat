@@ -1,7 +1,7 @@
 {
   "app": {
     "name": "uuChat",
-    "address": "127.0.0.1",
+    "address": "192.168.31.99",
     "port": 9688,
     "maxChatNum": 5,
     "lineupRefreshTime": 3000,
@@ -12,7 +12,8 @@
   },
   "database": {
     "dialect": "sqlite",
-    "storage": "content/data/uuchat.db"
+    "storage": "content/data/uuchat.db",
+    "logging": false
   },
   "socket.io": {
     "secretKey": "show_me_the_money",
