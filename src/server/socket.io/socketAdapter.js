@@ -53,7 +53,7 @@ SocketAdapter.emitCustomer = function (csid, cid) {
             async.waterfall([
                 function (next) {
                     getMarkedByCid(cid, csid, function (marked) {
-                        next(marked);
+                        next(null, marked);
                     })
                 },
                 function (marked) {

@@ -21,7 +21,7 @@ Sockets.init = function (server) {
     var socketIO = require('socket.io');
     io = new socketIO({
         "pingInterval": nconf.get('socket.io:pingInterval'),
-        "pingTimeout": nconf.get('socket.io:pingTimeout'),
+        "pingTimeout": nconf.get('socket.io:pingTimeout')
     });
 
     sessionStore = server.sessionStore();
@@ -30,7 +30,7 @@ Sockets.init = function (server) {
 
     if (process.env.NODE_ENV !== 'development') {
         var origins = nconf.get('socket.io:origins');
-        //io.origins(origins);
+        io.origins(origins);
         winston.info("[socket.io] transform access to origin: " + origins);
     }
 
@@ -145,9 +145,7 @@ function authorize(socket, callback) {
     if (!request) {
         return callback(new Error('[[error:not-authorized]]'));
     }
-
-    winston.info("start authorize!");
-
+    //winston.info("start authorize!");
     async.waterfall([
         function (next) {
             cookieParser(request, {}, next);
@@ -160,7 +158,6 @@ function authorize(socket, callback) {
                 winston.error("session id is null");
                 return next('[[error: session id is null]]');
             }
-            winston.info(sessionId);
             sessionStore.get(sessionId, function (err, sessionData){
                 if (err) {
                     return next(err);

@@ -311,7 +311,7 @@ function fileFilters(req, res, next) {
     var fileFilters = ['css', 'js', 'png', 'jpg', 'jpeg', 'ico'];
     var flag = false;
     var suffix = originalUrl.split('.').pop();
-    winston.info(suffix);
+
     if (fileFilters.indexOf(suffix) !== -1) {
         flag = true;
     }
