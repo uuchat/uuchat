@@ -196,6 +196,9 @@ customerSuccessController.update = function (req, res, next) {
 
     var condition = {csid: req.params.csid};
 
+    req.session.csName = req.body.displayName; // set display name to session
+    var cs = require('../socket.io/customerSuccess');
+    cs.get(req.session.csid).name = req.body.displayName;
     return CustomerSuccess.update(customerSuccess, condition, function (err, data) {
 
         if (err) return next(err);
@@ -235,6 +238,8 @@ customerSuccessController.uploadAvatar = function (req, res, next) {
 
         if (err) return next(err);
         req.session.photo = filePath;
+        var cs = require('../socket.io/customerSuccess');
+        cs.get(req.session.csid).photo = filePath;
         return res.json({code: 200, msg: {photo: filePath}});
     });
 };
