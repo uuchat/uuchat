@@ -81,9 +81,6 @@ class CustomerSuccess extends Component{
         this.createSocket = this.createSocket.bind(this);
 
     }
-    componentWillMount(){
-
-    }
     componentDidMount(){
         var that = this;
         this.createSocket();
@@ -93,11 +90,6 @@ class CustomerSuccess extends Component{
             }
             return 'Are you sure to leave??';
         };
-
-        window.onunload = function(){
-
-        }
-
     }
 
     /***
@@ -319,6 +311,8 @@ class CustomerSuccess extends Component{
         var isConnectErr = this.state.isConnectErr;
 
         if(isConnectErr){
+            notification.close("errNotifyKey");
+            notifyKey = "";
             this.setState({
                 isConnectErr: false
             });
@@ -338,6 +332,7 @@ class CustomerSuccess extends Component{
                 message: 'Server error',
                 top: 50,
                 duration: null,
+                key: 'errNotifyKey',
                 description: 'The server has offline!!!!.'
             });
             notifyKey = "nKey";
@@ -646,6 +641,7 @@ class CustomerSuccess extends Component{
 
         if(state.isConnectErr){
            this.createSocket();
+            notification.close("errNotifyKey");
         }else{
             if(status){
                 stat = 2;

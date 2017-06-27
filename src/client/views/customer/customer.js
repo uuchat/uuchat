@@ -5,11 +5,10 @@
 ;(function(w, doc,undefined){
 
     function $(el){
-        if(/^#/g.test(el)){
-            return doc.querySelector(el);
-        }else if(/^\./g.test(el)){
-            return doc.querySelectorAll(el);
-        }
+        return doc.querySelector(el);
+    }
+    function $All(el){
+        return doc.querySelectorAll(el);
     }
 
     function addEvent(el, event, fn){
@@ -92,21 +91,19 @@
         },
         createCT: function(){
             var ct = this.template(),
-                ctNode = document.createElement('div'),
-                eventType = 'mousewheel';
+                ctNode = document.createElement('div');
 
             ctNode.setAttribute('class', 'chat-console');
             ctNode.innerHTML = ct;
             doc.body.appendChild(ctNode);
         },
         ctrol: function(){
-
-            addEvent($('.chat-btn')[0], 'click', function(e){
-                toggleClass($('.chat-body')[0], 'chat-body-hidden');
+            addEvent($('.chat-btn'), 'click', function(e){
+                toggleClass($('.chat-body'), 'chat-body-hidden');
                 toggleClass(this, 'chat-btn-close');
 
-                $('.chat-nums')[0].style.display = 'none';
-                $('.chat-nums')[0].innerHTML = 0;
+                $('.chat-nums').style.display = 'none';
+                $('.chat-nums').innerHTML = 0;
 
                 if(!UUCT.socket){
                     UUCT.createSocket();
@@ -231,8 +228,11 @@
             var str = '';
             str +='<div class="chat-offline">';
             str +='<p class="offline-title">Have a question about what uuChat can do for you ?</p>';
-            str +='<input type="text" placeholder="Click here and type your Name" class="offline-name" ref="offName"/>';
-            str +='<input type="email" placeholder="Click here and type your Email" class="offline-email" required="required" ref="offEmail"/>';
+            str +='<h6>Name:</h6>';
+            str +='<input type="text" placeholder="Click here and type your Name" class="offline-name"/>';
+            str +='<h6>Email:</h6>';
+            str +='<input type="email" placeholder="Click here and type your Email" class="offline-email" required="required" />';
+            str +='<h6>Describe:</h6>';
             str +='<textarea placeholder="Let us know and someone will get back to you within 24 hours, if not sooner!(max 140 words)" class="offline-text"></textarea>';
             str +='<button class="offline-send">Send</button></div>';
 
@@ -313,7 +313,7 @@
             return str;
         },
         msgTranslate: function(msgObj){
-            var chatMsg =  $('.chat-msg')[0];
+            var chatMsg =  $('.chat-msg');
 
 
             if(msgObj.msg === 1){
@@ -326,15 +326,19 @@
                 str +='</div>';
                 str +='<div class="rete-btn">Done</div></div>';
                 chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
-                var hearts = $('.rete-heart'),
-                    rateBtns = $('.rete-btn');
+                var hearts = $All('.rete-heart'),
+                    rateBtns = $All('.rete-btn');
+
 
                 for(var i = 0, l = hearts.length; i < l; i++){
                     (function(i){
                         var rateLevel = 5,
                             rate = hearts[i].children;
                         addEvent(hearts[i], 'mouseover', function(e){
-                            if(e.target.tagName.toLowerCase() === 'span'){
+                            var e = e || w.event,
+                                tg = e.target || e.srcElement;
+
+                            if(tg.tagName.toLowerCase() === 'span'){
                                 var rateNum = e.target.innerHTML;
                                 rateLevel = rateNum;
                                 for(var j = 0; j < 5; j++){
@@ -352,11 +356,11 @@
                                     chatMsg.innerHTML += UUCT.tempMsgItem(1, 'Thank you for your rate!! Goodbye!', new Date());
                                     chatMsg.scrollTop = chatMsg.scrollHeight;
                                     UUCT.socket.close();
-                                    $('.chat-send')[0].parentNode.removeChild($('.chat-send')[0]);
-                                    $('.chat-msg')[0].style.height = '560px';
-                                    $('.chat-msg')[0].innerHTML = '<div class="reconnect-btn"><img width="32" src="'+UUCT.domain+'/static/images/write.png">New Conversation</div>';
-                                    addEvent($('.reconnect-btn')[0], 'click', function(){
-                                        $('.chat-msg')[0].parentNode.removeChild($('.chat-msg')[0]);
+                                    $('.chat-send').parentNode.removeChild($('.chat-send'));
+                                    $('.chat-msg').style.height = '560px';
+                                    $('.chat-msg').innerHTML = '<div class="reconnect-btn"><img width="32" src="'+UUCT.domain+'/static/images/write.png">New Conversation</div>';
+                                    addEvent($('.reconnect-btn'), 'click', function(){
+                                        $('.chat-msg').parentNode.removeChild($('.chat-msg'));
                                         UUCT.createSocket();
                                     });
                                 }
@@ -383,10 +387,10 @@
             UUCT.chat.csName = data.name;
 
 
-            $('.chat-name')[0].innerHTML = data.name;
-            $('.chat-body')[0].innerHTML += msg;
-            $('.chat-body')[0].innerHTML += send;
-            $('.avatar-img')[0].setAttribute("src", UUCT.domain+'/'+src);
+            $('.chat-name').innerHTML = data.name;
+            $('.chat-body').innerHTML += msg;
+            $('.chat-body').innerHTML += send;
+            $('.avatar-img').setAttribute("src", UUCT.domain+'/'+src);
 
             if(data.msg.length > 0){
                 for(var i = 0, l = data.msg.length; i < l; i++){
@@ -394,7 +398,7 @@
                         msgList += UUCT.tempMsgItem(data.msg[i].type, data.msg[i].msg, new Date(data.msg[i].createdAt));
                     }
                 }
-                $('.chat-msg')[0].innerHTML += msgList;
+                $('.chat-msg').innerHTML += msgList;
             }
 
         },
@@ -439,7 +443,7 @@
             this.on('c.dispatch', function(csid, name, avatar){
                 UUCT.chat.csid = csid;
                 UUCT.chat.name = name;
-                $('.chat-name')[0].innerHTML = name;
+                $('.chat-name').innerHTML = name;
             });
             /***
              * cs.rate
@@ -453,7 +457,10 @@
 
         },
         socketConnectError: function(){
-            this.close();
+            var str = '<div class="chat-offline"><div class="chat-error">Oh! no ! There has error !You can try it later again</div></div>';
+            if(!$('.chat-offline')){
+                $('.chat-body').innerHTML += str;
+            }
         },
         socketDisconnect: function(){
             UUCT.msgTranslate({
@@ -465,21 +472,20 @@
         socketCsSelect: function(type, data){
             if(1 === type){
                 UUCT.initCustomer(data);
-                addEvent($('.chat-emoji-btn')[0], 'click', function(e){
-                    toggleClass($('.emoji-lists')[0], 'emoji-lists-hidden');
+                addEvent($('.chat-emoji-btn'), 'click', function(e){
+                    toggleClass($('.emoji-lists'), 'emoji-lists-hidden');
                 });
-                addEvent($('.emoji-lists')[0], 'click', function(e){
+                addEvent($('.emoji-lists'), 'click', function(e){
                     var e = e || window.event,
                         tg = e.target || e.srcElement;
 
                     if(tg.tagName.toLowerCase() === 'span'){
-                        $('.chat-send-area')[0].value += ' '+tg.innerHTML+' ';
-                        $('.chat-send-area')[0].focus();
+                        $('.chat-send-area').value += ' '+tg.innerHTML+' ';
+                        $('.chat-send-area').focus();
                     }
                 });
 
-
-                $('.chat-upload')[0] && addEvent($('.chat-upload')[0], 'change', function(e){
+                $('.chat-upload') && addEvent($('.chat-upload'), 'change', function(e){
 
                    var data = new FormData();
                     data.append('image', e.target.files[0]);
@@ -490,16 +496,17 @@
                        fileType: true,
                        data: data,
                        progress: function(d){
-
-
-                           if(!isProgress){
-
+                           var percent = Math.round(d.loaded/d.total*100);
+                           if($('.upload-tips')){
+                               $('.upload-tips').innerHTML = 'Uploading '+percent+ ' %';
+                           }else{
+                               $('.chat-msg').innerHTML += '<div class="upload-tips">Uploading '+percent+ ' %</div>';
                            }
-
-                           UUCT.msgTranslate({
-                               role: 0,
-                               msg: '<span class="status-title">Image uploading</span>'
-                           });
+                           if(percent === 100){
+                               setTimeout(function(){
+                                   $('.upload-tips').parentNode.removeChild($('.upload-tips'));
+                               }, 1500);
+                           }
                        },
                        success: function(data){
                            var d = JSON.parse(data);
@@ -511,34 +518,34 @@
 
                 });
 
-                addEvent($('.chat-send-area')[0], 'keypress', function(e){
+                addEvent($('.chat-send-area'), 'keypress', function(e){
                     var e = e || w.event,
                         val = this.value;
 
                     val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
                     if(val !== ''){
-                        $('.send-pre')[0].innerHTML = val;
+                        $('.send-pre').innerHTML = val;
                     }
                     if(13 === e.keyCode){
                         if(val !== '') {
                             UUCT.socketSendMessage(val);
-                            $('.send-pre')[0].innerHTML = '';
+                            $('.send-pre').innerHTML = '';
                             this.value = '';
                             this.focus();
                             this.setAttribute("placeholder", "");
-                            addClass($('.emoji-lists')[0], 'emoji-lists-hidden');
+                            addClass($('.emoji-lists'), 'emoji-lists-hidden');
                         }
                         e.returnValue = false;
                         e.preventDefault && e.preventDefault();
                     }
 
                 });
-                addEvent($('.chat-send-area')[0], 'blur', function(e){
+                addEvent($('.chat-send-area'), 'blur', function(e){
                     var e = e || w.event,
                         val = this.value;
                     if(val === ''){
-                        $('.send-pre')[0].innerHTML = '';
+                        $('.send-pre').innerHTML = '';
                     }
                 });
 
@@ -548,35 +555,71 @@
                 var queue = '<div class="chat-offline"><div class="line-up">Current queue number <i class="line-num">';
                 queue += data.num;
                 queue += '</i></div></div>';
-                $('.chat-body')[0].innerHTML += queue;
+                $('.chat-body').innerHTML += queue;
 
             }else if(3 === type){
-                var offline = UUCT.tempOffline();
-                $('.chat-body')[0].innerHTML += offline;
-
-                addEvent($('.offline-send')[0], 'click', function(){
-
-                    var name = $('.offline-name')[0].value,
-                        email = $('.offline-email')[0].value,
-                        content = $('.offline-text')[0].value;
-
-                    UUCT.ajax({
-                        url:UUCT.domain+'/offlines',
-                        type:'GET',
-                        jsonp: 'jsonpCallback',
-                        data: {
-                            "name": name,
-                            "email": email,
-                            "content": content
-                        },
-                        success: function(d){
-                            if(d.code === 200){
-                                $('.chat-offline')[0].innerHTML = '<div className="offline-text-success"> Thank you for your message!We\'ll get back to you as soon as possible！</div>';
-                            }
-                        }
-                    });
-                });
+               UUCT.customerSuccessOffline();
             }
+        },
+        customerSuccessOffline: function(){
+            var offline = UUCT.tempOffline();
+            if($('.chat-offline')){
+               $('.chat-offline').parentNode.removeChild($('.chat-offline'));
+            }
+
+            $('.chat-body').innerHTML += offline;
+            addEvent($('.offline-name'), 'focus', function(){
+                removeClass(this, 'error');
+            });
+            addEvent($('.offline-email'), 'focus', function(){
+                removeClass(this, 'error');
+            });
+            addEvent($('.offline-text'), 'focus', function(){
+                removeClass(this, 'error');
+            });
+
+            addEvent($('.offline-send'), 'click', function(){
+
+                var name = $('.offline-name').value,
+                    email = $('.offline-email').value,
+                    content = $('.offline-text').value,
+                    vertify = true;
+
+                if(name === ''){
+                    addClass($('.offline-name'), 'error');
+                    vertify = false;
+                }
+
+                if(email === '' || !/^[0-9a-z_]+@(([0-9a-z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)){
+                    addClass($('.offline-email'), 'error');
+                    vertify = false;
+                }
+
+                if(content === ''){
+                    addClass($('.offline-text'), 'error');
+                    vertify = false;
+                }
+                if(!vertify){
+                    return false;
+                }
+
+                UUCT.ajax({
+                    url:UUCT.domain+'/offlines',
+                    type:'GET',
+                    jsonp: 'jsonpCallback',
+                    data: {
+                        "name": name,
+                        "email": email,
+                        "content": content
+                    },
+                    success: function(d){
+                        if(d.code === 200){
+                            $('.chat-offline').innerHTML = '<div className="offline-text-success"> <div class="offline-success">Thank you for your message!We\'ll get back to you as soon as' +
+                                ' possible！</div></div>';
+                        }
+                    }
+                });
+            });
         },
         socketSendMessage: function(msg){
             UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(isTrue){
@@ -594,13 +637,13 @@
             });
         },
         socketCsMessage: function(cid, msg){
-            var chatNums = $('.chat-nums')[0];
+            var chatNums = $('.chat-nums');
             UUCT.msgTranslate({
                 role: 1,
                 msg: msg
             });
 
-            if(!hasClass($('.chat-btn')[0], 'chat-btn-close')){
+            if(!hasClass($('.chat-btn'), 'chat-btn-close')){
                 var n = chatNums.innerHTML;
                 n++;
                 chatNums.innerHTML = n;
@@ -615,9 +658,9 @@
         },
         socketCsStatus: function(status){
             if(1 === status){
-                $('.chat-name')[0].innerHTML = '<span class="status-title">Entering</span>';
+                $('.chat-name').innerHTML = '<span class="status-title">Entering</span>';
             }else if(2 === status){
-                $('.chat-name')[0].innerHTML = UUCT.chat.csName;
+                $('.chat-name').innerHTML = UUCT.chat.csName;
             }
         },
         socketCsDisconnect: function(){
@@ -627,14 +670,14 @@
             });
         },
         socketQueueUpdate: function(pos){
-            if($('.line-num')[0]){
-                $('.line-num')[0].innerHTML = pos;
+            if($('.line-num')){
+                $('.line-num').innerHTML = pos;
             }
         },
         socketQueueShift: function(d){
             if(d){
-                var offline = $('.chat-offline')[0];
-                offline.parentNode.removeChild($('.chat-offline')[0]);
+                var offline = $('.chat-offline');
+                offline.parentNode.removeChild($('.chat-offline'));
                 UUCT.initCustomer(d);
             }
         },

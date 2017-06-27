@@ -82,7 +82,7 @@ class ChatMessage extends Component{
                         <div>
                             {onlineLists.length > 0 ? onlineLists.map((cs, i) =>
                                     <div key={i} className="online-item">
-                                        <span className="online-avatar fl"> {cs.info[1] !=='' ? cs.info[1]: <img width="100%" src={require('../static/images/contact.png')} alt="" /> }</span>
+                                        <span className="online-avatar fl"> {cs.info[1] !=='' ? <img width="100%" src={cs.info[1]} alt="" /> : <img width="100%" src={require('../static/images/contact.png')} alt="" /> }</span>
                                         <span className="online-name fl"> {cs.info[0]}</span>
                                         <span className="online-btn fr" data-csid={cs.name} onClick={this.transfer}>Transfer</span>
                                     </div>

@@ -469,6 +469,9 @@
     height: 30px;
     border-radius: 100%;
 }
+.online-item .online-avatar img{
+    border-radius: 100%;
+}
 .online-item .online-name{
     line-height: 30px;
     font-weight: bold;
