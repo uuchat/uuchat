@@ -171,7 +171,7 @@ class ChatSend extends Component{
         };
         return (
             <div className="chat-send">
-                <Progress percent={this.state.percent} className="upload-process" style={{display: this.state.isShowProcess ? 'block' : 'none'}} />
+                <Progress type="circle" percent={this.state.percent} className="upload-process" width={60} style={{display: this.state.isShowProcess ? 'block' : 'none'}} />
                 <div className="send-tools">
                     <div className="tool-box tool-emoji">
                         <Icon onClick={this.emojiBtnHandle} className={"emoji-icon "+(this.state.isEmojiShow ? 'active' : '')} />

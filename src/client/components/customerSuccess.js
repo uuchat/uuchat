@@ -58,6 +58,14 @@ class CustomerSuccess extends Component{
         this.customerSuccessConectErr  = this.customerSuccessConectErr.bind(this);
         this.customerSuccessDisconnect = this.customerSuccessDisconnect.bind(this);
         this.socketReconnect           = this.socketReconnect.bind(this);
+        this.csCustomerList            = this.csCustomerList.bind(this);
+        this.csCustomerOne             = this.csCustomerOne.bind(this);
+        this.csDispatch                = this.csDispatch.bind(this);
+        this.csNeedLogin               = this.csNeedLogin.bind(this);
+        this.cMessage                  = this.cMessage.bind(this);
+        this.cDisconnect               = this.cDisconnect.bind(this);
+        this.csCustomerOffline         = this.csCustomerOffline.bind(this);
+        this.socketError               = this.socketError.bind(this);
 
         this.onSearchHandler          = this.onSearchHandler.bind(this);
         this.onChatListClick          = this.onChatListClick.bind(this);
@@ -74,11 +82,11 @@ class CustomerSuccess extends Component{
 
     }
     componentWillMount(){
-        this.createSocket();
+
     }
     componentDidMount(){
         var that = this;
-
+        this.createSocket();
         window.onbeforeunload = function(){
             if(that.isClose){
                 return true;
@@ -102,14 +110,205 @@ class CustomerSuccess extends Component{
             reconnectionDelay:2000 ,
             timeout: 10000
         });
+
         sio.on('connect', this.customerSuccessConnect);
         sio.on('connect_error', this.customerSuccessConectErr);
         sio.on('disconnect', this.customerSuccessDisconnect);
         sio.on('reconnect', this.socketReconnect);
+        sio.on('cs.customer.one', this.csCustomerOne);
+        sio.on('cs.customer.list', this.csCustomerList);
+        sio.on('cs.dispatch', this.csDispatch);
+        sio.on('cs.need.login', this.csNeedLogin);
+        sio.on('c.message', this.cMessage);
+        sio.on('c.disconnect', this.cDisconnect);
+        sio.on('cs.customer.offline', this.csCustomerOffline);
+        sio.on('error', this.socketError);
         this.setState({
             socket: sio
         });
     }
+
+    /***
+     * cs.customer.list
+     */
+    csCustomerList(data){
+        var customer = {};
+        data.map((d)=>customer[d.cid] = []);
+
+        this.setState({
+            customerLists: data,
+            messageLists: customer,
+            customerSelect: {
+                cid: data[0].cid,
+                name: data[0].name,
+                marked: data[0].marked
+            }
+        });
+
+        for(var i = 0; i < data.length; i++){
+            this.getMessageHistory(data[i].cid);
+        }
+    }
+
+    /***
+     * cs.customer.one
+     */
+    csCustomerOne(data){
+        var customerLists = this.state.customerLists,
+            messageLists = this.state.messageLists,
+            cid = this.state.customerSelect.cid,
+            name = this.state.customerSelect.name,
+            marked = this.state.customerSelect.marked;
+
+        customerLists.unshift(data);
+
+        if(!messageLists[data.cid]){
+            if(customerLists.length <=1 ){
+                cid = data.cid;
+                name = data.name;
+                marked = data.marked;
+            }
+        }else{
+            cid = data.cid;
+            name = data.name;
+            marked = data.marked;
+        }
+        this.getMessageHistory(data.cid);
+        this.setState({
+            customerLists: customerLists,
+            customerSelect: {
+                cid: cid,
+                name: name,
+                marked: marked
+            }
+        });
+    }
+
+    /***
+     * cs.dispatch
+     */
+    csDispatch(cid, name, info){
+        var customerLists = this.state.customerLists;
+        customerLists.unshift({
+            cid: cid,
+            name: name,
+            info: info
+        });
+
+        if(customerLists.length > 1){
+            this.setState({
+                customerLists: customerLists
+            });
+        }else{
+            this.getMessageHistory(cid);
+            this.setState({
+                customerLists: customerLists,
+                customerSelect: {
+                    cid: cid,
+                    name: name
+                }
+            });
+        }
+    }
+
+    /***
+     * cs.need.login
+     */
+    csNeedLogin(fn){
+        fn(true);
+        this.state.socket.disconnect();
+        window.location.href="/";
+    }
+
+    /***
+     * c.message
+     */
+    cMessage(cid, msg){
+        var message = {
+            msgAvatar: '',
+            msgText: msg,
+            msgType: 0,
+            msgTime: new Date()
+        };
+
+        var msgArr = this.state.messageLists[cid],
+            messageLists = this.state.messageLists,
+            chatNotify = this.state.chatNotify;
+
+        if(this.state.customerSelect.cid !== cid){
+            if(!chatNotify[cid]){
+                chatNotify[cid] = 1;
+            }else{
+                chatNotify[cid]++;
+            }
+        }
+
+        msgArr && msgArr.push(message);
+        messageLists[cid] = msgArr;
+
+
+        this.setState({
+            messageLists:  messageLists,
+            chatNotify: chatNotify
+        });
+    }
+
+    /***
+     * c.disconnect
+     */
+    cDisconnect(cid){
+        var customerLists = this.state.customerLists,
+            cSelectCid = this.state.customerSelect.cid,
+            cSelectName = this.state.customerSelect.name;
+
+        customerLists.map((c, i)=> c.cid === cid && customerLists.splice(i, 1));
+
+        if(customerLists.length > 0){
+            cSelectCid = customerLists[0].cid;
+            cSelectName = customerLists[0].name;
+        }else{
+            cSelectCid = '';
+            cSelectName = '';
+        }
+
+        this.setState({
+            customerSelect:{
+                cid: cSelectCid,
+                name: cSelectName
+            },
+            customerLists: customerLists
+        });
+    }
+
+    /***
+     * cs.customer.offline
+     */
+    csCustomerOffline(data){
+        var customerLists = this.state.customerLists;
+        customerLists.unshift({
+            cid: data.cid,
+            name: data.name,
+            type: 'offline',
+            msg: {
+                name: data.name,
+                email: data.email,
+                content: data.content
+            }
+        });
+        this.setState({
+            customerLists: customerLists
+        });
+    }
+
+    /***
+     * reconnect
+     */
+    socketReconnect(){}
+
+    /***
+     * error
+     */
+    socketError(){}
 
     /***
      *
@@ -117,221 +316,14 @@ class CustomerSuccess extends Component{
      *
      */
     customerSuccessConnect(){
-        var that = this,
-            isConnectErr = this.state.isConnectErr;
-
-        notifyKey = '';
+        var isConnectErr = this.state.isConnectErr;
 
         if(isConnectErr){
             this.setState({
                 isConnectErr: false
             });
         }
-        if(!this.state.socket){
-            return false;
-        }
-        /***
-         * cs.customer.list
-         *
-         */
 
-        this.state.socket.on('cs.customer.list', function(data){
-            var customer = {};
-            data.map((d)=>customer[d.cid] = []);
-
-            that.setState({
-                customerLists: data,
-                messageLists: customer,
-                customerSelect: {
-                    cid: data[0].cid,
-                    name: data[0].name,
-                    marked: data[0].marked
-                }
-            });
-
-            for(var i = 0; i < data.length; i++){
-                that.getMessageHistory(data[i].cid);
-            }
-
-        });
-
-        /***
-         *
-         * customerSuccess select one customer
-         *
-         */
-        this.state.socket.on('cs.customer.one', function(data){
-            var customerLists = that.state.customerLists,
-                messageLists = that.state.messageLists,
-                cid = that.state.customerSelect.cid,
-                name = that.state.customerSelect.name,
-                marked = that.state.customerSelect.marked;
-
-            customerLists.unshift(data);
-
-            if(!messageLists[data.cid]){
-                if(customerLists.length <=1 ){
-                    cid = data.cid;
-                    name = data.name;
-                    marked = data.marked;
-                }
-            }else{
-                cid = data.cid;
-                name = data.name;
-                marked = data.marked;
-            }
-            that.getMessageHistory(data.cid);
-            that.setState({
-                customerLists: customerLists,
-                customerSelect: {
-                    cid: cid,
-                    name: name,
-                    marked: marked
-                }
-            });
-        });
-        /***
-         * cs.dispatch
-         */
-        this.state.socket.on('cs.dispatch', function(cid, name, info){
-            var customerLists = that.state.customerLists;
-            customerLists.unshift({
-                cid: cid,
-                name: name,
-                info: info
-            });
-
-            if(customerLists.length > 1){
-                that.setState({
-                    customerLists: customerLists
-                });
-            }else{
-                that.getMessageHistory(cid);
-                that.setState({
-                    customerLists: customerLists,
-                    customerSelect: {
-                        cid: cid,
-                        name: name
-                    }
-                });
-            }
-
-        });
-
-        /***
-         *
-         *
-         * Check customerSuccess whether Sign On Other Page
-         *
-         */
-        this.state.socket.on('cs.need.login', function(fn){
-            fn(true);
-            that.state.socket.disconnect();
-            window.location.href="/";
-
-        });
-
-        /***
-         *
-         *  Message From Server Handle
-         *
-         *
-         */
-
-        this.state.socket.on('c.message', function(cid, msg){
-
-            var message = {
-                msgAvatar: '',
-                msgText: msg,
-                msgType: 0,
-                msgTime: new Date()
-            };
-
-            var msgArr = that.state.messageLists[cid],
-                messageLists = that.state.messageLists,
-                chatNotify = that.state.chatNotify;
-
-            if(that.state.customerSelect.cid !== cid){
-                if(!chatNotify[cid]){
-                    chatNotify[cid] = 1;
-                }else{
-                    chatNotify[cid]++;
-                }
-            }
-
-            msgArr && msgArr.push(message);
-            messageLists[cid] = msgArr;
-
-
-            that.setState({
-                messageLists:  messageLists,
-                chatNotify: chatNotify
-            });
-
-        });
-        /***
-         *
-         *  Sign On Other Page
-         *
-         */
-
-        this.state.socket.on('c.disconnect', function(cid){
-
-            var customerLists = that.state.customerLists,
-                cSelectCid = that.state.customerSelect.cid,
-                cSelectName = that.state.customerSelect.name;
-
-            customerLists.map((c, i)=> c.cid === cid && customerLists.splice(i, 1));
-
-            if(customerLists.length > 0){
-                cSelectCid = customerLists[0].cid;
-                cSelectName = customerLists[0].name;
-            }else{
-                cSelectCid = '';
-                cSelectName = '';
-            }
-
-            that.setState({
-                customerSelect:{
-                    cid: cSelectCid,
-                    name: cSelectName
-                },
-                customerLists: customerLists
-            });
-
-        });
-        /***
-         * cs.customer.offline
-         */
-        this.state.socket.on('cs.customer.offline', function(data){
-
-            var customerLists = that.state.customerLists;
-            customerLists.unshift({
-                cid: data.cid,
-                name: data.name,
-                type: 'offline',
-                msg: {
-                    name: data.name,
-                    email: data.email,
-                    content: data.content
-                }
-            });
-            that.setState({
-                customerLists: customerLists
-            });
-
-
-        });
-        /***
-         * this.state.socket.on reconnect
-         */
-        this.state.socket.on('reconnect', function(){});
-        /***
-         * this.state.socket.on error
-         */
-        this.state.socket.on('error', function(){
-
-        });
     }
 
     /***
@@ -351,8 +343,7 @@ class CustomerSuccess extends Component{
             notifyKey = "nKey";
         }
 
-        this.state.socket && this.setState({
-            socket: null,
+       this.setState({
             isConnectErr: true,
             customerSelect:{
                 cid: '',
@@ -448,13 +439,6 @@ class CustomerSuccess extends Component{
         }
 
     }
-
-    /***
-     * socketReconnect
-     */
-    socketReconnect(){
-    }
-
     /***
      *
      * @returns {boolean}
