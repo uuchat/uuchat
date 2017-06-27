@@ -4,26 +4,28 @@
  */
 
 import React, { Component } from 'react';
-import { Breadcrumb, Table, message, Select, Modal, Button } from 'antd';
+import { Breadcrumb, Table, message, Select, Modal, Spin } from 'antd';
 
 import ChatList from './chatList';
 import { getCustomerName, formatDate } from './utils';
 
 const Option = Select.Option;
 
+//pageNum,pageSize,pageTotal,pageReload
+const initPagination = [0, 10, 0, true];
+
 class Transcripts extends Component {
     state = {
         csSource: [],
         dataSource: [],
-        pagination: {},
-        loading: false,
+        pagination: Object.assign([], initPagination),
+        spinning: false,
         filter: [],
-        sorter: {},
     };
 
     renderCustomer = (text, record) => {
         let customer = getCustomerName(text);
-        //  input params using closure
+        //  input params using closure(another way:bind)
         return <a onClick={ (e) => this.handleChatList(e, record) }>{ customer }</a>;
     }
 
@@ -49,17 +51,18 @@ class Transcripts extends Component {
     getDataSource = () => {
         const _component = this;
 
-        let { filter,pagination, sorter } = this.state;
+        let { dataSource, filter, pagination } = this.state;
 
-        _component.setState({loading: true});
+        if (!pagination[3]) return;
 
         let queryUrl = '/chathistories?1=1';
 
         if (filter.csid) queryUrl += '&csid=' + filter.csid;
-        if (pagination.current) queryUrl += "&pageNum=" + (pagination.current - 1);
-        if (sorter.field) queryUrl += "&sortField=" + sorter.field + "&sortOrder=" + sorter.order;
+        queryUrl += '&pageNum=' + pagination[0];
 
-        //console.log(queryUrl);
+        _component.setState({spinning: true});
+
+        console.log(queryUrl);
 
         fetch('/customersuccesses')
             .then((res) => res.json())
@@ -76,7 +79,6 @@ class Transcripts extends Component {
             .then((res) => res.json())
             .then((data) => {
                 if (200 === data.code) {
-                    pagination.total = data.msg.count;
 
                     data.msg.rows.forEach((item) => {
                         item.key = item.uuid;
@@ -85,25 +87,52 @@ class Transcripts extends Component {
                         item.csEmail = csFilters.length ? csFilters[0].email : 'invalid_email';
                     });
 
+                    dataSource = dataSource.concat(data.msg.rows);
+
+                    pagination[0]++;
+                    pagination[2] += data.msg.rows.length;
+
+                    //console.log('page:', pagination[2], data.msg.count, dataSource.length);
+
+                    if (pagination[2] === data.msg.count) pagination[3] = false;
+
                     _component.setState({
-                        pagination: pagination,
-                        dataSource: data.msg.rows,
+                        dataSource,
+                        pagination,
                     });
                 } else {
                     message.error(data.msg, 4);
                 }
             }).catch((e) => message.error(e.message, 4))
             .then(function () {
-                _component.setState({loading: false});
+                _component.setState({spinning: false});
             });
     }
 
-    componentDidMount = ()=> {
-        this.getDataSource();
+
+    componentDidMount() {
+        //console.log('transcript component did mount');
+        this.setState({
+            pagination: Object.assign([], initPagination),
+        }, this.getDataSource);
+        window.addEventListener('scroll', this.handleScroll.bind(this));
+    }
+
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.handleScroll.bind(this));
+    }
+
+    handleScroll(e) {
+        const { pagination, spinning } = this.state;
+
+        if (!spinning && pagination[3] && (document.body.clientHeight + document.body.scrollTop + 80 - document.body.scrollHeight >= 0)) {
+            //console.log('fetch data');
+            this.getDataSource();
+        }
     }
 
     handleChange = (pagination, filters, sorter) => {
-        console.log({pagination, sorter});
+        //console.log({pagination, sorter});
 
         this.setState({pagination, sorter}, this.getDataSource);
     }
@@ -114,24 +143,24 @@ class Transcripts extends Component {
         let filter = {};
         filter[key] = value;
 
-        this.setState({filter}, this.getDataSource);
+        this.setState({
+            filter,
+            pagination: Object.assign([], initPagination),
+            dataSource: [],
+        }, this.getDataSource);
     }
 
-    clearSorters = () => this.setState({sorter: {}}, this.getDataSource)
-
     render() {
-        let { csSource, dataSource,pagination,loading,sorter } = this.state;
+        let { csSource, dataSource, spinning } = this.state;
 
         const columns = [
             {
                 title: 'customer', dataIndex: 'cid', key: 'cid', render: this.renderCustomer,
-                sorter: true, sortOrder: sorter.columnKey === 'cid' && sorter.order,
             },
             {title: 'name', dataIndex: 'csName', key: 'csName',},
             {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
             {
                 title: 'latest connect time', dataIndex: 'updatedAt', key: 'updatedAt', render: formatDate,
-                sorter: true, sortOrder: sorter.columnKey === 'updatedAt' && sorter.order,
             },
         ];
 
@@ -149,6 +178,7 @@ class Transcripts extends Component {
                                 style={{ width: 200 }}
                                 size="large"
                                 placeholder="Select Email"
+                                allowClear={ true }
                                 optionFilterProp="children"
                                 onChange={ this.handleSelectChange.bind(null, 'csid') }
                                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
@@ -157,16 +187,20 @@ class Transcripts extends Component {
                             </Select>
                         </div>
                         <div className="table-operations">
-                            <Button onClick={this.clearSorters}>Clear sorters</Button>
                         </div>
                     </div>
 
                     <Table locale={{ emptyText: 'List is empty' }}
                            dataSource={ dataSource }
                            columns={ columns }
-                           pagination={ pagination }
-                           loading={ loading }
-                           onChange={ this.handleChange }
+                           pagination={ false }
+                           footer={ currentData =>
+                                    <div id="tableFooter" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                        <div> </div>
+                                        <div> <Spin spinning={spinning} /></div>
+                                        <div>total: {currentData.length} items</div>
+                                    </div>
+                                }
                         />
                 </div>
             </div>

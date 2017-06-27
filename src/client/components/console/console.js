@@ -139,7 +139,7 @@ class Console extends Component {
                         </Content>
 
                         <Footer style={{ textAlign: 'center' }}>
-                            uuchat ©2017 Created by uuchat
+                            uuchat ©2017 Built with ♥ in shenzhen.
                         </Footer>
                     </Layout>
                 </Layout>
