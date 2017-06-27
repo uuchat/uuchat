@@ -42,7 +42,7 @@ class Login extends Component{
                         localStorage.setItem('uuchat.avatar', (d.msg.photo ? d.msg.photo : ''));
                         window.location.href = "/chat";
                     }else if(1002 === d.code){
-                        message.error('User email is not found', 4);
+                        message.error('Email is not found', 4);
                     }else if(1003 === d.code){
                         message.error('User unauthorized ', 4);
                     }else{
@@ -70,7 +70,7 @@ class Login extends Component{
                             getFieldDecorator('userName', {
                                 rules: [{type: 'email', message: 'The input is not valid E-mail!'},{ required: true, message: 'Please input your email!' }]
                             })(
-                                <Input prefix={<Icon type="user" style={{ fontSize: 16 }} />} placeholder="Username or eamil" />
+                                <Input prefix={<Icon type="user" style={{ fontSize: 16 }} />} placeholder="Username Or Email" />
                             )
                           }
                         </FormItem>
