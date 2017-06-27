@@ -1,10 +1,11 @@
 /**
  * Created by longhao on 2017/5/4.
  */
-
+/** @member {Object} */
 var winston = require('winston');
 var fs = require('fs');
 var path = require('path');
+/** @member {Object} */
 var nconf = require('nconf');
 var async = require('async');
 var _ = require('lodash');
@@ -72,8 +73,7 @@ server.sessionStore = function() {
     }
 };
 
-module.exports.listen = function (callback) {
-    callback = callback || function () { };
+module.exports.listen = function () {
     async.waterfall([
         function (next) {
             setupExpress(app, next);
@@ -81,12 +81,12 @@ module.exports.listen = function (callback) {
         },
         function (next) {
             checkRedisStarted(next);
-
         },
-        function () {
-            listen();
+        function (next) {
+            expressListen();
+            next(null, '');
         }
-    ], function (err) {
+    ], function (err, result) {
         if (err) {
             switch (err.message) {
                 case 'redis-need-start':
@@ -103,7 +103,7 @@ module.exports.listen = function (callback) {
             }
             process.exit();
         }
-        callback();
+        winston.info("Web server has started");
     });
 };
 
@@ -362,7 +362,7 @@ function setupAutoLocale(app, callback) {
 
 }
 
-function listen() {
+function expressListen() {
     var configAddress = nconf.get('app:address');
     var address = ((configAddress === '0.0.0.0' || !configAddress) ? '0.0.0.0' : configAddress);
 

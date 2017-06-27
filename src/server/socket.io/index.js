@@ -1,11 +1,12 @@
 'use strict';
 
 var _ = require('lodash');
+/** @member {Object} */
 var nconf = require('nconf');
+/** @member {Object} */
 var winston = require('winston');
 var async = require('async');
 var cookieParser = require('cookie-parser')(nconf.get('socket.io:secretKey'));
-
 
 var customerEvents = require('./customerEvents');
 var customerSuccessEvents = require('./customerSuccessEvents');
@@ -30,7 +31,7 @@ Sockets.init = function (server) {
 
     if (process.env.NODE_ENV !== 'development') {
         var origins = nconf.get('socket.io:origins');
-        io.origins(origins);
+        //io.origins(origins);
         winston.info("[socket.io] transform access to origin: " + origins);
     }
 

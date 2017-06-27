@@ -3,8 +3,10 @@
  */
 
 var async = require('async');
+/** @member {Object} */
 var nconf = require('nconf');
 var _ = require('lodash');
+/** @member {Object} */
 var winston = require('winston');
 var path = require('path');
 var fs = require('fs');
@@ -30,18 +32,14 @@ function setupEnv(){
 }
 
 function start() {
-    if (nconf.get('database:dialect') === 'sqlite') {
-        winston.info('Database use sqlite');
-        initSqlite3();
-    }
+    checkSQLite();
 
     checkCORS();
 
     checkLogFolder();
 
-    webServer.listen(function next(){
-        winston.info("Web server has started");
-    });
+    //start server
+    webServer.listen();
     var io = require('./src/server/socket.io/index');
     io.init(webServer.server);
 }
@@ -52,9 +50,10 @@ function checkCORS() {
     if (!_.isUndefined(first)) {
         if (!_.startsWith(first, 'http')) {
             winston.info();
-            winston.info('-----------------------------');
-            winston.info('You need set white list domain,\n\t otherwise, has CORS risk !');
-            winston.info('-----------------------------');
+            winston.info('---------------------------------');
+            winston.info('You need set white list domain,\n\t in \'src > config.json\', ' +
+                '\n\t otherwise, has CORS risk !');
+            winston.info('---------------------------------');
         }
     }
 }
@@ -65,9 +64,12 @@ function checkLogFolder() {
     }
 }
 
-function initSqlite3() {
-    if (!utils.fileExistsSync('./content/data/uuchat.db')){
-        require('./src/server/models/index');
+function checkSQLite() {
+    if (nconf.get('database:dialect') === 'sqlite') {
+        winston.info('Database use sqlite');
+        if (!utils.fileExistsSync('./content/data/uuchat.db')){
+            require('./src/server/models/index');
+        }
     }
 }
 
