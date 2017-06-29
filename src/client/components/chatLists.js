@@ -76,9 +76,9 @@ class ChatList extends Component{
         var data = chatHistory[cid];
 
         Modal.info({
-            title: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats',
+            title: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history',
             width: '600px',
-            okText: 'Ok',
+            okText: 'ok',
             content: (
                 <div className="message-lists chat-lists-history">
 

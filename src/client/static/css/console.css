@@ -22,9 +22,16 @@
     margin: 16px 0px;
 }
 
-#console-body .ant-layout-content
-{
+#console-body .ant-layout-content {
     min-height: calc(100vh - 113px);
+}
+
+#console-body .user-avatar {
+    margin-right: 10px;
+    width: 30px;
+    height: 30px;
+    border-radius: 100%;
+    vertical-align: middle;
 }
 
 .rightWarpper {

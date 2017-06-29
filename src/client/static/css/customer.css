@@ -78,6 +78,7 @@
 .chat-console .chat-msg{
     padding: 0 20px;
     height:490px;
+    height: 400px\0;
     overflow-y: auto;
 }
 .chat-console .upload-tips{
@@ -194,12 +195,13 @@
     height: 30px;
     line-height: 30px;
     background-color: #fff;
-    border-radius: 3px;
+    border-radius: 4px;
     text-align: center;
     cursor: pointer;
 }
 .chat-console .rete-btn:hover{
-    background-color:#ecf6fd;
+    background-color:#1f8ceb;
+    color: #fff;
 }
 .chat-console  .chat-send{
     position: relative;
@@ -244,6 +246,7 @@
     word-break:break-all;
     overflow:hidden;
     background-color: #e9eaeb;
+    border-top: 1px solid transparent;
     border-radius: 0 0 5px 5px;
     word-spacing: 2px;
     -webkit-transition: background-color .2s ease,box-shadow .2s ease;
@@ -256,6 +259,7 @@
 .chat-console  .chat-send-area:focus{
     background-color: #fff;
     box-shadow: 0 -1px 10px #eaeaea;
+    border-top: 1px solid #eaeaea;
     outline:none;
 }
 
@@ -325,11 +329,11 @@
     background-size: 100% 100%;
 }
 .chat-console .chat-emoji-btn{
-    background: url(../images/smile.png) no-repeat center center;
+    background: url(../images/smile_ie8.png) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-console .chat-emoji-btn:hover{
-    background: url(../images/smile_selected.png) no-repeat center center;
+    background: url(../images/smile_selected_ie8.png) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-btn{
@@ -371,7 +375,6 @@
     background-color: #e74c3c;
     border-radius: 100%;
     font-size: 12px;
-
 }
 .chat-console .chat-offline{
     padding: 10px;

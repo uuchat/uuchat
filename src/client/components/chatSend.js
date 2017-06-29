@@ -57,10 +57,14 @@ class ChatSend extends Component{
 
     sendMessage(e){
         e.preventDefault();
-        var msg = e.target.value.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
+        var msgVal = e.target.value,
+            msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
-        if(e.target.value.length > 0){
-            this.props.sendMessage(msg);
+        if(msgVal.length > 0){
+            this.props.sendMessage(msg.substr(0, 512));
+            if(msgVal.length > 512){
+                this.props.sendMessage(msg.substr(512, 1024));
+            }
         }
         this.setState({
             isEmojiShow: false,
@@ -193,7 +197,7 @@ class ChatSend extends Component{
                     type="textarea"
                     className="chat-textarea"
                     onPressEnter={this.sendMessage}
-                    placeholder={this.state.isSendReady ? "" : "Input text and press enter to send"}
+                    placeholder={this.state.isSendReady ? "" : "Input text and press enter to send(max 140 words)"}
                     onChange={this.textChangeHandle}
                     value={this.state.textereaValue}
                     onFocus={this.textFocusHandle}
