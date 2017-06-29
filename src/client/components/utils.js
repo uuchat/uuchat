@@ -4,7 +4,12 @@
 
 
 function String2int(str){
-    return parseInt(str, 16) % 14;
+    if(str !== 0){
+        return parseInt(str.substr(0, 1), 16) % 16;
+    }else{
+        return str;
+    }
+
 }
 
 export default String2int;

@@ -15,11 +15,16 @@ class ChatList extends Component{
         this.state = {
             hasList: false,
             chatLists: [],
-            filterMark: 8
+            filterMark: 8,
+            hisCid: 0,
+            hisTitle: '',
+            isHisVis: false
+
         };
-        this.getList = this.getList.bind(this);
-        this.showHistory = this.showHistory.bind(this);
+        this.getList      = this.getList.bind(this);
+        this.showHistory  = this.showHistory.bind(this);
         this.filterMarked = this.filterMarked.bind(this);
+        this.historyClose = this.historyClose.bind(this);
     }
 
     componentDidMount(){
@@ -42,7 +47,6 @@ class ChatList extends Component{
         var t = e.target,
             cid = '',
             _li,
-            cIndex,
             ulList;
 
         if(t.tagName.toLowerCase() === 'li'){
@@ -53,13 +57,12 @@ class ChatList extends Component{
             _li = t.parentNode.parentNode;
         }
         cid = _li.getAttribute('data-cid');
-        cIndex = _li.getAttribute('data-cIndex');
 
         if(chatHistory[cid]){
-            this.renderHistroy(cid, cIndex);
+            this.renderHistroy(cid);
         }else{
             chatHistory[cid] = [];
-            this.fetchHistory(cid, this.props.csid, cIndex);
+            this.fetchHistory(cid, this.props.csid);
         }
 
         ulList = _li.parentNode;
@@ -71,31 +74,15 @@ class ChatList extends Component{
         _li.className='active';
     }
 
-    renderHistroy(cid, cIndex){
-
-        var data = chatHistory[cid];
-
-        Modal.info({
-            title: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history',
-            width: '600px',
-            okText: 'ok',
-            content: (
-                <div className="message-lists chat-lists-history">
-
-                {data.map((msg ,index)=>
-                     <ChatMessageItem key={index} ownerType={msg.msgType}
-                        ownerAvatar={ msg.msgAvatar ? msg.msgAvatar : <div className={"avatar-color avatar-icon-"+cIndex} >{cid.substr(0, 1).toUpperCase()}</div> }
-                        ownerText={msg.msgText} time={msg.msgTime}
-                        />
-                 )}
-
-                </div>
-            ),
-            onOk() {},
+    renderHistroy(cid){
+        this.setState({
+            hisCid: cid,
+            isHisVis: true,
+            hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
         });
     }
 
-    fetchHistory(cid, csid, cIndex){
+    fetchHistory(cid, csid){
         var that = this,
             csAvatar = that.props.csAvatar ? that.props.csAvatar : require('../static/images/contact.png') ;
 
@@ -113,7 +100,7 @@ class ChatList extends Component{
                 });
 
                 chatHistory[cid] = historyMessage;
-                that.renderHistroy(cid, cIndex);
+                that.renderHistroy(cid);
 
             })
             .catch(function(e){});
@@ -128,24 +115,31 @@ class ChatList extends Component{
         }
     }
 
+    historyClose(){
+        this.setState({
+            isHisVis: false
+        });
+    }
+
     render(){
 
-        var chatArr = [],
-            chatListsArr = this.state.chatLists,
-            markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'];
+        var state = this.state,
+            chatArr = [],
+            chatListsArr = state.chatLists,
+            markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
+            chatHistoryData = chatHistory[state.hisCid],
+            historyColorIndex = String2int(state.hisCid);
 
         for(var i = 0, l = chatListsArr.length; i < l; i++){
-            var cIndex = String2int(chatListsArr[i].cid);
 
-
-            if((this.state.filterMark !== 8) && this.state.filterMark !== chatListsArr[i].marked){
+            if((state.filterMark !== 8) && state.filterMark !== chatListsArr[i].marked){
                 continue;
             }
 
             chatArr.push(
-                <li key={i} data-cid={chatListsArr[i].cid} data-cIndex={cIndex}>
+                <li key={i} data-cid={chatListsArr[i].cid}>
                     <div className="chat-avatar fl">
-                        <span className={"avatar-icon avatar-icon-"+cIndex} >{chatListsArr[i].cid.substr(0,1).toUpperCase()}</span>
+                        <span className={"avatar-icon avatar-icon-"+String2int(chatListsArr[i].cid)} >{chatListsArr[i].cid.substr(0,1).toUpperCase()}</span>
                     </div>
                     <div className="chat-list-name fr">
                         <h2 className="text-overflow">U-{chatListsArr[i].cid.substr(0, 6).toUpperCase()}</h2>
@@ -160,9 +154,26 @@ class ChatList extends Component{
             <div className="contact-list">
                 <div className="mark-filter mark-color-list" onClick={this.filterMarked}>Filter :&nbsp;&nbsp;<span data-marked="8" className="mark-tag mark-tag-all">All</span>
                     {markArr.map((m ,i)=>
-                        <span key={i} data-marked={i+1} className={"mark-tag tag-"+m+(this.state.filterMark === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
+                        <span key={i} data-marked={i+1} className={"mark-tag tag-"+m+(state.filterMark === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
                     )}
                 </div>
+                <Modal
+                    title={state.hisTitle}
+                    visible={state.isHisVis}
+                    footer={null}
+                    onCancel={this.historyClose}
+                    className={"history-header history-header-"+historyColorIndex}
+                >
+                    <div className="message-lists chat-lists-history">
+                        {chatHistoryData && chatHistoryData.map((msg ,index)=>
+                            <ChatMessageItem key={index} ownerType={msg.msgType}
+                                ownerAvatar={ msg.msgAvatar ? msg.msgAvatar :
+                                    <div className={"avatar-color avatar-icon-"+historyColorIndex} >{state.hisCid.substr(0, 1).toUpperCase()}</div> }
+                                ownerText={msg.msgText} time={msg.msgTime}
+                            />
+                        )}
+                    </div>
+                </Modal>
                 <ul className="customer-lists" onClick={this.showHistory}>
                     {chatArr}
                 </ul>

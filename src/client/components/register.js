@@ -39,7 +39,12 @@ class RegisterForm extends Component {
                 .then((res)=>res.json())
                 .then(function(d){
                     if(200 === d.code){
-                        localStorage.setItem('csid', d.msg.csid);
+                        localStorage.setItem('avatar', '');
+                        localStorage.setItem('uuchat.csid', d.msg.csid);
+                        localStorage.setItem('uuchat.email', d.msg.email);
+                        localStorage.setItem('uuchat.name', d.msg.name);
+                        localStorage.setItem('uuchat.displayName', d.msg.displayName);
+                        localStorage.setItem('uuchat.avatar', d.msg.photo);
                         window.location.href = "/chat";
                     }else{
                         message.error(d.msg, 4);

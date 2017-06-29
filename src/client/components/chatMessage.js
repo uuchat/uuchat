@@ -164,11 +164,12 @@ class ChatMessage extends Component{
             <div className="chat-message">
                 <div className="message-title">U-{this.props.chatRoleName.toUpperCase()}
                     <div className="chat-tags fr" onClick={this.marked}>...
-                         <div className="more-options" style={{display: !this.state.isMarkShow ? 'none' : 'block'}} onClick={this.optionSelect}>
+                         <ul className="more-options" style={{display: !this.state.isMarkShow ? 'none' : 'block'}} onClick={this.optionSelect}>
                             <span className="caret"></span>
-                            <p data-type="m">Mark</p>
-                            <p data-type="t">Transfer</p>
-                        </div>
+                            <h3>List Actions <span className="fr options-close" onClick={this.markOk}>╳</span></h3>
+                            <li data-type="m">Mark</li>
+                            <li data-type="t">Transfer</li>
+                        </ul>
                         <Modal
                             title="Mark customer for favorite color"
                             okText="Ok"
