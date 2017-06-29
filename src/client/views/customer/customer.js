@@ -395,7 +395,17 @@
             if(data.msg.length > 0){
                 for(var i = 0, l = data.msg.length; i < l; i++){
                     if(data.msg[i].type !== 3 && data.msg[i].type !== 4){
-                        msgList += UUCT.tempMsgItem(data.msg[i].type, data.msg[i].msg, new Date(data.msg[i].createdAt));
+                        var s = data.msg[i].createdAt,
+                            d ;
+                        if(isNaN(new Date(s))){
+                             s = s.split(/\D/);
+                             d= new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
+
+
+                        }else{
+                            d = new Date(s);
+                        }
+                        msgList += UUCT.tempMsgItem(data.msg[i].type, data.msg[i].msg, d);
                     }
                 }
                 $('.chat-msg').innerHTML += msgList;
@@ -622,6 +632,12 @@
             });
         },
         socketSendMessage: function(msg){
+            UUCT.socketEmitMessage(msg.substr(0, 512));
+            if(msg.length > 512){
+                UUCT.socketEmitMessage(msg.substr(512, 1024));
+            }
+        },
+        socketEmitMessage: function(msg){
             UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(isTrue){
                 if(isTrue){
                     UUCT.msgTranslate({
