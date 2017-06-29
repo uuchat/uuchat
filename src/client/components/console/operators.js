@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import { Table, Breadcrumb, message, Button, Modal, Form, Input } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
 import ActionDropDown from './actionDropDown';
-import { sortFilterByProps, formatDate } from './utils';
+import { formatDate } from './utils';
 
 const Search = Input.Search;
 const Confirm = Modal.confirm;
@@ -13,7 +13,6 @@ class Operators extends Component {
         dataSource: [],
         StoreDataSource: [],
         visible: false,
-        sortedInfo: null,
         searchText: '',
     };
 
@@ -25,8 +24,9 @@ class Operators extends Component {
         }),
     }
 
-    handleChange = (pagination, filters, sorter) => this.setState({sortedInfo: sorter})
-    clearSorters = () => this.setState({sortedInfo: null})
+    handleChange = (pagination, filters, sorter) => {
+
+    }
     showModal = () => this.setState({visible: true})
 
     handleOk = (e) => {
@@ -188,25 +188,18 @@ class Operators extends Component {
     render() {
         const WrappedCustomerSuccessForm = Form.create()(CustomerSuccessForm);
 
-        let { dataSource, visible, confirmLoading, sortedInfo } = this.state;
-        sortedInfo = sortedInfo || {};
+        let { dataSource, visible, confirmLoading } = this.state;
 
         const columns = [
             {title: 'avatar', dataIndex: 'avatar', key: 'avatar',},
             {
                 title: 'email', dataIndex: 'email', key: 'email',
-                sorter: (a, b) => sortFilterByProps(a, b, 'email'),
-                sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
             },
             {
                 title: 'name', dataIndex: 'name', key: 'name',
-                sorter: (a, b) => sortFilterByProps(a, b, 'name'),
-                sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
             },
             {
                 title: 'createTime', dataIndex: 'createTime', key: 'createTime',
-                sorter: (a, b) => sortFilterByProps(a, b, 'createTime'),
-                sortOrder: sortedInfo.columnKey === 'createTime' && sortedInfo.order,
             },
             {
                 title: 'Action', dataIndex: '', key: 'csid',
@@ -235,7 +228,6 @@ class Operators extends Component {
                                 onCancel={this.handleCancel}
                                 ref={this.saveFormRef}
                                 />
-                            <Button onClick={this.clearSorters}>Clear sorters</Button>
                         </div>
                     </div>
 

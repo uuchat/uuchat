@@ -28,6 +28,8 @@ class Rates extends Component {
 
         let { month } = this.state;
 
+        if (!month) month = moment().format('YYYY-MM');
+
         let reportUrl = '/console/rates/report/month/' + month;
 
         _component.setState({loading: true});

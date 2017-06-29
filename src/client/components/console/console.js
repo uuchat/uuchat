@@ -18,6 +18,10 @@ class Console extends Component {
         collapsed: false,
         mode: 'inline',
         current: "dashboard",
+        csid: localStorage['uuchat.csid'] || '',
+        name: localStorage['uuchat.name'] || '',
+        displayName: localStorage['uuchat.displayName'] || '',
+        avatar: localStorage['uuchat.avatar'] || '',
     };
 
     onCollapse = (collapsed) => {
@@ -58,7 +62,15 @@ class Console extends Component {
 
     render() {
 
-        let { collapsed, mode, current } = this.state;
+        let { collapsed, mode, current, name, avatar } = this.state;
+
+        let userTitle = (<span style={{margin:'10px'}}>
+            <img className="user-avatar"
+                 src={ (avatar !=='null' && avatar) ? '/' + avatar : require('../../static/images/contact.png')}
+                 alt="avatar"
+                 title="avatar"/>
+            <a>{ name }</a>
+        </span>);
 
         return (
             <div>
@@ -114,7 +126,7 @@ class Console extends Component {
                         <Header style={{ background: '#fff', padding: 0, height: '47px' }}>
                             <div className="rightWarpper">
                                 <Menu mode="horizontal" onClick={this.handleHeaderClick}>
-                                    <SubMenu style={{ float: 'right' }} title={<span><Icon type="user" />admin</span>}>
+                                    <SubMenu style={{ float: 'right' }} title={ userTitle }>
                                         <Menu.Item key="logout">
                                             Sign out
                                         </Menu.Item>
