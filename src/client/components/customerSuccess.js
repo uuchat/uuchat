@@ -706,10 +706,11 @@ class CustomerSuccess extends Component{
                             </Col>
                             <Col span={18} className="user-avatar">
                                  <div className="user-avatar-box">
-                                    <a href="" className="login-user">{state.csName || state.csEmail}</a>&nbsp;&nbsp;|&nbsp;&nbsp;
-                                    <a href="" className="login-out" onClick={this.loginOut}>[Login Out]</a>
-                                    <img src={ (state.csAvatar !=='null' && state.csAvatar) ? '/'+state.csAvatar
-                                            : require('../static/images/contact.png')} alt="avatar" title="avatar" />
+                                     <img src={ (state.csAvatar !=='null' && state.csAvatar) ? '/'+state.csAvatar
+                                         : require('../static/images/contact.png')} alt="avatar" title="avatar" />&nbsp;&nbsp;
+                                     <a href="" className="logout" onClick={this.loginOut}>
+                                         LOGOUT &nbsp;{state.csName || state.csEmail}
+                                     </a>
                                 </div>
                             </Col>
                         </Row>
