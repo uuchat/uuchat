@@ -66,7 +66,7 @@ SocketCustomerSuccessEvents.refreshOnlineInfo = function() {
         customerList.dataInfoLog();
     }
 
-    if (customerSuccessList.onlineNum() == 0) return;
+    if (customerSuccessList.onlineNum() === 0) return;
 
     var list = customerSuccessList.list();
 
@@ -90,7 +90,7 @@ SocketCustomerSuccessEvents.refreshOnlineInfo = function() {
 
 SocketCustomerSuccessEvents.message = function(cid, msg, fn) {
     // null check ;
-    if (_.isUndefined(msg) || msg.length == 0) {
+    if (_.isUndefined(msg) || msg.length === 0) {
         winston.info("message is empty!");
         fn(false);
         return;
@@ -106,7 +106,6 @@ SocketCustomerSuccessEvents.message = function(cid, msg, fn) {
     if (!_.isEmpty(customer)) {
         customer.socket.emit('cs.message', customer.csid, msg);
         // add message to DB;
-        //socketDao.customerSuccessMsg(cid, customer.csid, msg);
         var data = {};
         data.cid = cid;
         data.csid = customer.csid;
@@ -120,11 +119,9 @@ SocketCustomerSuccessEvents.message = function(cid, msg, fn) {
         });
         fn(true);
     } else {
-
         winston.info("customer is offline;");
         fn(false);
     }
-
 };
 
 SocketCustomerSuccessEvents.marked = function(cid, csid, marked, fn) {
@@ -192,7 +189,6 @@ SocketCustomerSuccessEvents.dispatch = function(to, cid, fn) {
         });
 
         var userInfo = socketAdapter.reqParamsFormSocket(cid);
-        winston.info(userInfo);
         //to server
         customerSuccess.socket.emit('cs.dispatch', cid, customer.name, userInfo);
         //to client
@@ -260,18 +256,9 @@ SocketCustomerSuccessEvents.logout = function(socket, csid, fn) {
  */
 SocketCustomerSuccessEvents.disconnect = function(csid) {
     logger.info("customer success = %s disconnect start!", csid);
-    //logger.info("offline all user");
-    //disconnect(csid);
-
-    //logger.info("delete customer success info");
-    //customerSuccessList.delete(csid);
-
     customerSuccessList.get(csid).socket = {}; // set socket null;
-
     logger.info("refresh online info");
-
     this.refreshOnlineInfo();
-
     logger.info("customer success disconnected!");
 };
 

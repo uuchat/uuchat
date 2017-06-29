@@ -29,11 +29,10 @@ var SocketCustomerEvents = {};
 SocketCustomerEvents.select = function(socket, cid, name, fn) {
     var customer = customerList.get(cid);
     if (!_.isEmpty(customer)) { // has chat in other places;
-        var csid = customer.csid;
-        var customerSuccess = customerSuccessList.get(csid);
-        if (!_.isEmpty(customerSuccess)) {
+        var _customerSuccess = customerSuccessList.get(customer.csid);
+        if (!_.isEmpty(_customerSuccess)) {
             customer.socket = socket;
-            selectAfter(cid, customerSuccess, csid, fn);
+            selectAfter(cid, _customerSuccess, customer.csid, fn);
         }
         logger.log("customer = %s has online on other page", cid);
         //fn(3, {"code": 1001, "msg": "has online on other page!"});
@@ -86,7 +85,7 @@ function selectAfter(cid, customerSuccess, csid, fn) {
 
 SocketCustomerEvents.message = function(cid, msg, fn) {
     //null check
-    if (_.isUndefined(msg) || msg.length == 0) {
+    if (_.isUndefined(msg) || msg.length === 0) {
         winston.info("message is empty!");
         fn(false);
         return;
@@ -149,7 +148,7 @@ SocketCustomerEvents.rate = function(cid, value, ip, fn) {
 };
 
 SocketCustomerEvents.lineUpNotify = function() {
-    if (queue.length == 0) {
+    if (queue.length === 0) {
         return;
     }
     var list = customerList.list(); //TODO

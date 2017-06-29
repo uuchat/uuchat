@@ -1,9 +1,7 @@
 'use strict';
 
 var _ = require('lodash');
-/** @member {Object} */
 var nconf = require('nconf');
-/** @member {Object} */
 var winston = require('winston');
 var async = require('async');
 var cookieParser = require('cookie-parser')(nconf.get('socket.io:secretKey'));
