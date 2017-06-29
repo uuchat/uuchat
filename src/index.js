@@ -185,6 +185,7 @@ function setupExpress(app, callback) {
     app.use('/static/images', express.static(path.join(__dirname, './client/static/images')));
     app.use('/content/upload', express.static(path.join(__dirname, '../content/upload')));
     app.use('/content/avatar', express.static(path.join(__dirname, '../content/avatar')));
+    app.use('/public', express.static(path.join(__dirname, '../content/html')));
 
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({ extended: false }));
