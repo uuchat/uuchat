@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
-import { Layout, Menu, Icon, message } from 'antd';
+import { Layout, Menu, Icon, message, Button } from 'antd';
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
@@ -43,7 +43,11 @@ class Console extends Component {
             case "logout":
                 this.logout();
                 break;
+            case "whatIsNew":
+                window.open('/public/changelog.html');
+                break;
             default:
+                break;
         }
     };
 
@@ -64,12 +68,13 @@ class Console extends Component {
 
         let { collapsed, mode, current, name, avatar } = this.state;
 
-        let userTitle = (<span style={{margin:'10px'}}>
+        let userTitle = (<span style={{ fontSize: 12 }}>
             <img className="user-avatar"
                  src={ (avatar !=='null' && avatar) ? '/' + avatar : require('../../static/images/contact.png')}
                  alt="avatar"
                  title="avatar"/>
-            <a>{ name }</a>
+            { name } &nbsp;
+            <Icon style={{color: '#108ee9'}} type="down"/>
         </span>);
 
         return (
@@ -123,15 +128,29 @@ class Console extends Component {
                         </Menu>
                     </Sider>
                     <Layout>
-                        <Header style={{ background: '#fff', padding: 0, height: '47px' }}>
-                            <div className="rightWarpper">
-                                <Menu mode="horizontal" onClick={this.handleHeaderClick}>
-                                    <SubMenu style={{ float: 'right' }} title={ userTitle }>
-                                        <Menu.Item key="logout">
-                                            Sign out
-                                        </Menu.Item>
-                                    </SubMenu>
-                                </Menu>
+                        <Header style={{ background: '#fff', padding: 0, height: '47px', lineHeight: '47px' }}>
+                            <div style={{ float:'right' }}>
+                                <div style={{ display:'inline-block' }}>
+                                    <Button type="primary" onClick={(e)=> window.location.href='/chat'}>
+                                        launch chat
+                                    </Button>
+                                    <span style={{ borderLeft:'1px solid #a7def1',width:'1px',marginLeft:'20px' }}>
+                                    </span>
+                                </div>
+                                <div className="rightWarpper">
+                                    <Menu mode="horizontal" onClick={this.handleHeaderClick}>
+                                        <SubMenu title={ userTitle }>
+                                            <Menu.Item key="whatIsNew">
+                                                <Icon style={{fontSize:18, color: '#8fc9fb'}} type="bell"/>
+                                                What's new
+                                            </Menu.Item>
+                                            <Menu.Item key="logout">
+                                                <Icon style={{fontSize:18, color: '#d4572f'}} type="poweroff"/>
+                                                Sign out
+                                            </Menu.Item>
+                                        </SubMenu>
+                                    </Menu>
+                                </div>
                             </div>
                         </Header>
                         <Content style={{ margin: '0 16px' }}>

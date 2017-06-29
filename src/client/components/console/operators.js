@@ -190,8 +190,18 @@ class Operators extends Component {
 
         let { dataSource, visible, confirmLoading } = this.state;
 
+        let avatarRender = (avatar) =>
+            (<img className="user-avatar"
+                  src={ (avatar !=='null' && avatar) ? '/' + avatar : require('../../static/images/contact.png')}
+                  alt="avatar"
+                  title="avatar"/>)
+
+
         const columns = [
-            {title: 'avatar', dataIndex: 'avatar', key: 'avatar',},
+            {
+                title: 'avatar', dataIndex: 'avatar', key: 'avatar',
+                render: avatarRender,
+            },
             {
                 title: 'email', dataIndex: 'email', key: 'email',
             },
