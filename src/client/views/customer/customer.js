@@ -43,9 +43,8 @@
             addClass(obj, cls);
         }
     }
-
     var UUCT = {
-        domain: 'http://127.0.0.1:9688',
+        domain: (w.UUCHAT && w.UUCHAT.domain)|| '',
         socket: null,
         chat: {
             cid: '',
@@ -88,6 +87,36 @@
                 isIE = UA.indexOf('MSIE') > -1,
                 v = isIE ? /\d+/.exec(UA.split(';')[1]) : 'no ie';
             return v <= 8;
+        },
+        getStringLength: function(str){
+            var realLength = 0, len = str.length, charCode = -1;
+            for (var i = 0; i < len; i++) {
+                charCode = str.charCodeAt(i);
+                if (charCode >= 0 && charCode <= 128) realLength += 1;
+                else realLength += 2;
+            }
+            return realLength;
+        },
+        cutStr: function(str, star, len){
+            var str_length = star,
+                str_len = star,
+                str_cut = new String(),
+                str_len = str.length;
+
+            for (var i = star; i < str_len; i++) {
+                var a = str.charAt(i);
+                str_length++;
+                if (escape(a).length > 4) {
+                    str_length++;
+                }
+                str_cut = str_cut.concat(a);
+                if (str_length >= len) {
+                    return str_cut;
+                }
+            }
+            if (str_length < len) {
+                return str;
+            }
         },
         createCT: function(){
             var ct = this.template(),
@@ -249,7 +278,7 @@
             str += '<div class="chat-send">';
             str += '<div class="chat-send-text">';
             str += '<pre class="send-pre"></pre>';
-            str += '<textarea placeholder="Input text and Press Enter" class="chat-send-area"></textarea>';
+            str += '<textarea placeholder="Input text and Press Enter (max 256 words)" class="chat-send-area" maxlength="256"></textarea>';
             str += '<div class="chat-send-btns">';
             str += emj;
             str += '<label class="chat-send-btn chat-emoji-btn"></label>';
@@ -500,6 +529,10 @@
                    var data = new FormData();
                     data.append('image', e.target.files[0]);
 
+                    if(!e.target.files[0]){
+                        return false;
+                    }
+
                    UUCT.ajax({
                        url: UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image',
                        type:'POST',
@@ -632,9 +665,9 @@
             });
         },
         socketSendMessage: function(msg){
-            UUCT.socketEmitMessage(msg.substr(0, 512));
-            if(msg.length > 512){
-                UUCT.socketEmitMessage(msg.substr(512, 1024));
+            UUCT.socketEmitMessage(UUCT.cutStr(msg, 0, 256));
+            if(UUCT.getStringLength(msg) > 256){
+                UUCT.socketEmitMessage(UUCT.cutStr(msg, 256, 256));
             }
         },
         socketEmitMessage: function(msg){
@@ -647,7 +680,7 @@
                 }else{
                     UUCT.msgTranslate({
                         role: 1,
-                        msg: 'The customerSuccess is offline'
+                        msg: 'The customerSuccess is offline!You can try it later'
                     });
                 }
             });

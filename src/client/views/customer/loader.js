@@ -6,7 +6,7 @@
         i = (iframe.frameElement || iframe).style;
 
     i.cssText = "width:0px;height:0px;position:absolute;left:0px;bottom:0px;border:none;";
-    iframe.setAttribute("src", "http://127.0.0.1:9688/s" + '?r=' + top.location);
+    iframe.setAttribute("src", u.UUCHAT.domain + "/s" + '?r=' + top.location);
     c.body.appendChild(iframe);
 
     if(u.attachEvent){
@@ -21,8 +21,8 @@
 
         s.type = "text/javascript";
         s.async=true;
-        s.src = h;
+        s.src = u.UUCHAT.domain + h;
         x.parentNode.insertBefore(s,x);
     }
 
-})(window, document, "http://127.0.0.1:9688/static/js/uuchat.js");
+})(window, document, "/static/js/uuchat.js");

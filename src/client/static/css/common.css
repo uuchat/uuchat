@@ -110,6 +110,13 @@ input, select {
     display: inline-block;
     float:right;
 }
+.cfix:before, .cfix:after {
+    content:"";
+    display:table;
+}
+.cfix:after {
+    clear:both;
+}
 .text-overflow{
     overflow: hidden;
     white-space: nowrap;

@@ -7,14 +7,21 @@
 </head>
 <body>
 <!-- begin uuchat code  -->
-<script type="text/javascript">
+<script>
     ;(function(u, c, h){
+        u.UUCHAT = (function(){
+            return {
+                domain: 'http://127.0.0.1:9688',
+                src: h
+            };
+        })();
         var s = c.createElement('script'),
-            r=c.getElementsByTagName('script')[0];
+                r=c.getElementsByTagName('script')[0];
         s.async = 1;
-        s.src = h;
+        s.src = u.UUCHAT.domain+h;
         r.parentNode.insertBefore(s,r);
-    })(window, document, "http://127.0.0.1:9688/static/js/loader.js");
+
+    })(window, document, "/static/js/loader.js", );
 </script>
 <!-- end   uuchat code  -->
 

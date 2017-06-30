@@ -787,16 +787,11 @@
     overflow: auto;
 }
 #UUCHAT-Search .search-user-info{
+    margin: 0 auto;
+    width: 800px;
     text-align: center;
     height: 40px;
     line-height: 40px;
-}
-#UUCHAT-Search .search-user-info img{
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-    box-shadow: 0 0 2px 2px #fff;
-
 }
 #UUCHAT-Search .search-list li{
     padding: 10px;
@@ -810,13 +805,32 @@
 #UUCHAT-Search .search-list .search-avatar{
     width: 60px;
     height: 60px;
+    line-height: 60px;
     border: 1px solid #ccc;
     border-radius: 100%;
+    text-align: center;
+    color: #fff;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform:uppercase;
 }
 #UUCHAT-Search .search-list .search-text{
     width: 600px;
     height: 60px;
-    border: 1px solid #ccc;
+    line-height: 20px;
+    word-break: break-all;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    display: box;
+    line-clamp: 2;
+    box-orient: vertical;
+}
+
+#UUCHAT-Search .search-list .more-search{
+    text-align: center;
 }
 
 @media screen and (min-width: 768px) and (max-width: 979px){
@@ -879,6 +893,10 @@
     }
     .customerSuccess-right{
         display: none;
+    }
+    /* search */
+    .search-main{
+
     }
 }
 
