@@ -39,6 +39,16 @@
     padding-right: 16px;
 }
 
+#console-body .rightWarpper .ant-menu-root:hover{
+    color: #108ee9;
+    background-color: #8fc9fb;
+}
+
+#console-body .rightWarpper .ant-menu-item:hover{
+    color: #108ee9;
+    background-color: #8fc9fb;
+}
+
 .numberCard {
     padding: 32px;
     margin-bottom: 24px;

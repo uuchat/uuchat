@@ -15,6 +15,8 @@ const Option = Select.Option;
 const initPagination = [0, 10, 0, true];
 
 class Transcripts extends Component {
+    lock = false;
+
     state = {
         csSource: [],
         dataSource: [],
@@ -62,7 +64,7 @@ class Transcripts extends Component {
 
         _component.setState({spinning: true});
 
-        console.log(queryUrl);
+        //console.log(queryUrl);
 
         fetch('/customersuccesses')
             .then((res) => res.json())
@@ -104,37 +106,63 @@ class Transcripts extends Component {
                     message.error(data.msg, 4);
                 }
             }).catch((e) => message.error(e.message, 4))
-            .then(function () {
-                _component.setState({spinning: false});
-            });
+            .then(() => this.setState({spinning: false}))
     }
 
 
-    componentDidMount() {
-        //console.log('transcript component did mount');
-        this.setState({
-            pagination: Object.assign([], initPagination),
-        }, this.getDataSource);
-        window.addEventListener('scroll', this.handleScroll.bind(this));
-    }
+    handleScroll = (e) => {
+        const { pagination,spinning } = this.state;
+        let deta = document.body.clientHeight + document.body.scrollTop + 80 - document.body.scrollHeight;
+        //console.log('lock', this.lock, 'spinning', spinning, 'loading', pagination[3], 'deta', deta);
 
-    componentWillUnmount() {
-        window.removeEventListener('scroll', this.handleScroll.bind(this));
-    }
-
-    handleScroll(e) {
-        const { pagination, spinning } = this.state;
-
-        if (!spinning && pagination[3] && (document.body.clientHeight + document.body.scrollTop + 80 - document.body.scrollHeight >= 0)) {
-            //console.log('fetch data');
+        if (!this.lock && !spinning && pagination[3] && (deta >= 0)) {
+            //console.log(new Date(), 'update data source>>>>>');
+            this.lock = true;
+            this.detachScrollEvent();
             this.getDataSource();
         }
     }
 
+
+    attachScrollEvent = () => {
+        window.addEventListener('scroll', this.handleScroll, false);
+        window.addEventListener('resize', this.handleScroll, false);
+
+        this.handleScroll();
+    }
+
+    detachScrollEvent = (next) => {
+        this.lock = false;
+        window.removeEventListener('scroll', this.handleScroll, false);
+        window.removeEventListener('resize', this.handleScroll, false);
+    }
+
+    componentDidMount() {
+        this.attachScrollEvent();
+    }
+
+    componentWillUnmount() {
+        this.detachScrollEvent();
+    }
+
+    componentWillUpdate(nextProps, nextState) {
+        //console.log('componentWillUpdate');
+        //console.log(this.state.dataSource.length, nextState.dataSource.length);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+        //console.log('componentDidUpdate');
+        //console.log(this.state.dataSource.length, prevState.dataSource.length);
+        setTimeout(() => {
+            this.attachScrollEvent();
+        }, 0);
+    }
+
+
     handleChange = (pagination, filters, sorter) => {
         //console.log({pagination, sorter});
 
-        this.setState({pagination, sorter}, this.getDataSource);
+        //this.setState({pagination, sorter}, this.getDataSource);
     }
 
     handleSelectChange = (key, value) => {
