@@ -1,9 +1,7 @@
-/**
- * Created by jianzhiqiang on 2017/5/16.
- */
 "use strict";
 
 var winston = require('winston');
+var _ = require('lodash');
 var path = require('path');
 var fs = require('fs');
 var async = require('async');
@@ -61,6 +59,9 @@ function uploadImage(req, res, next) {
                     next(new Error('upload-file-has-error'));
                 }
                 var fileName = req.file.filename;
+                if (_.isUndefined(fileName)) {
+                    next(new Error('upload-file-name-undefined'));
+                }
                 var originalname = req.file.originalname;
                 next(null, fileName, originalname);
             });
@@ -117,6 +118,10 @@ function uploadImage(req, res, next) {
                 case 'resize-file-has-error':
                     winston.error(err.message);
                     res.json({code: 5005, msg: err.message});
+                    break;
+                case 'upload-file-name-undefined':
+                    winston.error(err.message);
+                    res.json({code: 5006, msg: err.message});
                     break;
                 default:
                     winston.error(err);
