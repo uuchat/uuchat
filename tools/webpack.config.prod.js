@@ -80,7 +80,10 @@ module.exports = {
             paths.appIndexJs
         ],
         'console': [
-            paths.consoleIndexJS,
+            paths.consoleIndexJS
+        ],
+        'search': [
+            paths.searchJS
         ]
     },
     output: {
@@ -258,6 +261,30 @@ module.exports = {
                 minifyURLs: true
             }
         }),
+        new HtmlWebpackPlugin({
+            inject: true,
+            filename: 'search.html',
+            template: paths.searchHtml,
+            chunks: ['vender', 'search', 'common'],
+            chunksSortMode: function (chunk1, chunk2) {
+                var order = ['common', 'vender', 'search'];
+                var order1 = order.indexOf(chunk1.names[0]);
+                var order2 = order.indexOf(chunk2.names[0]);
+                return order1 - order2;
+            },
+            minify: {
+                removeComments: true,
+                collapseWhitespace: true,
+                removeRedundantAttributes: true,
+                useShortDoctype: true,
+                removeEmptyAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                keepClosingSlash: true,
+                minifyJS: true,
+                minifyCSS: true,
+                minifyURLs: true
+            }
+        }),
         new CopyWebpackPlugin([
             {
                 from: paths.appSrc + '/client/static/css/common.css',
@@ -283,9 +310,9 @@ module.exports = {
                 from: paths.customerJS,
                 to: paths.appBuild + '/static/js/uuchat.js',
                 transform: function (content, absoluteFrom) {
-                    var data = (content + '').replace(/'..\/..'\+/g, '');
-                    var code = data.replace(/127.0.0.1:9688/g,
-                        nconf.get('app:address') + ':' + nconf.get('app:port'));
+                    var code = (content + '').replace(/'..\/..'\+/g, '');
+                    // var code = data.replace(/127.0.0.1:9688/g,
+                    //     nconf.get('app:address') + ':' + nconf.get('app:port'));
                     var result = UglifyJS.minify(code, {fromString: true});
                     if (result.error) {
                         result = UglifyJS.minify(code); //UglifyJS3
@@ -297,9 +324,9 @@ module.exports = {
                 from: paths.customerLoaderJS,
                 to: paths.appBuild + '/static/js/loader.js',
                 transform: function (content, absoluteFrom) {
-                    var data = (content + '');
-                    var code = data.replace(/127.0.0.1:9688/g,
-                        nconf.get('app:address') + ':' + nconf.get('app:port'));
+                    var code = (content + '');
+                    //var code = data.replace(/127.0.0.1:9688/g,
+                    //    nconf.get('app:address') + ':' + nconf.get('app:port'));
                     var result = UglifyJS.minify(code, {fromString: true});
                     if (result.error) {
                         result = UglifyJS.minify(code); //UglifyJS3

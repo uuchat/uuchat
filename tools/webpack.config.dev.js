@@ -70,7 +70,12 @@ module.exports = {
         'console': [
             paths.consoleIndexJS,
             hotMiddlewareScript
-        ]
+        ],
+        'search': [
+            require.resolve('./polyfills'),
+            paths.searchJS,
+            hotMiddlewareScript
+        ],
     },
     output: {
         // Next line is not used in dev but WebpackDevServer crashes without it:
@@ -215,6 +220,12 @@ module.exports = {
             template: paths.consoleHtml,
             chunks: ['console']
         }),
+        new HtmlWebpackPlugin({
+            inject: true,
+            filename: 'search.html',
+            template: paths.searchHtml,
+            chunks: ['search']
+        }),
         new CopyWebpackPlugin([
             {
                 from: paths.appSrc + '/client/static/css/common.css',
@@ -233,19 +244,20 @@ module.exports = {
                 to: paths.appBuild + '/static/js/uuchat.js',
                 transform: function (content, absoluteFrom) {
                     var result = content + '';
-                    var data = result.replace(/'..\/..'\+/g, '');
-                    return data.replace(/127.0.0.1:9688/g,
-                        nconf.get('app:address') + ':' + nconf.get('app:port'));
+                    //var data = result.replace(/'..\/..'\+/g, '');
+                    // return data.replace(/127.0.0.1:9688/g,
+                    //     nconf.get('app:address') + ':' + nconf.get('app:port'));
+                    return result.replace(/'..\/..'\+/g, '');
                 }
             },
             {
                 from: paths.customerLoaderJS,
                 to: paths.appBuild + '/static/js/loader.js',
-                transform: function (content, absoluteFrom) {
-                    var result = content + '';
-                    return result.replace(/127.0.0.1:9688/g,
-                        nconf.get('app:address') + ':' + nconf.get('app:port'));
-                }
+                // transform: function (content, absoluteFrom) {
+                //     var result = content + '';
+                //     return result.replace(/127.0.0.1:9688/g,
+                //         nconf.get('app:address') + ':' + nconf.get('app:port'));
+                // }
             },
             {
                 from: paths.customerHtml,

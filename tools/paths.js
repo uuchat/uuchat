@@ -77,6 +77,8 @@ module.exports = {
     customerHtml: resolveApp('src/client/views/customer/uuchat.html'),
     customerJS: resolveApp('src/client/views/customer/customer.js'),
     customerLoaderJS: resolveApp('src/client/views/customer/loader.js'),
+    searchHtml: resolveApp('src/client/views/customerSuccess/search.html'),
+    searchJS: resolveApp('src/client/views/customerSuccess/search.js'),
     yarnLockFile: resolveApp('yarn.lock'),
     testsSetup: resolveApp('src/setupTests.js'),
     appNodeModules: resolveApp('node_modules'),
