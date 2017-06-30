@@ -128,6 +128,10 @@ function baseHtmlRoute(app, middlewareDev) {
         var html = path.join(__dirname, '../build/customer.html');
         htmlRender(middlewareDev, res, html);
     });
+    app.get('/search', function response(req, res) {
+        var html = path.join(__dirname, '../build/search.html');
+        htmlRender(middlewareDev, res, html);
+    });
     app.get('/console', function response(req, res) {
         var html = path.join(__dirname, '../build/console.html');
         htmlRender(middlewareDev, res, html);
