@@ -127,9 +127,33 @@ Message.listAndCount = function (condition, order, pageSize, pageNum, callback) 
     });
 };
 
+Message.search = function (condition, order, pageSize, pageNum, callback) {
+    order = order || [['createdAt', 'DESC']];
+    pageSize = pageSize || 10;
+    pageNum = pageNum || 0;
+
+    var options = {
+        attributes: [[models.Sequelize.fn('DISTINCT', models.Sequelize.col('cid')), 'cid'], 'msg'],
+        where: condition,
+        order: order,
+        offset: pageSize * pageNum,
+        limit: pageSize
+    }
+
+    return models.Message.findAll(options).then(function (data) {
+        jsonToObj(data);
+        return callback(null, data);
+
+    }).catch(function (err) {
+        logger.error(err);
+
+        return callback(err);
+    });
+};
+
 
 function jsonToObj(data) {
-    _.forEach(data, function(value){
+    _.forEach(data, function (value) {
         if (value.type == 4) {
             value.msg = JSON.parse(value.msg);
         }

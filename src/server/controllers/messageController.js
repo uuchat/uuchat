@@ -4,6 +4,7 @@
 "use strict";
 
 var _ = require('lodash');
+var moment = require('moment');
 var Message = require('../database/message');
 var utils = require('../utils');
 
@@ -64,8 +65,10 @@ messageController.delete = function (req, res, next) {
 };
 
 messageController.search = function (req, res, next) {
-    if(!req.query.msg) return res.json({code:200, msg:[]});
+    if (!req.query.msg) return res.json({code: 200, msg: []});
+
     var condition = {
+        csid: req.params.csid,
         msg: {
             '$like': '%' + req.query.msg + '%',
             '$notLike': 'content/upload/%',
@@ -75,11 +78,37 @@ messageController.search = function (req, res, next) {
     var order = [['createdAt', 'DESC']];
 
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
-    var pageSize = 20;
+    var pageSize = 5;
 
-    Message.list(condition, order, pageSize, pageNum, function (err, messages) {
+    return Message.search(condition, order, pageSize, pageNum, function (err, messages) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: messages});
+        return res.json({code: 200, msg: messages});
+    });
+};
+
+messageController.searchLatestMonth = function (req, res, next) {
+    if (!req.query.msg) return res.json({code: 200, msg: []});
+
+    var condition = {
+        csid: req.params.csid,
+        msg: {
+            '$like': '%' + req.query.msg + '%',
+            '$notLike': 'content/upload/%',
+        },
+        createdAt:{
+            '$gte':moment().subtract(1, 'month'),
+        }
+    };
+
+    var pageNum = utils.parsePositiveInteger(req.query.pageNum);
+    var pageSize = 100;
+
+    var order = [['createdAt', 'DESC']];
+
+    return Message.search(condition, order, pageSize, pageNum, function (err, messages) {
+        if (err) return next(err);
+
+        return res.json({code: 200, msg: messages});
     });
 };

@@ -41,14 +41,16 @@ function customerSessionRoutes(app, middleware, controllers) {
 function messageRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
 
-    app.get('/messages', controllers.messageController.search);
     app.get('/messages/:uuid', controllers.messageController.get);
     app.delete('/messages/:uuid', controllers.messageController.delete);
     app.get('/messages/customer/:cid', controllers.messageController.list);
     app.get('/messages/customer/:cid/cs/:csid', controllers.messageController.list);
     app.post('/messages/customer/:cid/cs/:csid', controllers.messageController.create);
 
-    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.whiteListOpt()) , middleware.upload.uploadImage,
+    app.get('/messages/cs/:csid/search', controllers.messageController.search);
+    app.get('/messages/cs/:csid/search/latestmonth', controllers.messageController.searchLatestMonth);
+
+    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.whiteListOpt()), middleware.upload.uploadImage,
         controllers.customerSessionController.checkMonthlyUploadSize);
 }
 
