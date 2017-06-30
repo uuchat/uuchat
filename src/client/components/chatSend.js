@@ -5,6 +5,7 @@
 import React, {Component} from 'react';
 import { Input, Icon, Upload, message, Modal, Progress } from 'antd';
 import EmojiPicker from './chatEmoji';
+import {cutStr} from './utils';
 
 /**
  * ChatSend Component
@@ -61,10 +62,7 @@ class ChatSend extends Component{
             msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
         if(msgVal.length > 0){
-            this.props.sendMessage(msg.substr(0, 512));
-            if(msgVal.length > 512){
-                this.props.sendMessage(msg.substr(512, 1024));
-            }
+            this.props.sendMessage(cutStr(msg, 0, 256));
         }
         this.setState({
             isEmojiShow: false,
@@ -202,6 +200,7 @@ class ChatSend extends Component{
                     value={this.state.textereaValue}
                     onFocus={this.textFocusHandle}
                     onBlur={this.blurHandle}
+                    maxLength="256"
                     />
                 </div>
             </div>

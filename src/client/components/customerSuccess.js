@@ -354,14 +354,21 @@ class CustomerSuccess extends Component{
      *
      *  Server disconenct or network disconnection handle
      *
-     *
      */
     customerSuccessDisconnect(){
 
     }
 
-    onSearchHandler(val){
-
+    /***
+     *
+     * onSearchHandler
+     */
+    onSearchHandler(e){
+        console.log('|------ onSearchHandler ---', e, );
+        if(e.target.value === ''){
+            e.preventDefault();
+            return false;
+        }
     }
 
     /***
@@ -719,10 +726,13 @@ class CustomerSuccess extends Component{
                         <Col xs={24} sm={7} md={7} lg={6} xl={6}>
                             <div className="customerSuccess-left">
                                 <div className="left-menu">
-                                   <Input.Search
-                                        placeholder=""
-                                        onSearch={value =>{ this.onSearchHandler(value)}}
-                                    />
+                                   <form method="get" action="/search" target="_blank" className="">
+                                       <Input.Search
+                                            placeholder="Type text and enter"
+                                            onPressEnter={this.onSearchHandler}
+                                            name="search"
+                                        />
+                                    </form>
                                 </div>
                                 <Tabs defaultActiveKey="1" onTabClick={this.menuIconClick}>
                                     <TabPane tab={<ChatIcon name={state.menuIcons.chat} />} key="1">
