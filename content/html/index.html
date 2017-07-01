@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>uuchat - A powerful customer success platform !</title>
+	<meta name="author" content="Alvaro Trigo Lopez" />
+	<meta name="description" content="fullPage demo easing effect." />
+	<meta name="keywords"  content="fullpage,jquery,demo,easing,effect,jqueui" />
+	<meta name="Resource-type" content="Document" />
+
+
+	<link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.4/jquery.fullpage.min.css" />
+	<style>
+        body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,
+        form,fieldset,input,textarea,p,blockquote,th,td {
+            padding: 0;
+            margin: 0;
+        }
+        a{
+            text-decoration:none;
+        }
+        table {
+            border-spacing: 0;
+        }
+        fieldset,img {
+            border: 0;
+        }
+        address,caption,cite,code,dfn,em,strong,th,var {
+            font-weight: normal;
+            font-style: normal;
+        }
+        strong{
+            font-weight: bold;
+        }
+        ol,ul {
+            list-style: none;
+            margin:0;
+            padding:0;
+        }
+        caption,th {
+            text-align: left;
+
+        }
+        h1,h2,h3,h4,h5,h6 {
+            font-weight: normal;
+            font-size: 100%;
+            margin:0;
+            padding:0;
+            color:#444;
+        }
+        q:before,q:after {
+            content:'';
+        }
+        abbr,acronym { border: 0;
+        }
+
+
+        /* Custom CSS
+         * --------------------------------------- */
+        body{
+            font-family: arial,helvetica;
+            color: #333;
+            color: rgba(0,0,0,0.5);
+        }
+        h1{
+            font-size: 6em;
+        }
+		h2{
+			font-size: 4em;
+		}
+		h3{
+			font-size: 2em;
+			text-align: left;
+			width: 100%;
+		}
+        p{
+            font-size: 2em;
+        }
+		.intro {
+			width: 60%;
+			float: right;
+			margin: 0 15px;
+		}
+        .intro p{
+            width: 100%;
+            margin: 8px auto;
+            font-size: 1.5em;
+			text-align: left;
+        }
+        .section{
+            text-align:center;
+        }
+		.section::before
+		{
+			content: '';
+			position: fixed;
+			top: 0; right: 0; bottom: 0; left: 0;
+			-webkit-filter: blur(5px);
+			-moz-filter: blur(5px);
+			-ms-filter: blur(5px);
+			-o-filter: blur(5px);
+			filter: blur(5px);
+			filter: progid:DXImageTransform.
+			Microsoft.Blur(PixelRadius=4, MakeShadow=false);
+		}
+		.li_solid {
+			border: #ccc 1px solid;
+		}
+        #menu li {
+            display:inline-block;
+            margin: 0px 10px;
+            color: #2980b9;
+            background:#fff;
+            -webkit-border-radius: 9px;
+            border-radius: 9px;
+			vertical-align: middle;
+        }
+        #menu li.active{
+            background:#ccc;
+            color: #fff;
+        }
+        #menu li a{
+            text-decoration:none;
+            color: #2980b9;
+        }
+		#menu li img{
+			margin-top: 5px;
+		}
+        #menu li.active a:hover{
+            color: #000;
+        }
+        #menu li:hover{
+            background: rgba(255,255,255, 0.6);
+        }
+        #menu li a,
+        #menu li.active a{
+            padding: 9px 18px;
+            display:block;
+        }
+        #menu li.active a{
+            color: #fff;
+        }
+        #menu{
+            position:fixed;
+            top:0;
+            left:0;
+            height: 55px;
+			background: #fff;
+            z-index: 70;
+            width: 100%;
+            padding: 0;
+            margin:0;
+        }
+        #infoMenu ul{
+            padding: 0 40px;
+        }
+        #infoMenu li a{
+            display: block;
+            margin: 0 22px 0 0;
+            color: #333;
+        }
+        #infoMenu li a:hover{
+            text-decoration:underline;
+        }
+        #infoMenu li{
+            display:inline-block;
+            position:relative;
+        }
+
+    </style>
+
+	<!--[if IE]>
+		<script type="text/javascript">
+			 var console = { log: function() {} };
+		</script>
+	<![endif]-->
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
+
+	<script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.4/vendors/scrolloverflow.min.js"></script>
+
+	<script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.4/jquery.fullpage.min.js"></script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$('#fullpage').fullpage({
+                verticalCentered: true,
+				sectionsColor: ['#2980b9', '#16a085', '#27ae60', '#FFF'],
+				anchors: ['about', 'features', 'hire', 'footer'],
+				menu: '#menu',
+			});
+
+		});
+	</script>
+
+</head>
+<body>
+
+<ul id="menu">
+	<li><img alt="uuchat" src="http://i.imgur.com/endrrcC.png" /></li>
+	<li class="li_solid" data-menuanchor="about"><a href="#about">About</a></li>
+	<li class="li_solid" data-menuanchor="features"><a href="#features">Features</a></li>
+	<li class="li_solid" data-menuanchor="hire"><a href="#hire">Hire</a></li>
+	<li style="float: right; margin: 0px 20px 0 0;"><a href="https://github.com/uuchat/uuchat" style="color: #f39c12;">
+		<img width="24px" height="24px"
+			 src="https://a248.e.akamai.net/assets.github.com/images/icons/emoji/octocat.png" /> Fork me on Github</a></li>
+</ul>
+
+<div id="fullpage">
+	<div class="section" id="section0">
+		<h2 style="color: #fff;">A open source</h2>
+		<h2 style="color: #fff;">customer success platform</h2>
+		<br />
+		<br />
+		<p style="color: #fff;">You can deploy own customer success platform in 5 minutes, and you can develop own features base on uuchat!</p>
+	</div>
+	<div class="section" id="section1">
+		<div class="intro">
+			<h2 style="text-align: left;">Features</h2>
+			<p> + chat with customer on web</p>
+			<p> + send text, image and emoji</p>
+			<p> + offline message</p>
+			<p> + customer rate</p>
+			<p> + not need install any software on computer</p>
+		</div>
+	</div>
+	<div class="section" id="section2">
+		<div class="intro">
+			<h2>We are Hire</h2>
+			<h3>JOB RESPONSIBILITIES: </h3>
+			<p>* Develop and build our open source customer success platform which named
+				uuChat (https://github.com/uuchat/uuchat), maintenance according to
+				product requirements or yourself improvement;</p>
+			<p>* On the basis of understanding the front-end development process, combined with the actual
+				front-end to establish or optimize tools to improve work efficiency;
+				to enhance the product user experience
+			</p>
+			<br />
+			<h3>REQUIRED SKILLS:</h3>
+			<p>* 1+ Years of JavaScript Development (Object-Oriented)</p>
+			<p>* Knowledge of Node.JS, NPM  and front-end debug tools </p>
+			<p>* Good team spirit, sense of responsibility, strong learning ability, excellent communication and cooperation ability. </p>
+			<br />
+			<h3>PREFERRED SKILLS:</h3>
+			<p>* Github has project over 500 stars ;</p>
+			<p>* React framework experience ;</p>
+		</div>
+	</div>
+	<div class="section fp-auto-height" id="section3">
+		<div class="myContent">
+			<h2> Built with ❤️ in shenzhen</h2>
+		</div>
+	</div>
+</div>
+
+
+</body>
+</html>
