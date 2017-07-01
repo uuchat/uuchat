@@ -127,6 +127,21 @@ Message.listAndCount = function (condition, order, pageSize, pageNum, callback) 
     });
 };
 
+Message.Count = function (options, callback) {
+
+    options = options || {};
+
+    models.Message.count(options).then(function (data) {
+
+        return callback(null, data);
+
+    }).catch(function (err) {
+        logger.error(err);
+
+        return callback(err);
+    });
+};
+
 Message.search = function (condition, order, pageSize, pageNum, callback) {
     order = order || [['createdAt', 'DESC']];
     pageSize = pageSize || 10;

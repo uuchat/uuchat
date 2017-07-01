@@ -89,6 +89,7 @@ function consoleRoutes(app, middleware, controllers) {
 
     app.post('/console/login', controllers.customerSuccessController.loginConsole);
     app.get('/console/numbers', controllers.consoleController.getNumbers);
+    app.get('/console/monthly', controllers.consoleController.getMonthlyData);
     app.get('/console/rates/report/month/:month', controllers.consoleController.getMonthlyRateReport);
     app.get('/console/rates/cs/:csid/month/:month', controllers.consoleController.getMonthlyRateList);
 }
