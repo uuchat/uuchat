@@ -10,6 +10,10 @@ import { getCustomerName, formatDate } from './utils';
 const RadioGroup = Radio.Group;
 
 class Rates extends Component {
+    static defaultProps = {
+        rates: [1, 2, 3, 4, 5]
+    }
+
     state = {
         csSource: [],
         dataSource: [],
@@ -35,8 +39,7 @@ class Rates extends Component {
                         csSource: data.msg
                     });
                 } else {
-                    //message.error(data.msg, 4);
-                    throw new Error(data.msg);
+                    message.error(data.msg, 4);
                 }
             }).then(() => fetch(queryUrl))
             .then((res) => res.json())
@@ -75,6 +78,7 @@ class Rates extends Component {
     }
 
     render() {
+        let { rates } = this.props;
         let { dataSource, month } = this.state;
 
         const columns = [
@@ -95,11 +99,7 @@ class Rates extends Component {
                     <div className="table-deals">
                         <div className="table-search">
                             <RadioGroup onChange={this.handleRadioChange} value={this.state.rateValue}>
-                                <Radio value={1}>1</Radio>
-                                <Radio value={2}>2</Radio>
-                                <Radio value={3}>3</Radio>
-                                <Radio value={4}>4</Radio>
-                                <Radio value={5}>5</Radio>
+                                { rates.map((rate) => <Radio key={rate} value={rate}>{rate}</Radio>)}
                             </RadioGroup>
                         </div>
                         <div className="table-operations">

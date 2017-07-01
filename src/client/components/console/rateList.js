@@ -10,7 +10,7 @@ import RateSearchForm from './rateSearchForm';
 
 class Rates extends Component {
     filter = {
-        createdAt: [moment().subtract('days', 7), moment()],
+        createdAt: [moment().subtract(7, 'days'), moment()],
     };
 
     state = {
