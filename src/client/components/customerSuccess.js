@@ -689,8 +689,6 @@ class CustomerSuccess extends Component{
                     }else{
                         cArr.push(<Chat key={index} marked={chat.marked} cid={chat.cid} newMsg={state.messageLists[chat.cid]} name={chat.name} num={ num } closeDialog={this.closeDialog} onChatListClick={this.onChatListClick} isActive={isActive} />)
                     }
-
-
                 }
             });
         }

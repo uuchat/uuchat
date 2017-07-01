@@ -62,7 +62,7 @@ class ChatSend extends Component{
             msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
         if(msgVal.length > 0){
-            this.props.sendMessage(cutStr(msg, 0, 256));
+            this.props.sendMessage(cutStr(msg, 256));
         }
         this.setState({
             isEmojiShow: false,
@@ -195,7 +195,7 @@ class ChatSend extends Component{
                     type="textarea"
                     className="chat-textarea"
                     onPressEnter={this.sendMessage}
-                    placeholder={this.state.isSendReady ? "" : "Input text and press enter to send(max 140 words)"}
+                    placeholder={this.state.isSendReady ? "" : "Input text and press enter to send(max 256 words)"}
                     onChange={this.textChangeHandle}
                     value={this.state.textereaValue}
                     onFocus={this.textFocusHandle}
