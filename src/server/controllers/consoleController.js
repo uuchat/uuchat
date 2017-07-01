@@ -5,13 +5,17 @@
 
 var async = require('async');
 var _ = require('lodash');
+var moment = require('moment');
 var CustomerSuccess = require('../database/customerSuccess');
+var Message = require('../database/message');
 var ChatHistory = require('../database/chatHistory');
 var Offline = require('../database/offline');
 var Rate = require('../database/rate');
 var utils = require('../utils');
 
 var consoleController = module.exports;
+
+var memMonthlyData;
 
 consoleController.getNumbers = function (req, res, next) {
     let today = new Date(new Date().toDateString());
@@ -50,6 +54,87 @@ consoleController.getNumbers = function (req, res, next) {
         return res.json({code: 200, msg: results});
     });
 }
+
+consoleController.getMonthlyData = function (req, res, next) {
+    var now = moment();
+
+    var monthInterval = {
+        start: now.format('YYYY-MM') + '-01',
+        //start: '2016-01-01',
+        end: now.format('YYYY-MM-DD'),
+    };
+    var condition = {
+        createdAt: {
+            $gte: monthInterval.start,
+            $lt: monthInterval.end
+        }
+    };
+
+    if (memMonthlyData && memMonthlyData.createTime === monthInterval.end)
+        return res.json({
+            code: 200,
+            msg: memMonthlyData
+        });
+
+    async.parallel([
+        function (callback) {
+            ChatHistory.Count({where: condition}, function (err, data) {
+                return callback(err, {chats: data});
+            });
+        },
+        function (callback) {
+            Message.Count({where: condition}, function (err, data) {
+                return callback(err, {messages: data});
+            });
+        },
+        function (callback) {
+            Offline.Count({where: condition}, function (err, data) {
+                return callback(err, {offlineMessages: data});
+            });
+        },
+        function (callback) {
+            Rate.aggregate(['rate'], condition, callback);
+        }
+
+    ], function (err, results) {
+
+        if (err) return next(err);
+
+        var monthlyData = {};
+        var rateReport = results.pop();
+
+        _.forEach(results, function (item) {
+            _.assign(monthlyData, item);
+        });
+
+        monthlyData.rates = _.reduce(rateReport, function (sum, n) {
+            return sum + n.count;
+        }, 0);
+
+        var favorable = _.reduce(rateReport, function (sum, n) {
+            if (n.rate > 3) return sum + n.count;
+            return sum;
+        }, 0);
+
+        monthlyData.favorablePercent = Math.round(favorable * 100 / (monthlyData.rates || 1));
+
+        var critical = _.reduce(rateReport, function (sum, n) {
+            if (n.rate < 3) return sum + n.count;
+            return sum;
+        }, 0);
+
+        monthlyData.criticalPercent = Math.round(critical * 100 / (monthlyData.rates || 1));
+
+        monthlyData.createTime = monthInterval.end;
+
+        memMonthlyData = monthlyData;
+
+        return res.json({
+            code: 200,
+            msg: monthlyData
+        });
+    });
+};
 
 consoleController.getMonthlyRateReport = function (req, res, next) {
     var monthInterval = getMonthInterval(req.params.month);

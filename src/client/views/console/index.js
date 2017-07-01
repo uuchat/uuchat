@@ -9,7 +9,7 @@ import ReactDOM from 'react-dom';
 //import intl from 'intl';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
 
-import Login from '../../components/console/login';
+import LoginView from '../../components/console/loginView';
 import Console from '../../components/console/console';
 
 //const currentlang = navigator.language;
@@ -75,7 +75,7 @@ ReactDOM.render(
     <BrowserRouter basename="/console">
         <div style={{height: '100%'}}>
             <Switch>
-                <Route exact path="/" component={ Login }/>
+                <Route exact path="/" component={ LoginView }/>
                 <Route exact path="/index" component={ Console }/>
             </Switch>
         </div>

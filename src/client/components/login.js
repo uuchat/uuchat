@@ -1,7 +1,7 @@
 /**
  * Created by lwc on 2017/5/5.
  */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
 
 import '../static/css/login.css';
@@ -10,6 +10,11 @@ const FormItem = Form.Item;
 
 
 class Login extends Component{
+
+    static defaultProps = {
+        fetchUrl: '/login',
+        redirect: '/chat',
+    }
 
     constructor(){
         super();
@@ -24,7 +29,9 @@ class Login extends Component{
 
             if (!err) {
 
-                fetch('/login', {
+                const { fetchUrl, redirect } = this.props;
+
+                fetch(fetchUrl, {
                     credentials: 'include',
                     method: 'POST',
                     headers: {
@@ -40,7 +47,7 @@ class Login extends Component{
                         localStorage.setItem('uuchat.name', d.msg.name);
                         localStorage.setItem('uuchat.displayName', (d.msg.displayName ? d.msg.displayName : ''));
                         localStorage.setItem('uuchat.avatar', (d.msg.photo ? d.msg.photo : ''));
-                        window.location.href = "/chat";
+                        window.location.href = redirect;
                     }else if(1002 === d.code){
                         message.error('Email is not found', 4);
                     }else if(1003 === d.code){
