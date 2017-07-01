@@ -507,6 +507,17 @@
         height: 480px;
     }
 }
+@media screen and (max-width:640px){
+    .chat-console{
+        width: calc(100% - 40px);
+    }
+    .chat-console .chat-msg{
+        height: calc(80vh - 100px);
+    }
+    .chat-console .chat-send-text{
+        width: 100%;
+    }
+}
 @keyframes dots {
     0%, 20% {
         color: rgba(0,0,0,0);

@@ -12,24 +12,15 @@ function String2int(str){
 
 }
 
-export function getStringLength(str){
-    var realLength = 0, len = str.length, charCode = -1;
-    for (var i = 0; i < len; i++) {
-        charCode = str.charCodeAt(i);
-        if (charCode >= 0 && charCode <= 128) realLength += 1;
-        else realLength += 2;
-    }
-    return realLength;
-}
-export function cutStr(str, star, len){
-    var str_length = star,
-        str_len = 0,
-        str_cut = '';
 
-    str_len = str.length;
+export function cutStr(str, len){
+    var str_length = 0,
+        str_cut = '',
+        str_len = str.length,
+        a = '';
 
-    for (var i = star; i < str_len; i++) {
-        var a = str.charAt(i);
+    for (var i = 0; i < str_len; i++) {
+        a = str.charAt(i);
         str_length++;
         if (escape(a).length > 4) {
             str_length++;

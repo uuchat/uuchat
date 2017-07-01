@@ -577,6 +577,8 @@
 }
 .message-lists .message-avatar.fr{
     margin-left: 10px;
+    box-shadow: 0px 0px 1px 1px #ccc;
+    border-radius: 100%;
 }
 
 .message-lists .message-avatar img{
@@ -777,6 +779,7 @@
 
 /* search-main */
 .search-main{
+    position: relative;
     margin: 30px auto;
     width: 800px;
     height: calc(100vh - 130px);
@@ -785,6 +788,17 @@
     background-color:#fff;
     box-shadow: 0 0 2px 2px #ccc;
     overflow: auto;
+}
+.none-results{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 100%;
+    line-height: calc(100vh - 130px);
+    text-align: center;
+    color: #1f8ceb;
 }
 #UUCHAT-Search .search-user-info{
     margin: 0 auto;
@@ -865,10 +879,16 @@
         padding: 0;
         height: 100%;
     }
+    .customerSuccess-header{
+       height: 30px;
+    }
+    .customerSuccess-header .status-bar{
+       display:none;
+    }
+
     .uuchat-customerSuccess .customerSuccess-main{
-        margin: 2px 0;
-        min-height: 400px !important;
-        height: 100%;
+        margin: 10px 2%;
+        border: 1px solid #000;
         border:none;
     }
     .customerSuccess-content{
@@ -885,7 +905,21 @@
         background-color: #ccc;
     }
     .customerSuccess-content .chat-message{
-        height: 420px;
+        height: calc(100vh - 150px);
+    }
+    .customerSuccess-content .message-lists{
+        height: calc(100vh - 200px);
+    }
+    .chat-send{
+        height: calc(30vh);
+    }
+    .send-tools{
+        display: none;
+    }
+    .chat-text .chat-textarea{
+        margin-top: 2%;
+        margin-bottom: 2%;
+        height: 60px;
     }
     .send-tools .tool-emoji .emoji-picker{
         width: 300px;

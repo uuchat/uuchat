@@ -22,11 +22,10 @@ class ChatSearchItem extends Component{
 
     msgConver(msg){
         var str = '';
-        if(typeof msg === 'object'){
-            str = '<span class="offline-name">Offline message</span>';
-            str += '<p class="offline-content">'+msg.content+'</p>';
-            str += '<p class="offline-email">name: '+msg.name+'</p>';
-            str += '<p class="offline-email">email: '+msg.email+'</p>';
+        if(/"email":/g.test(msg)){
+            msg = JSON.parse(msg);
+            str += '<span>Offline messages(email: '+msg.email+'): </span>';
+            str += msg.content;
         }else {
             str = msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
                 return '<a href="' + match + '" target="_blank">' + match + '</a>';
@@ -76,15 +75,20 @@ class ChatSearch extends Component{
         var search = window.location.href,
             content = '';
 
-        search = search.split('?')[1].split('&');
-        for(var i = 0, l = search.length; i < l; i++){
-            if(search[i].indexOf('search=') > -1){
-                content = search[i].split('=')[1];
-                break;
+
+        if(search.indexOf('?search=') > -1){
+            search = search.split('?')[1].split('&');
+
+            for(var i = 0, l = search.length; i < l; i++){
+                if(search[i].indexOf('search=') > -1){
+                    content = search[i].split('=')[1];
+                    break;
+                }
             }
+            searchContent = content;
+            this.getSearchList(content);
         }
-        searchContent = content;
-        this.getSearchList(content);
+
     }
     getSearchList(content){
         var that = this;
@@ -92,16 +96,18 @@ class ChatSearch extends Component{
             return d.json();
         }).then(function(d){
             if(200 === d.code){
+                var isView = true;
                 if(d.msg.length > 0){
                     pageNum++;
-                    that.setState({
-                        searchList: d.msg,
-                        isViewMore: false
-                    });
                 }else{
                     pageNum = 0;
                     message.info('There has no chats result aboute '+content, 4);
+                    isView = false;
                 }
+                that.setState({
+                    searchList: d.msg,
+                    isViewMore: isView
+                });
             }
         }).catch(function(e){});
     }
@@ -157,7 +163,7 @@ class ChatSearch extends Component{
                     pageNum = 0;
                     message.info('There has no more result!', 4);
                     that.setState({
-                        isViewMore: true
+                        isViewMore: false
                     });
                 }
             }
@@ -210,10 +216,11 @@ class ChatSearch extends Component{
                 </Modal>
                 <div className="search-main">
                     <ul className="search-list">
-                        <li> Chats lists </li>
+                        <li> Chats history lists </li>
                         {sArr}
-                        <li className="more-search" style={{display: state.isViewMore ? 'none' : ''}} onClick={this.viewMore}>View more </li>
+                        <li className="more-search" style={{display: state.isViewMore ? '' : 'none'}} onClick={this.viewMore}>View more </li>
                     </ul>
+                    <div className="none-results" style={{display: searchL.length > 0 ? 'none' : ''}}>No relevant results were found</div>
                 </div>
              </div>
         );
