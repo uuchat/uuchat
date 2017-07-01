@@ -88,23 +88,15 @@
                 v = isIE ? /\d+/.exec(UA.split(';')[1]) : 'no ie';
             return v <= 8;
         },
-        getStringLength: function(str){
-            var realLength = 0, len = str.length, charCode = -1;
-            for (var i = 0; i < len; i++) {
-                charCode = str.charCodeAt(i);
-                if (charCode >= 0 && charCode <= 128) realLength += 1;
-                else realLength += 2;
-            }
-            return realLength;
-        },
-        cutStr: function(str, star, len){
-            var str_length = star,
-                str_len = star,
+        cutStr: function(str, len){
+            var str_length = 0,
                 str_cut = new String(),
-                str_len = str.length;
+                str_len = str.length,
+                a = '';
 
-            for (var i = star; i < str_len; i++) {
-                var a = str.charAt(i);
+
+            for (var i = 0; i < str_len; i++) {
+                a = str.charAt(i);
                 str_length++;
                 if (escape(a).length > 4) {
                     str_length++;
@@ -262,7 +254,7 @@
             str +='<h6>Email:</h6>';
             str +='<input type="email" placeholder="Click here and type your Email" class="offline-email" required="required" />';
             str +='<h6>Describe:</h6>';
-            str +='<textarea placeholder="Let us know and someone will get back to you within 24 hours, if not sooner!(max 140 words)" class="offline-text"></textarea>';
+            str +='<textarea placeholder="Let us know and someone will get back to you within 24 hours, if not sooner!(max 256 words)" class="offline-text"></textarea>';
             str +='<button class="offline-send">Send</button></div>';
 
             return str;
@@ -589,6 +581,8 @@
                         val = this.value;
                     if(val === ''){
                         $('.send-pre').innerHTML = '';
+                    }else{
+                        $('.send-pre').innerHTML = val;
                     }
                 });
 
@@ -665,10 +659,7 @@
             });
         },
         socketSendMessage: function(msg){
-            UUCT.socketEmitMessage(UUCT.cutStr(msg, 0, 256));
-            if(UUCT.getStringLength(msg) > 256){
-                UUCT.socketEmitMessage(UUCT.cutStr(msg, 256, 256));
-            }
+            UUCT.socketEmitMessage(UUCT.cutStr(msg, 256));
         },
         socketEmitMessage: function(msg){
             UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(isTrue){
