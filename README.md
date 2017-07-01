@@ -9,6 +9,14 @@ you can see demo on [http://uuchat.io](http://uuchat.io)
 * [Optional]MySQL version 5.0 or greater
 * [Optional]Redis, version 2.8.9 or greater
 
+#### Important Note for Windows Users
+Developing on OS X or Ubuntu/Linux is recommended, but if you only have access to
+a Windows machine you can do one of the following:
+
+* Use [vagrant](http://www.vagrantup.com/) to create a linux dev environment (recommended)
+* Follow the [Windows installation guide](https://github.com/brianmcd/contextify/wiki/Windows-Installation-Guide)
+for contextify
+
 ## Installation
 
 **git clone https://github.com/uuchat/uuchat.git uuchat** <br />
@@ -23,7 +31,7 @@ you can see demo on [http://uuchat.io](http://uuchat.io)
 >&nbsp;&nbsp;&nbsp;&nbsp;node tools/build.js <br />
 >&nbsp;&nbsp;&nbsp;&nbsp;node index.js <br />
 
-##### Ubuntu
+#### Ubuntu
 ```
 apt-get install sqlite3
 npm i sqlite3
