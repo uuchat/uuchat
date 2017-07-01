@@ -150,7 +150,7 @@ class ChatSend extends Component{
                     if(info.event){
                         that.setState({
                             isShowProcess: true,
-                            percent: info.event.percent
+                            percent: Math.ceil(info.event.percent)
                         });
                     }
                 }else if (status === 'done') {
