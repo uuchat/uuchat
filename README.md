@@ -32,13 +32,9 @@ for contextify
 >&nbsp;&nbsp;&nbsp;&nbsp;node tools/build.js <br />
 >&nbsp;&nbsp;&nbsp;&nbsp;node index.js <br />
 
-#### Ubuntu
-```
-apt-get install sqlite3
-npm i sqlite3
-apt-get install g++
-npm i sharp
-```
+
+> WARNING: you should install some software which operation system not install 
+by default, eg: Ubuntu 16.10 with sqlite3, g++ ...
 
 ## Basic uuChat Configuration
 
