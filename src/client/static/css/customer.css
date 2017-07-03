@@ -11,6 +11,7 @@
 .chat-console li,
 .chat-console a,
 .chat-console p,
+.chat-console pre,
 .chat-console textarea,
 .chat-console input
 {
@@ -224,7 +225,7 @@
     bottom:0;
     padding: 10px 0;
     width: 400px;
-    min-height: 30px;
+    min-height: 50px;
     max-height: 100px;
     background-color: #e9eaeb;
     border-radius: 0 0 5px 5px;

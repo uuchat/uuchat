@@ -895,14 +895,28 @@
         border: none;
     }
     .customerSuccess-left{
-        position: absolute;
-        top:0;
-        left: -102%;
-        z-index: 100;
+        position: fixed;
+        left: -100%;
+        top: 0;
+        z-index: 1000;
         width: 100%;
         min-height: 100%;
-        box-shadow: 0 0 2px #ccc;
-        background-color: #ccc;
+        background-color: rgba(0, 0, 0, 0.6);
+    }
+    .customerSuccess-left .ant-tabs{
+        height: 95%;
+    }
+    .customerSuccess-left .customer-lists{
+        position: absolute;
+        left: 0;
+        top: 0;
+        z-index: 1000;
+        height: 100%;
+        width: 100%;
+        background: #fff;
+    }
+    .customerSuccess-left .customer-lists li .chat-close{
+        display: none;
     }
     .customerSuccess-content .chat-message{
         height: calc(100vh - 150px);
