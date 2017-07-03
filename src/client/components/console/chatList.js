@@ -7,7 +7,7 @@ import ChatMessageItem from '../chatMessageItem';
 class ChatList extends Component {
     state = {
         dataSource: []
-    }
+    };
 
     getDataSource(cid, csid) {
         var _component = this;
@@ -34,7 +34,7 @@ class ChatList extends Component {
         if(cid && csid) {
             this.getDataSource(cid, csid);
         }
-    }
+    };
 
     render() {
         let { cid, cIndex } = this.props;

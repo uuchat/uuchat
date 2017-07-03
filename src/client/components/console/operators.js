@@ -22,11 +22,11 @@ class Operators extends Component {
         getCheckboxProps: (record) => ({
             disabled: record.key === this.state.superUser,
         }),
-    }
+    };
 
     handleChange = (pagination, filters, sorter) => {
 
-    }
+    };
     showModal = () => this.setState({visible: true})
 
     handleOk = (e) => {
@@ -75,7 +75,7 @@ class Operators extends Component {
                     message.error(e.message, 4);
                 });
         });
-    }
+    };
 
     saveFormRef = (form) => this.form = form
     handleCancel = () => this.setState({visible: false})
@@ -93,7 +93,7 @@ class Operators extends Component {
                 return record.email.match(reg);
             })
         });
-    }
+    };
 
     getDataSource = () => {
         const _component = this;
@@ -147,7 +147,7 @@ class Operators extends Component {
                 cancelText: 'Cancel'
             });
         }
-    }
+    };
 
     onDeleteItem = function (key) {
         const _self = this;
@@ -166,7 +166,7 @@ class Operators extends Component {
                 message.error(e, 4);
             });
 
-    }
+    };
 
     renderAction = (value) => {
         if (value.key === this.state.superUser) return;
@@ -179,11 +179,11 @@ class Operators extends Component {
                         { key: '2', name: 'Delete' }]}
                 />
         )
-    }
+    };
 
     componentDidMount = () => {
         this.getDataSource();
-    }
+    };
 
     render() {
         const WrappedCustomerSuccessForm = Form.create()(CustomerSuccessForm);
