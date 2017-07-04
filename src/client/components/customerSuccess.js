@@ -5,7 +5,6 @@ import React, { Component } from 'react';
 import { Row, Col, Input, Tabs, Modal, notification } from 'antd';
 import io from 'socket.io-client';
 
-
 import Chat from '../components/chat';
 import ChatSend from './chatSend';
 import ChatMessage from './chatMessage';
@@ -17,7 +16,6 @@ import ChatSetting from './chatSetting';
 
 const TabPane = Tabs.TabPane;
 var notifyKey = '';
-
 
 import '../static/css/customerSuccess.css';
 

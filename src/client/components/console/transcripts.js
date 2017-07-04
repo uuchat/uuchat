@@ -50,10 +50,25 @@ class Transcripts extends Component {
         });
     }
 
-    getDataSource = () => {
+    getCSSource = () => {
         const _component = this;
 
-        let { dataSource, filter, pagination } = this.state;
+        fetch('/customersuccesses')
+            .then((res) => res.json())
+            .then(function (data) {
+                if (200 === data.code) {
+                    return _component.setState({
+                        csSource: data.msg
+                    });
+                } else {
+                    message.error(data.msg, 4);
+                }
+            })
+    }
+
+    getDataSource = () => {
+        const _component = this;
+        let { dataSource, filter, pagination,csSource } = this.state;
 
         if (!pagination[3]) return;
 
@@ -66,25 +81,14 @@ class Transcripts extends Component {
 
         //console.log(queryUrl);
 
-        fetch('/customersuccesses')
-            .then((res) => res.json())
-            .then(function (data) {
-                if (200 === data.code) {
-                    return _component.setState({
-                        csSource: data.msg
-                    });
-                } else {
-                    //message.error(data.msg, 4);
-                    throw new Error(data.msg);
-                }
-            }).then(() => fetch(queryUrl))
+        fetch(queryUrl)
             .then((res) => res.json())
             .then((data) => {
                 if (200 === data.code) {
 
                     data.msg.rows.forEach((item) => {
                         item.key = item.uuid;
-                        let csFilters = this.state.csSource.filter((element) => element.csid === item.csid);
+                        let csFilters = csSource.filter((element) => element.csid === item.csid);
                         item.csName = csFilters.length ? csFilters[0].name : 'invalid_user';
                         item.csEmail = csFilters.length ? csFilters[0].email : 'invalid_email';
                     });
@@ -138,6 +142,7 @@ class Transcripts extends Component {
     }
 
     componentDidMount() {
+        this.getCSSource();
         this.attachScrollEvent();
     }
 

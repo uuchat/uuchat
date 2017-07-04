@@ -56,7 +56,7 @@
             if(this.isLtIe8()){
                 this.loadScript(UUCT.domain+'/static/images/socket.io.js');
             }else{
-                this.loadScript(UUCT.domain+'/socket.io/socket.io.js');
+                this.loadScript('https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js');
             }
             this.createCT();
         },
@@ -496,7 +496,7 @@
         socketDisconnect: function(){
             UUCT.msgTranslate({
                 role: 1,
-                msg: 'The server has been outline!You can try it by refesh the browser at latter'
+                msg: 'The server has been offline!You can try it by refesh the browser at latter'
             });
             this.close();
         },
