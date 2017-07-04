@@ -20,6 +20,7 @@ var cookieParser = require('cookie-parser');
 var session = require('express-session');
 var useragent = require('express-useragent');
 var favicon = require('serve-favicon');
+var compress = require('compression');
 
 var middleware = require('./server/middleware');
 
@@ -197,7 +198,7 @@ function setupExpress(app, callback) {
 
     app.use(useragent.express());
     setupFavicon(app);
-
+    app.use(compress());
     if (global.env === 'development') {
         var webpack = require('webpack');
         var webpackMiddleware = require('webpack-dev-middleware');
