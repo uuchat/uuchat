@@ -75,7 +75,7 @@ module.exports = {
     devtool: 'nosources-source-map',
     // In production, we only want to load the polyfills and the app code.
     entry: {
-        "vender": ["react", "react-dom", "react-router-dom", require.resolve('./polyfills')],
+        "vender": ["react-router-dom", require.resolve('./polyfills')],
         "app": [
             paths.appIndexJs
         ],
@@ -97,6 +97,11 @@ module.exports = {
         // We inferred the "public path" (such as / or /my-project) from homepage.
         publicPath: publicPath
     },
+    externals: {
+        'react': 'React',
+        'react-dom': 'ReactDOM',
+        'socket.io-client': 'io',
+    },
     resolve: {
         // This allows you to set a fallback for where Webpack should look for modules.
         // We read `NODE_PATH` environment variable in `paths.js` and pass paths here.
@@ -112,11 +117,13 @@ module.exports = {
         alias: {
             // Support React Native Web
             // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-            'react-native': 'react-native-web'
+            'react-native': 'react-native-web',
+            'socket.io-client': path.join( __dirname, 'node_modules', 'socket.io-client', 'socket.io.js' )
         }
     },
 
     module: {
+        noParse: [ /socket.io-client/ ],
         rules: [
             // ** ADDING/UPDATING LOADERS **
             // The "url" loader handles all static unless explicitly excluded.

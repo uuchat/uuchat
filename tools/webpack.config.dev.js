@@ -90,6 +90,11 @@ module.exports = {
         // This is the URL that app is served from. We use "/" in development.
         publicPath: publicPath
     },
+    externals: {
+        'react': 'React',
+        'react-dom': 'ReactDOM',
+        'socket.io-client': 'io',
+    },
     resolve: {
         // This allows you to set a fallback for where Webpack should look for modules.
         // We read `NODE_PATH` environment variable in `paths.js` and pass paths here.
@@ -105,11 +110,13 @@ module.exports = {
         alias: {
             // Support React Native Web
             // https://www.smashingmagazine.com/2016/08/a-glimpse-into-the-future-with-react-native-for-web/
-            'react-native': 'react-native-web'
+            'react-native': 'react-native-web',
+            'socket.io-client': path.join( __dirname, 'node_modules', 'socket.io-client', 'socket.io.js' )
         }
     },
 
     module: {
+        noParse: [ /socket.io-client/ ],
         // First, run the linter.
         // It's important to do this before Babel processes the JS.
         rules: [
