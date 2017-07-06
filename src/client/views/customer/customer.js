@@ -72,6 +72,7 @@
         loadScript: function(url){
             var spt = doc.createElement('script');
             spt.src = url;
+            spt.async = true;
             doc.getElementsByTagName('HEAD')[0].appendChild(spt);
 
             spt.onload = spt.onreadystatechange = function(){
