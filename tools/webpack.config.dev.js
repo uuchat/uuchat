@@ -144,7 +144,7 @@ module.exports = {
                 use: [
                     {
                         loader: 'url-loader',
-                        query: {
+                        options: {
                             limit: 10000,
                             name: 'static/media/[name].[hash:8].[ext]'
                         }
@@ -164,10 +164,10 @@ module.exports = {
                 use: [
                     {
                         loader: 'babel-loader',
-                        query: {
+                        options: {
                             plugins: [
                                 ['import', [{libraryName: "antd", style: 'css'}]],
-                                //'syntax-dynamic-import'
+                                'syntax-dynamic-import'
                             ],
 
                             // This is a feature of `babel-loader` for webpack (not Babel itself).
@@ -196,7 +196,7 @@ module.exports = {
                 use: [
                     {
                         loader: 'file',
-                        query: {
+                        options: {
                             name: 'static/media/[name].[hash:8].[ext]'
                         }
                     }
