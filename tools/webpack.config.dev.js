@@ -59,7 +59,7 @@ module.exports = {
             // require.resolve('webpack/hot/dev-server'),
             //require.resolve('react-dev-utils/webpackHotDevClient'),
             // We ship a few polyfills by default:
-            //require.resolve('./polyfills'),
+            require.resolve('./polyfills'),
             // Finally, this is your app's code:
             paths.appIndexJs,
             hotMiddlewareScript
