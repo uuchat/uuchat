@@ -242,6 +242,9 @@
         template: function(){
             var str = '<div class="chat-body chat-body-hidden">';
             str +='<div class="chat-header"><div class="chat-avatar"><img class="avatar-img" src="'+UUCT.domain+'/static/images/ua.png" /></div><div class="chat-name"></div></div>';
+            str +='<div class="chat-main">';
+            str +='<div class="chat-loading"><div class="bounce bounce1"></div><div class="bounce bounce2"></div><div class="bounce bounce3"></div></div>';
+            str +='</div>';
             str +='</div>';
             str +='<div class="chat-btn chat-btn-open"> <div class="chat-nums" style="display: none;">0</div> </div>';
             return str;
@@ -410,8 +413,8 @@
 
 
             $('.chat-name').innerHTML = data.name;
-            $('.chat-body').innerHTML += msg;
-            $('.chat-body').innerHTML += send;
+            $('.chat-main').innerHTML = msg;
+            $('.chat-main').innerHTML += send;
             $('.avatar-img').setAttribute("src", UUCT.domain+'/'+src);
 
             if(data.msg.length > 0){
@@ -491,7 +494,7 @@
         socketConnectError: function(){
             var str = '<div class="chat-offline"><div class="chat-error">Oh! no ! There has error !You can try it later again</div></div>';
             if(!$('.chat-offline')){
-                $('.chat-body').innerHTML += str;
+                $('.chat-main').innerHTML = str;
             }
         },
         socketDisconnect: function(){
@@ -593,19 +596,16 @@
                 var queue = '<div class="chat-offline"><div class="line-up">Current queue number <i class="line-num">';
                 queue += data.num;
                 queue += '</i></div></div>';
-                $('.chat-body').innerHTML += queue;
+                $('.chat-main').innerHTML += queue;
 
             }else if(3 === type){
-               UUCT.customerSuccessOffline();
+                UUCT.customerSuccessOffline();
             }
         },
         customerSuccessOffline: function(){
             var offline = UUCT.tempOffline();
-            if($('.chat-offline')){
-               $('.chat-offline').parentNode.removeChild($('.chat-offline'));
-            }
 
-            $('.chat-body').innerHTML += offline;
+            $('.chat-main').innerHTML = offline;
             addEvent($('.offline-name'), 'focus', function(){
                 removeClass(this, 'error');
             });

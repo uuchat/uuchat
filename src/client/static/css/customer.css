@@ -43,6 +43,10 @@
     border-radius: 5px;
 }
 .chat-console .chat-body{
+    height: 590px;
+    height:500px\0;
+    border-left: 1px solid #ccc\0;
+    border-right: 1px solid #ccc\0;
     border-radius: 10px;
     box-shadow: 0 5px 40px rgba(0,0,0,.16)!important;
 }
@@ -75,7 +79,33 @@
     border-radius: 100%;
     box-shadow:1px 1px 1px 1px #ededed;
 }
+.chat-console .chat-loading{
+    display: none\0;
+    margin: 190px auto 0 auto;
+    width: 150px;
+    text-align: center;
+}
+.chat-console .chat-loading .bounce{
+    display: inline-block;
+    margin-left: 5px;
+    width: 20px;
+    height: 20px;
+    background-color: #1f8ceb;
+    border-radius: 100%;
+    -webkit-animation: bouncedelay 1.4s infinite ease-in-out;
+    animation: bouncedelay 1.4s infinite ease-in-out;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+.chat-console .chat-loading .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
 
+.chat-console .chat-loading .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
 .chat-console .chat-msg{
     padding: 0 20px;
     height:490px;
@@ -226,6 +256,7 @@
     padding: 10px 0;
     width: 400px;
     min-height: 50px;
+    min-height: 30px\0;
     max-height: 100px;
     background-color: #e9eaeb;
     border-radius: 0 0 5px 5px;
@@ -261,6 +292,9 @@
     background-color: #fff;
     box-shadow: 0 -1px 10px #eaeaea;
     border-top: 1px solid #eaeaea;
+    border-left: 1px solid #eaeaea\0;
+    border-right: 1px solid #eaeaea\0;
+    border-bottom: 1px solid #eaeaea\0;
     outline:none;
 }
 
@@ -501,11 +535,16 @@
     color: #ff0000;
 }
 @media screen and (max-height:768px){
+    .chat-console .chat-body{
+        height: 500px;
+        height: 400px\0;
+    }
     .chat-console .chat-msg{
         height: 400px;
     }
     .chat-console .chat-offline{
-        height: 480px;
+        height: 450px;
+        height: 430px\0;
     }
 }
 @media screen and (max-width:640px){
@@ -541,4 +580,18 @@
         opacity: 0.95;
         padding-left: 10px;
     }
+}
+@-webkit-keyframes bouncedelay {
+    0%, 80%, 100% { -webkit-transform: scale(0.0) }
+    40% { -webkit-transform: scale(1.0) }
+}
+
+@keyframes bouncedelay {
+    0%, 80%, 100% {
+        transform: scale(0.0);
+        -webkit-transform: scale(0.0);
+    } 40% {
+          transform: scale(1.0);
+          -webkit-transform: scale(1.0);
+      }
 }
