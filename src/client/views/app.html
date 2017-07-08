@@ -14,12 +14,15 @@
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
     <title>online Customer services</title>
+    <link rel="stylesheet" href="../static/css/common.css" />
     <script src="https://unpkg.com/react@15.6.1/dist/react.min.js"></script>
     <script src="https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
 </head>
 <body>
-<div id="uu-chat"></div>
+<div id="uu-chat">
+    <div class="chat-loading"><div class="bounce bounce1"></div><div class="bounce bounce2"></div><div class="bounce bounce3"></div></div>
+</div>
 <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.

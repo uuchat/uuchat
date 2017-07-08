@@ -33,7 +33,7 @@ class CustomerSuccess extends Component{
             csName: localStorage['uuchat.name'] || '',
             csDisplayName: localStorage['uuchat.displayName'] || '',
             csEmail: localStorage['uuchat.email'] || '',
-            csAvatar: localStorage['uuchat.avatar'] || '',
+            csAvatar: localStorage['uuchat.avatar'] || '../static/images/contact.png',
             customerSelect:{
                 cid: '',
                 name: '',
@@ -362,7 +362,6 @@ class CustomerSuccess extends Component{
      * onSearchHandler
      */
     onSearchHandler(e){
-        console.log('|------ onSearchHandler ---', e, );
         if(e.target.value === ''){
             e.preventDefault();
             return false;
@@ -415,13 +414,12 @@ class CustomerSuccess extends Component{
              *
              */
             this.state.socket.emit('cs.message', cid, msg, function(success){
-                var avatar = that.state.csAvatar ? '/' +that.state.csAvatar : require('../static/images/contact.png'),
-                    message,
+                var message,
                     messageLists = that.state.messageLists,
                     msgArr = messageLists[cid];
 
                 message = {
-                    msgAvatar: avatar,
+                    msgAvatar: that.state.csAvatar,
                     msgText: msg,
                     msgType: 1,
                     msgTime: new Date()
@@ -589,13 +587,7 @@ class CustomerSuccess extends Component{
             .then((data) => data.json())
             .then(d =>{
                 var historyMessage = that.state.messageLists,
-                    avatar;
-
-                if(that.state.csAvatar){
                     avatar = that.state.csAvatar;
-                }else{
-                    avatar = require('../static/images/contact.png');
-                }
 
                 if(!historyMessage[cid] ){
                     historyMessage[cid]=[];
@@ -609,6 +601,7 @@ class CustomerSuccess extends Component{
                         msgTime: new Date(dd.createdAt)
                     });
                 });
+
                 that.setState({
                     messageLists:  historyMessage
                 });

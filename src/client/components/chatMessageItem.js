@@ -47,7 +47,6 @@ class ChatMessageItem extends Component{
             imgSrc = imgSrc.split('|');
 
         }
-
         if(typeof this.props.ownerAvatar === 'string'){
             img =  <img src={this.props.ownerAvatar} alt="avatar" title="avatar" />
         }else{

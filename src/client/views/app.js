@@ -10,7 +10,6 @@ import AsyncComponent from './asyncComponent.js';
 
 import LoginView from './login/index';
 
-import '../static/css/common.css';
 import '../static/css/app.css';
 
 
