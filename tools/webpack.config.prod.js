@@ -64,7 +64,7 @@ module.exports = {
     bail: true,
     devtool: 'nosources-source-map',
     entry: {
-        "vender": ["react-router-dom", require.resolve('./polyfills')],
+        "vendor": ["react-router-dom", require.resolve('./polyfills')],
         "app": [
             paths.appIndexJs
         ],
@@ -161,9 +161,9 @@ module.exports = {
             inject: true,
             filename: "app.html",
             template: paths.appHtml,
-            chunks: ['vender', 'app', 'common'],
+            chunks: ['vendor', 'app'],
             chunksSortMode: function (chunk1, chunk2) {
-                var order = ['common', 'vender', 'app'];
+                var order = ['vendor', 'app'];
                 var order1 = order.indexOf(chunk1.names[0]);
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
@@ -185,9 +185,9 @@ module.exports = {
             inject: true,
             filename: 'console.html',
             template: paths.consoleHtml,
-            chunks: ['vender', 'console', 'common'],
+            chunks: ['vendor', 'console'],
             chunksSortMode: function (chunk1, chunk2) {
-                var order = ['common', 'vender', 'console'];
+                var order = [ 'vendor', 'console'];
                 var order1 = order.indexOf(chunk1.names[0]);
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
@@ -209,9 +209,9 @@ module.exports = {
             inject: true,
             filename: 'search.html',
             template: paths.searchHtml,
-            chunks: ['vender', 'search', 'common'],
+            chunks: ['vendor', 'search'],
             chunksSortMode: function (chunk1, chunk2) {
-                var order = ['common', 'vender', 'search'];
+                var order = ['vendor', 'search'];
                 var order1 = order.indexOf(chunk1.names[0]);
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
@@ -288,7 +288,7 @@ module.exports = {
                 }
             }
         ]),
-        new webpack.optimize.CommonsChunkPlugin('common'),
+        new webpack.optimize.CommonsChunkPlugin('vendor'),
         new webpack.DefinePlugin({
             'process.env': {
                 'NODE_ENV': '"production"'
