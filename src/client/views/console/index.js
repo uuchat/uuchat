@@ -10,7 +10,9 @@ import ReactDOM from 'react-dom';
 import { Route, Switch, BrowserRouter } from 'react-router-dom';
 
 import LoginView from '../../components/console/loginView';
-import Console from '../../components/console/console';
+//import Console from '../../components/console/console';
+
+import AsyncComponent from '../asyncComponent.js';
 
 //const currentlang = navigator.language;
 
@@ -70,6 +72,9 @@ import Console from '../../components/console/console';
  </Switch>
  </div>
  </BrowserRouter>*/
+
+const Console = AsyncComponent(() => import('../../components/console/console')
+    .then(module => module.default), { name: 'console' });
 
 ReactDOM.render(
     <BrowserRouter basename="/console">

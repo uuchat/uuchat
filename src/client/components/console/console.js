@@ -2,16 +2,37 @@ import React, {Component} from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { Layout, Menu, Icon, message, Button } from 'antd';
+
+import UpgradeNote from './upgradeNote';
+import Dashboard from './dashboard';
+//import Operators from './operators';
+//import Transcripts from './transcripts';
+import Rates from './rates';
+//import RateList from './rateList';
+//import RateDetails from './rateDetails';
+
+import AsyncComponent from '../../views/asyncComponent.js';
+
+/*const Dashboard = AsyncComponent(() => import('./dashboard')
+    .then(module => module.default), { name: 'dashboard' });*/
+
+const Operators = AsyncComponent(() => import('./operators')
+    .then(module => module.default), { name: 'operators' });
+
+const Transcripts = AsyncComponent(() => import('./transcripts')
+    .then(module => module.default), { name: 'transcripts' });
+
+/*const Rates = AsyncComponent(() => import('./rates')
+    .then(Rates => module.default), { name: 'rates' });*/
+
+const RateList = AsyncComponent(() => import('./rateList')
+    .then(module => module.default), { name: 'rateList' });
+
+const RateDetails = AsyncComponent(() => import('./rateDetails')
+    .then(module => module.default), { name: 'rateDetails' });
+
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
-
-import Dashboard from './dashboard';
-import Operators from './operators';
-import UpgradeNote from './upgradeNote';
-import Transcripts from './transcripts';
-import Rates from './rates';
-import RateList from './rateList';
-import RateDetails from './rateDetails';
 
 class Console extends Component {
     state = {
