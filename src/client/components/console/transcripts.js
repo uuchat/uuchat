@@ -2,38 +2,24 @@
  *
  * Created by jianzhiqiang on 2017/6/14.
  */
-
 import React, { Component } from 'react';
-import { Breadcrumb, Table, message, Select, Modal, Spin } from 'antd';
+import { Breadcrumb, message, Select, Modal } from 'antd';
 
 import ChatList from './chatList';
-import { getCustomerName, formatDate } from './utils';
+import { getCustomerName } from './utils';
+
+import ScrollTable from './scrollTable';
 
 const Option = Select.Option;
 
-//pageNum,pageSize,pageTotal,pageReload
-const initPagination = [0, 10, 0, true];
-
 class Transcripts extends Component {
-    lock = false;
-
     state = {
         csSource: [],
         dataSource: [],
-        pagination: Object.assign([], initPagination),
-        spinning: false,
+        total: 0,
         filter: [],
+        initPage: false,
     };
-
-    renderCustomer = (text, record) => {
-        let customer = getCustomerName(text);
-        //  input params using closure(another way:bind)
-        return <a onClick={ (e) => this.handleChatList(e, record) }>{ customer }</a>;
-    }
-
-    handleSearchChange = (e) => {
-        e.preventDefault();
-    }
 
     handleChatList = (e, record) => {
         e.preventDefault();
@@ -53,7 +39,7 @@ class Transcripts extends Component {
     getCSSource = () => {
         const _component = this;
 
-        fetch('/customersuccesses')
+        return fetch('/customersuccesses')
             .then((res) => res.json())
             .then(function (data) {
                 if (200 === data.code) {
@@ -66,18 +52,14 @@ class Transcripts extends Component {
             })
     }
 
-    getDataSource = () => {
+    getDataSource = (pageNum) => {
         const _component = this;
-        let { dataSource, filter, pagination,csSource } = this.state;
-
-        if (!pagination[3]) return;
+        let { csSource, dataSource, filter } = this.state;
 
         let queryUrl = '/chathistories?1=1';
 
         if (filter.csid) queryUrl += '&csid=' + filter.csid;
-        queryUrl += '&pageNum=' + pagination[0];
-
-        _component.setState({spinning: true});
+        if (pageNum) queryUrl += '&pageNum=' + pageNum;
 
         //console.log(queryUrl);
 
@@ -93,82 +75,25 @@ class Transcripts extends Component {
                         item.csEmail = csFilters.length ? csFilters[0].email : 'invalid_email';
                     });
 
-                    dataSource = dataSource.concat(data.msg.rows);
-
-                    pagination[0]++;
-                    pagination[2] += data.msg.rows.length;
-
-                    //console.log('page:', pagination[2], data.msg.count, dataSource.length);
-
-                    if (pagination[2] === data.msg.count) pagination[3] = false;
 
                     _component.setState({
-                        dataSource,
-                        pagination,
+                        dataSource: dataSource.concat(data.msg.rows),
+                        total: data.msg.count,
+                        initPage: false,
                     });
                 } else {
                     message.error(data.msg, 4);
                 }
             }).catch((e) => message.error(e.message, 4))
-            .then(() => this.setState({spinning: false}))
-    }
-
-
-    handleScroll = (e) => {
-        const { pagination,spinning } = this.state;
-        let deta = document.body.clientHeight + document.body.scrollTop + 80 - document.body.scrollHeight;
-        //console.log('lock', this.lock, 'spinning', spinning, 'loading', pagination[3], 'deta', deta);
-
-        if (!this.lock && !spinning && pagination[3] && (deta >= 0)) {
-            //console.log(new Date(), 'update data source>>>>>');
-            this.lock = true;
-            this.detachScrollEvent();
-            this.getDataSource();
-        }
-    }
-
-
-    attachScrollEvent = () => {
-        window.addEventListener('scroll', this.handleScroll, false);
-        window.addEventListener('resize', this.handleScroll, false);
-
-        this.handleScroll();
-    }
-
-    detachScrollEvent = (next) => {
-        this.lock = false;
-        window.removeEventListener('scroll', this.handleScroll, false);
-        window.removeEventListener('resize', this.handleScroll, false);
     }
 
     componentDidMount() {
-        this.getCSSource();
-        this.attachScrollEvent();
+        const _component = this;
+        this.getCSSource().then(function () {
+            _component.getDataSource();
+        });
     }
 
-    componentWillUnmount() {
-        this.detachScrollEvent();
-    }
-
-    componentWillUpdate(nextProps, nextState) {
-        //console.log('componentWillUpdate');
-        //console.log(this.state.dataSource.length, nextState.dataSource.length);
-    }
-
-    componentDidUpdate(prevProps, prevState) {
-        //console.log('componentDidUpdate');
-        //console.log(this.state.dataSource.length, prevState.dataSource.length);
-        setTimeout(() => {
-            this.attachScrollEvent();
-        }, 0);
-    }
-
-
-    handleChange = (pagination, filters, sorter) => {
-        //console.log({pagination, sorter});
-
-        //this.setState({pagination, sorter}, this.getDataSource);
-    }
 
     handleSelectChange = (key, value) => {
         //console.log(key, value);
@@ -178,24 +103,30 @@ class Transcripts extends Component {
 
         this.setState({
             filter,
-            pagination: Object.assign([], initPagination),
             dataSource: [],
+            total: 0,
+            initPage: true,
         }, this.getDataSource);
     }
 
-    render() {
-        let { csSource, dataSource, spinning } = this.state;
+    renderCustomer = (text, record) => {
+        let customer = getCustomerName(text);
+        return <a onClick={ (e) => this.handleChatList(e, record) }>{ customer }</a>;
+    }
 
-        const columns = [
-            {
-                title: 'customer', dataIndex: 'cid', key: 'cid', render: this.renderCustomer,
+    render() {
+        let { csSource, dataSource, total,initPage } = this.state;
+
+
+        let scrollTableProps = {
+            initPage: initPage,
+            data: {
+                total: total,
+                list: dataSource,
             },
-            {title: 'name', dataIndex: 'csName', key: 'csName',},
-            {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
-            {
-                title: 'latest connect time', dataIndex: 'updatedAt', key: 'updatedAt', render: formatDate,
-            },
-        ];
+            loadNextFunc: this.getDataSource,
+            renderCustomer: this.renderCustomer
+        }
 
         return (
             <div>
@@ -223,18 +154,8 @@ class Transcripts extends Component {
                         </div>
                     </div>
 
-                    <Table locale={{ emptyText: 'List is empty' }}
-                           dataSource={ dataSource }
-                           columns={ columns }
-                           pagination={ false }
-                           footer={ currentData =>
-                                    <div id="tableFooter" style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                        <div> </div>
-                                        <div> <Spin spinning={spinning} /></div>
-                                        <div>total: {currentData.length} items</div>
-                                    </div>
-                                }
-                        />
+                    <ScrollTable {...scrollTableProps}/>
+
                 </div>
             </div>
         );

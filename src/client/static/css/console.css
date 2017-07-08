@@ -39,12 +39,12 @@
     padding-right: 16px;
 }
 
-#console-body .rightWarpper .ant-menu-root:hover{
+#console-body .rightWarpper .ant-menu-root:hover {
     color: #108ee9;
     background-color: #8fc9fb;
 }
 
-#console-body .rightWarpper .ant-menu-item:hover{
+#console-body .rightWarpper .ant-menu-item:hover {
     color: #108ee9;
     background-color: #8fc9fb;
 }
@@ -123,4 +123,10 @@
 
 .ant-table-expanded-nested .table-operation a:not(:last-child) {
     margin-right: 24px;
+}
+
+.scroll-loader {
+    text-align: center;
+    font-size: 20px;
+    line-height: 1.5;
 }
