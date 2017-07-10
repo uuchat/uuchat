@@ -46,6 +46,7 @@ class ScrollTable extends Component {
                                 pageLimit={ pageLimit }
                                 pageStart={ pageStart }
                                 hasMore={ hasMore }
+                                colSpan={ 4 }
                                 spinLoader={<div className='scroll-loader'><Spin /></div>}
                                 mannualLoader={<div className='scroll-loader'><a>Load More</a></div>}
                                 noMore={<div className='scroll-loader'>No More Items</div>}

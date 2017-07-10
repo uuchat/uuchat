@@ -6,7 +6,12 @@ import moment from 'moment';
 import { Breadcrumb, Table, message } from 'antd';
 import { getCustomerName, formatDate } from './utils';
 
-import RateSearchForm from './rateSearchForm';
+//import RateSearchForm from './rateSearchForm';
+
+import AsyncComponent from '../../views/asyncComponent.js';
+
+const RateSearchForm = AsyncComponent(() => import('./rateSearchForm')
+    .then(component => component.default));
 
 class Rates extends Component {
     filter = {

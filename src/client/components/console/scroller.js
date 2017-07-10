@@ -116,7 +116,7 @@ export default class LimitedInfiniteScroll extends Component {
     }
 
     render() {
-        const {pageLimit, pageStart, threshold, hasMore, autoLoad, useWindow, loadNext, spinLoader, mannualLoader, noMore, children, ...props} = this.props
+        const {pageLimit, pageStart, threshold, hasMore, autoLoad, useWindow,colSpan, loadNext, spinLoader, mannualLoader, noMore, children, ...props} = this.props
 
         const cloneMannualLoader = React.cloneElement(mannualLoader, {
             onClick: () => {
@@ -135,7 +135,7 @@ export default class LimitedInfiniteScroll extends Component {
             <tbody className='ant-table-tbody' {...props}>
             {children}
             <tr>
-                <td colSpan='4'>
+                <td colSpan={ colSpan }>
                     {this.state.loading && hasMore && <div style={{textAlign: 'center'}}>{spinLoader}</div>}
                     {!this.state.loading && hasMore && pageLimit > 0 && this.page >= pageLimit &&
                     <div style={{textAlign: 'center'}}>{cloneMannualLoader}</div>}

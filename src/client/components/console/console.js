@@ -7,14 +7,14 @@ import UpgradeNote from './upgradeNote';
 import Dashboard from './dashboard';
 //import Operators from './operators';
 //import Transcripts from './transcripts';
-import Rates from './rates';
+//import Rates from './rates';
 //import RateList from './rateList';
 //import RateDetails from './rateDetails';
 
 import AsyncComponent from '../../views/asyncComponent.js';
 
-/*const Dashboard = AsyncComponent(() => import('./dashboard')
-    .then(module => module.default), { name: 'dashboard' });*/
+//const Dashboard = AsyncComponent(() => import('./dashboard')
+//    .then(module => module.default), { name: 'dashboard' });
 
 const Operators = AsyncComponent(() => import('./operators')
     .then(module => module.default), { name: 'operators' });
@@ -22,8 +22,8 @@ const Operators = AsyncComponent(() => import('./operators')
 const Transcripts = AsyncComponent(() => import('./transcripts')
     .then(module => module.default), { name: 'transcripts' });
 
-/*const Rates = AsyncComponent(() => import('./rates')
-    .then(Rates => module.default), { name: 'rates' });*/
+const Rates = AsyncComponent(() => import('./rates')
+    .then(module => module.default), { name: 'rates' });
 
 const RateList = AsyncComponent(() => import('./rateList')
     .then(module => module.default), { name: 'rateList' });
