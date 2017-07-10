@@ -85,6 +85,7 @@ module.exports = {
         'react': 'React',
         'react-dom': 'ReactDOM',
         'socket.io-client': 'io',
+        'moment': 'moment',
     },
     resolve: {
         moduleExtensions: ['.js', '.json', '.jsx'],

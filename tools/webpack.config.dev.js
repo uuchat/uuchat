@@ -94,6 +94,7 @@ module.exports = {
         'react': 'React',
         'react-dom': 'ReactDOM',
         'socket.io-client': 'io',
+        'moment': 'moment',
     },
     resolve: {
         // This allows you to set a fallback for where Webpack should look for modules.
