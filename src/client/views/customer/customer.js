@@ -46,6 +46,9 @@
     var UUCT = {
         domain: (w.UUCHAT && w.UUCHAT.domain)|| '',
         socket: null,
+        timeStart: 0,
+        timeOutSeconds: 2700000,
+        timeOutTimer: null,
         chat: {
             cid: '',
             csid: '',
@@ -170,10 +173,7 @@
                     };
                 };
 
-                params.progress && (xhr.onprogress = params.progress);
-                xhr.onload = function(event){
-
-                }
+                xhr.upload.onprogress = params.progress;
 
                 if(params.type == 'GET') {
                     xhr.open(params.type, params.url + '?' + params.data, true);
@@ -233,11 +233,11 @@
                 reconnectionDelay:2000 ,
                 timeout: 10000
             });
-            UUCT.socket .on('connect', UUCT.socketConnect);
-            UUCT.socket .on('connect_error', UUCT.socketConnectError);
-            UUCT.socket .on('disconnect', UUCT.socketDisconnect);
-            UUCT.socket .on('reconnect', UUCT.socketReconnect);
-            UUCT.socket .on('error', UUCT.socketError);
+            UUCT.socket.on('connect', UUCT.socketConnect);
+            UUCT.socket.on('connect_error', UUCT.socketConnectError);
+            UUCT.socket.on('disconnect', UUCT.socketDisconnect);
+            UUCT.socket.on('reconnect', UUCT.socketReconnect);
+            UUCT.socket.on('error', UUCT.socketError);
         },
         template: function(){
             var str = '<div class="chat-body chat-body-hidden">';
@@ -401,11 +401,19 @@
             chatMsg && (chatMsg.scrollTop = chatMsg.scrollHeight);
 
         },
+        dateISOFomat: function(t){
+            if(isNaN(new Date(t))){
+                t = t.split(/\D/);
+                return new Date(Date.UTC(t[0], --t[1]||'', t[2]||'', t[3]||'', t[4]||'', t[5]||'', t[6]||''));
+            }else{
+                return new Date(t);
+            }
+        },
         initCustomer: function(data){
             var msg = UUCT.tempMsg(),
                 send = UUCT.tempSend(),
                 msgList = '',
-                src = (data.photo !== '') ? data.photo : 'static/images/ua.png';
+                src = (data.photo && data.photo !== '') ? data.photo : 'static/images/ua.png';
 
             UUCT.chat.cid = data.cid;
             UUCT.chat.csid = data.csid;
@@ -419,18 +427,9 @@
 
             if(data.msg.length > 0){
                 for(var i = 0, l = data.msg.length; i < l; i++){
-                    if(data.msg[i].type !== 3 && data.msg[i].type !== 4){
-                        var s = data.msg[i].createdAt,
-                            d ;
-                        if(isNaN(new Date(s))){
-                             s = s.split(/\D/);
-                             d= new Date(Date.UTC(s[0], --s[1]||'', s[2]||'', s[3]||'', s[4]||'', s[5]||'', s[6]||''));
-
-
-                        }else{
-                            d = new Date(s);
-                        }
-                        msgList += UUCT.tempMsgItem(data.msg[i].type, data.msg[i].msg, d);
+                    var msg = data.msg[i];
+                    if(msg.type !== 3 && msg.type !== 4){
+                        msgList += UUCT.tempMsgItem(msg.type, msg.msg, UUCT.dateISOFomat(msg.createdAt));
                     }
                 }
                 $('.chat-msg').innerHTML += msgList;
@@ -491,6 +490,18 @@
             });
 
         },
+        socketConnectTimeOut: function(){
+            UUCT.timeStart = UUCT.dateISOFomat(new Date());
+            clearInterval(UUCT.timeOutTimer);
+            UUCT.timeOutTimer = setInterval(function(){
+                var timeNow = UUCT.dateISOFomat(new Date());
+                if(timeNow.getTime() - UUCT.timeStart.getTime() > UUCT.timeOutSeconds){
+                    clearInterval(UUCT.timeOutTimer);
+                    UUCT.socket.close();
+                }
+            }, 2000);
+
+        },
         socketConnectError: function(){
             var str = '<div class="chat-offline"><div class="chat-error">Oh! no ! There has error !You can try it later again</div></div>';
             if(!$('.chat-offline')){
@@ -502,10 +513,12 @@
                 role: 1,
                 msg: 'The server has been offline!You can try it by refesh the browser at latter'
             });
+            $('.chat-name').innerHTML = UUCT.chat.csName;
             this.close();
         },
         socketCsSelect: function(type, data){
             if(1 === type){
+                UUCT.socketConnectTimeOut();
                 UUCT.initCustomer(data);
                 addEvent($('.chat-emoji-btn'), 'click', function(e){
                     toggleClass($('.emoji-lists'), 'emoji-lists-hidden');
@@ -529,6 +542,8 @@
                         return false;
                     }
 
+                   $('.chat-msg').innerHTML += '<div class="upload-tips">Uploading 0 %</div>';
+
                    UUCT.ajax({
                        url: UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image',
                        type:'POST',
@@ -536,11 +551,7 @@
                        data: data,
                        progress: function(d){
                            var percent = Math.round(d.loaded/d.total*100);
-                           if($('.upload-tips')){
-                               $('.upload-tips').innerHTML = 'Uploading '+percent+ ' %';
-                           }else{
-                               $('.chat-msg').innerHTML += '<div class="upload-tips">Uploading '+percent+ ' %</div>';
-                           }
+                           $('.upload-tips').innerHTML = 'Uploading '+percent+ ' %';
                            if(percent === 100){
                                setTimeout(function(){
                                    $('.upload-tips').parentNode.removeChild($('.upload-tips'));
@@ -664,6 +675,7 @@
         },
         socketEmitMessage: function(msg){
             UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(isTrue){
+                UUCT.timeStart = UUCT.dateISOFomat(new Date());
                 if(isTrue){
                     UUCT.msgTranslate({
                         role: 0,
@@ -679,6 +691,7 @@
         },
         socketCsMessage: function(cid, msg){
             var chatNums = $('.chat-nums');
+            UUCT.timeStart = UUCT.dateISOFomat(new Date());
             UUCT.msgTranslate({
                 role: 1,
                 msg: msg
@@ -717,9 +730,8 @@
         },
         socketQueueShift: function(d){
             if(d){
-                var offline = $('.chat-offline');
-                offline.parentNode.removeChild($('.chat-offline'));
                 UUCT.initCustomer(d);
+                UUCT.socketConnectTimeOut();
             }
         },
         socketReconnect: function(){
