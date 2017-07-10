@@ -478,10 +478,25 @@
     color: #222;
     font-weight: bold;
 }
+.avatar-box{
+    position: relative;
+}
 .avatar-box img{
     padding: 5px;
     border:1px solid #ccc;
     border-radius: 3px;
+}
+.avatar-process{
+    position: absolute;
+    top:0;
+    left: 0;
+    width: 112px;
+    height: 112px;
+    line-height: 100px;
+    text-align: center;
+    color:#fff;
+    font-size: 14px;
+    background-color: rgba(0, 0, 0, .6);
 }
 .avatar-upload{
     display:inline-block;

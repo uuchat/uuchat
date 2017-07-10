@@ -130,3 +130,51 @@
     font-size: 20px;
     line-height: 1.5;
 }
+
+.ant-table {
+    font-size: 12px;
+    color: rgba(0, 0, 0, 0.65);
+    overflow: hidden;
+    position: relative;
+    border-radius: 4px 4px 0 0;
+    /* fix firefox scrollbar bug */
+}
+
+.ant-table table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    text-align: left;
+    border-radius: 4px 4px 0 0;
+    overflow: hidden;
+}
+
+.ant-table-thead > tr > th {
+    background: #f7f7f7;
+    font-weight: 500;
+    transition: background .3s ease;
+    text-align: left;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+.ant-table-thead > tr > th[colspan] {
+    text-align: center;
+}
+
+.ant-table-tbody > tr > td {
+    border-bottom: 1px solid #e9e9e9;
+    transition: all .3s;
+}
+
+.ant-table-thead > tr.ant-table-row-hover > td,
+.ant-table-tbody > tr.ant-table-row-hover > td,
+.ant-table-thead > tr:hover > td,
+.ant-table-tbody > tr:hover > td {
+    background: #ecf6fd;
+}
+
+.ant-table-thead > tr > th,
+.ant-table-tbody > tr > td {
+    padding: 16px 8px;
+    word-break: break-all;
+}

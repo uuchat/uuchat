@@ -47,7 +47,6 @@ class CustomerSuccess extends Component{
                 setting: 'setting'
             },
             chatNotify: {},
-            isClose: false,
             isOnline: true,
             isConnectErr: false
         };
@@ -80,14 +79,7 @@ class CustomerSuccess extends Component{
 
     }
     componentDidMount(){
-        var that = this;
         this.createSocket();
-        window.onbeforeunload = function(){
-            if(that.isClose){
-                return true;
-            }
-            return 'Are you sure to leave??';
-        };
     }
 
     /***

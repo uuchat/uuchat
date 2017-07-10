@@ -11,6 +11,8 @@ class ChatSetting extends Component{
         this.state = {
             isAccountShow: false,
             isPasswordShow: false,
+            isUploading: false,
+            percent: 0,
             avatar: require('../static/images/contact.png')
         };
         this.accountHandle = this.accountHandle.bind(this);
@@ -103,16 +105,26 @@ class ChatSetting extends Component{
             },
             onChange(info) {
                 var file = info.file;
-                if (file.status === 'done') {
+                if(file.status === 'uploading'){
+                    if(info.event){
+                        that.setState({
+                            isUploading: true,
+                            percent: Math.ceil(info.event.percent)
+                        });
+                    }
+                }else if (file.status === 'done') {
                     if(200 === info.file.response.code){
                         var photo = file.response.msg.photo;
                         localStorage.setItem('uuchat.avatar', photo);
                         that.props.avatarHandle(photo);
-                        that.setState({
-                            avatar: photo
-                        });
+                        setTimeout(function(){
+                            that.setState({
+                                avatar: photo,
+                                isUploading: false
+                            });
+                        }, 800);
                     }
-                } else if (info.file.status === 'error') {
+                } else if (file.status === 'error') {
                     message.error(info.file.name+' file upload failed.');
                 }
             }
@@ -146,6 +158,7 @@ class ChatSetting extends Component{
                                 <p>Operator photo(100x100)</p>
                                 <div className="avatar-box">
                                     <img src={(localStorage['uuchat.avatar'] !=='' ? localStorage['uuchat.avatar'] : this.state.avatar)} alt="" />
+                                    <div className="avatar-process" style={{display: that.state.isUploading ? 'block' : 'none'}}>{that.state.percent}%</div>
                                 </div>
                                 <div className="avatar-upload"><Upload {...props}><Icon type="upload" /> Upload </Upload> </div>
                             </div>
