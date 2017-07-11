@@ -48,8 +48,19 @@ function printErrors(summary, errors) {
 
 // Create the production build and print the deployment instructions.
 function build(previousFileSizes) {
+
+    var sTime = new Date().getTime();
+
     console.log('Creating an optimized production build...');
-    webpack(config).run((err, stats) => {
+
+    var compiler = webpack(config);
+
+    //compiler.apply(new webpack.ProgressPlugin({profile: true}));
+    compiler.apply(new webpack.ProgressPlugin(profileDetail));
+
+    statsOutput(compiler);
+
+    compiler.run((err, stats) => {
         if (err) {
             printErrors('Failed to compile.', [err]);
             process.exit(1);
@@ -140,10 +151,56 @@ function build(previousFileSizes) {
             }
             console.log(`  ${chalk.cyan('serve')} -s build`);
             console.log();
+            console.log(`  ${chalk.cyan('Total build')} times - ${chalk.cyan(Math.ceil((new Date().getTime() - sTime)/1000))} s`);
+            console.log();
         }
     });
 }
 
+
+function statsOutput(compiler) {
+    var output = 'stats.json';
+    var options = {
+        chunkModules: true,
+        exclude: [/node_modules[\\\/]react/]
+    };
+
+    compiler.plugin('emit', function onEmit (compilation, done) {
+        var result;
+
+        compilation.assets[output] = {
+            size: function getSize () {
+                return result && result.length || 0;
+            },
+            source: function getSource () {
+                var stats = compilation.getStats().toJson(options);
+                var result = JSON.stringify(stats);
+                return result;
+            }
+        };
+        done();
+    })
+}
+
+function profile(percentage, msg, current, active, modulepath) {
+    if (process.stdout.isTTY && percentage < 1) {
+        process.stdout.cursorTo(0);
+        modulepath = modulepath ? ' …' + modulepath.substr(modulepath.length - 30) : '';
+        current = current ? ' ' + current : '';
+        active = active ? ' ' + active : '';
+        process.stdout.write((percentage * 100).toFixed(0) + '% ' + msg + current + active + modulepath + ' ');
+        process.stdout.clearLine(1)
+    } else if (percentage === 1) {
+        process.stdout.write('\n');
+        console.log('webpack: done.');
+    }
+}
+
+function profileDetail(percentage, msg, current, active, modulepath) {
+    //if ("react".indexOf(modulepath) >= 0 || "moment".indexOf(modulepath) >= 0){
+        console.log((percentage * 100) + '%', msg + current + modulepath + ' ');
+    //}
+}
 
 function copyPublicFolder() {
     fs.copySync(paths.appPublic, paths.appBuild, {
