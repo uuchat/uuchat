@@ -449,13 +449,20 @@ class CustomerSuccess extends Component{
      * Close the customer dialog
      *
      */
-    closeDialog(e, cid){
+    closeDialog(e, cid, type){
         e.stopPropagation();
+        var that = this,
+            title = 'Do you Want to close this customer?',
+            content = 'If yes , the customer window will be remove';
 
-        var that = this;
+        if('offline' === type){
+            title = 'Do you Want to close this offline message?';
+            content = 'If yes , the offline message will be remove';
+        }
+
         Modal.confirm({
-            title: 'Do you Want to close this customer?',
-            content: 'If yes , the customer window will be remove',
+            title: title,
+            content: content,
             okText: 'Yes',
             cancelText: 'No',
             onOk() {
@@ -467,6 +474,13 @@ class CustomerSuccess extends Component{
                 delete messageLists[cid];
 
                 customerLists && customerLists.map((c, i) => c.cid === cid &&  customerLists.splice(i, 1));
+
+                if(type === 'offline'){
+                    that.setState({
+                        customerLists: customerLists
+                    });
+                    return false;
+                }
 
                 if(customerLists.length > 0){
                     if(scid === cid){
@@ -537,22 +551,30 @@ class CustomerSuccess extends Component{
     loginOut(e){
         e.preventDefault();
         var that = this;
-        fetch('/logout', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded'
-            }
-        })
-        .then((res)=>res.json())
-        .then(function(d){
-            if(200 === d.code){
-                that.state.socket.emit('cs.logout',function(type){});
-                that.state.socket.close();
-                window.location.href = '/';
-            }
-        })
-        .catch(function(e){
+        Modal.confirm({
+            title: 'Login out',
+            content: 'Do you comfirm login out?',
+            cancelText: 'No',
+            okText: 'Yes',
+            onOk: function(){
+                fetch('/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then((res)=>res.json())
+                .then(function(d){
+                    if(200 === d.code){
+                        that.state.socket.emit('cs.logout',function(type){});
+                        that.state.socket.close();
+                        window.location.href = '/';
+                    }
+                })
+                .catch(function(e){
 
+                });
+            }
         });
     }
 
@@ -668,7 +690,7 @@ class CustomerSuccess extends Component{
                     var num = (!state.chatNotify[chat.cid]) ? 0 : state.chatNotify[chat.cid],
                         isActive = (state.customerSelect.cid === chat.cid);
                     if(chat.type && chat.type === 'offline'){
-                        cArr.push(<Chat key={index} email={chat.msg} cid={chat.cid} name={chat.name} type={chat.type}  />)
+                        cArr.push(<Chat key={index} email={chat.msg} cid={chat.cid} name={chat.name} type={chat.type} closeDialog={this.closeDialog}  />)
                     }else{
                         cArr.push(<Chat key={index} marked={chat.marked} cid={chat.cid} newMsg={state.messageLists[chat.cid]} name={chat.name} num={ num } closeDialog={this.closeDialog} onChatListClick={this.onChatListClick} isActive={isActive} />)
                     }

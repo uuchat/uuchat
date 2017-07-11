@@ -102,8 +102,12 @@ class ChatSearch extends Component{
                 }else{
                     pageNum = 0;
                     message.info('There has no chats result aboute '+content, 4);
+                }
+
+                if(d.msg.length <5){
                     isView = false;
                 }
+
                 that.setState({
                     searchList: d.msg,
                     isViewMore: isView
@@ -162,6 +166,8 @@ class ChatSearch extends Component{
                 }else{
                     pageNum = 0;
                     message.info('There has no more result!', 4);
+                }
+                if(d.msg.length < 5){
                     that.setState({
                         isViewMore: false
                     });

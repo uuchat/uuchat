@@ -10,12 +10,11 @@ class Chat extends Component{
 
     constructor(){
         super();
-        this.state = {
-            isCloseOffline: false
-        };
+        this.state={
+            isOfflineShow: false
+        }
         this.chatClickHandler = this.chatClickHandler.bind(this);
         this.offlineShow = this.offlineShow.bind(this);
-        this.closeOffline = this.closeOffline.bind(this);
     }
 
     chatClickHandler(e){
@@ -32,22 +31,9 @@ class Chat extends Component{
         return <span dangerouslySetInnerHTML={{__html: m}}></span>;
     }
     offlineShow(){
-        Modal.info({
-            title:'From customer offline message!',
-            okText: 'Close',
-            content: (
-                <div>
-                    <h1 className="chat-offline-msg">Content: {this.props.email.content}</h1>
-                    <h2 className="chat-offline-t">Name: {this.props.email.name}</h2>
-                    <h3 className="chat-offline-t">Email: {this.props.email.email}</h3>
-                </div>
-            )
-        });
-    }
-    closeOffline(e){
-        e.stopPropagation();
+        var isOfflineShow = this.state.isOfflineShow;
         this.setState({
-            isCloseOffline: true
+            isOfflineShow: !isOfflineShow
         });
     }
 
@@ -73,22 +59,35 @@ class Chat extends Component{
                         <h2 className="text-overflow">U-{this.props.name.toUpperCase()}</h2>
                         <p className="text-overflow">{msg && this.msgFilter(msg.msgText)}</p>
                     </div>
-                    <div className="chat-close" onClick={(e)=>this.props.closeDialog(e, this.props.cid)}>╳</div>
+                    <div className="chat-close" onClick={(e)=>this.props.closeDialog(e, this.props.cid, 'chat')}>╳</div>
                     <div className="chat-notify" style={{display: (this.props.isActive || this.props.num === 0) ? 'none' : 'inline-block'}}>{this.props.num}</div>
                 </li>
              );
         }else if(this.props.type){
+
             return (
-                <li onClick={this.offlineShow} style={{display: this.state.isCloseOffline ? 'none' : ''}}>
+                <li onClick={this.offlineShow}>
                     <div className="chat-avatar fl">
                         <span className={"avatar-icon avatar-icon-"+cIndex}>{this.props.cid.substr(0,1).toUpperCase()}</span>
                     </div>
                     <div className="chat-news fr">
-                        <h2 className="text-overflow">U-{this.props.cid.substr(0,1).toUpperCase()}</h2>
+                        <h2 className="text-overflow">U-{this.props.cid.substr(0,6).toUpperCase()}</h2>
                         <p className="text-overflow">Offline message </p>
                     </div>
-                    <div className="chat-close" onClick={this.closeOffline}>╳</div>
+                    <div className="chat-close" onClick={(e)=>this.props.closeDialog(e, this.props.cid, 'offline')}>╳</div>
                     <div className="chat-notify">Offline message </div>
+                    <Modal
+                        title={'U-'+this.props.cid.substr(0,6).toUpperCase()+' message offline'}
+                        visible={this.state.isOfflineShow}
+                        footer={null}
+                        onCancel={this.offlineShow}
+                    >
+                        <div>
+                            <h1 className="chat-offline-msg">Content: {this.props.email.content}</h1>
+                            <h2 className="chat-offline-t">Name: {this.props.email.name}</h2>
+                            <h3 className="chat-offline-t">Email: {this.props.email.email}</h3>
+                        </div>
+                    </Modal>
                </li>
             );
         }
