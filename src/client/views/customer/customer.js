@@ -98,7 +98,6 @@
                 str_len = str.length,
                 a = '';
 
-
             for (var i = 0; i < str_len; i++) {
                 a = str.charAt(i);
                 str_length++;
@@ -509,9 +508,11 @@
             }
         },
         socketDisconnect: function(){
+
+
             UUCT.msgTranslate({
                 role: 1,
-                msg: 'The server has been offline!You can try it by refesh the browser at latter'
+                msg: 'Long time no chat, disconnect, you can try it by refesh the browser at latter'
             });
             $('.chat-name').innerHTML = UUCT.chat.csName;
             this.close();
@@ -639,7 +640,7 @@
                     vertify = false;
                 }
 
-                if(email === '' || !/^[0-9a-z_]+@(([0-9a-z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)){
+                if(email === '' || !/^[0-9a-z_A-Z]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)){
                     addClass($('.offline-email'), 'error');
                     vertify = false;
                 }
@@ -718,6 +719,7 @@
             }
         },
         socketCsDisconnect: function(){
+            clearInterval(UUCT.timeOutTimer);
             UUCT.msgTranslate({
                 role: 1,
                 msg: 'The customerSuccess is offline!'

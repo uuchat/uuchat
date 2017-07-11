@@ -7,7 +7,7 @@ var csrf = require('csurf');
 var async = require('async');
 var nconf = require('nconf');
 var _ = require('lodash');
-
+var maxmind = require('maxmind');
 
 var middleware = {};
 
@@ -35,6 +35,49 @@ middleware.whiteListOpt = function () {
     }
     return opt;
 };
+
+middleware.jsCDN = function (req, res, next) {
+    if (req.session.isoCode) {
+        var ip = getIP(req);
+        if (ip !== req.session.isoCode) {
+            setupIOSCode(req, ip, next);
+        } else {
+            next();
+        }
+    } else {
+        setupIOSCode(req, getIP(req), next);
+    }
+};
+
+function getIP(req) {
+    var ip = req.headers['x-forwarded-for'] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        (req.connection.socket && req.connection.socket.remoteAddress);
+
+    return ip.match(new RegExp(/((\d+)\.){3}(\d+)/g))[0];
+}
+
+function setupIOSCode(req, ip, next) {
+    if (ip) {
+        maxmind.open(nconf.get('mmdb:path'), (err, orgLookup) => {
+            var ipInfo = orgLookup.get(ip);
+            var isoCode = nconf.get('CDN:DEFAULT');
+            if (ipInfo) {
+                isoCode = ipInfo.country.iso_code
+            }
+            if (_.isUndefined(isoCode) || _.isEmpty(isoCode)) {
+                isoCode = nconf.get('CDN:DEFAULT');
+            }
+            req.session.isoCode = isoCode;
+            next();
+        });
+    } else {
+        req.session.isoCode = nconf.get('CDN:DEFAULT');
+        next();
+    }
+}
+
 
 middleware.checkAccountPermissions = function (req, res, next) {
     // This middleware ensures that only the requested user and admins can pass

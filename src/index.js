@@ -21,6 +21,7 @@ var session = require('express-session');
 var useragent = require('express-useragent');
 var favicon = require('serve-favicon');
 var compress = require('compression');
+var ejs = require('ejs');
 
 var middleware = require('./server/middleware');
 
@@ -121,30 +122,30 @@ function baseHtmlRoute(app, middlewareDev) {
         saveUninitialized: true
     }));
 
-    app.get('/', function response(req, res) {
-        var html = path.join(__dirname, '../build/app.html');
-        htmlRender(middlewareDev, res, html);
+    app.get('/', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../build/app.ejs');
+        ejsRender(middlewareDev, getCNDFile(req, ['socketIO']), res, html);
     });
     app.get('/demo', function response(req, res) {
         var html = path.join(__dirname, '../build/customer.html');
         htmlRender(middlewareDev, res, html);
     });
-    app.get('/search', function response(req, res) {
-        var html = path.join(__dirname, '../build/search.html');
-        htmlRender(middlewareDev, res, html);
+    app.get('/search', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../build/search.ejs');
+        ejsRender(middlewareDev, getCNDFile(req, null), res, html);
     });
-    app.get('/console', function response(req, res) {
-        var html = path.join(__dirname, '../build/console.html');
-        htmlRender(middlewareDev, res, html);
+    app.get('/console', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../build/console.ejs');
+        ejsRender(middlewareDev, getCNDFile(req, ['momentMinJS']), res, html);
     });
-    app.get('/console/index', function response(req, res) {
+    app.get('/console/index', middleware.jsCDN, function response(req, res) {
         if (!req.session.csid) {
             res.redirect('/console');
         }
-        var html = path.join(__dirname, '../build/console.html');
-        htmlRender(middlewareDev, res, html);
+        var html = path.join(__dirname, '../build/console.ejs');
+        ejsRender(middlewareDev, getCNDFile(req, ['momentMinJS']), res, html);
     });
-    app.get('/chat', function response(req, res) {
+    app.get('/chat', middleware.jsCDN, function response(req, res) {
         if (!req.session.csid) {
             res.redirect('/');
         }else {
@@ -155,13 +156,14 @@ function baseHtmlRoute(app, middlewareDev) {
                 customerSuccess.create({csid: csid, name: req.session.csName, photo: req.session.photo});
             }
         }
-        var html = path.join(__dirname, '../build/app.html');
-        htmlRender(middlewareDev, res, html);
+        var html = path.join(__dirname, '../build/app.ejs');
+        ejsRender(middlewareDev, getCNDFile(req, ['socketIO']), res, html);
     });
-    app.get('/register', function response(req, res) {
-        var html = path.join(__dirname, '../build/app.html');
-        htmlRender(middlewareDev, res, html);
+    app.get('/register', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../build/app.ejs');
+        ejsRender(middlewareDev, getCNDFile(req, ['socketIO']), res, html);
     });
+
     var opts = middleware.whiteListOpt();
     opts.credentials = true;
     app.get('/s', cors(opts), function response(req, res) {
@@ -179,6 +181,16 @@ function htmlRender(middlewareDev, res, html) {
         res.end();
     } else {
         res.render(html);
+    }
+}
+
+function ejsRender(middlewareDev, jsObj, res, html) {
+    if (middlewareDev) {
+        var returnHtml = ejs.render(middlewareDev.fileSystem.readFileSync(html).toString(), jsObj);
+        res.write(returnHtml);
+        res.end();
+    } else {
+        res.render(html, jsObj);
     }
 }
 
@@ -250,6 +262,7 @@ function setupExpress(app, callback) {
         if (global.env === 'development') {
             logger.error(err.stack);
         } else {
+            logger.error(err.stack);
             logger.error("~~~~~~ has 503 error!");
         }
         res.status(503).send('system has problem.');
@@ -326,6 +339,31 @@ function fileFilters(req, res, next) {
     } else {
         next();
     }
+}
+
+function getCNDFile(req, keys) {
+    var defaultKeys = ['reactMinJS', 'reactDomMinJS'];
+    if (keys) {
+        defaultKeys = defaultKeys.concat(keys);
+    }
+    var isoCode = req.session.isoCode;
+    if (isoCode) {
+        isoCode = nconf.get('CDN:DEFAULT');
+    }
+
+    var js = nconf.get('CDN:'+ isoCode);
+    var rtnArray;
+    if(!_.isEmpty(js)) {
+        rtnArray = js
+    } else {
+        rtnArray = nconf.get('CDN:DEFAULT');
+    }
+    return _.reduce(rtnArray, function(result, value, key) {
+        if (_.indexOf(defaultKeys, key) >= 0) {
+            result[key] = value;
+        }
+        return result;
+    }, {});
 }
 
 //check redis has started;

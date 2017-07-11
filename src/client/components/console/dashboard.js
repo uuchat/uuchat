@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 //import {FormattedMessage} from 'react-intl';
-import _ from 'lodash';
 import { Breadcrumb, Col, Row, message,Card } from 'antd';
 
 import NumberCard from './numberCard';
@@ -49,7 +48,7 @@ class Dashboard extends Component {
 
                 if (200 === data.code) {
 
-                    var numberObj = _.reduce(data.msg, function (result, value) {
+                    var numberObj = data.msg.reduce(function (result, value) {
                         Object.assign(result, value);
                         return result;
                     }, {});

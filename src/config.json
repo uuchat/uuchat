@@ -41,5 +41,30 @@
     "height": 100,
     "fileSize": 2097152,
     "savePath": "content/avatar/"
+  },
+  "mmdb": {
+    "path": "content/data/GeoLite2-Country.mmdb",
+    "createTime": "2017-07-04"
+  },
+  "CDN": {
+    "DEFAULT": "CN",
+    "CN": {
+      "reactMinJS": "https://cdn.bootcss.com/react/15.6.1/react.min.js",
+      "reactDomMinJS": "https://cdn.bootcss.com/react/15.6.1/react-dom.min.js",
+      "socketIO": "https://cdn.bootcss.com/socket.io/1.7.3/socket.io.min.js",
+      "momentMinJS": "https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"
+    },
+    "US": {
+      "reactMinJS": "https://unpkg.com/react@15.6.1/dist/react.min.js",
+      "reactDomMinJS": "https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js",
+      "socketIO": "https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js",
+      "momentMinJS": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"
+    },
+    "JP": {
+      "reactMinJS": "https://unpkg.com/react@15.6.1/dist/react.min.js",
+      "reactDomMinJS": "https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js",
+      "socketIO": "https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js",
+      "momentMinJS": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"
+    }
   }
 }

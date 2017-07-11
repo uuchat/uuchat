@@ -17,6 +17,8 @@ function customerSuccessRoutes(app, middleware, controllers) {
     app.post('/login', controllers.customerSuccessController.login);
     app.post('/logout', controllers.customerSuccessController.logout);
 
+    app.get('/country', controllers.customerSuccessController.getCountryCode);
+
     app.patch('/customersuccesses/:csid', controllers.customerSuccessController.update);
     app.delete('/customersuccesses/:csid', controllers.customerSuccessController.delete);
     app.post('/customersuccesses/:csid/avatar', middleware.upload.uploadAvatar,
