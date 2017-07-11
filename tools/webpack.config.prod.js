@@ -62,6 +62,8 @@ const extractTextPluginOptions = shouldUseRelativeAssetPaths
 
 module.exports = {
     bail: true,
+    cache: true,
+    profile: true,
     devtool: 'nosources-source-map',
     entry: {
         "vendor": ["react-router-dom", require.resolve('./polyfills')],
@@ -94,7 +96,7 @@ module.exports = {
         }
     },
     module: {
-        noParse: [ /socket.io-client/ ],
+        noParse: [ /socket.io-client/, /moment/ ],
         rules: [
             {
                 exclude: [
@@ -120,7 +122,7 @@ module.exports = {
                 enforce: 'pre',
                 use: [
                     {
-                        loader: 'babel-loader',
+                        loader: 'babel-loader?cacheDirectory=true',
                         options: {
                             plugins: [
                                 ['import', [{libraryName: "antd", style: 'css'}]],
@@ -160,7 +162,7 @@ module.exports = {
         // new ExtractTextPlugin({filename: cssFilename}),
         new HtmlWebpackPlugin({
             inject: true,
-            filename: "app.html",
+            filename: "app.ejs",
             template: paths.appHtml,
             chunks: ['vendor', 'app'],
             chunksSortMode: function (chunk1, chunk2) {
@@ -184,7 +186,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             inject: true,
-            filename: 'console.html',
+            filename: 'console.ejs',
             template: paths.consoleHtml,
             chunks: ['vendor', 'console'],
             chunksSortMode: function (chunk1, chunk2) {
@@ -208,7 +210,7 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             inject: true,
-            filename: 'search.html',
+            filename: 'search.ejs',
             template: paths.searchHtml,
             chunks: ['vendor', 'search'],
             chunksSortMode: function (chunk1, chunk2) {

@@ -116,7 +116,7 @@ module.exports = {
     },
 
     module: {
-        noParse: [ /socket.io-client/ ],
+        noParse: [ /socket.io-client/, /moment/ ],
         // First, run the linter.
         // It's important to do this before Babel processes the JS.
         rules: [
@@ -216,20 +216,20 @@ module.exports = {
         // Generates an `index.html` file with the <script> injected.
         new HtmlWebpackPlugin({
             favicon: paths.appIco,
-            filename: 'app.html',
+            filename: 'app.ejs',
             inject: true,
             template: paths.appHtml,
             chunks: ['app']
         }),
         new HtmlWebpackPlugin({
             inject: true,
-            filename: 'console.html',
+            filename: 'console.ejs',
             template: paths.consoleHtml,
             chunks: ['console']
         }),
         new HtmlWebpackPlugin({
             inject: true,
-            filename: 'search.html',
+            filename: 'search.ejs',
             template: paths.searchHtml,
             chunks: ['search']
         }),
