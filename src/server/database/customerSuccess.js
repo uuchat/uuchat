@@ -3,9 +3,9 @@
  */
 "use strict";
 
+var _ = require('lodash');
 var models = require('../models');
 var logger = require('../logger');
-var _ = require('lodash');
 
 var CustomerSuccess = module.exports;
 
@@ -40,7 +40,7 @@ CustomerSuccess.findAll = function (attributes, condition, order, callback) {
 
     var options = {
         where: condition || {},
-        order: order || [['createdAt', 'DESC']],
+        order: order || [['createdAt', 'DESC']]
     };
 
     if (attributes && attributes.length) options.attributes = attributes;

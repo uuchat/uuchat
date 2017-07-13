@@ -3,9 +3,9 @@
  */
 "use strict";
 
+var _ = require('lodash');
 var models = require('../models');
 var logger = require('../logger');
-var _ = require('lodash');
 
 var Offline = module.exports;
 
