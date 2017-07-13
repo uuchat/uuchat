@@ -8,13 +8,12 @@ var path = require("path");
 var  _ = require("lodash");
 var Sequelize = require("sequelize");
 var databaseConfig = require('../../config.json').database;
-
-//databaseConfig.logging = winston.info;
+var sequelize;
 
 if (process.env.DATABASE_URL) {
-    var sequelize = new Sequelize(process.env.DATABASE_URL, databaseConfig);
+    sequelize = new Sequelize(process.env.DATABASE_URL, databaseConfig);
 } else {
-    var sequelize = new Sequelize(databaseConfig.database, databaseConfig.username, databaseConfig.password, databaseConfig);
+    sequelize = new Sequelize(databaseConfig.database, databaseConfig.username, databaseConfig.password, databaseConfig);
 }
 
 var db = {};

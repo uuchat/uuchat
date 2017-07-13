@@ -71,7 +71,7 @@ messageController.search = function (req, res, next) {
         csid: req.params.csid,
         msg: {
             '$like': '%' + req.query.msg + '%',
-            '$notLike': 'content/upload/%',
+            '$notLike': 'content/upload/%'
         }
     };
 
@@ -94,10 +94,10 @@ messageController.searchLatestMonth = function (req, res, next) {
         csid: req.params.csid,
         msg: {
             '$like': '%' + req.query.msg + '%',
-            '$notLike': 'content/upload/%',
+            '$notLike': 'content/upload/%'
         },
         createdAt:{
-            '$gte':moment().subtract(1, 'month'),
+            '$gte':moment().subtract(1, 'month')
         }
     };
 

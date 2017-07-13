@@ -283,7 +283,7 @@ customerSuccessController.list = function (req, res, next) {
 
 customerSuccessController.getCountryCode = function (req, res, next) {
     return res.json({code: 200, msg: utils.getCountryCode(utils.getClientIP(req)) || ''});
-}
+};
 
 function validatePasswordLength(passwd) {
     return validator.isLength(passwd || '', 6);

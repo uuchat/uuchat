@@ -27,7 +27,7 @@ module.exports = function (sequelize, DataTypes) {
             timezone: {
                 type: DataTypes.INTEGER,
                 defaultValue: -5
-            },
+            }
         }, {
             tableName: 'customer_success',
             indexes: [

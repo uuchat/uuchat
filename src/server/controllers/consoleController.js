@@ -53,7 +53,7 @@ consoleController.getNumbers = function (req, res, next) {
 
         return res.json({code: 200, msg: results});
     });
-}
+};
 
 consoleController.getMonthlyData = function (req, res, next) {
     var now = moment();
@@ -61,7 +61,7 @@ consoleController.getMonthlyData = function (req, res, next) {
     var monthInterval = {
         start: now.format('YYYY-MM') + '-01',
         //start: '2016-01-01',
-        end: now.format('YYYY-MM-DD'),
+        end: now.format('YYYY-MM-DD')
     };
     var condition = {
         createdAt: {
