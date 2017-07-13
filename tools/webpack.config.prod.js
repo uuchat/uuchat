@@ -127,7 +127,10 @@ module.exports = {
             },
             {
                 test: /\.css$/,
-                use: ['happypack/loader?id=hpcss']
+                use: ExtractTextPlugin.extract({
+                    fallback: "style-loader",
+                    use: "css-loader?importLoader=1"
+                })
             },
             {
                 test: /\.svg$/,
@@ -144,6 +147,11 @@ module.exports = {
     plugins: [
         new InterpolateHtmlPlugin(env.raw),
         new webpack.optimize.CommonsChunkPlugin('vendor'),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'common',
+            chunks:['app', 'console']
+        }),
+        new ExtractTextPlugin({filename: cssFilename, allChunks: true }),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
             debug: false
@@ -162,11 +170,6 @@ module.exports = {
                 }
             }, 'eslint-loader']
         }),
-        new HappyPack({
-            id: 'hpcss',
-            threads: 2,
-            loaders: [ 'style-loader', 'css-loader?importLoader=1' ]
-        }),
         new FastUglifyJsPlugin({
             compress: {
                 warnings: false
@@ -176,14 +179,13 @@ module.exports = {
             cacheFolder: path.resolve(__dirname, '.cache/'),
             workerNum: os.cpus().length
         }),
-        // new ExtractTextPlugin({filename: cssFilename}),
         new HtmlWebpackPlugin({
             inject: true,
             filename: "app.ejs",
             template: paths.appHtml,
-            chunks: ['vendor', 'app'],
+            chunks: ['vendor', 'common', 'app'],
             chunksSortMode: function (chunk1, chunk2) {
-                var order = ['vendor', 'app'];
+                var order = ['vendor','common', 'app'];
                 var order1 = order.indexOf(chunk1.names[0]);
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
@@ -194,9 +196,9 @@ module.exports = {
             inject: true,
             filename: 'console.ejs',
             template: paths.consoleHtml,
-            chunks: ['vendor', 'console'],
+            chunks: ['vendor', 'common', 'console'],
             chunksSortMode: function (chunk1, chunk2) {
-                var order = [ 'vendor', 'console'];
+                var order = [ 'vendor', 'common', 'console'];
                 var order1 = order.indexOf(chunk1.names[0]);
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;

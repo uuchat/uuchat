@@ -3,7 +3,8 @@
  */
 import React,{Component} from 'react';
 import { Alert } from 'antd';
-import { version } from '../../../../package.json';
+
+const version = '0.1.0';
 
 class UpgradeNote extends Component {
     state = {

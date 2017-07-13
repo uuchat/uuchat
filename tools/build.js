@@ -135,9 +135,9 @@ function build(previousFileSizes) {
                 // no homepage
                 console.log('The project was built assuming it is hosted at the server root.');
                 console.log('To override this, specify the ' + chalk.green('homepage') + ' in your ' + chalk.cyan('package.json') + '.');
-                console.log('For example, add this to build it for GitHub Pages:')
+                console.log('For example, add this to build it for GitHub Pages:');
                 console.log();
-                console.log('  ' + chalk.green('"homepage"') + chalk.cyan(': ') + chalk.green('"http://myname.github.io/myapp"') + chalk.cyan(','));
+                console.log('  ' + chalk.green('"homepage"') + chalk.cyan(': ') + chalk.green('"https://github.com/uuchat/uuchat"') + chalk.cyan(','));
                 console.log();
             }
             var build = path.relative(process.cwd(), paths.appBuild);
@@ -149,7 +149,7 @@ function build(previousFileSizes) {
             } else {
                 console.log(`  ${chalk.cyan('npm')} install -g serve`);
             }
-            console.log(`  ${chalk.cyan('serve')} -s build`);
+            console.log(`  ${chalk.cyan('node')} index.js`);
             console.log();
             console.log(`  ${chalk.cyan('Total build')} times - ${chalk.cyan(Math.ceil((new Date().getTime() - sTime)/1000))} s`);
             console.log();
@@ -197,6 +197,7 @@ function profile(percentage, msg, current, active, modulepath) {
 }
 
 function profileDetail(percentage, msg, current, active, modulepath) {
+    //test for package
     if ("react".indexOf(modulepath) >= 0 || "react-dom".indexOf(modulepath) >= 0){
         console.log((percentage * 100) + '%', msg + current + modulepath + ' ');
     }
