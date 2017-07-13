@@ -39,3 +39,6 @@ build
 /content/avatar/*
 /content/upload/*
 !README.md
+!GeoLite2-Country.mmdb
+
+/tools/.cache/
