@@ -3,8 +3,6 @@
  */
 
 import React, {Component} from 'react';
-import 'whatwg-fetch';
-
 import '../static/css/register.css';
 
 
