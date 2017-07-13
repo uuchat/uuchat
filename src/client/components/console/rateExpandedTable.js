@@ -19,21 +19,21 @@ class RateExpandedTable extends Component {
                 sorter: (a, b) => sortFilterByProps(a, b, 'email'),
                 sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
                 render: (text, record) => (
-                    <Link to={{pathname: '/rates/'+record.csid, state:{month: month} }}>{ text }</Link> ),
+                    <Link to={{pathname: '/rates/'+record.csid, state:{month: month} }}>{ text }</Link> )
             },
             {
                 title: 'name',
                 dataIndex: 'name',
                 key: 'name',
                 sorter: (a, b) => sortFilterByProps(a, b, 'name'),
-                sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order,
+                sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
             },
             {
                 title: 'rate times',
                 dataIndex: 'total',
                 key: 'total',
                 sorter: (a, b) => a.total - b.total,
-                sortOrder: sortedInfo.columnKey === 'total' && sortedInfo.order,
+                sortOrder: sortedInfo.columnKey === 'total' && sortedInfo.order
             },
             {
                 title: 'favorable percent',
@@ -41,20 +41,20 @@ class RateExpandedTable extends Component {
                 key: 'favorablePercent',
                 render: (value) => value + '%',
                 sorter: (a, b) => a.favorablePercent - b.favorablePercent,
-                sortOrder: sortedInfo.columnKey === 'favorablePercent' && sortedInfo.order,
+                sortOrder: sortedInfo.columnKey === 'favorablePercent' && sortedInfo.order
             },
             {
                 title: 'critical',
                 dataIndex: 'critical',
                 key: 'critical',
                 sorter: (a, b) => a.critical - b.critical,
-                sortOrder: sortedInfo.columnKey === 'critical' && sortedInfo.order,
+                sortOrder: sortedInfo.columnKey === 'critical' && sortedInfo.order
             }];
 
         const expandedRowRender = (record) => {
             const expanderColumns = [
                 {title: 'rate', dataIndex: 'rate', key: 'rate'},
-                {title: 'count', dataIndex: 'count', key: 'count'},
+                {title: 'count', dataIndex: 'count', key: 'count'}
             ];
 
             const expanderData = record.rates.map(function (item, index) {
@@ -70,7 +70,7 @@ class RateExpandedTable extends Component {
                     pagination={false}
                     />
             );
-        }
+        };
 
         return (
             <Table

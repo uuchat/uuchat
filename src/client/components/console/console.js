@@ -1,33 +1,20 @@
+/**
+ * Created by jianzhiqiang on 2017/5/12.
+ */
 import React, {Component} from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-
 import { Layout, Menu, Icon, message, Button } from 'antd';
-
 import UpgradeNote from './upgradeNote';
 import Dashboard from './dashboard';
-//import Operators from './operators';
-//import Transcripts from './transcripts';
-//import Rates from './rates';
-//import RateList from './rateList';
-//import RateDetails from './rateDetails';
-
+import RateList from './rateList';
 import AsyncComponent from '../../views/asyncComponent.js';
-
-//const Dashboard = AsyncComponent(() => import('./dashboard')
-//    .then(module => module.default), { name: 'dashboard' });
 
 const Operators = AsyncComponent(() => import('./operators')
     .then(module => module.default), { name: 'operators' });
-
 const Transcripts = AsyncComponent(() => import('./transcripts')
     .then(module => module.default), { name: 'transcripts' });
-
 const Rates = AsyncComponent(() => import('./rates')
     .then(module => module.default), { name: 'rates' });
-
-const RateList = AsyncComponent(() => import('./rateList')
-    .then(module => module.default), { name: 'rateList' });
-
 const RateDetails = AsyncComponent(() => import('./rateDetails')
     .then(module => module.default), { name: 'rateDetails' });
 
@@ -42,19 +29,19 @@ class Console extends Component {
         csid: localStorage['uuchat.csid'] || '',
         name: localStorage['uuchat.name'] || '',
         displayName: localStorage['uuchat.displayName'] || '',
-        avatar: localStorage['uuchat.avatar'] || '',
+        avatar: localStorage['uuchat.avatar'] || ''
     };
 
     onCollapse = (collapsed) => {
         this.setState({
             collapsed,
-            mode: collapsed ? 'vertical' : 'inline',
+            mode: collapsed ? 'vertical' : 'inline'
         });
     };
 
     handleClick = (e) => {
         this.setState({
-            current: e.key,
+            current: e.key
         });
         window.location.href = "#/" + e.key;
     };
@@ -72,7 +59,7 @@ class Console extends Component {
         }
     };
 
-    logout() {
+    logout = () => {
         fetch('/logout', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
             .then((res)=>res.json())
             .then(function (d) {
@@ -83,7 +70,7 @@ class Console extends Component {
             .catch(function (e) {
                 message.error(e.message, 4);
             });
-    }
+    };
 
     render() {
 

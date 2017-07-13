@@ -1,9 +1,9 @@
 /**
  * Created by jianzhiqiang on 2017/7/7.
  */
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
-export default class LimitedInfiniteScroll extends Component {
+ class LimitedInfiniteScroll extends Component {
 
     static defaultProps = {
         pageLimit: 10,
@@ -20,75 +20,72 @@ export default class LimitedInfiniteScroll extends Component {
             style={{fontSize: 20, lineHeight: 1.5, marginTop: 20, marginBottom: 20, display: 'inline-block', color: '#88899a', border: '1px solid #88899a', borderTopLeftRadius: 3, borderTopRightRadius: 3, borderBottomRightRadius: 3, borderBottomLeftRadius: 3, padding: '10px 20px', cursor: 'pointer'}}>Load More</span>
         </div>,
         noMore: null
-    }
+    };
 
     state = {
         loading: false
-    }
+    };
 
     calcTop = (element) => {
         if (!element) {
-            return 0
+            return 0;
         }
-        return element.offsetTop + this.calcTop(element.offsetParent)
-    }
+        return element.offsetTop + this.calcTop(element.offsetParent);
+    };
 
     scrollHandler = () => {
-        let offset
-        const el = this.selfComponent
+        let offset;
+        const el = this.selfComponent;
         if (this.props.useWindow) {
-            let scrollTop = window.pageYOffset !== undefined ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop
-            offset = this.calcTop(el) + el.offsetHeight - scrollTop - window.innerHeight
+            let scrollTop = window.pageYOffset !== undefined ? window.pageYOffset : (document.documentElement || document.body.parentNode || document.body).scrollTop;
+            offset = this.calcTop(el) + el.offsetHeight - scrollTop - window.innerHeight;
         } else {
-            offset = el.scrollHeight - el.parentNode.scrollTop - el.parentNode.clientHeight
+            offset = el.scrollHeight - el.parentNode.scrollTop - el.parentNode.clientHeight;
         }
 
         if (offset < Number(this.props.threshold)) {
-            this.detachScrollEvent()
+            this.detachScrollEvent();
 
             if (typeof this.props.loadNext === 'function') {
                 this.setState({
                     loading: true
-                })
-                this.props.loadNext(this.page++)
+                });
+                this.props.loadNext(this.page++);
             }
         }
-    }
+    };
 
     attachScrollEvent = () => {
-        //console.log('attachScrollEvent', new Date());
-        if (!this.props.hasMore) {
-            return
-        }
+        if (!this.props.hasMore) return;
 
-        const scrollEl = this.props.useWindow ? window : this.selfComponent.parentNode
-        scrollEl.addEventListener('scroll', this.scrollHandler, false)
-        scrollEl.addEventListener('resize', this.scrollHandler, false)
+        const scrollEl = this.props.useWindow ? window : this.selfComponent.parentNode;
+        scrollEl.addEventListener('scroll', this.scrollHandler, false);
+        scrollEl.addEventListener('resize', this.scrollHandler, false);
 
         if (this.props.autoLoad && !this.autoLoaded) {
-            this.autoLoaded = true
-            this.scrollHandler()
+            this.autoLoaded = true;
+            this.scrollHandler();
         }
-    }
+    };
 
     detachScrollEvent = () => {
-        const scrollEl = this.props.useWindow ? window : this.selfComponent.parentNode
+        const scrollEl = this.props.useWindow ? window : this.selfComponent.parentNode;
 
-        scrollEl.removeEventListener('scroll', this.scrollHandler, false)
-        scrollEl.removeEventListener('resize', this.scrollHandler, false)
-    }
+        scrollEl.removeEventListener('scroll', this.scrollHandler, false);
+        scrollEl.removeEventListener('resize', this.scrollHandler, false);
+    };
 
     _init = ()=> {
-        this.page = this.props.pageStart
-        this.autoLoaded = false
-    }
+        this.page = this.props.pageStart;
+        this.autoLoaded = false;
+    };
 
     componentWillMount() {
         this._init();
     }
 
     componentDidMount() {
-        this.attachScrollEvent()
+        this.attachScrollEvent();
     }
 
     componentWillReceiveProps(nextProps) {
@@ -99,37 +96,37 @@ export default class LimitedInfiniteScroll extends Component {
         if (this.props.children.length < nextProps.children.length) {
             this.setState({
                 loading: false
-            })
+            });
         }
     }
 
     componentDidUpdate(prevProps, prevState) {
         if ((!this.props.pageLimit || this.page < this.props.pageLimit) && this.props.children.length > prevProps.children.length) {
             setTimeout(() => {
-                this.attachScrollEvent()
-            }, 0)
+                this.attachScrollEvent();
+            }, 0);
         }
     }
 
     componentWillUnmount() {
-        this.detachScrollEvent()
+        this.detachScrollEvent();
     }
 
     render() {
-        const {pageLimit, pageStart, threshold, hasMore, autoLoad, useWindow,colSpan, loadNext, spinLoader, mannualLoader, noMore, children, ...props} = this.props
+        const {pageLimit, hasMore, colSpan, loadNext, spinLoader, mannualLoader, noMore, children, ...props} = this.props;
 
         const cloneMannualLoader = React.cloneElement(mannualLoader, {
             onClick: () => {
                 this.setState({
                     loading: true
-                })
-                loadNext(this.page++)
+                });
+                loadNext(this.page++);
             }
-        })
+        });
 
         props.ref = node => {
-            this.selfComponent = node
-        }
+            this.selfComponent = node;
+        };
 
         return (
             <tbody className='ant-table-tbody' {...props}>
@@ -143,6 +140,8 @@ export default class LimitedInfiniteScroll extends Component {
                 </td>
             </tr>
             </tbody>
-        )
+        );
     }
 }
+
+export default LimitedInfiniteScroll;

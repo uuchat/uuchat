@@ -1,22 +1,19 @@
-/**
- * Created by jianzhiqiang on 2017/6/13.
- */
+
 
 import React, {Component} from 'react';
-
 import { Modal, Form, Input, Tooltip, Icon } from 'antd';
 
 const FormItem = Form.Item;
 
 class CustomerSuccessForm extends Component {
     state = {
-        confirmDirty: false,
+        confirmDirty: false
     };
 
     handleConfirmBlur = (e) => {
         const value = e.target.value;
         this.setState({confirmDirty: this.state.confirmDirty || !!value});
-    }
+    };
 
     checkPassword = (rule, value, callback) => {
         const form = this.props.form;
@@ -25,7 +22,7 @@ class CustomerSuccessForm extends Component {
         } else {
             callback();
         }
-    }
+    };
 
     checkConfirm = (rule, value, callback) => {
         const form = this.props.form;
@@ -33,7 +30,7 @@ class CustomerSuccessForm extends Component {
             form.validateFields(['confirm'], {force: true});
         }
         callback();
-    }
+    };
 
     render() {
         const { getFieldDecorator } = this.props.form;
@@ -41,12 +38,12 @@ class CustomerSuccessForm extends Component {
         const formItemLayout = {
             labelCol: {
                 xs: {span: 24},
-                sm: {span: 7},
+                sm: {span: 7}
             },
             wrapperCol: {
                 xs: {span: 24},
-                sm: {span: 15},
-            },
+                sm: {span: 15}
+            }
         };
 
         const { visible, onCancel, onOk, confirmLoading } = this.props;
@@ -63,11 +60,13 @@ class CustomerSuccessForm extends Component {
                 <Form>
                     <FormItem {...formItemLayout} label="E-mail" hasFeedback>
                         {getFieldDecorator('email', {
-                            rules: [{
-                                type: 'email', message: 'The input is not valid E-mail!',
-                            }, {
-                                required: true, message: 'Please input your E-mail!',
-                            }],
+                            rules: [
+                                {
+                                    type: 'email', message: 'The input is not valid E-mail!'
+                                },
+                                {
+                                    required: true, message: 'Please input your E-mail!'
+                                }]
                         })(
                             <Input />
                         )}
@@ -78,11 +77,14 @@ class CustomerSuccessForm extends Component {
                         hasFeedback
                         >
                         {getFieldDecorator('password', {
-                            rules: [{
-                                required: true, message: 'min 6 words', min: 6
-                            }, {
-                                validator: this.checkConfirm,
-                            }],
+                            rules: [
+                                {
+                                    required: true, message: 'min 6 words', min: 6
+                                },
+                                {
+                                    validator: this.checkConfirm
+                                }
+                            ]
                         })(
                             <Input type="password"/>
                         )}
@@ -93,11 +95,14 @@ class CustomerSuccessForm extends Component {
                         hasFeedback
                         >
                         {getFieldDecorator('confirm', {
-                            rules: [{
-                                required: true, message: 'min 6 words', min: 6
-                            }, {
-                                validator: this.checkPassword,
-                            }],
+                            rules: [
+                                {
+                                    required: true, message: 'min 6 words', min: 6
+                                },
+                                {
+                                    validator: this.checkPassword
+                                }
+                            ]
                         })(
                             <Input type="password" onBlur={this.handleConfirmBlur}/>
                         )}

@@ -4,10 +4,8 @@
  */
 import React, { Component } from 'react';
 import { Breadcrumb, message, Select, Modal } from 'antd';
-
 import ChatList from './chatList';
 import { getCustomerName } from './utils';
-
 import ScrollTable from './scrollTable';
 
 const Option = Select.Option;
@@ -18,7 +16,7 @@ class Transcripts extends Component {
         dataSource: [],
         total: 0,
         filter: [],
-        initPage: false,
+        initPage: false
     };
 
     handleChatList = (e, record) => {
@@ -32,9 +30,9 @@ class Transcripts extends Component {
             okText: 'Ok',
             content: <ChatList { ...record } />,
             onOk() {
-            },
+            }
         });
-    }
+    };
 
     getCSSource = () => {
         const _component = this;
@@ -50,7 +48,7 @@ class Transcripts extends Component {
                     message.error(data.msg, 4);
                 }
             })
-    }
+    };
 
     getDataSource = (pageNum) => {
         const _component = this;
@@ -60,8 +58,6 @@ class Transcripts extends Component {
 
         if (filter.csid) queryUrl += '&csid=' + filter.csid;
         if (pageNum) queryUrl += '&pageNum=' + pageNum;
-
-        //console.log(queryUrl);
 
         fetch(queryUrl)
             .then((res) => res.json())
@@ -79,13 +75,13 @@ class Transcripts extends Component {
                     _component.setState({
                         dataSource: dataSource.concat(data.msg.rows),
                         total: data.msg.count,
-                        initPage: false,
+                        initPage: false
                     });
                 } else {
                     message.error(data.msg, 4);
                 }
-            }).catch((e) => message.error(e.message, 4))
-    }
+            }).catch((e) => message.error(e.message, 4));
+    };
 
     componentDidMount() {
         const _component = this;
@@ -94,10 +90,7 @@ class Transcripts extends Component {
         });
     }
 
-
     handleSelectChange = (key, value) => {
-        //console.log(key, value);
-
         let filter = {};
         filter[key] = value;
 
@@ -105,28 +98,27 @@ class Transcripts extends Component {
             filter,
             dataSource: [],
             total: 0,
-            initPage: true,
+            initPage: true
         }, this.getDataSource);
-    }
+    };
 
     renderCustomer = (text, record) => {
         let customer = getCustomerName(text);
         return <a onClick={ (e) => this.handleChatList(e, record) }>{ customer }</a>;
-    }
+    };
 
     render() {
         let { csSource, dataSource, total,initPage } = this.state;
-
 
         let scrollTableProps = {
             initPage: initPage,
             data: {
                 total: total,
-                list: dataSource,
+                list: dataSource
             },
             loadNextFunc: this.getDataSource,
             renderCustomer: this.renderCustomer
-        }
+        };
 
         return (
             <div>

@@ -9,7 +9,7 @@ class LoginView extends Component {
     render() {
         const loginProps = {
             fetchUrl: '/console/login',
-            redirect: '/console/index',
+            redirect: '/console/index'
         };
 
         return (

@@ -3,7 +3,6 @@
  */
 import React,{ Component } from 'react';
 import { Form, Button, Row, Col, DatePicker, Select, Radio } from 'antd';
-
 import moment from 'moment';
 
 const { RangePicker } = DatePicker;
@@ -24,7 +23,7 @@ class RateSearchForm extends Component {
         this.state = {
             csSource: [],
             rangePickerOpen: false,
-            calendarFooterValue: '7days',
+            calendarFooterValue: '7days'
         };
     }
 
@@ -39,7 +38,7 @@ class RateSearchForm extends Component {
         fields[key] = values;
         fields = this.handleFields(fields);
         this.onFilterChange(fields);
-    }
+    };
 
     handleFields = (fields) => {
         const { createdAt } = fields;
@@ -47,7 +46,7 @@ class RateSearchForm extends Component {
             fields.createdAt = [createdAt[0].format('YYYY-MM-DD'), createdAt[1].format('YYYY-MM-DD')];
         }
         return fields;
-    }
+    };
 
     handleReset = () => {
         const fields = this.getFieldsValue();
@@ -55,22 +54,22 @@ class RateSearchForm extends Component {
         for (let item in fields) {
             if ({}.hasOwnProperty.call(fields, item)) {
                 if (Array.isArray(fields[item])) {
-                    fields[item] = []
+                    fields[item] = [];
                 } else {
-                    fields[item] = undefined
+                    fields[item] = undefined;
                 }
             }
         }
         this.setState({calendarFooterValue: null});
         this.setFieldsValue(fields);
         this.handleSubmit();
-    }
+    };
 
     handleSubmit = () => {
         let fields = this.getFieldsValue();
         fields = this.handleFields(fields);
         this.onFilterChange(fields);
-    }
+    };
 
     handleCalendarFooterChange = (e) => {
         let range = e.target.value;
@@ -97,7 +96,7 @@ class RateSearchForm extends Component {
         }
 
         this.setState({
-            calendarFooterValue: range,
+            calendarFooterValue: range
         });
 
         const fields = this.getFieldsValue();
@@ -105,7 +104,7 @@ class RateSearchForm extends Component {
         this.setFieldsValue(fields);
 
         this.handleChange(key, values);
-    }
+    };
 
     render() {
         const { csSource, rangePickerOpen,calendarFooterValue } = this.state;
@@ -118,12 +117,12 @@ class RateSearchForm extends Component {
             xs: 24,
             sm: 12,
             style: {
-                marginBottom: 16,
-            },
+                marginBottom: 16
+            }
         };
         const TwoColProps = {
             ...ColProps,
-            xl: 96,
+            xl: 96
         };
 
         const renderCalendarFooter = ()=> {

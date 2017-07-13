@@ -1,3 +1,6 @@
+/**
+ * Created by jianzhiqiang on 2017/6/7.
+ */
 import React, {Component} from 'react';
 import { Table, Breadcrumb, message, Button, Modal, Form, Input } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
@@ -13,21 +16,18 @@ class Operators extends Component {
         dataSource: [],
         StoreDataSource: [],
         visible: false,
-        searchText: '',
+        searchText: ''
     };
 
     rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
         },
         getCheckboxProps: (record) => ({
-            disabled: record.key === this.state.superUser,
-        }),
+            disabled: record.key === this.state.superUser
+        })
     };
 
-    handleChange = (pagination, filters, sorter) => {
-
-    };
-    showModal = () => this.setState({visible: true})
+    showModal = () => this.setState({visible: true});
 
     handleOk = (e) => {
         e.preventDefault();
@@ -37,10 +37,6 @@ class Operators extends Component {
 
         form.validateFields((err, values) => {
             if (err) return;
-
-            /*this.setState({
-             confirmLoading: true,
-             });*/
 
             let body = 'email=' + values.email + '&passwd=' + values.password;
             if (values.name) body += '&name=' + values.name;
@@ -56,29 +52,28 @@ class Operators extends Component {
                 .then(function (d) {
                     if (200 === d.code) {
                         _self.setState({
-                            visible: false,
-                            //confirmLoading: false,
+                            visible: false
                         });
                         form.resetFields();
                         _self.getDataSource();
                     } else {
                         _self.setState({
-                            visible: false,
+                            visible: false
                         });
                         message.error(d.msg, 4);
                     }
                 })
                 .catch(function (e) {
                     _self.setState({
-                        visible: false,
+                        visible: false
                     });
                     message.error(e.message, 4);
                 });
         });
     };
 
-    saveFormRef = (form) => this.form = form
-    handleCancel = () => this.setState({visible: false})
+    saveFormRef = (form) => this.form = form;
+    handleCancel = () => this.setState({visible: false});
 
     handleSearchChange = (e) => {
         e.preventDefault();
@@ -117,7 +112,7 @@ class Operators extends Component {
                     });
                     let st = {
                         dataSource: sourceList,
-                        StoreDataSource: sourceList,
+                        StoreDataSource: sourceList
                     };
 
                     st.StoreDataSource = sourceList;
@@ -131,12 +126,12 @@ class Operators extends Component {
             }).catch(function (e) {
                 message.error(e, 4);
             });
-    }
+    };
 
     handleMenuClick = function (e, value) {
         const _self = this;
         if (e.key === '1') {
-            this.showModal();
+            _self.showModal();
         } else if (e.key === '2') {
             Confirm({
                 title: 'Are you sure delete ' + value.email,
@@ -153,7 +148,7 @@ class Operators extends Component {
         const _self = this;
 
         fetch('/customersuccesses/' + key, {
-            method: 'DELETE',
+            method: 'DELETE'
         }).then((res)=>res.json())
             .then(function (d) {
                 if (200 === d.code) {
@@ -175,10 +170,9 @@ class Operators extends Component {
             <ActionDropDown
                 onMenuClick={e => this.handleMenuClick(e, value)}
                 menuOptions={[
-                        //{ key: '1', name: 'Update' },
                         { key: '2', name: 'Delete' }]}
                 />
-        )
+        );
     };
 
     componentDidMount = () => {
@@ -194,27 +188,25 @@ class Operators extends Component {
             (<img className="user-avatar"
                   src={ (avatar !=='null' && avatar) ? '/' + avatar : require('../../static/images/contact.png')}
                   alt="avatar"
-                  title="avatar"/>)
+                  title="avatar"/>);
 
 
         const columns = [
             {
-                title: 'avatar', dataIndex: 'avatar', key: 'avatar',
-                render: avatarRender,
+                title: 'avatar', dataIndex: 'avatar', key: 'avatar', render: avatarRender
             },
             {
-                title: 'email', dataIndex: 'email', key: 'email',
+                title: 'email', dataIndex: 'email', key: 'email'
             },
             {
-                title: 'name', dataIndex: 'name', key: 'name',
+                title: 'name', dataIndex: 'name', key: 'name'
             },
             {
-                title: 'createTime', dataIndex: 'createTime', key: 'createTime',
+                title: 'createTime', dataIndex: 'createTime', key: 'createTime'
             },
             {
-                title: 'Action', dataIndex: '', key: 'csid',
-                render: this.renderAction,
-            },
+                title: 'Action', dataIndex: '', key: 'csid', render: this.renderAction
+            }
         ];
 
         return (
@@ -242,7 +234,7 @@ class Operators extends Component {
                     </div>
 
                     <Table rowSelection={this.rowSelection} dataSource={dataSource} columns={columns}
-                           onChange={this.handleChange} locale={{ emptyText: 'List is empty' }}/>
+                           locale={{ emptyText: 'List is empty' }}/>
                 </div>
             </div>
         );

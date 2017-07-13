@@ -12,13 +12,13 @@ const RadioGroup = Radio.Group;
 class Rates extends Component {
     static defaultProps = {
         rates: [1, 2, 3, 4, 5]
-    }
+    };
 
     state = {
         csSource: [],
         dataSource: [],
         month: moment().format('YYYY-MM'),
-        rateValue: null,
+        rateValue: null
     };
 
     getDataSource = ()=> {
@@ -59,34 +59,30 @@ class Rates extends Component {
                 } else {
                     message.error(data.msg, 4);
                 }
-            }).catch((e) => message.error(e.message, 4))
-    }
+            }).catch((e) => message.error(e.message, 4));
+    };
 
     componentDidMount = () => {
         const location = this.props.location;
         let month = location.state ? location.state.month : moment().format('YYYY-MM');
         this.setState({month}, this.getDataSource);
-    }
-
-    handleChange = (pagination, filters, sorter) => {
-    }
-
+    };
 
     handleRadioChange = (e) => {
         var rateValue = e.target.value;
         this.setState({rateValue}, this.getDataSource);
-    }
+    };
 
     render() {
         let { rates } = this.props;
         let { dataSource, month } = this.state;
 
         const columns = [
-            {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
-            {title: 'name', dataIndex: 'csName', key: 'csName',},
+            {title: 'email', dataIndex: 'csEmail', key: 'csEmail'},
+            {title: 'name', dataIndex: 'csName', key: 'csName'},
             {title: 'customer', dataIndex: 'cid', key: 'cid', render: getCustomerName},
             {title: 'rate', dataIndex: 'rate', key: 'rate'},
-            {title: 'createAt', dataIndex: 'createdAt', key: 'createdAt', render: formatDate},
+            {title: 'createAt', dataIndex: 'createdAt', key: 'createdAt', render: formatDate}
         ];
 
         return (
@@ -110,8 +106,7 @@ class Rates extends Component {
                         </div>
                     </div>
 
-                    <Table locale={{ emptyText: 'List is empty' }} dataSource={ dataSource } columns={ columns }
-                           onChange={ this.handleChange }/>
+                    <Table locale={{ emptyText: 'List is empty' }} dataSource={ dataSource } columns={ columns }/>
                 </div>
             </div>
         );

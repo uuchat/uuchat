@@ -2,9 +2,7 @@
  * Created by jianzhiqiang on 2017/7/7.
  */
 import React, { Component } from 'react';
-
 import { Spin } from 'antd';
-
 import LimitedInfiniteScroll from './scroller';
 import { formatDate } from './utils';
 
@@ -25,7 +23,7 @@ class ScrollTable extends Component {
                     <td>{item.csEmail}</td>
                     <td>{formatDate(item.updatedAt)}</td>
                 </tr>
-            )
+            );
         });
 
         return (

@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-//import {FormattedMessage} from 'react-intl';
 import { Breadcrumb, Col, Row, message,Card } from 'antd';
-
 import NumberCard from './numberCard';
 import MonthlyReport from './monthlyReport';
 
@@ -14,28 +12,28 @@ class Dashboard extends Component {
                 icon: 'customer-service',
                 color: '#f797d6',
                 title: 'Daily Chats',
-                number: 0,
+                number: 0
             }, {
                 key: 'offlineCustomers',
                 icon: 'user-delete',
                 color: '#f69899',
                 title: 'Offline Messages',
-                number: 0,
+                number: 0
             }, {
                 key: 'dailyRates',
                 icon: 'star-o',
                 color: '#8fc9fb',
                 title: 'Daily Rates',
-                number: 0,
+                number: 0
             }, {
                 key: 'criticalRates',
                 icon: 'star-o',
                 color: '#f8c82e',
                 title: 'Critical Rates',
-                number: 0,
-            },
+                number: 0
+            }
         ],
-        monthlyData: null,
+        monthlyData: null
     };
 
     getNumbersData = () => {
@@ -66,7 +64,7 @@ class Dashboard extends Component {
             }).catch(function (e) {
                 message.error(e.message, 4);
             });
-    }
+    };
 
     getMonthlyData = ()=> {
         let _component = this;
@@ -89,12 +87,12 @@ class Dashboard extends Component {
             }).catch(function (e) {
                 message.error(e.message, 4);
             });
-    }
+    };
 
     componentDidMount = () => {
         this.getNumbersData();
         this.getMonthlyData();
-    }
+    };
 
     render() {
         let { numbersData, monthlyData } = this.state;

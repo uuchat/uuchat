@@ -5,9 +5,6 @@ import React,{Component} from 'react';
 import moment from 'moment';
 import { Breadcrumb, Table, message } from 'antd';
 import { getCustomerName, formatDate } from './utils';
-
-//import RateSearchForm from './rateSearchForm';
-
 import AsyncComponent from '../../views/asyncComponent.js';
 
 const RateSearchForm = AsyncComponent(() => import('./rateSearchForm')
@@ -15,7 +12,7 @@ const RateSearchForm = AsyncComponent(() => import('./rateSearchForm')
 
 class Rates extends Component {
     filter = {
-        createdAt: [moment().subtract(7, 'days'), moment()],
+        createdAt: [moment().subtract(7, 'days'), moment()]
     };
 
     state = {
@@ -24,7 +21,7 @@ class Rates extends Component {
         pagination: {},
         loading: false,
         filter: this.filter,
-        sorter: {},
+        sorter: {}
     };
 
     getDataSource = ()=> {
@@ -44,9 +41,6 @@ class Rates extends Component {
         if (pagination.current) queryUrl += "&pageNum=" + (pagination.current - 1);
         if (sorter.field) queryUrl += "&sortField=" + sorter.field + "&sortOrder=" + sorter.order;
 
-        //console.log(pagination);
-        //console.log(queryUrl);
-
         fetch('/customersuccesses')
             .then((res) => res.json())
             .then(function (data) {
@@ -55,7 +49,6 @@ class Rates extends Component {
                         csSource: data.msg
                     });
                 } else {
-                    //message.error(data.msg, 4);
                     throw new Error(data.msg);
                 }
             }).then(() => fetch(queryUrl))
@@ -74,7 +67,7 @@ class Rates extends Component {
                     _component.setState({
                         pagination: pagination,
                         dataSource: data.msg.rows,
-                        loading: false,
+                        loading: false
                     });
                 } else {
                     _component.setState({loading: false});
@@ -88,48 +81,44 @@ class Rates extends Component {
 
     componentDidMount = () => {
         this.getDataSource();
-    }
+    };
 
     handleChange = (pagination, filters, sorter) => {
-        //console.log({pagination, sorter});
-
         this.setState({pagination, sorter}, this.getDataSource);
-    }
+    };
 
     onFilterChange = (value) => {
-        //console.log(value);
-
         // Init current page when searching.
         let {pagination} = this.state;
         pagination.current = 1;
         this.setState({pagination});
 
         this.setState({filter: value}, this.getDataSource);
-    }
+    };
 
     render() {
         let { csSource, dataSource, pagination, loading, sorter } = this.state;
 
         const columns = [
-            {title: 'email', dataIndex: 'csEmail', key: 'csEmail',},
-            {title: 'name', dataIndex: 'csName', key: 'csName',},
+            {title: 'email', dataIndex: 'csEmail', key: 'csEmail'},
+            {title: 'name', dataIndex: 'csName', key: 'csName'},
             {
                 title: 'customer', dataIndex: 'cid', key: 'cid', render: getCustomerName,
-                sorter: true, sortOrder: sorter.columnKey === 'customer' && sorter.order,
+                sorter: true, sortOrder: sorter.columnKey === 'customer' && sorter.order
             },
             {
                 title: 'rate', dataIndex: 'rate', key: 'rate',
-                sorter: true, sortOrder: sorter.columnKey === 'rate' && sorter.order,
+                sorter: true, sortOrder: sorter.columnKey === 'rate' && sorter.order
             },
             {
                 title: 'createdAt', dataIndex: 'createdAt', key: 'createdAt', render: formatDate,
-                sorter: true, sortOrder: sorter.columnKey === 'createdAt' && sorter.order,
-            },
+                sorter: true, sortOrder: sorter.columnKey === 'createdAt' && sorter.order
+            }
         ];
         const searchProps = {
             filter: this.filter,
             onFilterChange: this.onFilterChange,
-            csSource: csSource,
+            csSource: csSource
         };
 
         return (

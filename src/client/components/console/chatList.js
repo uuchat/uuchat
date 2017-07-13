@@ -1,5 +1,5 @@
 /**
- * Created by jianzhiqiang on 2017/6/17.
+ * Created by jianzhiqiang on 2017/5/12.
  */
 import React, { Component} from 'react';
 import ChatMessageItem from '../chatMessageItem';
@@ -24,16 +24,13 @@ class ChatList extends Component {
                         };
                     })
                 });
-            })
-            .catch(function (e) {
+            }).catch(function (e) {
             });
     }
 
     componentDidMount = ()=> {
         let { cid, csid } = this.props;
-        if(cid && csid) {
-            this.getDataSource(cid, csid);
-        }
+        if (cid && csid) this.getDataSource(cid, csid);
     };
 
     render() {

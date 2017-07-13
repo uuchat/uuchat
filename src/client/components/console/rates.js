@@ -4,8 +4,6 @@
 import React,{Component} from 'react';
 import { Breadcrumb, Button, message, DatePicker } from 'antd';
 import moment from 'moment';
-//import RateExpandedTable from './rateExpandedTable';
-
 import AsyncComponent from '../../views/asyncComponent.js';
 
 const RateExpandedTable = AsyncComponent(() => import('./rateExpandedTable')
@@ -18,14 +16,14 @@ class Rates extends Component {
         dataSource: [],
         sortedInfo: null,
         loading: false,
-        month: moment().format('YYYY-MM'),
+        month: moment().format('YYYY-MM')
     };
 
     clearSorters = () => {
         this.setState({
-            sortedInfo: null,
+            sortedInfo: null
         });
-    }
+    };
 
     getDataSource = ()=> {
         const _component = this;
@@ -60,30 +58,30 @@ class Rates extends Component {
                 _component.setState({loading: false});
                 message.error(e.message, 4);
             });
-    }
+    };
 
     componentWillMount = () => {
         const location = this.props.location;
         if (location.state) {
             this.setState({month: location.state.month});
         }
-    }
+    };
 
     componentDidMount = () => {
         this.getDataSource();
-    }
+    };
 
     handleChange = (pagination, filters, sorter) => {
         this.setState({
-            sortedInfo: sorter,
+            sortedInfo: sorter
         });
-    }
+    };
 
     handleMonthPickerChange = (date, dateString) => {
         this.setState({
-            month: dateString,
+            month: dateString
         }, this.getDataSource);
-    }
+    };
 
     render() {
         let { dataSource,sortedInfo, month, loading } = this.state;

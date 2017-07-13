@@ -1,7 +1,6 @@
 /**
- * Created by jianzhiqiang on 2017/6/13.
+ * Created by jianzhiqiang on 2017/7/9.
  */
-
 import React,{ Component } from 'react';
 import { Dropdown, Button, Icon, Menu } from 'antd';
 
