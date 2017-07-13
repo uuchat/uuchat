@@ -55,8 +55,8 @@ function build(previousFileSizes) {
 
     var compiler = webpack(config);
 
-    //compiler.apply(new webpack.ProgressPlugin({profile: true}));
-    compiler.apply(new webpack.ProgressPlugin(profileDetail));
+    compiler.apply(new webpack.ProgressPlugin({profile: true}));
+    //compiler.apply(new webpack.ProgressPlugin(profileDetail));
 
     statsOutput(compiler);
 
@@ -197,9 +197,9 @@ function profile(percentage, msg, current, active, modulepath) {
 }
 
 function profileDetail(percentage, msg, current, active, modulepath) {
-    //if ("react".indexOf(modulepath) >= 0 || "moment".indexOf(modulepath) >= 0){
+    if ("react".indexOf(modulepath) >= 0 || "react-dom".indexOf(modulepath) >= 0){
         console.log((percentage * 100) + '%', msg + current + modulepath + ' ');
-    //}
+    }
 }
 
 function copyPublicFolder() {

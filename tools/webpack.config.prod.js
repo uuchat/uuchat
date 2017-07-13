@@ -2,7 +2,6 @@
 
 var nconf = require('nconf');
 var path = require('path');
-var autoprefixer = require('autoprefixer');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
@@ -12,14 +11,27 @@ var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 var paths = require('./paths');
 var getClientEnvironment = require('./env');
 
+var HappyPack = require('happypack');
+var FastUglifyJsPlugin = require('fast-uglifyjs-plugin');
+var os = require('os');
+
+
+var publicPath = paths.servedPath;
+var shouldUseRelativeAssetPaths = publicPath === './';
+var publicUrl = publicPath.slice(0, -1);
+var env = getClientEnvironment(publicUrl);
+
+var cssFilename = 'static/css/[name].[contenthash:8].css';
+
 var UglifyJS;
+var CleanCSS;
+
 try {
     UglifyJS = require("uglify-js");
 } catch (e) {
     UglifyJS = require("webpack/node_modules/uglify-js");
 }
 
-var CleanCSS;
 try {
     CleanCSS =  require('clean-css');
 } catch (e) {
@@ -34,37 +46,27 @@ nconf.argv().env().file({
 });
 
 
-var publicPath = paths.servedPath;
-var shouldUseRelativeAssetPaths = publicPath === './';
-// `publicUrl` is just like `publicPath`, but we will provide it to our app
-// as %PUBLIC_URL% in `index.html` and `process.env.PUBLIC_URL` in JavaScript.
-// Omit trailing slash as %PUBLIC_URL%/xyz looks better than %PUBLIC_URL%xyz.
-var publicUrl = publicPath.slice(0, -1);
-// Get environment variables to inject into our app.
-var env = getClientEnvironment(publicUrl);
-
-// Assert this just to be safe.
-// Development builds of React are slow and not intended for production.
 if (env.stringified['process.env'].NODE_ENV !== '"production"') {
     throw new Error('Production builds must have NODE_ENV=production.');
 }
 
-const cssFilename = 'static/css/[name].[contenthash:8].css';
-
-// ExtractTextPlugin expects the build output to be flat.
-// (See https://github.com/webpack-contrib/extract-text-webpack-plugin/issues/27)
-// However, our output is structured with css, js and media folders.
-// To have this structure working with relative paths, we have to use custom options.
-const extractTextPluginOptions = shouldUseRelativeAssetPaths
-    // Making sure that the publicPath goes back to to build folder.
-    ? {publicPath: Array(cssFilename.split('/').length).join('../')}
-    : undefined;
+var minify = {
+    removeComments: true,
+    collapseWhitespace: true,
+    removeRedundantAttributes: true,
+    useShortDoctype: true,
+    removeEmptyAttributes: true,
+    removeStyleLinkTypeAttributes: true,
+    keepClosingSlash: true,
+    minifyJS: true,
+    minifyCSS: true,
+    minifyURLs: true
+};
 
 module.exports = {
     bail: true,
-    cache: true,
-    profile: true,
     devtool: 'nosources-source-map',
+    cache: true,
     entry: {
         "vendor": ["react-router-dom", require.resolve('./polyfills')],
         "app": [
@@ -88,6 +90,7 @@ module.exports = {
         'react-dom': 'ReactDOM',
         'socket.io-client': 'io',
         'moment': 'moment',
+        'moment/locale/zh-cn': 'moment.locale',
     },
     resolve: {
         moduleExtensions: ['.js', '.json', '.jsx'],
@@ -96,7 +99,7 @@ module.exports = {
         }
     },
     module: {
-        noParse: [ /socket.io-client/, /moment/ ],
+        noParse: [ /socket.io-client/ ],
         rules: [
             {
                 exclude: [
@@ -120,25 +123,11 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 include: paths.appSrc,
                 enforce: 'pre',
-                use: [
-                    {
-                        loader: 'babel-loader?cacheDirectory=true',
-                        options: {
-                            plugins: [
-                                ['import', [{libraryName: "antd", style: 'css'}]],
-                                'syntax-dynamic-import'
-                            ]
-                        }
-                    },
-                    'eslint-loader'
-                ]
+                use: ['happypack/loader?id=hpjsx']
             },
             {
                 test: /\.css$/,
-                use: [
-                    'style-loader',
-                    'css-loader?importLoader=1'
-                ]
+                use: ['happypack/loader?id=hpcss']
             },
             {
                 test: /\.svg$/,
@@ -148,17 +137,45 @@ module.exports = {
                         name: 'static/media/[name].[hash:8].[ext]'
                     }
                 }]
-
             }
         ]
     },
 
     plugins: [
+        new InterpolateHtmlPlugin(env.raw),
+        new webpack.optimize.CommonsChunkPlugin('vendor'),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
             debug: false
         }),
-        new InterpolateHtmlPlugin(env.raw),
+        new HappyPack({
+            id: 'hpjsx',
+            threads: 2,
+            loaders: [ {
+                loader: 'babel-loader',
+                query: {
+                    cacheDirectory: true,
+                    plugins: [
+                        ['import', [{libraryName: "antd", style: 'css'}]],
+                        ["syntax-dynamic-import"]
+                    ]
+                }
+            }, 'eslint-loader']
+        }),
+        new HappyPack({
+            id: 'hpcss',
+            threads: 2,
+            loaders: [ 'style-loader', 'css-loader?importLoader=1' ]
+        }),
+        new FastUglifyJsPlugin({
+            compress: {
+                warnings: false
+            },
+            debug: false,
+            cache: true,
+            cacheFolder: path.resolve(__dirname, '.cache/'),
+            workerNum: os.cpus().length
+        }),
         // new ExtractTextPlugin({filename: cssFilename}),
         new HtmlWebpackPlugin({
             inject: true,
@@ -171,18 +188,7 @@ module.exports = {
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
             },
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeRedundantAttributes: true,
-                useShortDoctype: true,
-                removeEmptyAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                keepClosingSlash: true,
-                minifyJS: true,
-                minifyCSS: true,
-                minifyURLs: true
-            }
+            minify: minify
         }),
         new HtmlWebpackPlugin({
             inject: true,
@@ -195,18 +201,7 @@ module.exports = {
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
             },
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeRedundantAttributes: true,
-                useShortDoctype: true,
-                removeEmptyAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                keepClosingSlash: true,
-                minifyJS: true,
-                minifyCSS: true,
-                minifyURLs: true
-            }
+            minify: minify
         }),
         new HtmlWebpackPlugin({
             inject: true,
@@ -219,18 +214,7 @@ module.exports = {
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
             },
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeRedundantAttributes: true,
-                useShortDoctype: true,
-                removeEmptyAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                keepClosingSlash: true,
-                minifyJS: true,
-                minifyCSS: true,
-                minifyURLs: true
-            }
+            minify: minify
         }),
         new CopyWebpackPlugin([
             {
@@ -258,8 +242,6 @@ module.exports = {
                 to: paths.appBuild + '/static/js/uuchat.js',
                 transform: function (content, absoluteFrom) {
                     var code = (content + '').replace(/'..\/..'\+/g, '');
-                    // var code = data.replace(/127.0.0.1:9688/g,
-                    //     nconf.get('app:address') + ':' + nconf.get('app:port'));
                     var result = UglifyJS.minify(code, {fromString: true});
                     if (result.error) {
                         result = UglifyJS.minify(code); //UglifyJS3
@@ -272,8 +254,6 @@ module.exports = {
                 to: paths.appBuild + '/static/js/loader.js',
                 transform: function (content, absoluteFrom) {
                     var code = (content + '');
-                    //var code = data.replace(/127.0.0.1:9688/g,
-                    //    nconf.get('app:address') + ':' + nconf.get('app:port'));
                     var result = UglifyJS.minify(code, {fromString: true});
                     if (result.error) {
                         result = UglifyJS.minify(code); //UglifyJS3
@@ -291,26 +271,10 @@ module.exports = {
                 }
             }
         ]),
-        new webpack.optimize.CommonsChunkPlugin('vendor'),
+
         new webpack.DefinePlugin({
             'process.env': {
                 'NODE_ENV': '"production"'
-            }
-        }),
-        new webpack.optimize.UglifyJsPlugin({
-            compress: {
-                screw_ie8: true, // React doesn't support IE8
-                warnings: false
-            },
-            mangle: {
-                screw_ie8: true
-            },
-            output: {
-                comments: false,
-                screw_ie8: true
-            },
-            compressor: {
-                warnings: false
             }
         }),
         new ManifestPlugin({
