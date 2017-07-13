@@ -124,7 +124,9 @@ function baseHtmlRoute(app, middlewareDev) {
 
     app.get('/', middleware.jsCDN, function response(req, res) {
         var html = path.join(__dirname, '../build/app.ejs');
-        ejsRender(middlewareDev, getCNDFile(req, ['socketIO']), res, html);
+        var cdnFile = getCNDFile(req, null);
+        cdnFile['socketIO'] = '';
+        ejsRender(middlewareDev, cdnFile, res, html);
     });
     app.get('/demo', function response(req, res) {
         var html = path.join(__dirname, '../build/customer.html');
@@ -161,7 +163,9 @@ function baseHtmlRoute(app, middlewareDev) {
     });
     app.get('/register', middleware.jsCDN, function response(req, res) {
         var html = path.join(__dirname, '../build/app.ejs');
-        ejsRender(middlewareDev, getCNDFile(req, ['socketIO']), res, html);
+        var cdnFile = getCNDFile(req, null);
+        cdnFile['socketIO'] = '';
+        ejsRender(middlewareDev, cdnFile, res, html);
     });
 
     var opts = middleware.whiteListOpt();
@@ -171,7 +175,8 @@ function baseHtmlRoute(app, middlewareDev) {
         req.inframUrl = req.query.r;
         setupSession(req, res);
         var html = path.join(__dirname, '../build/storage.html');
-        htmlRender(middlewareDev, res, html);
+        //htmlRender(middlewareDev, res, html);
+        ejsRender(middlewareDev, autoCNDFile(req, null, ['socketIO']), res, html);
     });
 }
 
@@ -343,6 +348,13 @@ function fileFilters(req, res, next) {
 
 function getCNDFile(req, keys) {
     var defaultKeys = ['reactMinJS', 'reactDomMinJS'];
+    return autoCNDFile(req, defaultKeys, keys);
+}
+
+function autoCNDFile(req, defaultKeys, keys) {
+    if (!defaultKeys) {
+        defaultKeys = [];
+    }
     if (keys) {
         defaultKeys = defaultKeys.concat(keys);
     }

@@ -59,7 +59,8 @@
             if(this.isLtIe8()){
                 this.loadScript(UUCT.domain+'/static/images/socket.io.js');
             }else{
-                this.loadScript('https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js');
+                var socketIO = localStorage.getItem ? localStorage.getItem('uuchat.skcdn', socketIO) : null;
+                this.loadScript(socketIO || 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js');
             }
             this.createCT();
         },
