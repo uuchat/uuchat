@@ -9,7 +9,6 @@ var nconf = require('nconf');
 var multer = require('multer');
 var sharp = require('sharp');
 var crypto = require('crypto');
-
 var logger = require('../logger');
 var utils = require('../utils');
 
@@ -70,7 +69,7 @@ function uploadImage(req, res, next) {
             crypto.pseudoRandomBytes(16, function (err, raw) {
                 if (err) {
                     logger.error(err);
-                    next(new Error('crypto-name-has-error'))
+                    next(new Error('crypto-name-has-error'));
                 }
 
                 var original = path.join(getSavePath(nconf.get('images:savePath')), fileName);
