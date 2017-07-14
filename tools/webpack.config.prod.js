@@ -13,7 +13,6 @@ var getClientEnvironment = require('./env');
 
 var HappyPack = require('happypack');
 var FastUglifyJsPlugin = require('fast-uglifyjs-plugin');
-var os = require('os');
 
 
 var publicPath = paths.servedPath;
@@ -65,10 +64,19 @@ var minify = {
 
 module.exports = {
     bail: true,
-    devtool: 'nosources-source-map',
+    devtool: 'hidden-source-map',
     cache: true,
     entry: {
         "vendor": ["react-router-dom", require.resolve('./polyfills')],
+        "antd-main": [
+            "antd/lib/layout",
+            "antd/lib/menu",
+            "antd/lib/message",
+            "antd/lib/button",
+            "antd/lib/icon",
+            "antd/lib/breadcrumb",
+            "antd/lib/pagination"
+            ],
         "app": [
             paths.appIndexJs
         ],
@@ -129,7 +137,7 @@ module.exports = {
                 test: /\.css$/,
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
-                    use: "css-loader?importLoader=1"
+                    use: "css-loader?importLoader=1&sourceMap=false"
                 })
             },
             {
@@ -146,12 +154,6 @@ module.exports = {
 
     plugins: [
         new InterpolateHtmlPlugin(env.raw),
-        new webpack.optimize.CommonsChunkPlugin('vendor'),
-        new webpack.optimize.CommonsChunkPlugin({
-            name: 'common',
-            chunks:['app', 'console']
-        }),
-        new ExtractTextPlugin({filename: cssFilename, allChunks: true }),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
             debug: false
@@ -170,14 +172,23 @@ module.exports = {
                 }
             }, 'eslint-loader']
         }),
+        new ExtractTextPlugin({filename: cssFilename, allChunks: true }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'common',
+            chunks:['app', 'console']
+        }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'antd-main',
+            chunks:['antd-main', 'console']
+        }),
+        new webpack.optimize.CommonsChunkPlugin('vendor'),
         new FastUglifyJsPlugin({
             compress: {
                 warnings: false
             },
+            comments: false,
             debug: false,
-            cache: true,
-            cacheFolder: path.resolve(__dirname, '.cache/'),
-            workerNum: os.cpus().length
+            cacheFolder: path.resolve(__dirname, '.cache/')
         }),
         new HtmlWebpackPlugin({
             inject: true,
@@ -196,9 +207,9 @@ module.exports = {
             inject: true,
             filename: 'console.ejs',
             template: paths.consoleHtml,
-            chunks: ['vendor', 'common', 'console'],
+            chunks: ['vendor', 'common', 'antd-main', 'console'],
             chunksSortMode: function (chunk1, chunk2) {
-                var order = [ 'vendor', 'common', 'console'];
+                var order = [ 'vendor', 'common', 'antd-main', 'console'];
                 var order1 = order.indexOf(chunk1.names[0]);
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
