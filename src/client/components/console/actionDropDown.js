@@ -1,10 +1,7 @@
-/**
- * Created by jianzhiqiang on 2017/7/9.
- */
-import React,{ Component } from 'react';
+import React,{ PureComponent } from 'react';
 import { Dropdown, Button, Icon, Menu } from 'antd';
 
-class ActionDropDown extends Component {
+class ActionDropDown extends PureComponent {
 
     render() {
         const menu = this.props.menuOptions.map(item => <Menu.Item key={item.key}>{item.name}</Menu.Item>);

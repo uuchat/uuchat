@@ -1,7 +1,3 @@
-/**
- * Created by lwc on 2017/6/1.
- */
-
 ;(function(w, doc,undefined){
 
     function $(el){

@@ -1,9 +1,6 @@
-/**
- * Created by jianzhiqiang on 2017/6/14.
- */
-import React,{Component} from 'react';
-import { Breadcrumb, Button, message, DatePicker } from 'antd';
+import React, { Component } from 'react';
 import moment from 'moment';
+import { Breadcrumb, Button, message, DatePicker } from 'antd';
 import AsyncComponent from '../../views/asyncComponent.js';
 
 const RateExpandedTable = AsyncComponent(() => import('./rateExpandedTable')

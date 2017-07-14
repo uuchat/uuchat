@@ -1,6 +1,3 @@
-/**
- * Created by jianzhiqiang on 2017/6/18.
- */
 "use strict";
 
 var async = require('async');

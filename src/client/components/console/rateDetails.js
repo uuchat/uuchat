@@ -1,18 +1,13 @@
-/**
- * Created by jianzhiqiang on 2017/6/19.
- */
-import React,{Component} from 'react';
-import { Breadcrumb, Table, Button, message, Radio } from 'antd';
-import moment from 'moment';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import moment from 'moment';
+import { Breadcrumb, Table, Button, message, Radio } from 'antd';
 import { getCustomerName, formatDate } from './utils';
+import { rateList } from './constants';
 
 const RadioGroup = Radio.Group;
 
 class Rates extends Component {
-    static defaultProps = {
-        rates: [1, 2, 3, 4, 5]
-    };
 
     state = {
         csSource: [],
@@ -69,12 +64,11 @@ class Rates extends Component {
     };
 
     handleRadioChange = (e) => {
-        var rateValue = e.target.value;
+        let rateValue = e.target.value;
         this.setState({rateValue}, this.getDataSource);
     };
 
     render() {
-        let { rates } = this.props;
         let { dataSource, month } = this.state;
 
         const columns = [
@@ -95,7 +89,7 @@ class Rates extends Component {
                     <div className="table-deals">
                         <div className="table-search">
                             <RadioGroup onChange={this.handleRadioChange} value={this.state.rateValue}>
-                                { rates.map((rate) => <Radio key={rate} value={rate}>{rate}</Radio>)}
+                                { rateList.map((rate) => <Radio key={rate} value={rate}>{rate}</Radio>)}
                             </RadioGroup>
                         </div>
                         <div className="table-operations">

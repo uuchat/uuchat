@@ -1,14 +1,8 @@
-/**
- * Created by lwc on 2017/5/11.
- */
-
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import { Form, Input, Checkbox, Row, Col, Button, message } from 'antd';
 import '../static/css/register.css';
 
-
-import { Form, Input, Checkbox, Row, Col, Button, message } from 'antd';
-const FormItem = Form.Item;
-
+var FormItem = Form.Item;
 
 class RegisterForm extends Component {
     constructor(){
@@ -16,16 +10,11 @@ class RegisterForm extends Component {
         this.state = {
             confirmDirty: false
         };
-
-        this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleConfirmBlur = this.handleConfirmBlur.bind(this);
-        this.checkPassword = this.checkPassword.bind(this);
-        this.checkConfirm = this.checkConfirm.bind(this);
     }
-    handleSubmit(e){
+    handleSubmit = (e) =>{
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
-            if (!err) {
+            if(!err) {
                 fetch('/register', {
                     credentials: 'include',
                     method: 'POST',
@@ -54,31 +43,31 @@ class RegisterForm extends Component {
             }
         });
     }
-    handleConfirmBlur(e){
-        const value = e.target.value;
+    handleConfirmBlur = (e) => {
+        var value = e.target.value;
         this.setState({ confirmDirty: this.state.confirmDirty || !!value });
     }
-    checkPassword(rule, value, callback){
-        const form = this.props.form;
-        if (value && value !== form.getFieldValue('password')) {
+    checkPassword = (rule, value, callback) => {
+        var form = this.props.form;
+        if(value && value !== form.getFieldValue('password')) {
             callback('Two passwords that you enter is inconsistent!');
-        } else {
+        }else {
             callback();
         }
     }
-    checkConfirm(rule, value, callback){
-        const form = this.props.form;
-        if (value && this.state.confirmDirty) {
+    checkConfirm = (rule, value, callback) => {
+        var form = this.props.form;
+        if(value && this.state.confirmDirty) {
             form.validateFields(['confirm'], { force: true });
         }
         callback();
     }
-    hasErrors(fieldsError) {
+    hasErrors = (fieldsError) => {
         return Object.keys(fieldsError).some(field => fieldsError[field]);
     }
     render() {
 
-        const { getFieldDecorator, getFieldsError } = this.props.form;
+        var { getFieldDecorator, getFieldsError } = this.props.form;
 
         return (
             <Row>
@@ -146,7 +135,7 @@ class RegisterForm extends Component {
     }
 }
 
-const RegistrationForm = Form.create()(RegisterForm);
+var RegistrationForm = Form.create()(RegisterForm);
 
 
 class Register extends Component{
@@ -159,8 +148,6 @@ class Register extends Component{
                 <RegistrationForm />
             </div>
         );
-
-
     }
 
 }

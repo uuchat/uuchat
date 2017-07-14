@@ -1,10 +1,5 @@
 'use strict';
 
-/**
- * customer object
- * need check undefined, events only check empty!
- * @type {exports|module.exports}
- */
 var _ = require('lodash');
 var winston = require('winston');
 

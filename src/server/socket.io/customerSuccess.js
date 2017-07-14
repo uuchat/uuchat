@@ -1,11 +1,5 @@
 'use strict';
 
-/**
- * customer success object
- * need check undefined, events only check empty!
- * @type {exports|module.exports}
- */
-
 var winston = require('winston');
 var _ = require('lodash');
 

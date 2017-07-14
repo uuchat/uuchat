@@ -1,7 +1,4 @@
-/**
- * Created by jianzhiqiang on 2017/6/7.
- */
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 import { Icon, Card } from 'antd';
 
 class NumberCard extends Component {

@@ -1,9 +1,7 @@
-/**
- * Created by jianzhiqiang on 2017/6/20.
- */
-import React,{ Component } from 'react';
-import { Form, Button, Row, Col, DatePicker, Select, Radio } from 'antd';
+import React, { Component } from 'react';
 import moment from 'moment';
+import { Form, Button, Row, Col, DatePicker, Select, Radio } from 'antd';
+import { rateList } from './constants';
 
 const { RangePicker } = DatePicker;
 const Option = Select.Option;
@@ -110,8 +108,6 @@ class RateSearchForm extends Component {
         const { csSource, rangePickerOpen,calendarFooterValue } = this.state;
 
         const initialCreatedAt = this.filter.createdAt;
-
-        const rateList = [1, 2, 3, 4, 5];
 
         const ColProps = {
             xs: 24,

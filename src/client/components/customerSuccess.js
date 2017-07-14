@@ -1,10 +1,6 @@
-/**
- * Created by lwc on 2017/5/4.
- */
 import React, { Component } from 'react';
 import { Row, Col, Input, Tabs, Modal, notification } from 'antd';
 import io from 'socket.io-client';
-
 import Chat from '../components/chat';
 import ChatSend from './chatSend';
 import ChatMessage from './chatMessage';
@@ -13,11 +9,10 @@ import ChatUser from './chatUser';
 import ChatIcon from './chatMenuIcon';
 import ChatList from './chatLists';
 import ChatSetting from './chatSetting';
-
-const TabPane = Tabs.TabPane;
-var notifyKey = '';
-
 import '../static/css/customerSuccess.css';
+
+var TabPane = Tabs.TabPane;
+var notifyKey = '';
 
 /**
  * Customer Component
@@ -51,32 +46,6 @@ class CustomerSuccess extends Component{
             isConnectErr: false
         };
 
-        this.customerSuccessConnect    = this.customerSuccessConnect.bind(this);
-        this.customerSuccessConectErr  = this.customerSuccessConectErr.bind(this);
-        this.customerSuccessDisconnect = this.customerSuccessDisconnect.bind(this);
-        this.socketReconnect           = this.socketReconnect.bind(this);
-        this.csCustomerList            = this.csCustomerList.bind(this);
-        this.csCustomerOne             = this.csCustomerOne.bind(this);
-        this.csDispatch                = this.csDispatch.bind(this);
-        this.csNeedLogin               = this.csNeedLogin.bind(this);
-        this.cMessage                  = this.cMessage.bind(this);
-        this.cDisconnect               = this.cDisconnect.bind(this);
-        this.csCustomerOffline         = this.csCustomerOffline.bind(this);
-        this.socketError               = this.socketError.bind(this);
-
-        this.onSearchHandler          = this.onSearchHandler.bind(this);
-        this.onChatListClick          = this.onChatListClick.bind(this);
-        this.customerSuccessMessage   = this.customerSuccessMessage.bind(this);
-        this.statusHandle             = this.statusHandle.bind(this);
-
-        this.menuIconClick = this.menuIconClick.bind(this);
-        this.loginOut = this.loginOut.bind(this);
-        this.closeDialog = this.closeDialog.bind(this);
-        this.socketTransfer = this.socketTransfer.bind(this);
-        this.statusToggle = this.statusToggle.bind(this);
-        this.avatarHandle = this.avatarHandle.bind(this);
-        this.createSocket = this.createSocket.bind(this);
-
     }
     componentDidMount(){
         this.createSocket();
@@ -85,7 +54,7 @@ class CustomerSuccess extends Component{
     /***
      * createSocket
      */
-    createSocket(){
+    createSocket = () => {
         var sio = io('/cs', {
             forceNew: true,
             reconnectionAttempts:5,
@@ -113,8 +82,9 @@ class CustomerSuccess extends Component{
     /***
      * cs.customer.list
      */
-    csCustomerList(data){
+    csCustomerList = (data) => {
         var customer = {};
+
         data.map((d)=>customer[d.cid] = []);
 
         this.setState({
@@ -135,7 +105,7 @@ class CustomerSuccess extends Component{
     /***
      * cs.customer.one
      */
-    csCustomerOne(data){
+    csCustomerOne = (data) => {
         var customerLists = this.state.customerLists,
             messageLists = this.state.messageLists,
             cid = this.state.customerSelect.cid,
@@ -169,7 +139,7 @@ class CustomerSuccess extends Component{
     /***
      * cs.dispatch
      */
-    csDispatch(cid, name, info){
+    csDispatch = (cid, name, info) => {
         var customerLists = this.state.customerLists;
         customerLists.unshift({
             cid: cid,
@@ -196,7 +166,7 @@ class CustomerSuccess extends Component{
     /***
      * cs.need.login
      */
-    csNeedLogin(fn){
+    csNeedLogin = (fn) => {
         fn(true);
         this.state.socket.disconnect();
         window.location.href="/";
@@ -205,7 +175,7 @@ class CustomerSuccess extends Component{
     /***
      * c.message
      */
-    cMessage(cid, msg){
+    cMessage = (cid, msg) => {
         var message = {
             msgAvatar: '',
             msgText: msg,
@@ -228,7 +198,6 @@ class CustomerSuccess extends Component{
         msgArr && msgArr.push(message);
         messageLists[cid] = msgArr;
 
-
         this.setState({
             messageLists:  messageLists,
             chatNotify: chatNotify
@@ -238,7 +207,7 @@ class CustomerSuccess extends Component{
     /***
      * c.disconnect
      */
-    cDisconnect(cid){
+    cDisconnect = (cid) => {
         var customerLists = this.state.customerLists,
             cSelectCid = this.state.customerSelect.cid,
             cSelectName = this.state.customerSelect.name;
@@ -265,7 +234,7 @@ class CustomerSuccess extends Component{
     /***
      * cs.customer.offline
      */
-    csCustomerOffline(data){
+    csCustomerOffline = (data) => {
         var customerLists = this.state.customerLists;
         customerLists.unshift({
             cid: data.cid,
@@ -285,19 +254,19 @@ class CustomerSuccess extends Component{
     /***
      * reconnect
      */
-    socketReconnect(){}
+    socketReconnect = () => {}
 
     /***
      * error
      */
-    socketError(){}
+    socketError = () => {}
 
     /***
      *
      * customerSuccessConnect Socket Connected Server Handle
      *
      */
-    customerSuccessConnect(){
+    customerSuccessConnect = () => {
         var isConnectErr = this.state.isConnectErr;
 
         if(isConnectErr){
@@ -307,7 +276,6 @@ class CustomerSuccess extends Component{
                 isConnectErr: false
             });
         }
-
     }
 
     /***
@@ -316,7 +284,7 @@ class CustomerSuccess extends Component{
      *
      */
 
-    customerSuccessConectErr(){
+    customerSuccessConectErr = () => {
         if(notifyKey === ""){
             notification.open({
                 message: 'Server error',
@@ -345,15 +313,13 @@ class CustomerSuccess extends Component{
      *  Server disconenct or network disconnection handle
      *
      */
-    customerSuccessDisconnect(){
-
-    }
+    customerSuccessDisconnect = () => {}
 
     /***
      *
      * onSearchHandler
      */
-    onSearchHandler(e){
+    onSearchHandler = (e) => {
         if(e.target.value === ''){
             e.preventDefault();
             return false;
@@ -365,7 +331,7 @@ class CustomerSuccess extends Component{
      * @param activeIndex
      * @param name
      */
-    onChatListClick(name, cid, marked){
+    onChatListClick = (name, cid, marked) => {
 
         var chatNotify = this.state.chatNotify;
         if(cid === this.state.customerSelect.cid){
@@ -394,17 +360,11 @@ class CustomerSuccess extends Component{
      *
      * @param msg
      */
-    customerSuccessMessage(msg){
+    customerSuccessMessage = (msg) => {
         var that = this,
              cid = that.state.customerSelect.cid;
-        if(msg !== ''){
 
-            /***
-             *
-             *  Send Message To Server
-             *
-             *
-             */
+        if(msg !== ''){
             this.state.socket.emit('cs.message', cid, msg, function(success){
                 var message,
                     messageLists = that.state.messageLists,
@@ -434,7 +394,7 @@ class CustomerSuccess extends Component{
      * @returns {boolean}
      */
 
-    menuIconClick(index){
+    menuIconClick = (index) => {
         this.setState({
             menuIcons:{
                 chat: (index === "1" ? 'chat_selected' : 'chat'),
@@ -449,7 +409,7 @@ class CustomerSuccess extends Component{
      * Close the customer dialog
      *
      */
-    closeDialog(e, cid, type){
+    closeDialog = (e, cid, type) => {
         e.stopPropagation();
         var that = this,
             title = 'Do you Want to close this customer?',
@@ -514,7 +474,7 @@ class CustomerSuccess extends Component{
     /***
      * socketTransfer
      */
-    socketTransfer(cid){
+    socketTransfer = (cid) => {
 
         var customerLists = this.state.customerLists,
             messageLists = this.state.messageLists,
@@ -548,7 +508,7 @@ class CustomerSuccess extends Component{
      * User login out
      *
      */
-    loginOut(e){
+    loginOut = (e) => {
         e.preventDefault();
         var that = this;
         Modal.confirm({
@@ -582,7 +542,7 @@ class CustomerSuccess extends Component{
      *
      *   status handle
      */
-    statusHandle(type){
+    statusHandle = (type) => {
         this.state.socket.emit('cs.status', this.state.customerSelect.cid, type, function(state){})
     }
 
@@ -590,7 +550,7 @@ class CustomerSuccess extends Component{
      * get customerSuccess and customer chat history
      *
      */
-    getMessageHistory(cid){
+    getMessageHistory = (cid) => {
         var that = this;
 
         if(that.state.messageLists[cid] && that.state.messageLists[cid].length > 0){
@@ -629,7 +589,7 @@ class CustomerSuccess extends Component{
      * filterCustomerInfo
      *
      */
-    filterCustomerInfo(customer, cid){
+    filterCustomerInfo = (customer, cid) => {
         var cdata = null;
         if(customer.length > 0){
             for(var i = 0, l = customer.length; i < l; i++){
@@ -646,7 +606,7 @@ class CustomerSuccess extends Component{
      * @returns {boolean}
      *       statusToggle
      */
-    statusToggle(){
+    statusToggle = () => {
         var state = this.state,
             status = state.isOnline,
             stat = 1;
@@ -673,7 +633,7 @@ class CustomerSuccess extends Component{
     /***
      * avatarHandle
      */
-    avatarHandle(avatar){
+    avatarHandle = (avatar) => {
         this.setState({
             csAvatar: avatar
         });

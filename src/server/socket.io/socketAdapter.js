@@ -1,6 +1,5 @@
-/**
- * Created by longhao on 2017/5/6.
- */
+'use strict';
+
 var winston = require('winston');
 var _ = require('lodash');
 var async = require('async');

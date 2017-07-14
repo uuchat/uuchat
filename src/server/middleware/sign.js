@@ -1,6 +1,3 @@
-/**
- * Created by jianzhiqiang on 2017/5/27.
- */
 "use strict";
 
 var crypto = require('crypto');

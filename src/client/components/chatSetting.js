@@ -1,9 +1,5 @@
-/**
- * Created by lwc on 2017/6/14.
- */
-import React, {Component} from 'react';
-import {Modal, Input, Upload, Icon, message} from 'antd';
-
+import React, { Component } from 'react';
+import { Modal, Input, Upload, Icon, message } from 'antd';
 
 class ChatSetting extends Component{
     constructor(){
@@ -15,21 +11,19 @@ class ChatSetting extends Component{
             percent: 0,
             avatar: require('../static/images/contact.png')
         };
-        this.accountHandle = this.accountHandle.bind(this);
-        this.accountSave = this.accountSave.bind(this);
-        this.passwordHandle = this.passwordHandle.bind(this);
-        this.passwordSave = this.passwordSave.bind(this);
     }
-    accountHandle(){
+    accountHandle = () => {
         var isAccountShow = this.state.isAccountShow;
+
         this.setState({
             isAccountShow: !isAccountShow
         });
     }
-    accountSave(){
+    accountSave = () => {
         var name = this.refs.name.refs.input.value,
             displayName = this.refs.displayName.refs.input.value,
             that = this;
+
         if(name !==''){
             fetch('/customersuccesses/'+this.props.csid, {
                 credentials: 'include',
@@ -55,13 +49,13 @@ class ChatSetting extends Component{
             this.refs.name.refs.input.style.border = '1px solid red';
         }
     }
-    passwordHandle(){
+    passwordHandle = () => {
         var isPasswordShow = this.state.isPasswordShow;
         this.setState({
             isPasswordShow: !isPasswordShow
         });
     }
-    passwordSave(e){
+    passwordSave = (e) => {
         var that = this,
             passwd = this.refs.passwd.refs.input.value.replace(/^\s$/g, ''),
             cpasswd = this.refs.cpasswd.refs.input.value.replace(/^\s$/g, '');
@@ -96,39 +90,39 @@ class ChatSetting extends Component{
     render(){
         var that = this,
             props = {
-            name: 'avatars',
-            action: '/customersuccesses/'+this.props.csid+'/avatar',
-            accept: 'image/*',
-            showUploadList: false,
-            headers: {
-                authorization: 'authorization-text',
-            },
-            onChange(info) {
-                var file = info.file;
-                if(file.status === 'uploading'){
-                    if(info.event){
-                        that.setState({
-                            isUploading: true,
-                            percent: Math.ceil(info.event.percent)
-                        });
-                    }
-                }else if (file.status === 'done') {
-                    if(200 === info.file.response.code){
-                        var photo = file.response.msg.photo;
-                        localStorage.setItem('uuchat.avatar', photo);
-                        that.props.avatarHandle(photo);
-                        setTimeout(function(){
+                name: 'avatars',
+                action: '/customersuccesses/'+this.props.csid+'/avatar',
+                accept: 'image/*',
+                showUploadList: false,
+                headers: {
+                    authorization: 'authorization-text',
+                },
+                onChange(info) {
+                    var file = info.file;
+                    if(file.status === 'uploading'){
+                        if(info.event){
                             that.setState({
-                                avatar: photo,
-                                isUploading: false
+                                isUploading: true,
+                                percent: Math.ceil(info.event.percent)
                             });
-                        }, 800);
+                        }
+                    }else if(file.status === 'done') {
+                        if(200 === info.file.response.code){
+                            var photo = file.response.msg.photo;
+                            localStorage.setItem('uuchat.avatar', photo);
+                            that.props.avatarHandle(photo);
+                            setTimeout(function(){
+                                that.setState({
+                                    avatar: photo,
+                                    isUploading: false
+                                });
+                            }, 800);
+                        }
+                    } else if(file.status === 'error') {
+                        message.error(info.file.name+' file upload failed.');
                     }
-                } else if (file.status === 'error') {
-                    message.error(info.file.name+' file upload failed.');
                 }
-            }
-        };
+            };
 
         return (
             <ul className="customerSuccess-setting">

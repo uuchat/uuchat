@@ -1,7 +1,3 @@
-/**
- *
- * Created by jianzhiqiang on 2017/6/14.
- */
 import React, { Component } from 'react';
 import { Breadcrumb, message, Select, Modal } from 'antd';
 import ChatList from './chatList';

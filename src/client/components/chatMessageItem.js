@@ -1,7 +1,4 @@
-/**
- * Created by lwc on 2017/5/5.
- */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 
 class ChatMessageItem extends Component{
 

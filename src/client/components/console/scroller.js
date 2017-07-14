@@ -1,9 +1,6 @@
-/**
- * Created by jianzhiqiang on 2017/7/7.
- */
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 
- class LimitedInfiniteScroll extends Component {
+ class LimitedInfiniteScroll extends PureComponent {
 
     static defaultProps = {
         pageLimit: 10,
@@ -27,9 +24,7 @@ import React, { Component } from 'react';
     };
 
     calcTop = (element) => {
-        if (!element) {
-            return 0;
-        }
+        if (!element) return 0;
         return element.offsetTop + this.calcTop(element.offsetParent);
     };
 
@@ -75,7 +70,7 @@ import React, { Component } from 'react';
         scrollEl.removeEventListener('resize', this.scrollHandler, false);
     };
 
-    _init = ()=> {
+    _init = () => {
         this.page = this.props.pageStart;
         this.autoLoaded = false;
     };

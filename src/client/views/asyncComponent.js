@@ -1,6 +1,3 @@
-/**
- * Created by lwc on 2017/7/6.
- */
 import React from 'react';
 
 export default (loader, collection) => (

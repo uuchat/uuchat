@@ -1,7 +1,4 @@
-/**
- * Created by lwc on 2017/5/9.
- */
-const Emojis = [
+var Emojis = [
     {name: 'grinning-smile-eyes', text: '😁', code: 'U+1F601'},
     {name: 'tears-of-joy', text: '😂', code: 'U+1F602'},
     {name: 'smiling-open-mouth', text: '😃', code: 'U+1F603'},

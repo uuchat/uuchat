@@ -1,16 +1,13 @@
-/**
- * Created by jianzhiqiang on 2017/6/19.
- */
-import React,{Component} from 'react';
+import React, { Component } from 'react';
 import moment from 'moment';
-import { Breadcrumb, Table, message } from 'antd';
-import { getCustomerName, formatDate } from './utils';
+import { Breadcrumb, message } from 'antd';
+import RateListTable from './rateListTable';
 import AsyncComponent from '../../views/asyncComponent.js';
 
 const RateSearchForm = AsyncComponent(() => import('./rateSearchForm')
     .then(component => component.default));
 
-class Rates extends Component {
+class RateList extends Component {
     filter = {
         createdAt: [moment().subtract(7, 'days'), moment()]
     };
@@ -99,22 +96,6 @@ class Rates extends Component {
     render() {
         let { csSource, dataSource, pagination, loading, sorter } = this.state;
 
-        const columns = [
-            {title: 'email', dataIndex: 'csEmail', key: 'csEmail'},
-            {title: 'name', dataIndex: 'csName', key: 'csName'},
-            {
-                title: 'customer', dataIndex: 'cid', key: 'cid', render: getCustomerName,
-                sorter: true, sortOrder: sorter.columnKey === 'customer' && sorter.order
-            },
-            {
-                title: 'rate', dataIndex: 'rate', key: 'rate',
-                sorter: true, sortOrder: sorter.columnKey === 'rate' && sorter.order
-            },
-            {
-                title: 'createdAt', dataIndex: 'createdAt', key: 'createdAt', render: formatDate,
-                sorter: true, sortOrder: sorter.columnKey === 'createdAt' && sorter.order
-            }
-        ];
         const searchProps = {
             filter: this.filter,
             onFilterChange: this.onFilterChange,
@@ -130,11 +111,11 @@ class Rates extends Component {
                 <div style={{ padding: 24, background: '#fff' }}>
                     <RateSearchForm  { ...searchProps } />
 
-                    <Table locale={{ emptyText: 'List is empty' }}
+                    <RateListTable locale={{ emptyText: 'List is empty' }}
                            dataSource={ dataSource }
-                           columns={ columns }
                            pagination={ pagination }
                            loading={ loading }
+                           sorter={ sorter }
                            onChange={ this.handleChange }/>
                 </div>
             </div>
@@ -142,5 +123,5 @@ class Rates extends Component {
     }
 }
 
-export default Rates;
+export default RateList;
 

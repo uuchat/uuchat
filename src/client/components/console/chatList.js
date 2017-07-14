@@ -1,7 +1,4 @@
-/**
- * Created by jianzhiqiang on 2017/5/12.
- */
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 import ChatMessageItem from '../chatMessageItem';
 
 class ChatList extends Component {
@@ -10,7 +7,7 @@ class ChatList extends Component {
     };
 
     getDataSource(cid, csid) {
-        var _component = this;
+        let _component = this;
         fetch('/messages/customer/' + cid + '/cs/' + csid)
             .then((data) => data.json())
             .then(data => {

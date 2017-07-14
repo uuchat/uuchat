@@ -1,6 +1,3 @@
-/**
- * Created by jianzhiqiang on 2017/6/9.
- */
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {

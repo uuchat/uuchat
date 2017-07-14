@@ -1,11 +1,5 @@
-/**
- * Created by lwc on 2017/5/8.
- */
-import React, {Component} from 'react';
-
+import React, { Component } from 'react';
 import Emojis from './emojis';
-
-
 
 class EmojiPicker extends Component{
 
@@ -21,7 +15,6 @@ class EmojiPicker extends Component{
     render(){
 
         return (
-
             <div className="emoji-picker">
                 <div className="emoji-group">
                     {Emojis.map((emoji, index) =>
@@ -31,7 +24,6 @@ class EmojiPicker extends Component{
 
                 <div className="emoji-caret"></div>
             </div>
-
         );
 
     }

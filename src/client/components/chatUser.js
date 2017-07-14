@@ -1,8 +1,4 @@
-/**
- * Created by lwc on 2017/5/18.
- */
-import React, {Component} from 'react';
-
+import React, { Component } from 'react';
 
 class ChatUser extends Component{
 
@@ -16,7 +12,6 @@ class ChatUser extends Component{
         }
 
         return (
-
             <div className="chat-user">
                 <div className="user-header">USER-Infomation</div>
                 <div className="user-body">
@@ -27,10 +22,8 @@ class ChatUser extends Component{
                     </table>
                 </div>
             </div>
-
         );
     }
 }
-
 
 export default ChatUser;

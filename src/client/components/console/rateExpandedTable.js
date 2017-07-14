@@ -1,9 +1,6 @@
-/**
- * Created by jianzhiqiang on 2017/7/9.
- */
-import React,{Component} from 'react';
-import { Table } from 'antd';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import { Table } from 'antd';
 import { sortFilterByProps } from './utils';
 
 class RateExpandedTable extends Component {

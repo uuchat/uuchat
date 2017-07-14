@@ -1,6 +1,3 @@
-/**
- * Created by jianzhiqiang on 2017/7/7.
- */
 import React, { Component } from 'react';
 import { Spin } from 'antd';
 import LimitedInfiniteScroll from './scroller';
@@ -17,7 +14,7 @@ class ScrollTable extends Component {
 
         const items = list.map((item, index) => {
             return (
-                <tr>
+                <tr key={index}>
                     <td>{renderCustomer(item.cid, item)}</td>
                     <td>{item.csName}</td>
                     <td>{item.csEmail}</td>

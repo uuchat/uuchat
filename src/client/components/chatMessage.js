@@ -1,8 +1,5 @@
-/**
- * Created by lwc on 2017/5/5.
- */
-import React, {Component} from 'react';
-import {Modal} from 'antd';
+import React, { Component } from 'react';
+import { Modal } from 'antd';
 import ChatMessageItem from './chatMessageItem';
 import String2int from './utils';
 
@@ -19,13 +16,6 @@ class ChatMessage extends Component{
             onlineShow: null,
             markedList: {}
         };
-        this.marked = this.marked.bind(this);
-        this.optionSelect = this.optionSelect.bind(this);
-        this.markOk = this.markOk.bind(this);
-        this.markCancel = this.markCancel.bind(this);
-        this.markColorSelect = this.markColorSelect.bind(this);
-        this.csOnlineInfo = this.csOnlineInfo.bind(this);
-        this.transfer = this.transfer.bind(this);
     }
     componentDidMount(){
 
@@ -48,13 +38,13 @@ class ChatMessage extends Component{
         msgList.scrollTop = msgList.scrollHeight;
     }
 
-    marked(e){
+    marked = (e) => {
         var isms = this.state.isMarkShow;
         this.setState({
             isMarkShow: !isms
         });
     }
-    optionSelect(e){
+    optionSelect = (e) => {
         e.stopPropagation();
         var type = e.target.getAttribute('data-type'),
             that = this;
@@ -99,20 +89,20 @@ class ChatMessage extends Component{
             });
         }
     }
-    markOk(){
+    markOk = () => {
         this.setState({
             visible: false,
             isMarkShow: false
         });
     }
 
-    markCancel(){
+    markCancel = () => {
         this.setState({
             visible: false,
             isMarkShow: false
         });
     }
-    markColorSelect(e){
+    markColorSelect = (e) => {
         var t = e.target,
             that = this,
             markedList = this.state.markedList;
@@ -129,14 +119,14 @@ class ChatMessage extends Component{
         }
     }
 
-    csOnlineInfo(data){
+    csOnlineInfo = (data) =>{
         if(Object.keys(this.state.OnlineCustomerList).length !== Object.keys(data).length){
               this.setState({
                   OnlineCustomerList: data
               });
         }
     }
-    transfer(e){
+    transfer = (e) => {
         var t = e.target,
             csid = t.getAttribute('data-csid'),
             that = this;

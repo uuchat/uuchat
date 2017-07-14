@@ -1,8 +1,8 @@
 /**
  * Created by lwc on 2017/6/7.
  */
-import React, { Component} from 'react';
-import {Modal} from 'antd';
+import React, { Component } from 'react';
+import { Modal } from 'antd';
 import ChatMessageItem from './chatMessageItem';
 import String2int from './utils';
 
@@ -19,18 +19,13 @@ class ChatList extends Component{
             hisCid: 0,
             hisTitle: '',
             isHisVis: false
-
         };
-        this.getList      = this.getList.bind(this);
-        this.showHistory  = this.showHistory.bind(this);
-        this.filterMarked = this.filterMarked.bind(this);
-        this.historyClose = this.historyClose.bind(this);
     }
 
     componentDidMount(){
         this.getList();
     }
-    getList(){
+    getList = () => {
         var that = this;
         fetch('/chathistories/cs/'+this.props.csid+'/latestmonth').then(function(d){
             return d.json();
@@ -43,7 +38,7 @@ class ChatList extends Component{
             }
         }).catch(function(e){});
     }
-    showHistory(e){
+    showHistory = (e) => {
         var t = e.target,
             cid = '',
             _li,
@@ -74,7 +69,7 @@ class ChatList extends Component{
         _li.className='active';
     }
 
-    renderHistroy(cid){
+    renderHistroy = (cid) => {
         this.setState({
             hisCid: cid,
             isHisVis: true,
@@ -82,7 +77,7 @@ class ChatList extends Component{
         });
     }
 
-    fetchHistory(cid, csid){
+    fetchHistory = (cid, csid) => {
         var that = this,
             csAvatar = that.props.csAvatar ? that.props.csAvatar : require('../static/images/contact.png') ;
 
@@ -106,7 +101,7 @@ class ChatList extends Component{
             .catch(function(e){});
     }
 
-    filterMarked(e){
+    filterMarked = (e) => {
         if(e.target.tagName.toLowerCase() === 'span'){
             var marked = parseInt(e.target.getAttribute('data-marked'), 10) === 7 ? 0 : parseInt(e.target.getAttribute('data-marked'), 10);
             this.setState({
@@ -115,7 +110,7 @@ class ChatList extends Component{
         }
     }
 
-    historyClose(){
+    historyClose = () => {
         this.setState({
             isHisVis: false
         });
@@ -150,7 +145,6 @@ class ChatList extends Component{
         }
 
         return (
-
             <div className="contact-list">
                 <div className="mark-filter mark-color-list" onClick={this.filterMarked}>Filter :&nbsp;&nbsp;<span data-marked="8" className="mark-tag mark-tag-all">All</span>
                     {markArr.map((m ,i)=>

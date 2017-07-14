@@ -1,8 +1,7 @@
 /**
  * Created by lwc on 2017/5/5.
  */
-
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { Input, Icon, Upload, message, Modal, Progress } from 'antd';
 import EmojiPicker from './chatEmoji';
 import {cutStr} from './utils';
@@ -24,39 +23,24 @@ class ChatSend extends Component{
             socket: props.socket,
             isShowProcess: false
         };
-
-        this.sendMessage = this.sendMessage.bind(this);
-        this.emojiBtnHandle = this.emojiBtnHandle.bind(this);
-        this.addEmojiHandle = this.addEmojiHandle.bind(this);
-        this.textChangeHandle = this.textChangeHandle.bind(this);
-        this.textFocusHandle = this.textFocusHandle.bind(this);
-        this.blurHandle = this.blurHandle.bind(this);
-        this.rateHandle = this.rateHandle.bind(this);
     }
-    /***
-     *
-     * @param e
-     */
-    textChangeHandle(e){
+
+    textChangeHandle = (e) => {
         this.setState({
             textereaValue: e.target.value.substr(0, 512)
         });
         this.props.statusHandle(1);
     }
-    blurHandle(){
+    blurHandle = () => {
         this.props.statusHandle(2);
     }
-    textFocusHandle(){
+    textFocusHandle = () => {
         this.setState({
             isEmojiShow: false
         });
     }
-    /***
-     *
-     * @param e
-     */
 
-    sendMessage(e){
+    sendMessage = (e) => {
         e.preventDefault();
         var msgVal = e.target.value,
             msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
@@ -70,24 +54,18 @@ class ChatSend extends Component{
             isSendReady: true
         });
     }
-    /***
-     *
-     */
-    emojiBtnHandle(){
+
+    emojiBtnHandle = () => {
         this.setState({
             isEmojiShow: !this.state.isEmojiShow
         })
     }
 
-    /***
-     *
-     * @param emoj
-     */
-    addEmojiHandle(emoji){
+    addEmojiHandle = (emoji) => {
         this.insertToCursorPosition(this.state.textereaValue, emoji);
     }
 
-    insertToCursorPosition(s1, s2){
+    insertToCursorPosition = (s1, s2) => {
         var obj = document.getElementsByClassName("chat-textarea")[0];
         obj.focus();
         if(document.selection) {
@@ -97,9 +75,8 @@ class ChatSend extends Component{
             var startPos = obj.selectionStart,
                 endPos = obj.selectionEnd,
                 cursorPos = startPos,
-                tmpStr = s1;
-
-            var s3 = tmpStr.substring(0, startPos) + s2 + tmpStr.substring(endPos, tmpStr.length);
+                tmpStr = s1,
+                s3 = tmpStr.substring(0, startPos) + s2 + tmpStr.substring(endPos, tmpStr.length);
 
             this.setState({
                 textereaValue: s3
@@ -112,7 +89,7 @@ class ChatSend extends Component{
              });
         }
     }
-    rateHandle(e){
+    rateHandle = (e) => {
         var that = this;
         Modal.confirm({
             title: 'Invite user rate',
@@ -134,43 +111,43 @@ class ChatSend extends Component{
 
     render(){
         var sendMessage = this.props.sendMessage,
-            that = this;
+            that = this,
+            props = {
+                name: 'image',
+                action: '/messages/customer/'+this.props.cid+'/cs/'+this.props.csid+'/image',
+                accept: 'image/*',
+                headers: {
+                    authorization: 'authorization-text',
+                },
+                onChange(info) {
+                    var status = info.file.status;
 
-        const props = {
-            name: 'image',
-            action: '/messages/customer/'+this.props.cid+'/cs/'+this.props.csid+'/image',
-            accept: 'image/*',
-            headers: {
-                authorization: 'authorization-text',
-            },
-            onChange(info) {
-                var status = info.file.status;
-
-                if(status === 'uploading'){
-                    if(info.event){
-                        that.setState({
-                            isShowProcess: true,
-                            percent: Math.ceil(info.event.percent)
+                    if(status === 'uploading'){
+                        if(info.event){
+                            that.setState({
+                                isShowProcess: true,
+                                percent: Math.ceil(info.event.percent)
+                            });
+                        }
+                    }else if(status === 'done') {
+                        if(200 === info.file.response.code){
+                            sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original);
+                        }
+                        message.success(info.file.name+' file uploaded successfully', 2, function(){
+                            that.setState({
+                                isShowProcess: false
+                            });
+                        });
+                    }else if(status === 'error') {
+                        message.error(info.file.name+' file upload failed.', 2, function(){
+                            that.setState({
+                                isShowProcess: false
+                            });
                         });
                     }
-                }else if (status === 'done') {
-                    if(200 === info.file.response.code){
-                        sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original);
-                    }
-                    message.success(info.file.name+' file uploaded successfully', 2, function(){
-                        that.setState({
-                            isShowProcess: false
-                        });
-                    });
-                } else if (status === 'error') {
-                    message.error(info.file.name+' file upload failed.', 2, function(){
-                        that.setState({
-                            isShowProcess: false
-                        });
-                    });
                 }
-            }
-        };
+            };
+
         return (
             <div className="chat-send">
                 <Progress type="circle" percent={this.state.percent} className="upload-process" width={60} style={{display: this.state.isShowProcess ? 'block' : 'none'}} />
@@ -204,7 +181,6 @@ class ChatSend extends Component{
                     />
                 </div>
             </div>
-
         );
     }
 }

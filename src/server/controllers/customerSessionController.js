@@ -1,6 +1,3 @@
-/**
- * Created by jianzhiqiang on 2017/5/12.
- */
 "use strict";
 
 var nconf = require('nconf');

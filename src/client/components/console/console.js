@@ -1,14 +1,12 @@
-/**
- * Created by jianzhiqiang on 2017/5/12.
- */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 import { Layout, Menu, Icon, message, Button } from 'antd';
 import UpgradeNote from './upgradeNote';
-import Dashboard from './dashboard';
 import RateList from './rateList';
 import AsyncComponent from '../../views/asyncComponent.js';
 
+const Dashboard = AsyncComponent(() => import('./dashboard')
+    .then(module => module.default), { name: 'dashboard' });
 const Operators = AsyncComponent(() => import('./operators')
     .then(module => module.default), { name: 'operators' });
 const Transcripts = AsyncComponent(() => import('./transcripts')
@@ -85,6 +83,14 @@ class Console extends Component {
             <Icon style={{color: '#108ee9'}} type="down"/>
         </span>);
 
+        const menuList = [
+            {key: 'dashboard', type:'laptop', text:'Dashboard'},
+            {key: 'operators', type:'user', text:'Operators'},
+            {key: 'transcripts', type:'database', text:'Transcripts'},
+            {key: 'rates', type:'star-o', text:'Rate Report'},
+            {key: 'rateList', type:'star-o', text:'Rate List'}
+        ];
+
         return (
             <div>
                 <UpgradeNote />
@@ -103,36 +109,16 @@ class Console extends Component {
                             defaultOpenKeys={["dashboard"]}
                             selectedKeys={ [current] }
                             >
-                            <Menu.Item key="dashboard">
-                              <span>
-                                <Icon type="laptop"/>
-                                <span className="nav-text">Dashboard</span>
-                              </span>
-                            </Menu.Item>
-                            <Menu.Item key="operators">
-                              <span>
-                                <Icon type="user"/>
-                                <span className="nav-text">Operators</span>
-                              </span>
-                            </Menu.Item>
-                            <Menu.Item key="transcripts">
-                              <span>
-                                <Icon type="database"/>
-                                <span className="nav-text">Transcripts</span>
-                              </span>
-                            </Menu.Item>
-                            <Menu.Item key="rates">
-                              <span>
-                                <Icon type="star-o"/>
-                                <span className="nav-text">Rate Report</span>
-                              </span>
-                            </Menu.Item>
-                            <Menu.Item key="rateList">
-                              <span>
-                                <Icon type="star-o"/>
-                                <span className="nav-text">Rate List</span>
-                              </span>
-                            </Menu.Item>
+                            {
+                                menuList.map((item, index) =>
+                                    <Menu.Item key={item.key}>
+                                      <span>
+                                        <Icon type={item.type}/>
+                                        <span className="nav-text">{item.text}</span>
+                                      </span>
+                                    </Menu.Item>
+                                )
+                            }
                         </Menu>
                     </Sider>
                     <Layout>

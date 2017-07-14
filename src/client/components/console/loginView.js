@@ -1,7 +1,4 @@
-/**
- * Created by jianzhiqiang on 2017/7/1.
- */
-import React, { Component} from 'react';
+import React, { Component } from 'react';
 import Login from '../login';
 
 class LoginView extends Component {

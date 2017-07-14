@@ -1,5 +1,5 @@
-import React, {Component} from 'react';
-import { Breadcrumb, Col, Row, message,Card } from 'antd';
+import React, { Component } from 'react';
+import { Breadcrumb, Col, Row, message, Card } from 'antd';
 import NumberCard from './numberCard';
 import MonthlyReport from './monthlyReport';
 
@@ -46,7 +46,7 @@ class Dashboard extends Component {
 
                 if (200 === data.code) {
 
-                    var numberObj = data.msg.reduce(function (result, value) {
+                    let numberObj = data.msg.reduce(function (result, value) {
                         Object.assign(result, value);
                         return result;
                     }, {});

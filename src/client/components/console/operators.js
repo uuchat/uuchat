@@ -1,7 +1,4 @@
-/**
- * Created by jianzhiqiang on 2017/6/7.
- */
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import { Table, Breadcrumb, message, Button, Modal, Form, Input } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
 import ActionDropDown from './actionDropDown';

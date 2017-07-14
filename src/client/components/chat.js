@@ -1,9 +1,8 @@
 /**
  * Created by lwc on 2017/5/5.
  */
-
 import React, { Component } from 'react';
-import {Modal} from 'antd';
+import { Modal } from 'antd';
 import String2int from './utils';
 
 class Chat extends Component{
@@ -13,11 +12,9 @@ class Chat extends Component{
         this.state={
             isOfflineShow: false
         }
-        this.chatClickHandler = this.chatClickHandler.bind(this);
-        this.offlineShow = this.offlineShow.bind(this);
     }
 
-    chatClickHandler(e){
+    chatClickHandler = (e) => {
         this.props.onChatListClick(this.props.name, this.props.cid,  this.props.marked);
     }
 
@@ -30,7 +27,7 @@ class Chat extends Component{
         }
         return <span dangerouslySetInnerHTML={{__html: m}}></span>;
     }
-    offlineShow(){
+    offlineShow = () => {
         var isOfflineShow = this.state.isOfflineShow;
         this.setState({
             isOfflineShow: !isOfflineShow

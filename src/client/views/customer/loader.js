@@ -1,6 +1,3 @@
-/**
- * Created by lwc on 2017/6/22.
- */
 ;(function(u, c, h){
     var iframe = document.createElement('iframe'),
         i = (iframe.frameElement || iframe).style;

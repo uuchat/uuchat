@@ -1,6 +1,3 @@
-/**
- * Created by jianzhiqiang on 2017/5/4.
- */
 'use strict';
 
 var fs = require("fs");

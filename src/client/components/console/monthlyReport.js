@@ -1,8 +1,5 @@
-/**
- * Created by jianzhiqiang on 2017/6/30.
- */
-import React,{Component} from 'react';
-import { Progress,Col, Row } from 'antd';
+import React, { Component } from 'react';
+import { Progress, Col, Row } from 'antd';
 
 class MonthlyReport extends Component {
 

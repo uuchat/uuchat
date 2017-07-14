@@ -1,8 +1,5 @@
-/**
- * Created by lwc on 2017/6/29.
- */
-import React, {Component} from 'react';
-import {Modal, message, Input} from 'antd';
+import React, { Component } from 'react';
+import { Modal, message, Input } from 'antd';
 import ChatMessageItem from './chatMessageItem';
 import String2int from './utils';
 import '../static/css/common.css';
@@ -14,13 +11,7 @@ var chatHistory = {},
 
 class ChatSearchItem extends Component{
 
-    constructor(){
-        super();
-        this.msgConver = this.msgConver.bind(this);
-        this.showHistory = this.showHistory.bind(this);
-    }
-
-    msgConver(msg){
+    msgConver = (msg) => {
         var str = '';
         if(/"email":/g.test(msg)){
             msg = JSON.parse(msg);
@@ -33,10 +24,10 @@ class ChatSearchItem extends Component{
         }
         return <div dangerouslySetInnerHTML={{__html: str}}></div>;
     }
-    showHistory(e){
+    showHistory = (e) => {
         this.props.showHistory(this.props.cid);
     }
-    renderHistroy(cid){
+    renderHistroy = (cid) => {
         this.setState({
             hisCid: cid,
             isHisVis: true,
@@ -64,17 +55,10 @@ class ChatSearch extends Component{
             hisTitle: '',
             isViewMore: false
         };
-        this.getSearchList = this.getSearchList.bind(this);
-        this.fetchHistory = this.fetchHistory.bind(this);
-        this.renderHistroy = this.renderHistroy.bind(this);
-        this.historyClose = this.historyClose.bind(this);
-        this.viewMore = this.viewMore.bind(this);
-        this.onSearchHandler = this.onSearchHandler.bind(this);
     }
     componentWillMount(){
         var search = window.location.href,
             content = '';
-
 
         if(search.indexOf('?search=') > -1){
             search = search.split('?')[1].split('&');
@@ -90,7 +74,7 @@ class ChatSearch extends Component{
         }
 
     }
-    getSearchList(content){
+    getSearchList = (content) => {
         var that = this;
         fetch('/messages/cs/'+that.state.csid+'/search?msg='+content).then(function(d){
             return d.json();
@@ -115,7 +99,7 @@ class ChatSearch extends Component{
             }
         }).catch(function(e){});
     }
-    fetchHistory(cid){
+    fetchHistory = (cid) => {
         var that = this,
             csAvatar = localStorage.getItem('uuchat.avatar') ? localStorage.getItem('uuchat.avatar') : require('../static/images/contact.png');
 
@@ -138,19 +122,19 @@ class ChatSearch extends Component{
             })
             .catch(function(e){});
     }
-    renderHistroy(cid){
+    renderHistroy = (cid) => {
         this.setState({
             hisCid: cid,
             isHisVis: true,
             hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
         });
     }
-    historyClose(){
+    historyClose = () => {
         this.setState({
             isHisVis: false
         });
     }
-    viewMore(){
+    viewMore = () => {
         var that = this;
         fetch('/messages/cs/'+that.state.csid+'/search/latestmonth?msg='+searchContent+'&pageNum='+(pageNum * 5)).then(function(d){
             return d.json();
@@ -175,7 +159,7 @@ class ChatSearch extends Component{
             }
         }).catch(function(e){});
     }
-    onSearchHandler(e){
+    onSearchHandler = (e) => {
         if(e.target.value!==""){
             this.getSearchList(e.target.value);
         }

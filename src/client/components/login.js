@@ -1,13 +1,8 @@
-/**
- * Created by lwc on 2017/5/5.
- */
 import React, { Component } from 'react';
 import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
-
 import '../static/css/login.css';
 
-const FormItem = Form.Item;
-
+var FormItem = Form.Item;
 
 class Login extends Component{
 
@@ -16,20 +11,14 @@ class Login extends Component{
         redirect: '/chat',
     }
 
-    constructor(){
-        super();
-        this.handleSubmit = this.handleSubmit.bind(this);
-
-    }
-
-    handleSubmit(e){
+    handleSubmit = (e) => {
         e.preventDefault();
 
         this.props.form.validateFields((err, values) => {
 
-            if (!err) {
+            if(!err) {
 
-                const { fetchUrl, redirect } = this.props;
+                var { fetchUrl, redirect } = this.props;
 
                 fetch(fetchUrl, {
                     credentials: 'include',
@@ -47,7 +36,7 @@ class Login extends Component{
                         localStorage.setItem('uuchat.name', d.msg.name);
                         localStorage.setItem('uuchat.displayName', (d.msg.displayName ? d.msg.displayName : ''));
                         localStorage.setItem('uuchat.avatar', (d.msg.photo ? d.msg.photo : ''));
-                        if( document.querySelector('#uu-chat')) {
+                        if(document.querySelector('#uu-chat')) {
                             document.querySelector('#uu-chat').innerHTML = '<div class="chat-loading"><div class="bounce bounce1"></div><div class="bounce bounce2"></div><div class="bounce bounce3"></div></div>';
                         }
                         window.location.href = redirect;
@@ -68,9 +57,8 @@ class Login extends Component{
 
     }
 
-
     render(){
-        const { getFieldDecorator } = this.props.form;
+        var { getFieldDecorator } = this.props.form;
         return (
             <div className="login-body">
                 <div className="login-header"> <span>U</span> </div>
@@ -104,12 +92,10 @@ class Login extends Component{
                 </Form>
             </div>
         );
-
     }
 
 }
 
-const LoginForm = Form.create()(Login);
-
+var LoginForm = Form.create()(Login);
 
 export default LoginForm;
