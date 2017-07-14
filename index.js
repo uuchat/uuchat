@@ -1,7 +1,3 @@
-/**
- * Created by longhao on 2017/5/5.
- */
-
 var async = require('async');
 /** @member {Object} */
 var nconf = require('nconf');
