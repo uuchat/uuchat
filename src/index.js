@@ -1,6 +1,5 @@
-/**
- * Created by longhao on 2017/5/4.
- */
+'use strict';
+
 /** @member {Object} */
 var winston = require('winston');
 var fs = require('fs');
@@ -359,7 +358,7 @@ function autoCNDFile(req, defaultKeys, keys) {
         defaultKeys = defaultKeys.concat(keys);
     }
     var isoCode = req.session.isoCode;
-    if (isoCode) {
+    if (!isoCode) {
         isoCode = nconf.get('CDN:DEFAULT');
     }
 
@@ -368,7 +367,8 @@ function autoCNDFile(req, defaultKeys, keys) {
     if(!_.isEmpty(js)) {
         rtnArray = js
     } else {
-        rtnArray = nconf.get('CDN:DEFAULT');
+        let d = nconf.get('CDN:DEFAULT');
+        rtnArray = nconf.get('CDN:' + d);
     }
     return _.reduce(rtnArray, function(result, value, key) {
         if (_.indexOf(defaultKeys, key) >= 0) {
