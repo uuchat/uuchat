@@ -1,16 +1,9 @@
-/**
- * Created by lwc on 2017/5/5.
- */
 import React, { Component } from 'react';
 import { Input, Icon, Upload, message, Modal, Progress } from 'antd';
 import EmojiPicker from './chatEmoji';
 import {cutStr} from './utils';
 
-/**
- * ChatSend Component
- *
- *
- */
+
 class ChatSend extends Component{
 
     constructor(props){
@@ -42,7 +35,7 @@ class ChatSend extends Component{
 
     sendMessage = (e) => {
         e.preventDefault();
-        var msgVal = e.target.value,
+        let msgVal = e.target.value,
             msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
         if(msgVal.length > 0){
@@ -66,13 +59,14 @@ class ChatSend extends Component{
     }
 
     insertToCursorPosition = (s1, s2) => {
-        var obj = document.getElementsByClassName("chat-textarea")[0];
+        let obj = document.getElementsByClassName("chat-textarea")[0];
         obj.focus();
+
         if(document.selection) {
-            var sel = document.selection.createRange();
+            let sel = document.selection.createRange();
             sel.text = s2;
         }else if(typeof obj.selectionStart === 'number' && typeof obj.selectionEnd === 'number') {
-            var startPos = obj.selectionStart,
+            let startPos = obj.selectionStart,
                 endPos = obj.selectionEnd,
                 cursorPos = startPos,
                 tmpStr = s1,
@@ -90,7 +84,7 @@ class ChatSend extends Component{
         }
     }
     rateHandle = (e) => {
-        var that = this;
+        let that = this;
         Modal.confirm({
             title: 'Invite user rate',
             okText: 'Yes',
@@ -110,7 +104,7 @@ class ChatSend extends Component{
     }
 
     render(){
-        var sendMessage = this.props.sendMessage,
+        let sendMessage = this.props.sendMessage,
             that = this,
             props = {
                 name: 'image',
@@ -120,7 +114,7 @@ class ChatSend extends Component{
                     authorization: 'authorization-text',
                 },
                 onChange(info) {
-                    var status = info.file.status;
+                    let status = info.file.status;
 
                     if(status === 'uploading'){
                         if(info.event){

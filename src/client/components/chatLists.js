@@ -1,12 +1,9 @@
-/**
- * Created by lwc on 2017/6/7.
- */
 import React, { Component } from 'react';
 import { Modal } from 'antd';
 import ChatMessageItem from './chatMessageItem';
 import String2int from './utils';
 
-var chatHistory = {};
+const chatHistory = {};
 
 class ChatList extends Component{
 
@@ -26,7 +23,7 @@ class ChatList extends Component{
         this.getList();
     }
     getList = () => {
-        var that = this;
+        let that = this;
         fetch('/chathistories/cs/'+this.props.csid+'/latestmonth').then(function(d){
             return d.json();
         }).then(function(d){
@@ -39,7 +36,7 @@ class ChatList extends Component{
         }).catch(function(e){});
     }
     showHistory = (e) => {
-        var t = e.target,
+        let t = e.target,
             cid = '',
             _li,
             ulList;
@@ -63,7 +60,7 @@ class ChatList extends Component{
         ulList = _li.parentNode;
         ulList = ulList.getElementsByTagName('li');
 
-        for(var i = 0, l = ulList.length; i < l; i++){
+        for(let i = 0, l = ulList.length; i < l; i++){
             ulList[i].className = '';
         }
         _li.className='active';
@@ -78,13 +75,13 @@ class ChatList extends Component{
     }
 
     fetchHistory = (cid, csid) => {
-        var that = this,
+        let that = this,
             csAvatar = that.props.csAvatar ? that.props.csAvatar : require('../static/images/contact.png') ;
 
         fetch('/messages/customer/'+cid+'/cs/'+csid)
             .then((data) => data.json())
             .then(d =>{
-                var historyMessage = [];
+                let historyMessage = [];
                 d.msg.map((dd) =>{
                     return historyMessage.push({
                         msgAvatar: (dd.type === 1) ? csAvatar : '',
@@ -103,7 +100,7 @@ class ChatList extends Component{
 
     filterMarked = (e) => {
         if(e.target.tagName.toLowerCase() === 'span'){
-            var marked = parseInt(e.target.getAttribute('data-marked'), 10) === 7 ? 0 : parseInt(e.target.getAttribute('data-marked'), 10);
+            let marked = parseInt(e.target.getAttribute('data-marked'), 10) === 7 ? 0 : parseInt(e.target.getAttribute('data-marked'), 10);
             this.setState({
                 filterMark: marked
             });
@@ -118,14 +115,14 @@ class ChatList extends Component{
 
     render(){
 
-        var state = this.state,
+        let state = this.state,
             chatArr = [],
             chatListsArr = state.chatLists,
             markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
             chatHistoryData = chatHistory[state.hisCid],
             historyColorIndex = String2int(state.hisCid);
 
-        for(var i = 0, l = chatListsArr.length; i < l; i++){
+        for(let i = 0, l = chatListsArr.length; i < l; i++){
 
             if((state.filterMark !== 8) && state.filterMark !== chatListsArr[i].marked){
                 continue;

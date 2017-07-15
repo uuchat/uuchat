@@ -11,13 +11,8 @@ import ChatList from './chatLists';
 import ChatSetting from './chatSetting';
 import '../static/css/customerSuccess.css';
 
-var TabPane = Tabs.TabPane;
-var notifyKey = '';
-
-/**
- * Customer Component
- *
- */
+const TabPane = Tabs.TabPane;
+let notifyKey = '';
 
 class CustomerSuccess extends Component{
     constructor(props){
@@ -55,7 +50,7 @@ class CustomerSuccess extends Component{
      * createSocket
      */
     createSocket = () => {
-        var sio = io('/cs', {
+        let sio = io('/cs', {
             forceNew: true,
             reconnectionAttempts:5,
             reconnectionDelay:2000 ,
@@ -83,7 +78,7 @@ class CustomerSuccess extends Component{
      * cs.customer.list
      */
     csCustomerList = (data) => {
-        var customer = {};
+        let customer = {};
 
         data.map((d)=>customer[d.cid] = []);
 
@@ -97,7 +92,7 @@ class CustomerSuccess extends Component{
             }
         });
 
-        for(var i = 0; i < data.length; i++){
+        for(let i = 0; i < data.length; i++){
             this.getMessageHistory(data[i].cid);
         }
     }
@@ -106,7 +101,7 @@ class CustomerSuccess extends Component{
      * cs.customer.one
      */
     csCustomerOne = (data) => {
-        var customerLists = this.state.customerLists,
+        let customerLists = this.state.customerLists,
             messageLists = this.state.messageLists,
             cid = this.state.customerSelect.cid,
             name = this.state.customerSelect.name,
@@ -140,7 +135,7 @@ class CustomerSuccess extends Component{
      * cs.dispatch
      */
     csDispatch = (cid, name, info) => {
-        var customerLists = this.state.customerLists;
+        let customerLists = this.state.customerLists;
         customerLists.unshift({
             cid: cid,
             name: name,
@@ -176,14 +171,8 @@ class CustomerSuccess extends Component{
      * c.message
      */
     cMessage = (cid, msg) => {
-        var message = {
-            msgAvatar: '',
-            msgText: msg,
-            msgType: 0,
-            msgTime: new Date()
-        };
 
-        var msgArr = this.state.messageLists[cid],
+        let msgArr = this.state.messageLists[cid],
             messageLists = this.state.messageLists,
             chatNotify = this.state.chatNotify;
 
@@ -195,7 +184,12 @@ class CustomerSuccess extends Component{
             }
         }
 
-        msgArr && msgArr.push(message);
+        msgArr && msgArr.push({
+            msgAvatar: '',
+            msgText: msg,
+            msgType: 0,
+            msgTime: new Date()
+        });
         messageLists[cid] = msgArr;
 
         this.setState({
@@ -208,7 +202,7 @@ class CustomerSuccess extends Component{
      * c.disconnect
      */
     cDisconnect = (cid) => {
-        var customerLists = this.state.customerLists,
+        let customerLists = this.state.customerLists,
             cSelectCid = this.state.customerSelect.cid,
             cSelectName = this.state.customerSelect.name;
 
@@ -235,7 +229,7 @@ class CustomerSuccess extends Component{
      * cs.customer.offline
      */
     csCustomerOffline = (data) => {
-        var customerLists = this.state.customerLists;
+        let customerLists = this.state.customerLists;
         customerLists.unshift({
             cid: data.cid,
             name: data.name,
@@ -267,7 +261,7 @@ class CustomerSuccess extends Component{
      *
      */
     customerSuccessConnect = () => {
-        var isConnectErr = this.state.isConnectErr;
+        let isConnectErr = this.state.isConnectErr;
 
         if(isConnectErr){
             notification.close("errNotifyKey");
@@ -333,7 +327,7 @@ class CustomerSuccess extends Component{
      */
     onChatListClick = (name, cid, marked) => {
 
-        var chatNotify = this.state.chatNotify;
+        let chatNotify = this.state.chatNotify;
         if(cid === this.state.customerSelect.cid){
             return false;
         }
@@ -361,12 +355,12 @@ class CustomerSuccess extends Component{
      * @param msg
      */
     customerSuccessMessage = (msg) => {
-        var that = this,
+        let that = this,
              cid = that.state.customerSelect.cid;
 
         if(msg !== ''){
             this.state.socket.emit('cs.message', cid, msg, function(success){
-                var message,
+                let message,
                     messageLists = that.state.messageLists,
                     msgArr = messageLists[cid];
 
@@ -411,7 +405,7 @@ class CustomerSuccess extends Component{
      */
     closeDialog = (e, cid, type) => {
         e.stopPropagation();
-        var that = this,
+        let that = this,
             title = 'Do you Want to close this customer?',
             content = 'If yes , the customer window will be remove';
 
@@ -426,7 +420,7 @@ class CustomerSuccess extends Component{
             okText: 'Yes',
             cancelText: 'No',
             onOk() {
-                var customerLists = that.state.customerLists,
+                let customerLists = that.state.customerLists,
                     messageLists = that.state.messageLists,
                     scid = that.state.customerSelect.cid,
                     name = that.state.customerSelect.name;
@@ -476,7 +470,7 @@ class CustomerSuccess extends Component{
      */
     socketTransfer = (cid) => {
 
-        var customerLists = this.state.customerLists,
+        let customerLists = this.state.customerLists,
             messageLists = this.state.messageLists,
             scid = this.state.customerSelect.cid,
             name = this.state.customerSelect.name;
@@ -510,7 +504,7 @@ class CustomerSuccess extends Component{
      */
     loginOut = (e) => {
         e.preventDefault();
-        var that = this;
+        let that = this;
         Modal.confirm({
             title: 'Login out',
             content: 'Do you comfirm login out?',
@@ -551,7 +545,7 @@ class CustomerSuccess extends Component{
      *
      */
     getMessageHistory = (cid) => {
-        var that = this;
+        let that = this;
 
         if(that.state.messageLists[cid] && that.state.messageLists[cid].length > 0){
             return false;
@@ -560,7 +554,7 @@ class CustomerSuccess extends Component{
         fetch('/messages/customer/'+cid+'/cs/'+this.state.csid)
             .then((data) => data.json())
             .then(d =>{
-                var historyMessage = that.state.messageLists,
+                let historyMessage = that.state.messageLists,
                     avatar = that.state.csAvatar;
 
                 if(!historyMessage[cid] ){
@@ -590,7 +584,7 @@ class CustomerSuccess extends Component{
      *
      */
     filterCustomerInfo = (customer, cid) => {
-        var cdata = null;
+        let cdata = null;
         if(customer.length > 0){
             for(var i = 0, l = customer.length; i < l; i++){
                 if(customer[i].cid === cid){
@@ -607,7 +601,7 @@ class CustomerSuccess extends Component{
      *       statusToggle
      */
     statusToggle = () => {
-        var state = this.state,
+        let state = this.state,
             status = state.isOnline,
             stat = 1;
 
@@ -640,14 +634,14 @@ class CustomerSuccess extends Component{
     }
     render(){
 
-        var state = this.state,
+        let state = this.state,
             cArr = [],
             Info = this.filterCustomerInfo(state.customerLists, state.customerSelect.cid);
 
         if(state.customerLists.length > 0){
             state.customerLists.forEach((chat, index)=>{
                 if(chat.cid !== ''){
-                    var num = (!state.chatNotify[chat.cid]) ? 0 : state.chatNotify[chat.cid],
+                    let num = (!state.chatNotify[chat.cid]) ? 0 : state.chatNotify[chat.cid],
                         isActive = (state.customerSelect.cid === chat.cid);
                     if(chat.type && chat.type === 'offline'){
                         cArr.push(<Chat key={index} email={chat.msg} cid={chat.cid} name={chat.name} type={chat.type} closeDialog={this.closeDialog}  />)

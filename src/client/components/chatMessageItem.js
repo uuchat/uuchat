@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class ChatMessageItem extends Component{
 
     msgConver(msg){
-        var str = '';
+        let str = '';
         if(typeof msg === 'object'){
             str = '<span class="offline-name">Offline message</span>';
             str += '<p class="offline-content">'+msg.content+'</p>';
@@ -17,7 +17,7 @@ class ChatMessageItem extends Component{
         return <div dangerouslySetInnerHTML={{__html: str}}></div>;
     }
     timeFomat(t){
-        var str = '',
+        let str = '',
             h = t.getHours(),
             m = t.getMinutes();
         m = m > 9 ? m : '0' + m;
@@ -33,7 +33,7 @@ class ChatMessageItem extends Component{
         return str;
     }
     render(){
-        var imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
+        let imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
             imgSrc = this.props.ownerText,
             isImg = false,
             img = '',

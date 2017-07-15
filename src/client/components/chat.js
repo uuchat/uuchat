@@ -19,7 +19,7 @@ class Chat extends Component{
     }
 
     msgFilter(msg){
-        var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
+        let imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
             m = msg.replace && msg.replace(/#/gi, "<br />");
 
         if(msg.replace && imgReg.test(m)){
@@ -28,7 +28,8 @@ class Chat extends Component{
         return <span dangerouslySetInnerHTML={{__html: m}}></span>;
     }
     offlineShow = () => {
-        var isOfflineShow = this.state.isOfflineShow;
+        let isOfflineShow = this.state.isOfflineShow;
+
         this.setState({
             isOfflineShow: !isOfflineShow
         });
@@ -36,7 +37,8 @@ class Chat extends Component{
 
     render(){
 
-        var len, msg,
+        let len,
+            msg,
             cIndex = String2int(this.props.cid);
 
         if(!this.props.type){

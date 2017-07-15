@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Input, Checkbox, Row, Col, Button, message } from 'antd';
 import '../static/css/register.css';
 
-var FormItem = Form.Item;
+const FormItem = Form.Item;
 
 class RegisterForm extends Component {
     constructor(){
@@ -44,11 +44,11 @@ class RegisterForm extends Component {
         });
     }
     handleConfirmBlur = (e) => {
-        var value = e.target.value;
+        let value = e.target.value;
         this.setState({ confirmDirty: this.state.confirmDirty || !!value });
     }
     checkPassword = (rule, value, callback) => {
-        var form = this.props.form;
+        let form = this.props.form;
         if(value && value !== form.getFieldValue('password')) {
             callback('Two passwords that you enter is inconsistent!');
         }else {
@@ -56,7 +56,7 @@ class RegisterForm extends Component {
         }
     }
     checkConfirm = (rule, value, callback) => {
-        var form = this.props.form;
+        let form = this.props.form;
         if(value && this.state.confirmDirty) {
             form.validateFields(['confirm'], { force: true });
         }
@@ -67,7 +67,7 @@ class RegisterForm extends Component {
     }
     render() {
 
-        var { getFieldDecorator, getFieldsError } = this.props.form;
+        let { getFieldDecorator, getFieldsError } = this.props.form;
 
         return (
             <Row>
@@ -135,7 +135,7 @@ class RegisterForm extends Component {
     }
 }
 
-var RegistrationForm = Form.create()(RegisterForm);
+const RegistrationForm = Form.create()(RegisterForm);
 
 
 class Register extends Component{

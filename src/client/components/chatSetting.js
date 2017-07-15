@@ -13,14 +13,14 @@ class ChatSetting extends Component{
         };
     }
     accountHandle = () => {
-        var isAccountShow = this.state.isAccountShow;
+        let isAccountShow = this.state.isAccountShow;
 
         this.setState({
             isAccountShow: !isAccountShow
         });
     }
     accountSave = () => {
-        var name = this.refs.name.refs.input.value,
+        let name = this.refs.name.refs.input.value,
             displayName = this.refs.displayName.refs.input.value,
             that = this;
 
@@ -50,13 +50,13 @@ class ChatSetting extends Component{
         }
     }
     passwordHandle = () => {
-        var isPasswordShow = this.state.isPasswordShow;
+        let isPasswordShow = this.state.isPasswordShow;
         this.setState({
             isPasswordShow: !isPasswordShow
         });
     }
     passwordSave = (e) => {
-        var that = this,
+        let that = this,
             passwd = this.refs.passwd.refs.input.value.replace(/^\s$/g, ''),
             cpasswd = this.refs.cpasswd.refs.input.value.replace(/^\s$/g, '');
 
@@ -88,7 +88,7 @@ class ChatSetting extends Component{
         });
     }
     render(){
-        var that = this,
+        let that = this,
             props = {
                 name: 'avatars',
                 action: '/customersuccesses/'+this.props.csid+'/avatar',
@@ -98,7 +98,7 @@ class ChatSetting extends Component{
                     authorization: 'authorization-text',
                 },
                 onChange(info) {
-                    var file = info.file;
+                    let file = info.file;
                     if(file.status === 'uploading'){
                         if(info.event){
                             that.setState({
@@ -108,7 +108,7 @@ class ChatSetting extends Component{
                         }
                     }else if(file.status === 'done') {
                         if(200 === info.file.response.code){
-                            var photo = file.response.msg.photo;
+                            let photo = file.response.msg.photo;
                             localStorage.setItem('uuchat.avatar', photo);
                             that.props.avatarHandle(photo);
                             setTimeout(function(){
@@ -118,7 +118,7 @@ class ChatSetting extends Component{
                                 });
                             }, 800);
                         }
-                    } else if(file.status === 'error') {
+                    }else if(file.status === 'error') {
                         message.error(info.file.name+' file upload failed.');
                     }
                 }

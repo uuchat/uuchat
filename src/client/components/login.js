@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
 import '../static/css/login.css';
 
-var FormItem = Form.Item;
+const FormItem = Form.Item;
 
 class Login extends Component{
 
@@ -18,7 +18,7 @@ class Login extends Component{
 
             if(!err) {
 
-                var { fetchUrl, redirect } = this.props;
+                let { fetchUrl, redirect } = this.props;
 
                 fetch(fetchUrl, {
                     credentials: 'include',
@@ -58,7 +58,7 @@ class Login extends Component{
     }
 
     render(){
-        var { getFieldDecorator } = this.props.form;
+        let { getFieldDecorator } = this.props.form;
         return (
             <div className="login-body">
                 <div className="login-header"> <span>U</span> </div>
@@ -96,6 +96,6 @@ class Login extends Component{
 
 }
 
-var LoginForm = Form.create()(Login);
+const LoginForm = Form.create()(Login);
 
 export default LoginForm;

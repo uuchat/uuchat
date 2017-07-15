@@ -4,10 +4,10 @@ class ChatUser extends Component{
 
     render(){
 
-        var I = this.props.info;
-        var info = [];
+        let I = this.props.info,
+            info = [];
 
-        for(var i in I.info){
+        for(let i in I.info){
             info.push(<tr key={i}><td className="user-td">{i}:</td><td>{I.info[i]}</td></tr>);
         }
 

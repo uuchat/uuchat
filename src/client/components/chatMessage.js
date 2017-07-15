@@ -19,7 +19,7 @@ class ChatMessage extends Component{
     }
     componentDidMount(){
 
-        var markedList = this.state.markedList;
+        let markedList = this.state.markedList;
 
         if(!markedList[this.props.cid]){
             markedList[this.props.cid] = this.props.marked
@@ -39,14 +39,14 @@ class ChatMessage extends Component{
     }
 
     marked = (e) => {
-        var isms = this.state.isMarkShow;
+        let isms = this.state.isMarkShow;
         this.setState({
             isMarkShow: !isms
         });
     }
     optionSelect = (e) => {
         e.stopPropagation();
-        var type = e.target.getAttribute('data-type'),
+        let type = e.target.getAttribute('data-type'),
             that = this;
 
         if('m' === type){
@@ -54,10 +54,10 @@ class ChatMessage extends Component{
                 visible: true
             });
         }else if('t' === type){
-            var onlineLists = [],
+            let onlineLists = [],
                 ocl = that.state.OnlineCustomerList;
 
-            for(var i in ocl){
+            for(let i in ocl){
                 if(i !== that.props.csid){
                     onlineLists.push({
                         name: i,
@@ -103,7 +103,7 @@ class ChatMessage extends Component{
         });
     }
     markColorSelect = (e) => {
-        var t = e.target,
+        let t = e.target,
             that = this,
             markedList = this.state.markedList;
 
@@ -127,7 +127,7 @@ class ChatMessage extends Component{
         }
     }
     transfer = (e) => {
-        var t = e.target,
+        let t = e.target,
             csid = t.getAttribute('data-csid'),
             that = this;
 
@@ -141,7 +141,7 @@ class ChatMessage extends Component{
     }
 
     render(){
-        var markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
+        let markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
             cIndex = String2int(this.props.cid),
             avatar = '',
             marked = this.state.markedList[this.props.cid] ? this.state.markedList[this.props.cid] : this.props.marked;

@@ -5,14 +5,14 @@ import String2int from './utils';
 import '../static/css/common.css';
 import '../static/css/customerSuccess.css';
 
-var chatHistory = {},
+let chatHistory = {},
     searchContent = '',
     pageNum = 0;
 
 class ChatSearchItem extends Component{
 
     msgConver = (msg) => {
-        var str = '';
+        let str = '';
         if(/"email":/g.test(msg)){
             msg = JSON.parse(msg);
             str += '<span>Offline messages(email: '+msg.email+'): </span>';
@@ -57,13 +57,13 @@ class ChatSearch extends Component{
         };
     }
     componentWillMount(){
-        var search = window.location.href,
+        let search = window.location.href,
             content = '';
 
         if(search.indexOf('?search=') > -1){
             search = search.split('?')[1].split('&');
 
-            for(var i = 0, l = search.length; i < l; i++){
+            for(let i = 0, l = search.length; i < l; i++){
                 if(search[i].indexOf('search=') > -1){
                     content = search[i].split('=')[1];
                     break;
@@ -75,12 +75,12 @@ class ChatSearch extends Component{
 
     }
     getSearchList = (content) => {
-        var that = this;
+        let that = this;
         fetch('/messages/cs/'+that.state.csid+'/search?msg='+content).then(function(d){
             return d.json();
         }).then(function(d){
             if(200 === d.code){
-                var isView = true;
+                let isView = true;
                 if(d.msg.length > 0){
                     pageNum++;
                 }else{
@@ -100,13 +100,13 @@ class ChatSearch extends Component{
         }).catch(function(e){});
     }
     fetchHistory = (cid) => {
-        var that = this,
+        let that = this,
             csAvatar = localStorage.getItem('uuchat.avatar') ? localStorage.getItem('uuchat.avatar') : require('../static/images/contact.png');
 
         fetch('/messages/customer/'+cid+'/cs/'+that.state.csid)
             .then((data) => data.json())
             .then(d =>{
-                var historyMessage = [];
+                let historyMessage = [];
                 d.msg.map((dd) =>{
                     return historyMessage.push({
                         msgAvatar: (dd.type === 1) ? csAvatar : '',
@@ -135,13 +135,13 @@ class ChatSearch extends Component{
         });
     }
     viewMore = () => {
-        var that = this;
+        let that = this;
         fetch('/messages/cs/'+that.state.csid+'/search/latestmonth?msg='+searchContent+'&pageNum='+(pageNum * 5)).then(function(d){
             return d.json();
         }).then(function(d){
             if(200 === d.code){
                 if(d.msg.length > 0) {
-                    var sList = that.state.searchList;
+                    let sList = that.state.searchList;
                     sList = sList.concat(d.msg);
                     pageNum++;
                     that.setState({
@@ -166,13 +166,13 @@ class ChatSearch extends Component{
     }
 
     render(){
-        var state = this.state,
+        let state = this.state,
             sArr = [],
             searchL = state.searchList,
             chatHistoryData = chatHistory[state.hisCid],
             historyColorIndex = String2int(state.hisCid);
 
-        for(var i = 0, l = searchL.length; i < l; i++){
+        for(let i = 0, l = searchL.length; i < l; i++){
             sArr.push(<ChatSearchItem key={i} cid={searchL[i].cid} msg={searchL[i].msg}  showHistory={this.fetchHistory} />);
         }
 
