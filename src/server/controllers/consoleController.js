@@ -48,7 +48,12 @@ consoleController.getNumbers = function (req, res, next) {
     ], function (err, results) {
         if (err) return next(err);
 
-        return res.json({code: 200, msg: results});
+        var numbers = results.reduce(function (result, value) {
+            _.assign(result, value);
+            return result;
+        }, {});
+
+        return res.json({code: 200, msg: numbers});
     });
 };
 

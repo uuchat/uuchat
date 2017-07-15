@@ -5,6 +5,7 @@ import { getMainVersion } from './utils';
 const version = '0.1.0';
 
 class UpgradeNote extends Component {
+
     state = {
         currentVersion: version,
         latestVersion: version

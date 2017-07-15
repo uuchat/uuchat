@@ -57,7 +57,7 @@ class Rates extends Component {
             }).catch((e) => message.error(e.message, 4));
     };
 
-    componentDidMount = () => {
+    componentDidMount () {
         const location = this.props.location;
         let month = location.state ? location.state.month : moment().format('YYYY-MM');
         this.setState({month}, this.getDataSource);

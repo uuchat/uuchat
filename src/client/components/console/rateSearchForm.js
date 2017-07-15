@@ -7,23 +7,12 @@ const { RangePicker } = DatePicker;
 const Option = Select.Option;
 
 class RateSearchForm extends Component {
-    constructor(props) {
-        super(props);
-        const { filter, onFilterChange } = this.props;
-        this.filter = filter;
-        this.onFilterChange = onFilterChange;
 
-        const { getFieldsValue, setFieldsValue, getFieldDecorator } = this.props.form;
-        this.getFieldsValue = getFieldsValue;
-        this.setFieldsValue = setFieldsValue;
-        this.getFieldDecorator = getFieldDecorator;
-
-        this.state = {
-            csSource: [],
-            rangePickerOpen: false,
-            calendarFooterValue: '7days'
-        };
-    }
+    state = {
+        csSource: [],
+        rangePickerOpen: false,
+        calendarFooterValue: '7days'
+    };
 
     componentWillReceiveProps(nextProps) {
         if (nextProps.csSource) {
@@ -32,10 +21,10 @@ class RateSearchForm extends Component {
     }
 
     handleChange = (key, values) => {
-        let fields = this.getFieldsValue();
+        let fields = this.props.form.getFieldsValue();
         fields[key] = values;
         fields = this.handleFields(fields);
-        this.onFilterChange(fields);
+        this.props.onFilterChange(fields);
     };
 
     handleFields = (fields) => {
@@ -47,7 +36,7 @@ class RateSearchForm extends Component {
     };
 
     handleReset = () => {
-        const fields = this.getFieldsValue();
+        const fields = this.props.form.getFieldsValue();
 
         for (let item in fields) {
             if ({}.hasOwnProperty.call(fields, item)) {
@@ -59,14 +48,14 @@ class RateSearchForm extends Component {
             }
         }
         this.setState({calendarFooterValue: null});
-        this.setFieldsValue(fields);
+        this.props.form.setFieldsValue(fields);
         this.handleSubmit();
     };
 
     handleSubmit = () => {
-        let fields = this.getFieldsValue();
+        let fields = this.props.form.getFieldsValue();
         fields = this.handleFields(fields);
-        this.onFilterChange(fields);
+        this.props.onFilterChange(fields);
     };
 
     handleCalendarFooterChange = (e) => {
@@ -97,17 +86,18 @@ class RateSearchForm extends Component {
             calendarFooterValue: range
         });
 
-        const fields = this.getFieldsValue();
+        const fields = this.props.form.getFieldsValue();
         fields.createdAt = values;
-        this.setFieldsValue(fields);
+        this.props.form.setFieldsValue(fields);
 
         this.handleChange(key, values);
     };
 
     render() {
+        const { filter, form:{ getFieldDecorator } } = this.props;
         const { csSource, rangePickerOpen,calendarFooterValue } = this.state;
 
-        const initialCreatedAt = this.filter.createdAt;
+        const initialCreatedAt = filter.createdAt;
 
         const ColProps = {
             xs: 24,
@@ -122,23 +112,29 @@ class RateSearchForm extends Component {
         };
 
         const renderCalendarFooter = ()=> {
+            const intervalList = [
+                {key: '7days', text: 'Last Week'},
+                {key: '1month', text: 'Last Month'},
+                {key: '3months', text: 'Last 3 Months'},
+                {key: '6months', text: 'Last 6 Months'},
+                {key: '1year', text: 'Last year'}
+            ];
+
             return (
                 <Radio.Group style={{padding:'8px 0'}} size='large'
                              defaultValue={ calendarFooterValue }
                              onChange={this.handleCalendarFooterChange}>
-                    <Radio.Button style={{padding:'0 8px'}} value='7days'>Last Week</Radio.Button>
-                    <Radio.Button style={{padding:'0 8px'}} value='1month'>Last Month</Radio.Button>
-                    <Radio.Button style={{padding:'0 8px'}} value='3months'>Last 3 Months</Radio.Button>
-                    <Radio.Button style={{padding:'0 8px'}} value='6months'>Last 6 Months</Radio.Button>
-                    <Radio.Button style={{padding:'0 8px'}} value='1year'>Last year</Radio.Button>
+                    {intervalList.map((item)=>
+                        <Radio.Button style={{padding:'0 8px'}} value={item.key}>{item.text}</Radio.Button>
+                    )}
                 </Radio.Group>
             );
-        }
+        };
 
         return (
             <Row gutter={24}>
                 <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-                    {this.getFieldDecorator('rate')(
+                    {getFieldDecorator('rate')(
                         <Select
                             showSearch
                             style={{ width: '100%' }}
@@ -153,7 +149,7 @@ class RateSearchForm extends Component {
                     )}
                 </Col>
                 <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-                    {this.getFieldDecorator('csid')(
+                    {getFieldDecorator('csid')(
                         <Select
                             showSearch
                             style={{ width: '100%' }}
@@ -168,7 +164,7 @@ class RateSearchForm extends Component {
                     )}
                 </Col>
                 <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-                    {this.getFieldDecorator('createdAt', {initialValue: initialCreatedAt})(
+                    {getFieldDecorator('createdAt', {initialValue: initialCreatedAt})(
                         <RangePicker style={{ width: '100%' }} size="large"
                                      renderExtraFooter={renderCalendarFooter}
                                      open={ rangePickerOpen }

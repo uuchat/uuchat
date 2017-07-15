@@ -1,7 +1,8 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import { Icon, Card } from 'antd';
 
-class NumberCard extends Component {
+class NumberCard extends PureComponent {
+
     render() {
 
         let { color, icon, title, number } = this.props;

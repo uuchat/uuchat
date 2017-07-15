@@ -6,7 +6,57 @@ import MonthlyReport from './monthlyReport';
 class Dashboard extends Component {
 
     state = {
-        numbersData: [
+        numbersData: {},
+        monthlyData: {}
+    };
+
+    getNumbersData = () => {
+        let _component = this;
+
+        return fetch('/console/numbers')
+            .then((res)=>res.json())
+            .then(function (data) {
+
+                if (200 === data.code) {
+                    _component.setState({
+                        numbersData : data.msg
+                    });
+                } else {
+                    message.error(data.msg, 4);
+                }
+            }).catch(function (e) {
+                message.error(e.message, 4);
+            });
+    };
+
+    getMonthlyData = ()=> {
+        let _component = this;
+
+        return fetch('/console/monthly')
+            .then((res)=>res.json())
+            .then(function (data) {
+
+                if (200 === data.code) {
+                    _component.setState({
+                        monthlyData: data.msg
+                    });
+                } else {
+                    message.error(data.msg, 4);
+                }
+            }).catch(function (e) {
+                message.error(e.message, 4);
+            });
+    };
+
+    componentDidMount () {
+        this.getNumbersData();
+        this.getMonthlyData();
+    }
+
+    render() {
+        let { numbersData, monthlyData } = this.state;
+
+        let numbersList = [
             {
                 key: 'dailyChats',
                 icon: 'customer-service',
@@ -32,80 +82,17 @@ class Dashboard extends Component {
                 title: 'Critical Rates',
                 number: 0
             }
-        ],
-        monthlyData: null
-    };
+        ];
 
-    getNumbersData = () => {
-        let _component = this;
-        let { numbersData } = this.state;
+        numbersList.forEach(function (number) {
+            number.number = numbersData[number.key] || 0;
+        });
 
-        return fetch('/console/numbers')
-            .then((res)=>res.json())
-            .then(function (data) {
-
-                if (200 === data.code) {
-
-                    let numberObj = data.msg.reduce(function (result, value) {
-                        Object.assign(result, value);
-                        return result;
-                    }, {});
-
-                    numbersData.forEach(function (number) {
-                        number.number = numberObj[number.key];
-                    });
-
-                    _component.setState({
-                        numbersData
-                    });
-                } else {
-                    message.error(data.msg, 4);
-                }
-            }).catch(function (e) {
-                message.error(e.message, 4);
-            });
-    };
-
-    getMonthlyData = ()=> {
-        let _component = this;
-        let { monthlyData } = this.state;
-
-        return fetch('/console/monthly')
-            .then((res)=>res.json())
-            .then(function (data) {
-
-                if (200 === data.code) {
-
-                    monthlyData = data.msg;
-
-                    _component.setState({
-                        monthlyData
-                    });
-                } else {
-                    message.error(data.msg, 4);
-                }
-            }).catch(function (e) {
-                message.error(e.message, 4);
-            });
-    };
-
-    componentDidMount = () => {
-        this.getNumbersData();
-        this.getMonthlyData();
-    };
-
-    render() {
-        let { numbersData, monthlyData } = this.state;
-
-        let numberCards = numbersData.map((item, key) =>
+        let numberCards = numbersList.map((item, key) =>
                 (<Col key={key} lg={6} md={12}>
                     <NumberCard {...item} />
                 </Col>)
         );
-
-        let monthlyProps = {
-            monthlyData
-        };
 
         return (
             <div style={{ overflowX:'hidden' }}>
@@ -114,17 +101,13 @@ class Dashboard extends Component {
                 </Breadcrumb>
 
                 <Row gutter={24}>
-                    {numberCards}
+                    { numberCards }
                     <Col lg={24} md={24}>
                         <Card title="Monthly Report" bordered={false}>
-                            <MonthlyReport {...monthlyProps}/>
+                            <MonthlyReport { ...monthlyData }/>
                         </Card>
                     </Col>
                 </Row>
-
-                <div style={{ padding: 0, background: '#fff' }}>
-
-                </div>
             </div>
         );
     }

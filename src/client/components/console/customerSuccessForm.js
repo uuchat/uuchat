@@ -4,6 +4,7 @@ import { Modal, Form, Input, Tooltip, Icon } from 'antd';
 const FormItem = Form.Item;
 
 class CustomerSuccessForm extends Component {
+
     state = {
         confirmDirty: false
     };
@@ -52,8 +53,6 @@ class CustomerSuccessForm extends Component {
                    onOk={onOk}
                    confirmLoading={confirmLoading}
                    onCancel={onCancel}
-                   okText="Create"
-                   cancelText="Cancel"
                 >
                 <Form>
                     <FormItem {...formItemLayout} label="E-mail" hasFeedback>

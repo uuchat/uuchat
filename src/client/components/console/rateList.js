@@ -8,6 +8,7 @@ const RateSearchForm = AsyncComponent(() => import('./rateSearchForm')
     .then(component => component.default));
 
 class RateList extends Component {
+
     filter = {
         createdAt: [moment().subtract(7, 'days'), moment()]
     };
@@ -76,9 +77,9 @@ class RateList extends Component {
             })
     }
 
-    componentDidMount = () => {
+    componentDidMount () {
         this.getDataSource();
-    };
+    }
 
     handleChange = (pagination, filters, sorter) => {
         this.setState({pagination, sorter}, this.getDataSource);

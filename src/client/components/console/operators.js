@@ -134,9 +134,7 @@ class Operators extends Component {
                 title: 'Are you sure delete ' + value.email,
                 onOk(){
                     _self.onDeleteItem(value.key)
-                },
-                okText: 'Confirm',
-                cancelText: 'Cancel'
+                }
             });
         }
     };
@@ -172,7 +170,7 @@ class Operators extends Component {
         );
     };
 
-    componentDidMount = () => {
+    componentDidMount () {
         this.getDataSource();
     };
 

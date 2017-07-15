@@ -20,6 +20,7 @@ const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
 class Console extends Component {
+
     state = {
         collapsed: false,
         mode: 'inline',

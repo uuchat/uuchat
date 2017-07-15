@@ -7,6 +7,7 @@ import ScrollTable from './scrollTable';
 const Option = Select.Option;
 
 class Transcripts extends Component {
+
     state = {
         csSource: [],
         dataSource: [],
@@ -23,7 +24,6 @@ class Transcripts extends Component {
         Modal.info({
             title: 'U-' + (record.cid.substr(0, 6).toUpperCase()) + ' chats',
             width: '600px',
-            okText: 'Ok',
             content: <ChatList { ...record } />,
             onOk() {
             }

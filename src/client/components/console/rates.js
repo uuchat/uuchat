@@ -9,6 +9,7 @@ const RateExpandedTable = AsyncComponent(() => import('./rateExpandedTable')
 const { MonthPicker } = DatePicker;
 
 class Rates extends Component {
+
     state = {
         dataSource: [],
         sortedInfo: null,
@@ -45,7 +46,7 @@ class Rates extends Component {
 
                     _component.setState({
                         dataSource: data.msg,
-                        loading: false,
+                        loading: false
                     });
                 } else {
                     _component.setState({loading: false});
@@ -57,14 +58,14 @@ class Rates extends Component {
             });
     };
 
-    componentWillMount = () => {
+    componentWillMount () {
         const location = this.props.location;
         if (location.state) {
             this.setState({month: location.state.month});
         }
     };
 
-    componentDidMount = () => {
+    componentDidMount () {
         this.getDataSource();
     };
 
@@ -85,8 +86,6 @@ class Rates extends Component {
         sortedInfo = sortedInfo || {};
 
         let defaultPickerMonth = moment(month);
-
-        moment.locale('en');
 
         return (
             <div>

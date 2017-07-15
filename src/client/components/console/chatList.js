@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import ChatMessageItem from '../chatMessageItem';
 
 class ChatList extends Component {
+
     state = {
         dataSource: []
     };
 
-    getDataSource(cid, csid) {
-        let _component = this;
+    getDataSource = (cid, csid) => {
         fetch('/messages/customer/' + cid + '/cs/' + csid)
             .then((data) => data.json())
             .then(data => {
-                _component.setState({
+                this.setState({
                     dataSource: data.msg.map((item) => {
                         return {
                             msgAvatar: (item.type === 1) ? '/static/images/contact.png' : '',
@@ -25,10 +25,10 @@ class ChatList extends Component {
             });
     }
 
-    componentDidMount = ()=> {
+    componentDidMount () {
         let { cid, csid } = this.props;
         if (cid && csid) this.getDataSource(cid, csid);
-    };
+    }
 
     render() {
         let { cid, cIndex } = this.props;
