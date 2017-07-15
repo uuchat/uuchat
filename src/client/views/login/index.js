@@ -1,5 +1,5 @@
 import LoginForm from '../../components/login';
 
-var LoginView = LoginForm;
+const LoginView = LoginForm;
 
 export default LoginView;

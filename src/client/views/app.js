@@ -5,10 +5,10 @@ import AsyncComponent from './asyncComponent.js';
 import LoginView from './login/index';
 import '../static/css/app.css';
 
-var CustomerSuccessView = AsyncComponent(() => import('./customerSuccess/index')
+const CustomerSuccessView = AsyncComponent(() => import('./customerSuccess/index')
     .then(module => module.default), { name: 'chat'});
 
-var RegisterView = AsyncComponent(() => import('./register/index')
+const RegisterView = AsyncComponent(() => import('./register/index')
     .then(module => module.default), { name: 'register' });
 
 ReactDOM.render(

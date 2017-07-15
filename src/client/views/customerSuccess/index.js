@@ -1,5 +1,5 @@
 import CustomerSuccess from '../../components/customerSuccess';
 
-var CustomerSuccessView = CustomerSuccess;
+const CustomerSuccessView = CustomerSuccess;
 
 export default CustomerSuccessView;
