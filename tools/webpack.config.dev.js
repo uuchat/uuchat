@@ -33,6 +33,7 @@ module.exports = {
             hotMiddlewareScript
         ],
         'console': [
+            require.resolve('./polyfills'),
             paths.consoleIndexJS,
             hotMiddlewareScript
         ],

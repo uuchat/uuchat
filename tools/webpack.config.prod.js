@@ -101,6 +101,7 @@ module.exports = {
         'moment/locale/zh-cn': 'moment.locale',
     },
     resolve: {
+        modules: ["node_modules"],
         moduleExtensions: ['.js', '.json', '.jsx'],
         alias: {
             'react-native': 'react-native-web',
@@ -182,6 +183,8 @@ module.exports = {
             chunks:['antd-main', 'console']
         }),
         new webpack.optimize.CommonsChunkPlugin('vendor'),
+
+
         new FastUglifyJsPlugin({
             compress: {
                 warnings: false
@@ -190,6 +193,7 @@ module.exports = {
             debug: false,
             cacheFolder: path.resolve(__dirname, '.cache/')
         }),
+
         new HtmlWebpackPlugin({
             inject: true,
             filename: "app.ejs",
