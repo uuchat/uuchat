@@ -86,7 +86,6 @@
     "happypack": "^4.0.0-beta.1",
     "html-webpack-plugin": "2.24.0",
     "mocha": "~3.3.0",
-    "object-assign": "4.1.1",
     "promise": "7.1.1",
     "react-dev-utils": "^0.5.2",
     "style-loader": "0.13.1",
