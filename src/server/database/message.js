@@ -145,8 +145,9 @@ Message.search = function (condition, order, pageSize, pageNum, callback) {
     pageNum = pageNum || 0;
 
     var options = {
-        attributes: [[models.Sequelize.fn('DISTINCT', models.Sequelize.col('cid')), 'cid'], 'msg'],
+        attributes: ['cid', 'msg', models.Sequelize.fn('MAX', models.Sequelize.col('createdAt'))],
         where: condition,
+        group: 'cid',
         order: order,
         offset: pageSize * pageNum,
         limit: pageSize
