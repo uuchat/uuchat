@@ -99,7 +99,7 @@ function uploadImage(req, res, next) {
                         logger.error(err);
                         next(new Error('resize-file-has-error'));
                     }
-                    next(null, {code: 200, msg: {original: original, resized: dest}});
+                    next(null, {code: 200, msg: {original: original, resized: dest, w: resizeWidth, h: resizeHeight}});
                 }
             );
         }

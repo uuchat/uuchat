@@ -8,7 +8,6 @@ function hash(body, next) {
     var postArray = [];
     var key = {};
 
-    // 对象转换为数组
     for (var pro in body) {
         key.name = pro;
         key.value = body[pro];
@@ -18,12 +17,10 @@ function hash(body, next) {
         key = {};
     }
 
-    //数组排序
     postArray.sort(function (object1, object2) {
         return ~~(object1['name'] > object2['name']);
     });
 
-    //拼装字符串
     var postStr = nconf.get('socket.io:secretKey');
     postArray.forEach(function (post) {
         postStr += post.name + post.value;
@@ -60,6 +57,7 @@ function sign(resJson) {
         return resJson;
     });
 }
+
 module.exports = function (middleware) {
     middleware.checksum = checksum;
     middleware.sign = sign;
