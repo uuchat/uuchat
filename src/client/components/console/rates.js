@@ -8,13 +8,15 @@ const RateExpandedTable = AsyncComponent(() => import('./rateExpandedTable')
 
 const { MonthPicker } = DatePicker;
 
+const defaultMonth = moment().format('YYYY-MM');
+
 class Rates extends Component {
 
     state = {
         dataSource: [],
         sortedInfo: null,
         loading: false,
-        month: moment().format('YYYY-MM')
+        month: defaultMonth
     };
 
     clearSorters = () => {
@@ -28,7 +30,7 @@ class Rates extends Component {
 
         let { month } = this.state;
 
-        if (!month) month = moment().format('YYYY-MM');
+        month = month || defaultMonth;
 
         let reportUrl = '/console/rates/report/month/' + month;
 
@@ -108,7 +110,7 @@ class Rates extends Component {
                     <RateExpandedTable
                         dataSource={ dataSource }
                         sortedInfo={ sortedInfo }
-                        month={ month }
+                        month={ month || defaultMonth }
                         loading={ loading }
                         onChange={ this.handleChange }/>
                 </div>

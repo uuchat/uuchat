@@ -39,14 +39,18 @@
     padding-right: 16px;
 }
 
-#console-body .rightWarpper .ant-menu-root:hover {
+.rightWarpper .ant-menu-root:hover {
     color: #108ee9;
     background-color: #8fc9fb;
 }
 
-#console-body .rightWarpper .ant-menu-item:hover {
+.rightWarpper .ant-menu-item:hover {
     color: #108ee9;
     background-color: #8fc9fb;
+}
+
+.rightWarpper .ant-menu-horizontal > .ant-menu-submenu{
+    border-bottom: 0px solid transparent;
 }
 
 .numberCard {

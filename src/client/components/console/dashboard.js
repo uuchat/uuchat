@@ -95,7 +95,7 @@ class Dashboard extends Component {
         );
 
         return (
-            <div style={{ overflowX:'hidden' }}>
+            <div>
                 <Breadcrumb separator=">">
                     <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
                 </Breadcrumb>

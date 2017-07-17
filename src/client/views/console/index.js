@@ -6,8 +6,8 @@ import enUS from 'antd/lib/locale-provider/en_US';
 import LoginView from '../../components/console/loginView';
 import Console from '../../components/console/console';
 import '../../static/css/common.css';
-import '../../static/css/console.css';
 import '../../static/css/customerSuccess.css';
+import '../../static/css/console.css';
 
 ReactDOM.render(
     <LocaleProvider locale={enUS}>
