@@ -1,6 +1,9 @@
 'use strict';
 
 var crypto = require('crypto');
+var nconf = require('nconf');
+var _ = require('lodash');
+var maxmind = require('maxmind');
 
 var utils = {};
 
@@ -67,6 +70,36 @@ function isLeapYear(year) {
 
 utils.getDaysInMonth = function (year, month) {
     return [31, (isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
+};
+
+
+utils.getIP = function(req) {
+    var ip = req.headers['x-forwarded-for'] ||
+        req.connection.remoteAddress ||
+        req.socket.remoteAddress ||
+        (req.connection.socket && req.connection.socket.remoteAddress);
+
+    return ip.match(new RegExp(/((\d+)\.){3}(\d+)/g))[0];
+};
+
+utils.setupIOSCode = function(req, ip, next) {
+    if (ip) {
+        maxmind.open(nconf.get('mmdb:path'), (err, orgLookup) => {
+            var ipInfo = orgLookup.get(ip);
+            var isoCode = nconf.get('CDN:DEFAULT');
+            if (ipInfo) {
+                isoCode = ipInfo.country.iso_code
+            }
+            if (_.isUndefined(isoCode) || _.isEmpty(isoCode)) {
+                isoCode = nconf.get('CDN:DEFAULT');
+            }
+            req.session.isoCode = isoCode;
+            next();
+        });
+    } else {
+        req.session.isoCode = nconf.get('CDN:DEFAULT');
+        next();
+    }
 };
 
 

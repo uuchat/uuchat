@@ -2,7 +2,7 @@
 
 var nconf = require('nconf');
 var _ = require('lodash');
-var winston = require('winston');
+var logger = require('../logger');
 var express = require('express');
 var controllers = require('../controllers');
 var cors = require('cors');
@@ -38,8 +38,6 @@ function customerSessionRoutes(app, middleware, controllers) {
 }
 
 function messageRoutes(app, middleware, controllers) {
-    //var middlewares = [middleware.checkGlobalPrivacySettings];
-
     app.get('/messages/:uuid', controllers.messageController.get);
     app.delete('/messages/:uuid', controllers.messageController.delete);
     app.get('/messages/customer/:cid', controllers.messageController.list);
@@ -48,8 +46,8 @@ function messageRoutes(app, middleware, controllers) {
 
     app.get('/messages/cs/:csid/search', controllers.messageController.search);
     app.get('/messages/cs/:csid/search/latestmonth', controllers.messageController.searchLatestMonth);
-
-    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.whiteListOpt()), middleware.upload.uploadImage,
+    app.options('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate));
+    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.upload.uploadImage,
         controllers.customerSessionController.checkMonthlyUploadSize);
 }
 
@@ -96,10 +94,6 @@ function consoleRoutes(app, middleware, controllers) {
 module.exports = function (app, middleware, callback) {
     var router = express.Router();
 
-    /* if (global.env === 'production') {
-     router.use(middleware.checksum);
-     }*/
-
     customerSuccessRoutes(router, middleware, controllers);
     customerSessionRoutes(router, middleware, controllers);
     messageRoutes(router, middleware, controllers);
@@ -109,11 +103,9 @@ module.exports = function (app, middleware, callback) {
     consoleRoutes(router, middleware, controllers);
 
     router.use(function (err, req, res, next) {
-        winston.error(err);
+        logger.error(err);
         res.status(500).json({code: 500, msg: 'internal server error'});
     });
 
     app.use('/', router);
-
-    winston.info('Routes added');
 };

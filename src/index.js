@@ -167,9 +167,9 @@ function baseHtmlRoute(app, middlewareDev) {
         ejsRender(middlewareDev, cdnFile, res, html);
     });
 
-    var opts = middleware.whiteListOpt();
-    opts.credentials = true;
-    app.get('/s', cors(opts), function response(req, res) {
+    //opts.credentials = true;
+    //cors(middleware.corsOptionsDelegate),
+    app.get('/s', middleware.jsCDN, function response(req, res) {
         res.setHeader("P3P", "CP=CAO PSA OUR"); // For IE set cookie
         req.inframUrl = req.query.r;
         setupSession(req, res);
@@ -199,9 +199,9 @@ function ejsRender(middlewareDev, jsObj, res, html) {
 }
 
 function setupExpress(app, callback) {
-    app.set('showStackError', true);
-    app.disable('x-powered-by'); // http://expressjs.com/zh-cn/advanced/best-practice-security.html
-    app.set('json spaces', process.env.NODE_ENV === 'development' ? 4 : 0);
+    //app.set('showStackError', true);
+    //app.disable('x-powered-by'); // http://expressjs.com/zh-cn/advanced/best-practice-security.html
+    //app.set('json spaces', process.env.NODE_ENV === 'development' ? 4 : 0);
 
     app.use('/static/images', express.static(path.join(__dirname, './client/static/images')));
     app.use('/content/upload', express.static(path.join(__dirname, '../content/upload')));
@@ -263,12 +263,8 @@ function setupExpress(app, callback) {
         res.status(404).send('can not find page!');
     });
     app.use(function(err, req, res, next) {
-        if (global.env === 'development') {
-            logger.error(err.stack);
-        } else {
-            logger.error(err.stack);
-            logger.error("~~~~~~ has 503 error!");
-        }
+        logger.error("~~~~~~ has 503 error!");
+        logger.error(err.stack);
         res.status(503).send('system has problem.');
     });
 

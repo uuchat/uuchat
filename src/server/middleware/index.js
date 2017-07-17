@@ -1,13 +1,12 @@
 'use strict';
 
 var fs = require('fs');
-var path = require('path');
 var csrf = require('csurf');
 
 var async = require('async');
 var nconf = require('nconf');
 var _ = require('lodash');
-var maxmind = require('maxmind');
+var utils = require('../utils');
 
 var middleware = {};
 
@@ -16,67 +15,42 @@ middleware.applyCSRF = csrf();
 require('./upload')(middleware);
 require('./sign')(middleware);
 
-middleware.whiteListOpt = function () {
-    var opt = {};
+middleware.corsOptionsDelegate = function (req, callback) {
     var whiteList = nconf.get('app:image_upload_white_list');
     var first = _.head(whiteList);
     if (!_.isUndefined(first)) {
         if (_.startsWith(first, 'http')) {
-            opt = {
-                origin: function (origin, callback) {
-                    if (whiteList.indexOf(origin) !== -1) {
-                        callback(null, true)
-                    } else {
-                        callback(new Error('Not allowed by CORS'))
-                    }
-                }
-            };
+            var corsOptions;
+            if (whiteList.indexOf(req.header('Origin')) !== -1) {
+                corsOptions = { origin: true };
+                callback(null, corsOptions);
+            }else{
+                corsOptions = { origin: false };
+                callback(new Error('Not allowed by CORS'));
+            }
+
+        } else {
+            var corsOptions = { origin: true };
+            callback(null, corsOptions);
         }
+    } else {
+        var corsOptions = { origin: true };
+        callback(null, corsOptions);
     }
-    return opt;
 };
 
 middleware.jsCDN = function (req, res, next) {
     if (req.session.isoCode) {
-        var ip = getIP(req);
+        var ip = utils.getIP(req);
         if (ip !== req.session.isoCode) {
-            setupIOSCode(req, ip, next);
+            utils.setupIOSCode(req, ip, next);
         } else {
             next();
         }
     } else {
-        setupIOSCode(req, getIP(req), next);
+        utils.setupIOSCode(req, utils.getIP(req), next);
     }
 };
-
-function getIP(req) {
-    var ip = req.headers['x-forwarded-for'] ||
-        req.connection.remoteAddress ||
-        req.socket.remoteAddress ||
-        (req.connection.socket && req.connection.socket.remoteAddress);
-
-    return ip.match(new RegExp(/((\d+)\.){3}(\d+)/g))[0];
-}
-
-function setupIOSCode(req, ip, next) {
-    if (ip) {
-        maxmind.open(nconf.get('mmdb:path'), (err, orgLookup) => {
-            var ipInfo = orgLookup.get(ip);
-            var isoCode = nconf.get('CDN:DEFAULT');
-            if (ipInfo) {
-                isoCode = ipInfo.country.iso_code
-            }
-            if (_.isUndefined(isoCode) || _.isEmpty(isoCode)) {
-                isoCode = nconf.get('CDN:DEFAULT');
-            }
-            req.session.isoCode = isoCode;
-            next();
-        });
-    } else {
-        req.session.isoCode = nconf.get('CDN:DEFAULT');
-        next();
-    }
-}
 
 
 middleware.checkAccountPermissions = function (req, res, next) {
