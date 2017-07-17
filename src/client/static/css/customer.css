@@ -120,6 +120,7 @@
     width: 100%;
     height:30px;
     line-height: 30px;
+    text-align: center;
     color: #fff;
     background: rgba(0, 0, 0, 0.5);
 }
@@ -203,13 +204,12 @@
 }
 .chat-console .rete-heart span{
     display: inline-block;
-    width: 30px;
-    height: 30px;
-    line-height: 30px;
-    text-align: center;
+    width: 32px;
+    height: 32px;
     margin-right: 5px;
     color: red;
     background: url(../images/heart.png) no-repeat center center;
+    background: url(../images/heart_ie8.png) no-repeat center center\0;
     background-size: 100% 100%;
     border-radius: 100%;
     text-indent: -99999em;
@@ -217,6 +217,7 @@
 }
 .rete-heart span.active{
     background: url(../images/heart_selected.png) no-repeat center center;
+    background: url(../images/heart_selected_ie8.png) no-repeat center center\0;
     background-size: 100% 100%;
 }
 .chat-console .rete-btn{
@@ -386,17 +387,25 @@
     -wenkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
+    -webkit-tap-highlight-color:rgba(0,0,0,0);
+    -webkit-animation: slideUp 0.5s linear;
+    animation: slideUp 0.5s linear;
 }
-
 .chat-btn.chat-btn-open{
     background: #1f8ceb url(../images/c_w.png) no-repeat center center;
     background-size: 70%;
 }
 .chat-btn.chat-btn-close{
     background: #1f8ceb;
+    -webkit-transition: transform 0.3s linear;
+    transition: transform 0.3s linear;
 }
 .chat-btn.chat-btn-close:after{
     content: '╳';
+}
+.chat-btn.chat-btn-close:hover{
+    -webkit-transform:rotate(180deg);
+    transform:rotate(180deg);
 }
 .chat-btn .chat-nums{
     position: absolute;
@@ -410,6 +419,7 @@
     background-color: #e74c3c;
     border-radius: 100%;
     font-size: 12px;
+    cursor: pointer;
 }
 .chat-console .chat-offline{
     padding: 10px;
@@ -512,7 +522,7 @@
     text-align: center;
     cursor: pointer;
 }
-.chat-msg .reconnect-btn{
+.chat-main .reconnect-btn{
     position: absolute;
     bottom: 100px;
     left: 115px;
@@ -527,7 +537,7 @@
     border-radius: 30px;
     font-size: 14px;
 }
-.chat-msg .reconnect-btn img{
+.chat-main .reconnect-btn img{
     vertical-align: middle;
 }
 
@@ -549,9 +559,14 @@
 @media screen and (max-width:640px){
     .chat-console{
         width: calc(100% - 40px);
+        height: calc(90vh - 50px);
+    }
+    .chat-console .chat-offline,
+    .chat-console .chat-body{
+        height: 100%;
     }
     .chat-console .chat-msg{
-        height: calc(80vh - 100px);
+        height: calc(90vh - 150px);
     }
     .chat-console .chat-send-text{
         width: 100%;
@@ -593,4 +608,20 @@
           transform: scale(1.0);
           -webkit-transform: scale(1.0);
       }
+}
+@-webkit-keyframes slideUp{
+    0%{
+        -webkit-transform: translateY(50px);
+    }
+    100%{
+        -webkit-transform: translateY(0);
+    }
+}
+@keyframes slideUp{
+    0%{
+        transform: translateY(50px);
+    }
+    100%{
+        transform: translateY(0);
+    }
 }

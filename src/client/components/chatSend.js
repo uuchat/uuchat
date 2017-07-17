@@ -125,7 +125,7 @@ class ChatSend extends Component{
                         }
                     }else if(status === 'done') {
                         if(200 === info.file.response.code){
-                            sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original);
+                            sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original+'|'+info.file.response.msg.w+'|'+info.file.response.msg.h);
                         }
                         message.success(info.file.name+' file uploaded successfully', 2, function(){
                             that.setState({

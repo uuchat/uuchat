@@ -23,12 +23,7 @@ class ChatMessageItem extends Component{
         m = m > 9 ? m : '0' + m;
 
         str += h + ':' + m;
-
-        if(h <= 12){
-            str += ' AM';
-        }else{
-            str += ' PM';
-        }
+        str += (h <= 12) ? ' AM' : ' PM';
 
         return str;
     }
@@ -64,7 +59,7 @@ class ChatMessageItem extends Component{
                 </div>
                 <div className={"message-content " + flClass}>
                     {    isImg?
-                        <a href={'/'+imgSrc[1]} target="_blank"><img src={'/'+imgSrc[0]} alt="" /></a>
+                        <a href={'/'+imgSrc[1]} target="_blank"><img width={imgSrc[2]} height={imgSrc[3]} src={'/'+imgSrc[0]} alt="" /></a>
                         : this.msgConver(this.props.ownerText)
                     }
                 </div>

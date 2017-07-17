@@ -360,18 +360,15 @@ class CustomerSuccess extends Component{
 
         if(msg !== ''){
             this.state.socket.emit('cs.message', cid, msg, function(success){
-                let message,
-                    messageLists = that.state.messageLists,
+                let messageLists = that.state.messageLists,
                     msgArr = messageLists[cid];
 
-                message = {
+                msgArr.push({
                     msgAvatar: that.state.csAvatar,
                     msgText: msg,
                     msgType: 1,
                     msgTime: new Date()
-                };
-
-                msgArr.push(message);
+                });
                 messageLists[cid] = msgArr;
 
                 that.setState({

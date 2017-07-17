@@ -22,11 +22,11 @@
     }
 
     function addClass(obj, cls) {
-        if (!hasClass(obj, cls)) obj.className += " " + cls;
+        if(!hasClass(obj, cls)) obj.className += " " + cls;
     }
 
     function removeClass(obj, cls) {
-        if (hasClass(obj, cls)) {
+        if(hasClass(obj, cls)){
             var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
             obj.className = obj.className.replace(reg, ' ');
         }
@@ -76,7 +76,7 @@
             doc.getElementsByTagName('HEAD')[0].appendChild(spt);
 
             spt.onload = spt.onreadystatechange = function(){
-                if (!this.readyState || this.readyState === "loaded" || this.readyState === "complete" ) {
+                if(!this.readyState || this.readyState === "loaded" || this.readyState === "complete" ){
                     UUCT.ctrol();
                     spt.onload = spt.onreadystatechange = null;
                 }
@@ -87,6 +87,7 @@
             var UA = navigator.userAgent,
                 isIE = UA.indexOf('MSIE') > -1,
                 v = isIE ? /\d+/.exec(UA.split(';')[1]) : 'no ie';
+
             return v <= 8;
         },
         cutStr: function(str, len){
@@ -95,7 +96,7 @@
                 str_len = str.length,
                 a = '';
 
-            for (var i = 0; i < str_len; i++) {
+            for(var i = 0; i < str_len; i++){
                 a = str.charAt(i);
                 str_length++;
                 if (escape(a).length > 4) {
@@ -106,7 +107,7 @@
                     return str_cut;
                 }
             }
-            if (str_length < len) {
+            if(str_length < len) {
                 return str;
             }
         },
@@ -136,17 +137,14 @@
                 params.data = params.data || {},
                 json = params.jsonp ? jsonp(params) : json(params);
 
-
             function json(params){
                 params.type = (params.type || 'GET').toUpperCase();
                 !params.fileType && (params.data = formatParams(params.data));
 
-                var xhr = null;
-                if(window.XMLHttpRequest) {
-                    xhr = new XMLHttpRequest();
-                } else {
-                    xhr = new ActiveXObjcet('Microsoft.XMLHTTP');
-                };
+                var xhr = null,
+                    org = window.location.protocol+'://'+window.location.host;
+
+                xhr = new XMLHttpRequest() || new ActiveXObjcet('Microsoft.XMLHTTP');
 
                 xhr.onreadystatechange = function() {
                     if(xhr.readyState == 4) {
@@ -309,11 +307,8 @@
             msg = this.msgFilter(msg);
             str += '<div class="chat-item chat-'+cls+'">';
             str += '<p class="chat-role"><i>'+name+'</i>'+h+':'+m+'</p>';
-            str += '<div class="chat-text">';
-            str += msg;
-            str += '</div>';
-            str += '<div class="chat-caret"></div>';
-            str += '</div>';
+            str += '<div class="chat-text">'+msg+'</div>';
+            str += '<div class="chat-caret"></div></div>';
 
             return str;
         },
@@ -325,7 +320,7 @@
             if(imgReg.test(imgSrc)){
                 imgSrc = msg.split('|');
                 str += '<a href="'+UUCT.domain+'/'+imgSrc[1] +'" target="_blank">';
-                str += '<img src="'+UUCT.domain+'/'+imgSrc[0] +'" alt="" /></a>';
+                str += '<img src="'+UUCT.domain+'/'+imgSrc[0] +'" width="'+imgSrc[2]+'" height="'+imgSrc[3]+'" alt="" /></a>';
             }else{
                 str = msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#\/%?=~_|!:,.;]*)/g, function(match){
                     return '<a href="'+match+'" target="_blank">'+match+'</a>';
@@ -334,22 +329,23 @@
             return str;
         },
         msgTranslate: function(msgObj){
-            var chatMsg =  $('.chat-msg');
 
+            var chatMsg =  $('.chat-msg');
 
             if(msgObj.msg === 1){
 
-                var str = '';
+                var str = '',
+                    hearts = $All('.rete-heart'),
+                    rateBtns = $All('.rete-btn');
+
                 str += '<div class="rate-box">';
                 str += '<p class="rate-title">Please rate the dialogue</p>';
                 str += '<div class="rete-heart">';
                 str += '<span class="rate-span">1</span><span class="rate-span">2</span><span class="rate-span">3</span><span class="rate-span">4</span><span class="rate-span">5</span>';
                 str +='</div>';
                 str +='<div class="rete-btn">Done</div></div>';
-                chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
-                var hearts = $All('.rete-heart'),
-                    rateBtns = $All('.rete-btn');
 
+                chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
 
                 for(var i = 0, l = hearts.length; i < l; i++){
                     (function(i){
@@ -360,7 +356,7 @@
                                 tg = e.target || e.srcElement;
 
                             if(tg.tagName.toLowerCase() === 'span'){
-                                var rateNum = e.target.innerHTML;
+                                var rateNum = tg.innerHTML;
                                 rateLevel = rateNum;
                                 for(var j = 0; j < 5; j++){
                                     if(j < rateNum){
@@ -372,18 +368,20 @@
                             }
                         });
                         addEvent(rateBtns[i], 'click', function() {
+
+                            chatMsg.innerHTML += UUCT.tempMsgItem(1, 'Thank you for your rate!! Goodbye!', new Date());
+                            chatMsg.scrollTop = chatMsg.scrollHeight;
+
                             UUCT.socket.emit('c.rate', UUCT.chat.cid, rateLevel, function (success) {
-                                if (success) {
-                                    chatMsg.innerHTML += UUCT.tempMsgItem(1, 'Thank you for your rate!! Goodbye!', new Date());
-                                    chatMsg.scrollTop = chatMsg.scrollHeight;
-                                    UUCT.socket.close();
-                                    $('.chat-send').parentNode.removeChild($('.chat-send'));
-                                    $('.chat-msg').style.height = '560px';
-                                    $('.chat-msg').innerHTML = '<div class="reconnect-btn"><img width="32" src="'+UUCT.domain+'/static/images/write.png">New Conversation</div>';
-                                    addEvent($('.reconnect-btn'), 'click', function(){
-                                        $('.chat-msg').parentNode.removeChild($('.chat-msg'));
-                                        UUCT.createSocket();
-                                    });
+                                if(success){
+                                    setTimeout(function(){
+                                        UUCT.socket.close();
+                                        $('.chat-main').innerHTML = '<div class="reconnect-btn"><img width="32" src="'+UUCT.domain+'/static/images/write.png">New Conversation</div>';
+                                        addEvent($('.reconnect-btn'), 'click', function(){
+                                            $('.chat-msg').parentNode.removeChild($('.chat-msg'));
+                                            UUCT.createSocket();
+                                        });
+                                    }, 3000);
                                 }
                             });
                         });
@@ -414,7 +412,6 @@
             UUCT.chat.cid = data.cid;
             UUCT.chat.csid = data.csid;
             UUCT.chat.csName = data.name;
-
 
             $('.chat-name').innerHTML = data.name;
             $('.chat-main').innerHTML = msg;
@@ -468,7 +465,7 @@
              */
             this.on('cs.close.dialog', UUCT.socketCloseDialog)
             /***
-             *
+             *  c.dispatch
              */
             this.on('c.dispatch', function(csid, name, avatar){
                 UUCT.chat.csid = csid;
@@ -499,17 +496,19 @@
 
         },
         socketConnectError: function(){
-            var str = '<div class="chat-offline"><div class="chat-error">Oh! no ! There has error !You can try it later again</div></div>';
-            if(!$('.chat-offline')){
-                $('.chat-main').innerHTML = str;
-            }
+            $('.chat-main').innerHTML = '<div class="chat-offline"><div class="chat-error">Oh! no ! There has error !You can try it later again</div></div>';
         },
         socketDisconnect: function(){
+            var timeNow = UUCT.dateISOFomat(new Date()),
+                tips = 'The customerSuccess has offline, you can try it by refesh the browser at latter';
 
+            if(timeNow.getTime() - UUCT.timeStart.getTime() > UUCT.timeOutSeconds){
+                tips = 'Long time no chat, disconnect, you can try it by refesh the browser at latter';
+            }
 
             UUCT.msgTranslate({
                 role: 1,
-                msg: 'Long time no chat, disconnect, you can try it by refesh the browser at latter'
+                msg: tips
             });
             $('.chat-name').innerHTML = UUCT.chat.csName;
             this.close();
@@ -540,7 +539,7 @@
                         return false;
                     }
 
-                   $('.chat-msg').innerHTML += '<div class="upload-tips">Uploading 0 %</div>';
+                   $('.chat-msg').innerHTML += '<div class="upload-tips">Start upload ...</div>';
 
                    UUCT.ajax({
                        url: UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image',
@@ -548,18 +547,22 @@
                        fileType: true,
                        data: data,
                        progress: function(d){
-                           var percent = Math.round(d.loaded/d.total*100);
-                           $('.upload-tips').innerHTML = 'Uploading '+percent+ ' %';
-                           if(percent === 100){
+                           if(d.total === 0){
+                               $('.upload-tips').innerHTML = 'Upload failed!!!';
+                           }else{
+                               $('.upload-tips').innerHTML = 'Uploading '+Math.round(d.loaded/d.total*100)+ ' %';
+                           }
+
+                           if(d.loaded === d.total){
                                setTimeout(function(){
                                    $('.upload-tips').parentNode.removeChild($('.upload-tips'));
-                               }, 1500);
+                               }, 2000);
                            }
                        },
                        success: function(data){
                            var d = JSON.parse(data);
                            if(d.code === 200){
-                               UUCT.socketSendMessage(d.msg.resized+'|'+d.msg.original);
+                               UUCT.socketSendMessage(d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h);
                            }
                        }
                    });
@@ -599,13 +602,12 @@
                     }
                 });
 
-                localStorage.setItem('csid', data.csid);
             }else if(2 === type){
 
                 var queue = '<div class="chat-offline"><div class="line-up">Current queue number <i class="line-num">';
                 queue += data.num;
                 queue += '</i></div></div>';
-                $('.chat-main').innerHTML += queue;
+                $('.chat-main').innerHTML = queue;
 
             }else if(3 === type){
                 UUCT.customerSuccessOffline();
