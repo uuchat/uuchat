@@ -77,6 +77,19 @@
     text-align: right;
     cursor: pointer;
 }
+.customerSuccess-header .m-menu{
+    display: none;
+    float: left;
+    margin-left: -20px;
+    width:30px;
+    height: 30px;
+    text-align: left;
+    font-size: 24px;
+    color: #1f8ceb;
+}
+.customerSuccess-header .m-menu:after{
+    content: '☰'
+}
 .customerSuccess-header .user-avatar img{
     margin-left: 10px;
     width: 30px;
@@ -610,9 +623,11 @@
     font-size: 14px;
     line-height: 18px;
     word-break: break-all;
+    -webkit-transition: background-color 0.8s linear;
+    transition: background-color 0.8s linear;
 }
 
-.message-lists .message-content.fr {
+.message-lists .message-content.done {
     background-color: #edf9ff;
 }
 
@@ -900,7 +915,9 @@
     .customerSuccess-header .status-bar{
        display:none;
     }
-
+    .customerSuccess-header .m-menu{
+        display: inline-block;
+    }
     .uuchat-customerSuccess .customerSuccess-main{
         margin: 10px 2%;
         border: 1px solid #000;
@@ -917,6 +934,8 @@
         width: 100%;
         min-height: 100%;
         background-color: rgba(0, 0, 0, 0.6);
+        -webkit-transition: left 0.5s linear;
+        transition: left 0.5s linear;
     }
     .customerSuccess-left .ant-tabs{
         height: 95%;
@@ -934,16 +953,17 @@
         display: none;
     }
     .customerSuccess-content .chat-message{
-        height: calc(100vh - 150px);
+        height: calc(100vh - 170px);
     }
     .customerSuccess-content .message-lists{
         height: calc(100vh - 200px);
     }
     .chat-send{
-        height: calc(30vh);
+        position: relative;
+        height: 105px;
     }
     .send-tools{
-        display: none;
+        height:30px;
     }
     .chat-text .chat-textarea{
         margin-top: 2%;
@@ -958,8 +978,11 @@
         display: none;
     }
     /* search */
-    .search-main{
-
+    .left-menu{
+        display:none;
+    }
+    .left-menu-show{
+        left: 0px;
     }
 }
 

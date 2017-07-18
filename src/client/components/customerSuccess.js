@@ -359,22 +359,25 @@ class CustomerSuccess extends Component{
              cid = that.state.customerSelect.cid;
 
         if(msg !== ''){
+            let messageLists = that.state.messageLists,
+                msgArr = messageLists[cid],
+                d = new Date();
+
+            msgArr.push({
+                msgAvatar: that.state.csAvatar,
+                msgText: msg,
+                msgType: 1,
+                msgTime: d
+            });
+            messageLists[cid] = msgArr;
+
+            that.setState({
+                messageLists:  messageLists
+            });
             this.state.socket.emit('cs.message', cid, msg, function(success){
-                let messageLists = that.state.messageLists,
-                    msgArr = messageLists[cid];
-
-                msgArr.push({
-                    msgAvatar: that.state.csAvatar,
-                    msgText: msg,
-                    msgType: 1,
-                    msgTime: new Date()
-                });
-                messageLists[cid] = msgArr;
-
-                that.setState({
-                    messageLists:  messageLists
-                });
-
+                if(success){
+                    document.querySelector('.t-'+d.getMinutes()+'-'+d.getSeconds()).className += ' done';
+                }
             });
 
         }
@@ -563,7 +566,7 @@ class CustomerSuccess extends Component{
                         msgAvatar: (dd.type === 1) ? avatar : '',
                         msgText: dd.msg,
                         msgType: dd.type,
-                        msgTime: new Date(dd.createdAt)
+                        msgTime: dd.createdAt
                     });
                 });
 
@@ -629,6 +632,12 @@ class CustomerSuccess extends Component{
             csAvatar: avatar
         });
     }
+    chatListShow = () => {
+        document.querySelector('.customerSuccess-left').className += ' left-menu-show';
+    }
+    chatListHide = () => {
+        document.querySelector('.customerSuccess-left').className='customerSuccess-left';
+    }
     render(){
 
         let state = this.state,
@@ -653,7 +662,7 @@ class CustomerSuccess extends Component{
             <div className={"uuchat-customerSuccess " + ((!state.isOnline || state.isConnectErr) ? " off" : "")}>
                     <div className="customerSuccess-header">
                         <Row>
-                            <Col span={6}>
+                            <Col xs={0} sm={6} md={6} lg={6} xl={6}>
                                 <div className="user-status">
                                     <div className="status-bar" onClick={this.statusToggle}>
                                         {state.isConnectErr ?
@@ -665,8 +674,9 @@ class CustomerSuccess extends Component{
                                     </div>
                                 </div>
                             </Col>
-                            <Col span={18} className="user-avatar">
+                            <Col xs={24} sm={18} md={18} lg={18} xl={18} className="user-avatar">
                                  <div className="user-avatar-box">
+                                    {state.customerSelect.cid !== '' && <div className="m-menu" onClick={this.chatListShow}></div>}
                                      <img src={ (state.csAvatar !=='null' && state.csAvatar) ? '/'+state.csAvatar
                                          : require('../static/images/contact.png')} alt="avatar" title="avatar" />&nbsp;&nbsp;
                                      <a href="" className="logout" onClick={this.loginOut}>
@@ -678,7 +688,7 @@ class CustomerSuccess extends Component{
                     </div>
                     <Row className="customerSuccess-main">
                         <Col xs={24} sm={7} md={7} lg={6} xl={6}>
-                            <div className="customerSuccess-left">
+                            <div className="customerSuccess-left" onClick={this.chatListHide}>
                                 <div className="left-menu">
                                    <form method="get" action="/search" target="_blank" className="">
                                        <Input.Search

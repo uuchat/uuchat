@@ -84,7 +84,7 @@ class ChatSend extends Component{
         }
     }
     rateHandle = (e) => {
-        let that = this;
+        let {socket, cid} = this.props;
         Modal.confirm({
             title: 'Invite user rate',
             okText: 'Yes',
@@ -94,21 +94,18 @@ class ChatSend extends Component{
             ),
             onOk(){
                 message.success('Invitation has been sent!', 4);
-                that.props.socket && that.props.socket.emit('cs.rate', that.props.cid, function(success){
-                    if(success){
-                    }else{
-                    }
-                });
+                socket && socket.emit('cs.rate', cid, function(success){});
             }
         });
     }
 
     render(){
-        let sendMessage = this.props.sendMessage,
+        let {sendMessage, cid, csid} = this.props,
+            {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue} = this.state,
             that = this,
             props = {
                 name: 'image',
-                action: '/messages/customer/'+this.props.cid+'/cs/'+this.props.csid+'/image',
+                action: '/messages/customer/'+cid+'/cs/'+csid+'/image',
                 accept: 'image/*',
                 headers: {
                     authorization: 'authorization-text',
@@ -144,12 +141,12 @@ class ChatSend extends Component{
 
         return (
             <div className="chat-send">
-                <Progress type="circle" percent={this.state.percent} className="upload-process" width={60} style={{display: this.state.isShowProcess ? 'block' : 'none'}} />
+                <Progress type="circle" percent={percent} className="upload-process" width={60} style={{display: isShowProcess ? 'block' : 'none'}} />
                 <div className="send-tools">
                     <div className="tool-box tool-emoji">
-                        <Icon onClick={this.emojiBtnHandle} className={"emoji-icon "+(this.state.isEmojiShow ? 'active' : '')} />
+                        <Icon onClick={this.emojiBtnHandle} className={"emoji-icon "+(isEmojiShow ? 'active' : '')} />
                         {
-                            this.state.isEmojiShow &&  <EmojiPicker addEmojiHandle={this.addEmojiHandle} />
+                            isEmojiShow &&  <EmojiPicker addEmojiHandle={this.addEmojiHandle} />
                         }
                     </div>
                     <div className="tool-box">
@@ -166,9 +163,9 @@ class ChatSend extends Component{
                     type="textarea"
                     className="chat-textarea"
                     onPressEnter={this.sendMessage}
-                    placeholder={this.state.isSendReady ? "" : "Input text and press enter to send(max 256 words)"}
+                    placeholder={isSendReady ? "" : "Input text and press enter to send(max 256 words)"}
                     onChange={this.textChangeHandle}
-                    value={this.state.textereaValue}
+                    value={textereaValue}
                     onFocus={this.textFocusHandle}
                     onBlur={this.blurHandle}
                     maxLength="256"

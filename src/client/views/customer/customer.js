@@ -28,7 +28,7 @@
     function removeClass(obj, cls) {
         if(hasClass(obj, cls)){
             var reg = new RegExp('(\\s|^)' + cls + '(\\s|$)');
-            obj.className = obj.className.replace(reg, ' ');
+            obj.className = obj.className.replace(reg, '');
         }
     }
 
@@ -334,9 +334,7 @@
 
             if(msgObj.msg === 1){
 
-                var str = '',
-                    hearts = $All('.rete-heart'),
-                    rateBtns = $All('.rete-btn');
+                var str = '';
 
                 str += '<div class="rate-box">';
                 str += '<p class="rate-title">Please rate the dialogue</p>';
@@ -346,6 +344,9 @@
                 str +='<div class="rete-btn">Done</div></div>';
 
                 chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
+
+                var hearts = $All('.rete-heart'),
+                    rateBtns = $All('.rete-btn');
 
                 for(var i = 0, l = hearts.length; i < l; i++){
                     (function(i){
@@ -358,6 +359,7 @@
                             if(tg.tagName.toLowerCase() === 'span'){
                                 var rateNum = tg.innerHTML;
                                 rateLevel = rateNum;
+
                                 for(var j = 0; j < 5; j++){
                                     if(j < rateNum){
                                         rate[j].className="rate-span active";
@@ -378,7 +380,6 @@
                                         UUCT.socket.close();
                                         $('.chat-main').innerHTML = '<div class="reconnect-btn"><img width="32" src="'+UUCT.domain+'/static/images/write.png">New Conversation</div>';
                                         addEvent($('.reconnect-btn'), 'click', function(){
-                                            $('.chat-msg').parentNode.removeChild($('.chat-msg'));
                                             UUCT.createSocket();
                                         });
                                     }, 3000);

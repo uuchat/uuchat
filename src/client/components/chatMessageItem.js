@@ -28,39 +28,46 @@ class ChatMessageItem extends Component{
         return str;
     }
     render(){
-        let imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
-            imgSrc = this.props.ownerText,
+        let {ownerAvatar, ownerType, time, ownerText} = this.props,
+            imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
+            imgSrc = ownerText,
             isImg = false,
+            isOld = false,
             img = '',
             flClass = 'fl';
+
+        if(typeof time === 'string'){
+            time = new Date(time);
+            isOld = true;
+        }
 
         if(imgReg.test(imgSrc)){
             isImg = true;
             imgSrc = imgSrc.split('|');
-
         }
-        if(typeof this.props.ownerAvatar === 'string'){
-            img =  <img src={this.props.ownerAvatar} alt="avatar" title="avatar" />
+
+        if(typeof ownerAvatar === 'string'){
+            img =  <img src={ownerAvatar} alt="avatar" title="avatar" />
         }else{
-            if(this.props.ownerType===0 || this.props.ownerType===4){
-                img = this.props.ownerAvatar;
+            if(ownerType===0 || ownerType===4){
+                img = ownerAvatar;
             }
         }
 
-        if(this.props.ownerType===1 || this.props.ownerType === 3){
-            flClass='fr';
+        if(ownerType===1 || ownerType === 3){
+            flClass = isOld ? 'fr done' : 'fr';
         }
 
         return (
             <div className="message-item">
-                <p className={'msg-time-'+this.props.ownerType}>{this.timeFomat(this.props.time)}</p>
+                <p className={'msg-time-'+ownerType}>{this.timeFomat(time)}</p>
                 <div className={"message-avatar " + flClass}>
                     { img }
                 </div>
-                <div className={"message-content " + flClass}>
+                <div className={"message-content " + flClass + " t-" +time.getMinutes()+"-"+time.getSeconds()}>
                     {    isImg?
                         <a href={'/'+imgSrc[1]} target="_blank"><img width={imgSrc[2]} height={imgSrc[3]} src={'/'+imgSrc[0]} alt="" /></a>
-                        : this.msgConver(this.props.ownerText)
+                        : this.msgConver(ownerText)
                     }
                 </div>
             </div>
