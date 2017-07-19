@@ -64,7 +64,7 @@ class ChatMessageItem extends Component{
                 <div className={"message-avatar " + flClass}>
                     { img }
                 </div>
-                <div className={"message-content " + flClass + " t-" +time.getMinutes()+"-"+time.getSeconds()}>
+                <div className={"message-content " + flClass + " t-" +time.getTime()}>
                     {    isImg?
                         <a href={'/'+imgSrc[1]} target="_blank"><img width={imgSrc[2]} height={imgSrc[3]} src={'/'+imgSrc[0]} alt="" /></a>
                         : this.msgConver(ownerText)

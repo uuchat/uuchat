@@ -376,7 +376,7 @@ class CustomerSuccess extends Component{
             });
             this.state.socket.emit('cs.message', cid, msg, function(success){
                 if(success){
-                    document.querySelector('.t-'+d.getMinutes()+'-'+d.getSeconds()).className += ' done';
+                    document.querySelector('.t-'+d.getTime()).className += ' done';
                 }
             });
 

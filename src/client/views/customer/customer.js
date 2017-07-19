@@ -292,20 +292,35 @@
             var str = '',
                 cls = '',
                 name = '',
-                h = t.getHours(),
+                h = '',
+                m = '',
+                isOld = false;
+
+            if(typeof t === 'number'){
+                cls += 't-'+t+' ';
+                t = UUCT.dateISOFomat(t);
+            }
+
+            if(typeof t === 'string'){
+                t = UUCT.dateISOFomat(t);
+                isOld = true;
+            }
+
+            h = t.getHours(),
                 m = t.getMinutes();
 
             m = m > 9 ? m : '0'+m;
 
             if(0 === role){
-                cls = 'to';
+                cls += 'chat-to';
+                cls += isOld ? ' done' : '';
             }else{
-                cls = 'from';
+                cls = 'chat-from';
                 name = UUCT.chat.csName;
             }
 
             msg = this.msgFilter(msg);
-            str += '<div class="chat-item chat-'+cls+'">';
+            str += '<div class="chat-item '+cls+'">';
             str += '<p class="chat-role"><i>'+name+'</i>'+h+':'+m+'</p>';
             str += '<div class="chat-text">'+msg+'</div>';
             str += '<div class="chat-caret"></div></div>';
@@ -390,7 +405,7 @@
                 }
 
             }else{
-                chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, new Date()));
+                chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, msgObj.time));
             }
 
             chatMsg && (chatMsg.scrollTop = chatMsg.scrollHeight);
@@ -423,7 +438,7 @@
                 for(var i = 0, l = data.msg.length; i < l; i++){
                     var msg = data.msg[i];
                     if(msg.type !== 3 && msg.type !== 4){
-                        msgList += UUCT.tempMsgItem(msg.type, msg.msg, UUCT.dateISOFomat(msg.createdAt));
+                        msgList += UUCT.tempMsgItem(msg.type, msg.msg, msg.createdAt);
                     }
                 }
                 $('.chat-msg').innerHTML += msgList;
@@ -479,7 +494,8 @@
             this.on('cs.action.rate', function(){
                 UUCT.msgTranslate({
                     role: 1,
-                    msg: 1
+                    msg: 1,
+                    time: new Date()
                 });
             });
 
@@ -509,7 +525,8 @@
 
             UUCT.msgTranslate({
                 role: 1,
-                msg: tips
+                msg: tips,
+                time: new Date()
             });
             $('.chat-name').innerHTML = UUCT.chat.csName;
             this.close();
@@ -675,17 +692,22 @@
             UUCT.socketEmitMessage(UUCT.cutStr(msg, 256));
         },
         socketEmitMessage: function(msg){
-            UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(isTrue){
-                UUCT.timeStart = UUCT.dateISOFomat(new Date());
-                if(isTrue){
-                    UUCT.msgTranslate({
-                        role: 0,
-                        msg: msg
-                    });
+            var d = (new Date()).getTime();
+            UUCT.timeStart = UUCT.dateISOFomat(new Date());
+            UUCT.msgTranslate({
+                role: 0,
+                msg: msg,
+                time: d
+            });
+
+            UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(success){
+                if(success){
+                    addClass($('.t-'+d), 'done')
                 }else{
                     UUCT.msgTranslate({
                         role: 1,
-                        msg: 'The customerSuccess is offline!You can try it later'
+                        msg: 'The customerSuccess is offline!You can try it later',
+                        time: new Date()
                     });
                 }
             });
@@ -695,7 +717,8 @@
             UUCT.timeStart = UUCT.dateISOFomat(new Date());
             UUCT.msgTranslate({
                 role: 1,
-                msg: msg
+                msg: msg,
+                time: new Date()
             });
 
             if(!hasClass($('.chat-btn'), 'chat-btn-close')){
@@ -708,7 +731,8 @@
         socketCloseDialog: function(){
             UUCT.msgTranslate({
                 role: 1,
-                msg: 'The customerSuccess is offline!'
+                msg: 'The customerSuccess is offline!',
+                time: new Date()
             });
         },
         socketCsStatus: function(status){
@@ -722,7 +746,8 @@
             clearInterval(UUCT.timeOutTimer);
             UUCT.msgTranslate({
                 role: 1,
-                msg: 'The customerSuccess is offline!'
+                msg: 'The customerSuccess is offline!',
+                time: new Date()
             });
         },
         socketQueueUpdate: function(pos){
@@ -739,13 +764,15 @@
         socketReconnect: function(){
             UUCT.msgTranslate({
                 role: 1,
-                msg: 'Reconnect to server success!!!'
+                msg: 'Reconnect to server success!!!',
+                time: new Date()
             });
         },
         socketError: function(){
             UUCT.msgTranslate({
                 role: 1,
-                msg: 'Its error to connect to the server!!! '
+                msg: 'Its error to connect to the server!!! ',
+                time: new Date()
             });
         }
     };
