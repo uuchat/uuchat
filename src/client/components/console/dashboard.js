@@ -3,7 +3,7 @@ import { Breadcrumb, Col, Row, message, Card } from 'antd';
 import NumberCard from './numberCard';
 import MonthlyReport from './monthlyReport';
 
-class Dashboard extends Component {
+export default class Dashboard extends Component {
 
     state = {
         numbersData: {},
@@ -112,5 +112,3 @@ class Dashboard extends Component {
         );
     }
 }
-
-export default Dashboard;

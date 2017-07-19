@@ -3,11 +3,12 @@ import moment from 'moment';
 import { Breadcrumb, message } from 'antd';
 import RateListTable from './rateListTable';
 import AsyncComponent from '../../views/asyncComponent.js';
+import { emptyTableLocale } from './constants';
 
 const RateSearchForm = AsyncComponent(() => import('./rateSearchForm')
     .then(component => component.default));
 
-class RateList extends Component {
+export default class RateList extends Component {
 
     filter = {
         createdAt: [moment().subtract(7, 'days'), moment()]
@@ -109,10 +110,10 @@ class RateList extends Component {
                     <Breadcrumb.Item>Rate List</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <div style={{ padding: 24, background: '#fff' }}>
+                <div className="content-body">
                     <RateSearchForm  { ...searchProps } />
 
-                    <RateListTable locale={{ emptyText: 'List is empty' }}
+                    <RateListTable locale={ emptyTableLocale }
                            dataSource={ dataSource }
                            pagination={ pagination }
                            loading={ loading }
@@ -123,6 +124,3 @@ class RateList extends Component {
         );
     }
 }
-
-export default RateList;
-

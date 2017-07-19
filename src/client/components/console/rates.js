@@ -10,7 +10,7 @@ const { MonthPicker } = DatePicker;
 
 const defaultMonth = moment().format('YYYY-MM');
 
-class Rates extends Component {
+export default class Rates extends Component {
 
     state = {
         dataSource: [],
@@ -95,7 +95,7 @@ class Rates extends Component {
                     <Breadcrumb.Item>Rate Report</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <div style={{ padding: 24, background: '#fff' }}>
+                <div className="content-body">
                     <div className="table-deals">
                         <div className="table-search">
                             <MonthPicker onChange={ this.handleMonthPickerChange } defaultValue={ defaultPickerMonth }
@@ -118,6 +118,3 @@ class Rates extends Component {
         );
     }
 }
-
-export default Rates;
-

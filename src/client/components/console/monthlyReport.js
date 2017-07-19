@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Progress, Col, Row } from 'antd';
 
-class MonthlyReport extends PureComponent {
+export default class MonthlyReport extends PureComponent {
 
     static defaultProps = {
         chats: 0,
@@ -67,5 +67,3 @@ class MonthlyReport extends PureComponent {
     }
 
 }
-
-export default MonthlyReport;

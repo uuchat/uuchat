@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { Table } from 'antd';
 import { sortFilterByProps } from './utils';
+import { emptyTableLocale } from './constants';
 
-class RateExpandedTable extends Component {
+export default class RateExpandedTable extends Component {
 
     render() {
         let { dataSource, sortedInfo,month, loading, onChange } = this.props;
@@ -61,10 +62,10 @@ class RateExpandedTable extends Component {
 
             return (
                 <Table
-                    locale={{ emptyText: 'List is empty' }}
-                    columns={expanderColumns}
-                    dataSource={expanderData}
-                    pagination={false}
+                    locale={ emptyTableLocale }
+                    columns={ expanderColumns }
+                    dataSource={ expanderData }
+                    pagination={ false }
                     />
             );
         };
@@ -72,7 +73,7 @@ class RateExpandedTable extends Component {
         return (
             <Table
                 className="ant-table-expanded-nested"
-                locale={{ emptyText: 'List is empty' }}
+                locale={ emptyTableLocale }
                 expandedRowRender={ expandedRowRender }
                 dataSource={ dataSource }
                 columns={ columns }
@@ -82,6 +83,3 @@ class RateExpandedTable extends Component {
         );
     }
 }
-
-export default RateExpandedTable;
-

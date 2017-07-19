@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import { Icon, Card } from 'antd';
 
-class NumberCard extends PureComponent {
+export default class NumberCard extends PureComponent {
 
     render() {
 
@@ -18,5 +18,3 @@ class NumberCard extends PureComponent {
         );
     }
 }
-
-export default NumberCard;

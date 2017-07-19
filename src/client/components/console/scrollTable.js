@@ -3,7 +3,7 @@ import { Spin } from 'antd';
 import LimitedInfiniteScroll from './scroller';
 import { formatDate } from './utils';
 
-class ScrollTable extends Component {
+export default class ScrollTable extends Component {
 
     render() {
         const pageLimit = 10, pageStart = 1;
@@ -61,5 +61,3 @@ class ScrollTable extends Component {
         );
     }
 }
-
-export default ScrollTable;

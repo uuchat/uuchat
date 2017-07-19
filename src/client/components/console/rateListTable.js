@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Table } from 'antd';
 import { getCustomerName, formatDate } from './utils';
 
-class RateListTable extends Component {
+export default class RateListTable extends Component {
 
     render() {
         let { locale, dataSource, pagination, loading, onChange, sorter } = this.props;
@@ -34,6 +34,3 @@ class RateListTable extends Component {
         );
     }
 }
-
-export default RateListTable;
-

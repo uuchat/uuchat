@@ -6,7 +6,7 @@ import ScrollTable from './scrollTable';
 
 const Option = Select.Option;
 
-class Transcripts extends Component {
+export default class Transcripts extends Component {
 
     state = {
         csSource: [],
@@ -122,7 +122,7 @@ class Transcripts extends Component {
                     <Breadcrumb.Item>Transcripts</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <div style={{ padding: 24, background: '#fff' }}>
+                <div className="content-body">
                     <div className="table-deals">
                         <div className="table-search">
                             <Select
@@ -149,5 +149,3 @@ class Transcripts extends Component {
         );
     }
 }
-
-export default Transcripts;

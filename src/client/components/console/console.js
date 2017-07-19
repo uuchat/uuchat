@@ -15,11 +15,13 @@ const Rates = AsyncComponent(() => import('./rates')
     .then(module => module.default), { name: 'rates' });
 const RateDetails = AsyncComponent(() => import('./rateDetails')
     .then(module => module.default), { name: 'rateDetails' });
+const Shortcuts = AsyncComponent(() => import('./shortcuts')
+    .then(module => module.default), { name: 'shortcuts' });
 
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
-class Console extends Component {
+export default class Console extends Component {
 
     state = {
         collapsed: false,
@@ -89,7 +91,8 @@ class Console extends Component {
             {key: 'operators', type:'user', text:'Operators'},
             {key: 'transcripts', type:'database', text:'Transcripts'},
             {key: 'rates', type:'star-o', text:'Rate Report'},
-            {key: 'rateList', type:'star-o', text:'Rate List'}
+            {key: 'rateList', type:'star-o', text:'Rate List'},
+            {key: 'shortcuts', type:'tags-o', text:'Shortcuts'}
         ];
 
         return (
@@ -158,6 +161,7 @@ class Console extends Component {
                                         <Route exact path="/transcripts" component={ Transcripts }/>
                                         <Route exact path="/rates" component={ Rates }/>
                                         <Route exact path="/rateList" component={ RateList }/>
+                                        <Route exact path="/shortcuts" component={ Shortcuts }/>
                                         <Route exact path="/rates/:csid" component={ RateDetails }/>
                                     </Switch>
                                 </div>
@@ -173,5 +177,3 @@ class Console extends Component {
         );
     }
 }
-
-export default Console;

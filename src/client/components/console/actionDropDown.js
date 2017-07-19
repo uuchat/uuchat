@@ -1,7 +1,7 @@
 import React,{ PureComponent } from 'react';
 import { Dropdown, Button, Icon, Menu } from 'antd';
 
-class ActionDropDown extends PureComponent {
+export default class ActionDropDown extends PureComponent {
 
     render() {
         const menu = this.props.menuOptions.map(item => <Menu.Item key={item.key}>{item.name}</Menu.Item>);
@@ -16,5 +16,3 @@ class ActionDropDown extends PureComponent {
         );
     }
 }
-
-export default ActionDropDown;

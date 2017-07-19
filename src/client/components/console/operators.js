@@ -3,11 +3,12 @@ import { Table, Breadcrumb, message, Button, Modal, Form, Input } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
 import ActionDropDown from './actionDropDown';
 import { formatDate } from './utils';
+import { emptyTableLocale } from './constants';
 
 const Search = Input.Search;
 const Confirm = Modal.confirm;
 
-class Operators extends Component {
+export default class Operators extends Component {
 
     state = {
         dataSource: [],
@@ -210,7 +211,7 @@ class Operators extends Component {
                     <Breadcrumb.Item>Operators</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <div style={{ padding: 24, background: '#fff' }}>
+                <div className="content-body">
                     <div className="table-deals">
                         <div className="table-search">
                             <Search placeholder="search email" style={{ width: 200 }}
@@ -229,11 +230,9 @@ class Operators extends Component {
                     </div>
 
                     <Table rowSelection={this.rowSelection} dataSource={dataSource} columns={columns}
-                           locale={{ emptyText: 'List is empty' }}/>
+                           locale={emptyTableLocale}/>
                 </div>
             </div>
         );
     }
 }
-
-export default Operators;

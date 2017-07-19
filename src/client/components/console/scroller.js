@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 
- class LimitedInfiniteScroll extends PureComponent {
+export default class LimitedInfiniteScroll extends PureComponent {
 
     static defaultProps = {
         pageLimit: 10,
@@ -138,5 +138,3 @@ import React, { PureComponent } from 'react';
         );
     }
 }
-
-export default LimitedInfiniteScroll;

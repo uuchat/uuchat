@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Login from '../login';
 
-class LoginView extends Component {
+export default class LoginView extends Component {
 
     render() {
         const loginProps = {
@@ -14,5 +14,3 @@ class LoginView extends Component {
         );
     }
 }
-
-export default LoginView;

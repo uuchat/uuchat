@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ChatMessageItem from '../chatMessageItem';
 
-class ChatList extends Component {
+export default class ChatList extends Component {
 
     state = {
         dataSource: []
@@ -46,5 +46,3 @@ class ChatList extends Component {
         );
     }
 }
-
-export default ChatList;

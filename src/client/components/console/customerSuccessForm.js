@@ -3,7 +3,7 @@ import { Modal, Form, Input, Tooltip, Icon } from 'antd';
 
 const FormItem = Form.Item;
 
-class CustomerSuccessForm extends Component {
+export default class CustomerSuccessForm extends Component {
 
     state = {
         confirmDirty: false
@@ -125,5 +125,3 @@ class CustomerSuccessForm extends Component {
         );
     }
 }
-
-export default CustomerSuccessForm;

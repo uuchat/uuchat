@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 import { Breadcrumb, Table, Button, message, Radio } from 'antd';
 import { getCustomerName, formatDate } from './utils';
-import { rateList } from './constants';
+import { rateList,emptyTableLocale } from './constants';
 
 const RadioGroup = Radio.Group;
 
-class Rates extends Component {
+export default class Rates extends Component {
 
     state = {
         csSource: [],
@@ -85,7 +85,7 @@ class Rates extends Component {
                     <Breadcrumb.Item>Rates</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <div style={{ padding: 24, background: '#fff' }}>
+                <div className="content-body">
                     <div className="table-deals">
                         <div className="table-search">
                             <RadioGroup onChange={this.handleRadioChange} value={this.state.rateValue}>
@@ -100,12 +100,9 @@ class Rates extends Component {
                         </div>
                     </div>
 
-                    <Table locale={{ emptyText: 'List is empty' }} dataSource={ dataSource } columns={ columns }/>
+                    <Table locale={ emptyTableLocale } dataSource={ dataSource } columns={ columns }/>
                 </div>
             </div>
         );
     }
 }
-
-export default Rates;
-
