@@ -80,7 +80,6 @@ function chatHistoryRoutes(app, middleware, controllers) {
     app.get('/chathistories/cs/:csid/latestmonth', controllers.chatHistoryController.getLatestMonthChats);
 }
 
-
 function consoleRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
 
@@ -89,6 +88,16 @@ function consoleRoutes(app, middleware, controllers) {
     app.get('/console/monthly', controllers.consoleController.getMonthlyData);
     app.get('/console/rates/report/month/:month', controllers.consoleController.getMonthlyRateReport);
     app.get('/console/rates/cs/:csid/month/:month', controllers.consoleController.getMonthlyRateList);
+}
+
+function shortcutRoutes(app, middleware, controllers){
+    app.get('/shortcuts', controllers.shortcutController.list);
+    app.post('/shortcuts', controllers.shortcutController.create);
+    app.patch('/shortcuts/:uuid', controllers.shortcutController.patch);
+    app.delete('/shortcuts/:uuid', controllers.shortcutController.delete);
+    app.get('/shortcuts/cs/:csid', controllers.shortcutController.list);
+    app.post('/shortcuts/cs/:csid', controllers.shortcutController.create);
+    app.get('/shortcuts/cs/:csid/all', controllers.shortcutController.listAll);
 }
 
 module.exports = function (app, middleware, callback) {
@@ -101,6 +110,7 @@ module.exports = function (app, middleware, callback) {
     offlineRoutes(router, middleware, controllers);
     chatHistoryRoutes(router, middleware, controllers);
     consoleRoutes(router, middleware, controllers);
+    shortcutRoutes(router, middleware, controllers);
 
     router.use(function (err, req, res, next) {
         logger.error(err);
