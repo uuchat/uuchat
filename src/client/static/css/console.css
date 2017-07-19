@@ -53,6 +53,11 @@
     border-bottom: 0px solid transparent;
 }
 
+.content-body{
+    padding: 24px;
+    background: #fff;
+}
+
 .numberCard {
     padding: 32px;
     margin-bottom: 24px;
