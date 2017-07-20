@@ -1,5 +1,5 @@
 'use strict';
-var nconf = require('nconf');
+
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -9,6 +9,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 var WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
 var getClientEnvironment = require('./env');
 var paths = require('./paths');
+var base = require('./baseConfig');
 
 var publicPath = '/';
 var publicUrl = '';
@@ -18,10 +19,6 @@ var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&tim
 process.env.NODE_ENV = 'development';
 
 process.noDeprecation = true;
-
-nconf.argv().env().file({
-    file: path.join(__dirname, '../src/config.json')
-});
 
 module.exports = {
     context: __dirname,
@@ -49,19 +46,8 @@ module.exports = {
         filename: 'static/js/[name].js',
         publicPath: publicPath
     },
-    externals: {
-        'react': 'React',
-        'react-dom': 'ReactDOM',
-        'socket.io-client': 'io',
-        'moment': 'moment',
-        'moment/locale/zh-cn': 'moment.locale',
-    },
-    resolve: {
-        moduleExtensions: ['.js', '.json', '.jsx'],
-        alias: {
-            'react-native': 'react-native-web',
-        }
-    },
+    externals: base.externals,
+    resolve: base.resolve,
 
     module: {
         noParse: [ /socket.io-client/ ],
@@ -148,57 +134,11 @@ module.exports = {
             template: paths.searchHtml,
             chunks: ['search']
         }),
-        new CopyWebpackPlugin([
-            {
-                from: paths.appSrc + '/client/static/css/common.css',
-                to: paths.appBuild + '/static/css/common.css'
-            },
-            {
-                from: paths.appSrc + '/client/static/css/customer.css',
-                to: paths.appBuild + '/static/css/customer.css'
-            },
-            {
-                from: paths.appSrc + '/client/views/customer/storage.html',
-                to: paths.appBuild + '/storage.html'
-            },
-            {
-                from: paths.customerJS,
-                to: paths.appBuild + '/static/js/uuchat.js',
-                transform: function (content, absoluteFrom) {
-                    var result = content + '';
-                    //var data = result.replace(/'..\/..'\+/g, '');
-                    // return data.replace(/127.0.0.1:9688/g,
-                    //     nconf.get('app:address') + ':' + nconf.get('app:port'));
-                    return result.replace(/'..\/..'\+/g, '');
-                }
-            },
-            {
-                from: paths.customerLoaderJS,
-                to: paths.appBuild + '/static/js/loader.js',
-                // transform: function (content, absoluteFrom) {
-                //     var result = content + '';
-                //     return result.replace(/127.0.0.1:9688/g,
-                //         nconf.get('app:address') + ':' + nconf.get('app:port'));
-                // }
-            },
-            {
-                from: paths.customerHtml,
-                to: paths.appBuild + '/customer.html',
-                transform: function (content, absoluteFrom) {
-                    var result = content + '';
-                    return result.replace(/127.0.0.1:9688/g,
-                        nconf.get('app:address') + ':' + nconf.get('app:port'));
-                }
-            }
-        ]),
+        new CopyWebpackPlugin(base.copyWebpackPlugin),
         new webpack.DefinePlugin(env.stringified),
         new webpack.HotModuleReplacementPlugin(),
         new CaseSensitivePathsPlugin(),
         new WatchMissingNodeModulesPlugin(paths.appNodeModules)
     ],
-    node: {
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty'
-    }
+    node: base.node
 };

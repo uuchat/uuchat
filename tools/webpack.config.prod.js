@@ -1,6 +1,5 @@
 'use strict';
 
-var nconf = require('nconf');
 var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -11,39 +10,19 @@ var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 var paths = require('./paths');
 var getClientEnvironment = require('./env');
 
+var base = require('./baseConfig');
+
 var HappyPack = require('happypack');
 var FastUglifyJsPlugin = require('fast-uglifyjs-plugin');
 
-
+process.env.NODE_ENV = 'production';
 var publicPath = paths.servedPath;
-var shouldUseRelativeAssetPaths = publicPath === './';
 var publicUrl = publicPath.slice(0, -1);
 var env = getClientEnvironment(publicUrl);
 
 var cssFilename = 'static/css/[name].[contenthash:8].css';
 
-var UglifyJS;
-var CleanCSS;
-
-try {
-    UglifyJS = require("uglify-js");
-} catch (e) {
-    UglifyJS = require("webpack/node_modules/uglify-js");
-}
-
-try {
-    CleanCSS =  require('clean-css');
-} catch (e) {
-    CleanCSS =  require('html-webpack-plugin/node_modules/html-minifier/node_modules/clean-css');
-}
-
-
 process.noDeprecation = true;
-
-nconf.argv().env().file({
-    file: path.join(__dirname, '../src/config.json')
-});
-
 
 if (env.stringified['process.env'].NODE_ENV !== '"production"') {
     throw new Error('Production builds must have NODE_ENV=production.');
@@ -93,20 +72,8 @@ module.exports = {
         chunkFilename: 'static/js/[name].[chunkhash:8].chunk.js',
         publicPath: publicPath
     },
-    externals: {
-        'react': 'React',
-        'react-dom': 'ReactDOM',
-        'socket.io-client': 'io',
-        'moment': 'moment',
-        'moment/locale/zh-cn': 'moment.locale',
-    },
-    resolve: {
-        modules: ["node_modules"],
-        moduleExtensions: ['.js', '.json', '.jsx'],
-        alias: {
-            'react-native': 'react-native-web',
-        }
-    },
+    externals: base.externals,
+    resolve: base.resolve,
     module: {
         noParse: [ /socket.io-client/ ],
         rules: [
@@ -233,61 +200,7 @@ module.exports = {
             },
             minify: minify
         }),
-        new CopyWebpackPlugin([
-            {
-                from: paths.appSrc + '/client/static/css/common.css',
-                to: paths.appBuild + '/static/css/common.css',
-                transform: function (content, absoluteFrom) {
-                    var result = new CleanCSS({}).minify((content + ''));
-                    return result.styles;
-                }
-            },
-            {
-                from: paths.appSrc + '/client/static/css/customer.css',
-                to: paths.appBuild + '/static/css/customer.css',
-                transform: function (content, absoluteFrom) {
-                    var result = new CleanCSS({}).minify((content + ''));
-                    return result.styles;
-                }
-            },
-            {
-                from: paths.appSrc + '/client/views/customer/storage.html',
-                to: paths.appBuild + '/storage.html'
-            },
-            {
-                from: paths.customerJS,
-                to: paths.appBuild + '/static/js/uuchat.js',
-                transform: function (content, absoluteFrom) {
-                    var code = (content + '').replace(/'..\/..'\+/g, '');
-                    var result = UglifyJS.minify(code, {fromString: true});
-                    if (result.error) {
-                        result = UglifyJS.minify(code); //UglifyJS3
-                    }
-                    return result.code;
-                }
-            },
-            {
-                from: paths.customerLoaderJS,
-                to: paths.appBuild + '/static/js/loader.js',
-                transform: function (content, absoluteFrom) {
-                    var code = (content + '');
-                    var result = UglifyJS.minify(code, {fromString: true});
-                    if (result.error) {
-                        result = UglifyJS.minify(code); //UglifyJS3
-                    }
-                    return result.code;
-                }
-            },
-            {
-                from: paths.customerHtml,
-                to: paths.appBuild + '/customer.html',
-                transform: function (content, absoluteFrom) {
-                    var result = (content + '').replace(/127.0.0.1:9688/g,
-                        nconf.get('app:address') + ':' + nconf.get('app:port'));
-                    return result;
-                }
-            }
-        ]),
+        new CopyWebpackPlugin(base.copyWebpackPlugin),
 
         new webpack.DefinePlugin({
             'process.env': {
@@ -298,9 +211,5 @@ module.exports = {
             fileName: 'asset-manifest.json'
         })
     ],
-    node: {
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty'
-    }
+    node: base.node
 };
