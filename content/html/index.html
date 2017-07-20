@@ -1,262 +1,226 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html lang="en">
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-	<title>uuchat - A powerful customer success platform !</title>
-	<meta name="author" content="uuchat team" />
-	<meta name="description" content="A powerful customer success platform!" />
-	<meta name="keywords"  content="customer service, customer success, web chat" />
-	<meta name="Resource-type" content="Document" />
 
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
 
-	<link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.4/jquery.fullpage.min.css" />
-	<style>
-        body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,
-        form,fieldset,input,textarea,p,blockquote,th,td {
-            padding: 0;
-            margin: 0;
-        }
-        a{
-            text-decoration:none;
-        }
-        table {
-            border-spacing: 0;
-        }
-        fieldset,img {
-            border: 0;
-        }
-        address,caption,cite,code,dfn,em,strong,th,var {
-            font-weight: normal;
-            font-style: normal;
-        }
-        strong{
-            font-weight: bold;
-        }
-        ol,ul {
-            list-style: none;
-            margin:0;
-            padding:0;
-        }
-        caption,th {
-            text-align: left;
+    <title>uuchat - A powerful customer success platform !</title>
 
-        }
-        h1,h2,h3,h4,h5,h6 {
-            font-weight: normal;
-            font-size: 100%;
-            margin:0;
-            padding:0;
-            color:#444;
-        }
-        q:before,q:after {
-            content:'';
-        }
-        abbr,acronym { border: 0;
-        }
+    <!-- Bootstrap Core CSS -->
+    <link href="lib/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Plugin CSS -->
+    <link rel="stylesheet" href="lib/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="lib/simple-line-icons/css/simple-line-icons.css">
 
-        /* Custom CSS
-         * --------------------------------------- */
-        body{
-            font-family: arial,helvetica;
-            color: #333;
-            color: rgba(0,0,0,0.5);
-        }
-        h1{
-            font-size: 6em;
-        }
-		h2{
-			font-size: 4em;
-		}
-		h3{
-			font-size: 2em;
-			text-align: left;
-			width: 100%;
-		}
-        p{
-            font-size: 2em;
-        }
-		.intro {
-			width: 60%;
-			float: right;
-			margin: 0 15px;
-		}
-        .intro p{
-            width: 100%;
-            margin: 8px auto;
-            font-size: 1.5em;
-			text-align: left;
-        }
-        .section{
-            text-align:center;
-        }
-		.section::before
-		{
-			content: '';
-			position: fixed;
-			top: 0; right: 0; bottom: 0; left: 0;
-			-webkit-filter: blur(5px);
-			-moz-filter: blur(5px);
-			-ms-filter: blur(5px);
-			-o-filter: blur(5px);
-			filter: blur(5px);
-			filter: progid:DXImageTransform.
-			Microsoft.Blur(PixelRadius=4, MakeShadow=false);
-		}
-		.li_solid {
-			border: #ccc 1px solid;
-		}
-        #menu li {
-            display:inline-block;
-            margin: 0px 10px;
-            color: #2980b9;
-            background:#fff;
-            -webkit-border-radius: 9px;
-            border-radius: 9px;
-			vertical-align: middle;
-        }
-        #menu li.active{
-            background:#ccc;
-            color: #fff;
-        }
-        #menu li a{
-            text-decoration:none;
-            color: #2980b9;
-        }
-		#menu li img{
-			margin-top: 5px;
-		}
-        #menu li.active a:hover{
-            color: #000;
-        }
-        #menu li:hover{
-            background: rgba(255,255,255, 0.6);
-        }
-        #menu li a,
-        #menu li.active a{
-            padding: 9px 18px;
-            display:block;
-        }
-        #menu li.active a{
-            color: #fff;
-        }
-        #menu{
-            position:fixed;
-            top:0;
-            left:0;
-            height: 55px;
-			background: #fff;
-            z-index: 70;
-            width: 100%;
-            padding: 0;
-            margin:0;
-        }
-        #infoMenu ul{
-            padding: 0 40px;
-        }
-        #infoMenu li a{
-            display: block;
-            margin: 0 22px 0 0;
-            color: #333;
-        }
-        #infoMenu li a:hover{
-            text-decoration:underline;
-        }
-        #infoMenu li{
-            display:inline-block;
-            position:relative;
-        }
+    <!-- Theme CSS -->
+    <link href="css/new-age.css" rel="stylesheet">
 
-    </style>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
-	<!--[if IE]>
-		<script type="text/javascript">
-			 var console = { log: function() {} };
-		</script>
-	<![endif]-->
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.9.1/jquery-ui.min.js"></script>
-
-	<script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.4/vendors/scrolloverflow.min.js"></script>
-
-	<script type="text/javascript"
-            src="https://cdnjs.cloudflare.com/ajax/libs/fullPage.js/2.9.4/jquery.fullpage.min.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-			$('#fullpage').fullpage({
-                verticalCentered: true,
-				sectionsColor: ['#2980b9', '#16a085', '#27ae60', '#FFF'],
-				anchors: ['about', 'features', 'hire', 'footer'],
-				menu: '#menu',
-			});
-
-		});
-	</script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.min.css" />
+<!--[if lt IE 9]>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/github-fork-ribbon-css/0.2.0/gh-fork-ribbon.ie.min.css" />
+<![endif]-->
 
 </head>
-<body>
 
-<ul id="menu">
-	<li><img alt="uuchat" src="http://i.imgur.com/endrrcC.png" /></li>
-	<li class="li_solid" data-menuanchor="about"><a href="#about">About</a></li>
-	<li class="li_solid" data-menuanchor="features"><a href="#features">Features</a></li>
-	<li class="li_solid" data-menuanchor="hire"><a href="#hire">Hire</a></li>
-	<li style="float: right; margin: 0px 20px 0 0;"><a href="https://github.com/uuchat/uuchat" style="color: #f39c12;">
-		<img width="24px" height="24px"
-			 src="https://a248.e.akamai.net/assets.github.com/images/icons/emoji/octocat.png" /> Fork me on Github</a></li>
-</ul>
+<body id="page-top">
+    <a class="github-fork-ribbon right-top" href="https://github.com/uuchat/uuchat" title="Fork me on GitHub">Fork me on GitHub</a>
+    <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span> Menu <i class="fa fa-bars"></i>
+                </button>
+                <a class="navbar-brand page-scroll" href="#page-top">UUChat</a>
+            </div>
 
-<div id="fullpage">
-	<div class="section" id="section0">
-		<h2 style="color: #fff;">A open source</h2>
-		<h2 style="color: #fff;">customer success platform</h2>
-		<br />
-		<br />
-		<p style="color: #fff;">You can deploy own customer success platform in 5 minutes, and you can develop own features base on uuchat!</p>
-	</div>
-	<div class="section" id="section1">
-		<div class="intro">
-			<h2 style="text-align: left;">Features</h2>
-			<p> + chat with customer on web</p>
-			<p> + send text, image and emoji</p>
-			<p> + offline message</p>
-			<p> + customer rate</p>
-			<p> + not need install any software on computer</p>
-		</div>
-	</div>
-	<div class="section" id="section2">
-		<div class="intro">
-			<h2>We are Hire</h2>
-			<h3>JOB RESPONSIBILITIES: </h3>
-			<p>* Develop and build our open source customer success platform which named
-				uuChat (https://github.com/uuchat/uuchat), maintenance according to
-				product requirements or yourself improvement;</p>
-			<p>* On the basis of understanding the front-end development process, combined with the actual
-				front-end to establish or optimize tools to improve work efficiency;
-				to enhance the product user experience
-			</p>
-			<br />
-			<h3>REQUIRED SKILLS:</h3>
-			<p>* 1+ Years of JavaScript Development (Object-Oriented)</p>
-			<p>* Knowledge of Node.JS, NPM  and front-end debug tools </p>
-			<p>* Good team spirit, sense of responsibility, strong learning ability, excellent communication and cooperation ability. </p>
-			<br />
-			<h3>PREFERRED SKILLS:</h3>
-			<p>* Github has project over 500 stars ;</p>
-			<p>* React framework experience ;</p>
-		</div>
-	</div>
-	<div class="section fp-auto-height" id="section3">
-		<div class="myContent">
-			<h2> Built with ❤️ in shenzhen</h2>
-		</div>
-	</div>
-</div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a class="page-scroll" href="#demo">Demo</a>
+                    </li>
+                    <li>
+                        <a class="page-scroll" href="#features">features</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
 
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-5">
+                    <div class="device-container">
+                        <div class="device-mockup portrait white">
+                            <div class="device">
+                                <div class="screen">
+                                    <!-- Demo image for screen mockup, you can put an image here, some HTML, an animation, video, or anything else! -->
+                                    <img src="img/chat.jpg" class="img-responsive" alt="">
+                                </div>
+                                <div class="button">
+                                    <!-- You can hook the "home button" to some JavaScript events or just remove it -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-7">
+                    <div class="header-content">
+                        <div class="header-content-inner">
+                            <h1>customer success platform</h1>
+                            <h3>&nbsp;&nbsp;&nbsp;&nbsp;You can deploy own customer success platform in 5 minutes, and you can develop own features base on uuchat !</h3>
+                            <br />
+                            <a href="https://github.com/uuchat/uuchat" class="btn btn-outline btn-xl page-scroll">Start Now for Free!</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="demo" class="cta">
+        <div class="cta-content">
+            <div class="container" style="text-align: center;">
+                <h2>Chat with your visitors with browser anywhere.</h2>
+                <h3>Help customers who’s on your website and which they are visitor.</h3>
+                <br />
+                <a href="http://uuchat.io/demo" class="btn btn-outline btn-xl page-scroll">Start as customer</a>
+                <a href="http://uuchat.io/login" class="btn btn-outline btn-xl page-scroll">Start as customer success</a>
+                <a href="http://uuchat.io/console" class="btn btn-outline btn-xl page-scroll">Goto console</a>
+            </div>
+        </div>
+        <div class="overlay"></div>
+    </section>
+
+    <section id="features" class="features">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <div class="section-heading">
+                        <h2>Open Source, Powerful!</h2>
+                        <p class="text-muted">We provide base features of customer success platform, easy to deploy!</p>
+                        <hr>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="icon-present text-primary"></i>
+                                    <h3>Free to Use</h3>
+                                    <p class="text-muted">Download from github.com/uuchat/uuchat, install with 5 minutes to use uuchat!</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="icon-heart text-primary"></i>
+                                    <h3>Rate</h3>
+                                    <p class="text-muted">Let's customer to rate service quality, discover how to improve your product and experience.</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="icon-pie-chart text-primary"></i>
+                                    <h3>Analysis Console</h3>
+                                    <p class="text-muted">Ready to use HTML/CSS device mockups, no Photoshop required!</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                        <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="icon-camera text-primary"></i>
+                                    <h3>Mark and Transfer</h3>
+                                    <p class="text-muted">You can mark customer and easy to search, customer success can transfer customer to each other!</p>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="icon-target text-primary"></i>
+                                    <h3>Shortcut Reply</h3>
+                                    <p class="text-muted">Make easy to reply customer question, you can set which you are most replays !</p>
+                                    
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feature-item">
+                                    <i class="icon-lock-open text-primary"></i>
+                                    <h3>Open Source</h3>
+                                    <p class="text-muted">Since uuchat is BSD-3-Clause licensed, you can use it commercially!</p>
+                                </div>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div id="contact" class="contact">
+                <ul class="list-inline list-social">
+                    <li class="social-twitter">
+                        <a href="https://twitter.com/uuchats"><i class="fa fa-twitter"></i></a>
+                    </li>
+                    <li class="social-facebook">
+                        <a href="#"><i class="fa fa-facebook"></i></a>
+                    </li>
+                </ul>
+            </div>
+            <p style="color: #fff;">Built with <i class="fa fa-heart" style="color: #c00;"></i> in ShenZhen China !</p>
+        </div>
+    </footer>
+
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="lib/bootstrap/js/bootstrap.min.js"></script>
+
+    <!-- Plugin JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+
+    <!-- Theme JavaScript -->
+    <script src="js/new-age.min.js"></script>
+
+    <!-- begin uuchat code  -->
+<script type="text/javascript">
+    ;(function(u, c, h){
+        u.UUCHAT = (function(){
+            return {
+                domain: 'http://uuchat.io',
+                src: h
+            };
+        })();
+        var s = c.createElement('script'),
+                r=c.getElementsByTagName('script')[0];
+        s.async = 1;
+        s.src = u.UUCHAT.domain+h;
+        r.parentNode.insertBefore(s,r);
+
+    })(window, document, "/static/js/loader.js", );
+</script>
+<!-- end uuchat code  -->
 
 </body>
+
 </html>
