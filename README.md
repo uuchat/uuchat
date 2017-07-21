@@ -1,8 +1,6 @@
 ## <img alt="uuchat" src="http://i.imgur.com/endrrcC.png" />
 
-A powerful customer success platform !
-
-you can see demo on [http://uuchat.io](http://uuchat.io)
+A powerful customer success platform ! demo: [http://uuchat.io](http://uuchat.io)
 
 ## Requirements
 
@@ -79,13 +77,14 @@ more than 5, we suggest you use redis for session store.
 
 Copy and paste this code above the last `</body>` tag on your site.
 This code is fully asynchronous and won't delay the load time of your page.
+you can see in `build > customer.html` , like this: 
 ```
 <!-- begin uuchat code  -->
 <script type="text/javascript">
     ;(function(u, c, h){
         u.UUCHAT = (function(){
             return {
-                domain: 'http://<ip>:<port>',
+                domain: 'http://uuchat.io',
                 src: h
             };
         })();
