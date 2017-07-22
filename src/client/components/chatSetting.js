@@ -90,9 +90,10 @@ class ChatSetting extends Component{
         });
     }
     shortcutSet = () => {
+        let csid = this.props.csid;
         import('./console/shortcuts').then(s => {
             this.setState({
-                setContent: <s.default cisd={this.state.csid} />,
+                setContent: <s.default csid={csid} />,
                 isSetVisible: true
             });
         }).catch(e=>{});
