@@ -46,6 +46,16 @@ class ChatShortcut extends Component{
         let _self = this;
 
         if(shortCutLists.length > 0){
+            let newSC = localStorage.getItem("newShortcut");
+            if(newSC){
+                let newScObj = JSON.parse(newSC);
+                shortCutLists.shift({
+                    shortcut: newScObj.shortcut,
+                    msg:newScObj.msg
+                });
+                localStorage.setItem('newShortcut', "");
+            }
+
             this.setState({
                 isFetchList: true
             });
