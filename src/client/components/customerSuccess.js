@@ -506,7 +506,7 @@ class CustomerSuccess extends Component{
                     if(200 === d.code){
                         _self.state.socket.emit('cs.logout',function(type){});
                         _self.state.socket.close();
-                        window.location.href = '/';
+                        window.location.href = '/login';
                     }
                 })
                 .catch(function(e){
