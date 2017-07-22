@@ -3,7 +3,7 @@
 var async = require('async');
 var nconf = require('nconf');
 var _ = require('lodash');
-var Shortcut = require('../database/shortcut');
+var Shortcut = require('../cache/shortcut');
 var utils = require('../utils');
 
 var shortcutController = module.exports;
@@ -19,28 +19,45 @@ shortcutController.get = function (req, res, next) {
 
 shortcutController.create = function (req, res, next) {
     var shortcut = {
-        csid: req.params.csid || '',
+        csid: req.body.csid || '',
         shortcut: req.body.shortcut,
-        message: req.body.message,
-        type: req.params.csid ? 1 : 0
+        msg: req.body.msg,
+        type: req.body.csid ? 1 : 0
     };
 
-    Shortcut.create(shortcut, function (err, data) {
-        if (err) return next(err);
+    if (!shortcut.shortcut) return res.json({code: 9001, msg: 'shortcut_null'});
 
-        return res.json({code: 200, msg: 'success create'});
+    Shortcut.create(shortcut, function (err, data) {
+        if (err) {
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                return res.json({
+                    code: 9002, msg: 'shortcut_already_used'
+                });
+            }
+            return next(err);
+        }
+
+
+        return res.json({code: 200, msg: data});
     });
 };
 
 shortcutController.patch = function (req, res, next) {
     var shortcut = {
         shortcut: req.body.shortcut,
-        message: req.body.message
+        msg: req.body.msg
     };
     var condition = {uuid: req.params.uuid};
 
     Shortcut.update(shortcut, condition, function (err, data) {
-        if (err) return next(err);
+        if (err) {
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                return res.json({
+                    code: 9002, msg: 'shortcut_already_used'
+                });
+            }
+            return next(err);
+        }
 
         return res.json({code: 200, msg: 'success update'});
     });
@@ -60,12 +77,11 @@ shortcutController.list = function (req, res, next) {
     var csid = req.params.csid || '';
 
     var condition = getCondition(csid);
-    var order = [['createdAt', 'DESC']];
 
-    var pageNum = utils.parsePositiveInteger(req.query.pageNum);
-    var pageSize = 10;
+    var order = [['shortcut', 'ASC']];
+    if (req.query.sortField) order = [[req.query.sortField, req.query.sortOrder === 'ascend' ? 'ASC' : 'DESC']];
 
-    Shortcut.listAndCount(condition, order, pageSize, pageNum, function (err, data) {
+    Shortcut.listAndCount(condition, order, function (err, data) {
         if (err) return next(err);
 
         return res.json({code: 200, msg: data});
@@ -77,14 +93,19 @@ shortcutController.listAll = function (req, res, next) {
 
     if (!csid) return res.json({code: 9000, msg: 'csid_null'});
 
-    var condition = getCondition(csid);
-    var attributes = ['type', 'shortcut', 'message'];
+    var condition = {
+        $or: [
+            getCondition(''),
+            getCondition(csid)
+        ]
+    };
+    var attributes = ['type', 'shortcut', 'msg'];
 
     Shortcut.listAll(attributes, condition, function (err, data) {
         if (err) return next(err);
 
         // remove repeat shortcut
-        var msg = _.uniqBy(_.orderBy(data, ['type'],['desc']), 'shortcut');
+        var msg = _.uniqBy(_.orderBy(data, ['type'], ['desc']), 'shortcut');
 
         // remove property:type
         msg = _.map(msg, function (item) {

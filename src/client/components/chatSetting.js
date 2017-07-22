@@ -8,6 +8,8 @@ class ChatSetting extends Component{
             isAccountShow: false,
             isPasswordShow: false,
             isUploading: false,
+            isSetVisible: false,
+            setContent: '',
             percent: 0,
             avatar: require('../static/images/contact.png')
         };
@@ -22,7 +24,7 @@ class ChatSetting extends Component{
     accountSave = () => {
         let name = this.refs.name.refs.input.value,
             displayName = this.refs.displayName.refs.input.value,
-            that = this;
+            _self = this;
 
         if(name !==''){
             fetch('/customersuccesses/'+this.props.csid, {
@@ -37,7 +39,7 @@ class ChatSetting extends Component{
             .then(function(d){
                 if(200 === d.code){
                     message.success('Save success!');
-                    that.setState({
+                    _self.setState({
                         isAccountShow: false
                     });
                 }
@@ -56,7 +58,7 @@ class ChatSetting extends Component{
         });
     }
     passwordSave = (e) => {
-        let that = this,
+        let _self = this,
             passwd = this.refs.passwd.refs.input.value.replace(/^\s$/g, ''),
             cpasswd = this.refs.cpasswd.refs.input.value.replace(/^\s$/g, '');
 
@@ -77,7 +79,7 @@ class ChatSetting extends Component{
         .then(function(d){
             if(200 === d.code){
                 message.success('Change passwd success!');
-                that.setState({
+                _self.setState({
                     isPasswordShow: false
                 });
                 window.location.href = '/';
@@ -87,11 +89,26 @@ class ChatSetting extends Component{
             message.error(e, 4);
         });
     }
+    shortcutSet = () => {
+        import('./console/shortcuts').then(s => {
+            this.setState({
+                setContent: <s.default cisd={this.state.csid} />,
+                isSetVisible: true
+            });
+        }).catch(e=>{});
+    }
+    shortcutClose = () => {
+        this.setState({
+            isSetVisible: false
+        });
+    }
     render(){
-        let that = this,
+        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible} = this.state,
+            {csid, avatarHandle, name} = this.props,
+            _self = this,
             props = {
                 name: 'avatars',
-                action: '/customersuccesses/'+this.props.csid+'/avatar',
+                action: '/customersuccesses/'+csid+'/avatar',
                 accept: 'image/*',
                 showUploadList: false,
                 headers: {
@@ -101,25 +118,25 @@ class ChatSetting extends Component{
                     let file = info.file;
                     if(file.status === 'uploading'){
                         if(info.event){
-                            that.setState({
+                            _self.setState({
                                 isUploading: true,
                                 percent: Math.ceil(info.event.percent)
                             });
                         }
                     }else if(file.status === 'done') {
-                        if(200 === info.file.response.code){
+                        if(200 === file.response.code){
                             let photo = file.response.msg.photo;
                             localStorage.setItem('uuchat.avatar', photo);
-                            that.props.avatarHandle(photo);
+                            avatarHandle(photo);
                             setTimeout(function(){
-                                that.setState({
+                                _self.setState({
                                     avatar: photo,
                                     isUploading: false
                                 });
                             }, 800);
                         }
                     }else if(file.status === 'error') {
-                        message.error(info.file.name+' file upload failed.');
+                        message.error(file.name+' file upload failed.');
                     }
                 }
             };
@@ -128,8 +145,8 @@ class ChatSetting extends Component{
             <ul className="customerSuccess-setting">
                 <li onClick={this.accountHandle}>Your account
                     <Modal
-                        title={"Editing "+this.props.name}
-                        visible={this.state.isAccountShow}
+                        title={"Editing "+name}
+                        visible={isAccountShow}
                         cancelText="Cancel"
                         okText="Save"
                         onCancel={this.accountHandle}
@@ -142,17 +159,17 @@ class ChatSetting extends Component{
                             </div>
                             <div className="account-item">
                                 <p>Display name</p>
-                                <Input defaultValue={(localStorage['uuchat.displayName'] !=='' ? localStorage['uuchat.displayName'] : this.props.name)} ref="displayName" />
+                                <Input defaultValue={(localStorage['uuchat.displayName'] !=='' ? localStorage['uuchat.displayName'] : name)} ref="displayName" />
                             </div>
                             <div className="account-item">
                                 <p>Username</p>
-                                <Input defaultValue={this.props.name} ref="name" />
+                                <Input defaultValue={name} ref="name" />
                             </div>
                             <div className="account-item">
                                 <p>Operator photo(100x100)</p>
                                 <div className="avatar-box">
-                                    <img src={(localStorage['uuchat.avatar'] !=='' ? localStorage['uuchat.avatar'] : this.state.avatar)} alt="" />
-                                    <div className="avatar-process" style={{display: that.state.isUploading ? 'block' : 'none'}}>{that.state.percent}%</div>
+                                    <img src={(localStorage['uuchat.avatar'] !=='' ? localStorage['uuchat.avatar'] : avatar)} alt="" />
+                                    <div className="avatar-process" style={{display: isUploading ? 'block' : 'none'}}>{percent}%</div>
                                 </div>
                                 <div className="avatar-upload"><Upload {...props}><Icon type="upload" /> Upload </Upload> </div>
                             </div>
@@ -162,7 +179,7 @@ class ChatSetting extends Component{
                 <li onClick={this.passwordHandle}>Change password
                     <Modal
                         title="Change Password"
-                        visible={this.state.isPasswordShow}
+                        visible={isPasswordShow}
                         cancelText="Cancel"
                         okText="Save"
                         onCancel={this.passwordHandle}
@@ -174,6 +191,17 @@ class ChatSetting extends Component{
                             <p>Confirn</p>
                             <Input type="password" placeholder="comfirn password" ref="cpasswd" />
                         </div>
+                    </Modal>
+                </li>
+                <li onClick={this.shortcutSet}>Shortcut settings
+                    <Modal
+                        title="Shortcuts"
+                        visible={isSetVisible}
+                        onCancel={this.shortcutClose}
+                        width="88%"
+                        footer={null}
+                    >
+                          {setContent}
                     </Modal>
                 </li>
             </ul>

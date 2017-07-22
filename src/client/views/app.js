@@ -15,7 +15,7 @@ ReactDOM.render(
     <BrowserRouter basename="/">
         <div style={{height: '100%'}}>
             <Switch>
-                <Route exact path="/" component={LoginView}  />
+                <Route exact path="/login" component={LoginView}  />
                 <Route exact path="/chat" component={CustomerSuccessView}  />
                 <Route exact path="/register" component={RegisterView} />
             </Switch>

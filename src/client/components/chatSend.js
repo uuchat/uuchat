@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import { Input, Icon, Upload, message, Modal, Progress } from 'antd';
+import ChatShortcut from './chatSendShortcut';
 import EmojiPicker from './chatEmoji';
 import {cutStr} from './utils';
 
+let shortListIndex=0;
 
 class ChatSend extends Component{
 
     constructor(props){
         super(props);
         this.state = {
-            percent: 0,
             isSendReady: false,
             isEmojiShow: false,
-            textereaValue: "",
             socket: props.socket,
-            isShowProcess: false
+            isShowProcess: false,
+            isShortShow: false,
+            percent: 0,
+            textereaValue: ""
         };
     }
 
@@ -25,7 +28,15 @@ class ChatSend extends Component{
         this.props.statusHandle(1);
     }
     blurHandle = () => {
+        let that = this;
         this.props.statusHandle(2);
+
+        setTimeout(function(){
+            that.setState({
+                isShortShow: false
+            });
+        }, 500);
+
     }
     textFocusHandle = () => {
         this.setState({
@@ -38,14 +49,93 @@ class ChatSend extends Component{
         let msgVal = e.target.value,
             msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
-        if(msgVal.length > 0){
+        if(msgVal.length > 0 && !this.state.isShortShow){
             this.props.sendMessage(cutStr(msg, 256));
+            this.setState({
+                isEmojiShow: false,
+                textereaValue: "",
+                isSendReady: true
+            });
         }
-        this.setState({
-            isEmojiShow: false,
-            textereaValue: "",
-            isSendReady: true
-        });
+
+    }
+    onKeyDown = (e) => {
+        if(e.keyCode === 38 || e.keyCode === 40 || e.keyCode === 9){
+            e.preventDefault();
+        }
+    }
+
+    onKeyup = (e) => {
+
+        let tg = e.target,
+            val = tg.value,
+            keyCode = e.keyCode,
+            sIndex = tg.selectionStart,
+            cmd = val.substr(sIndex - 2, 2);
+
+        if(keyCode === 38 && this.state.isShortShow){
+            shortListIndex--;
+            this.shortCutsSelector(-1);
+        }
+        if(keyCode === 40 && this.state.isShortShow){
+            shortListIndex++;
+            this.shortCutsSelector(1);
+        }
+
+        if(/(\s;)|(^;$)/.test(cmd)){
+            this.setState({
+                isShortShow: true
+            });
+        }else{
+            this.setState({
+                isShortShow: false
+            });
+        }
+
+        if(keyCode === 9 || keyCode === 13){
+            if(document.querySelector('.short-list .on')){
+                this.insertToCursorPosition(val.replace(new RegExp(cmd, 'g'), ' '), ' '+document.querySelector('.short-list .on .key-value').innerHTML+' ');
+            }
+            this.setState({
+                isShortShow: false
+            });
+        }
+    }
+
+    shortCutSelecterClick = (val) => {
+        this.insertToCursorPosition(this.state.textereaValue.replace(/(\s;)|(^;)/g, ''), ' '+val);
+    }
+
+    shortCutsSelector = (direction) => {
+        if(document.querySelector('.shortListUl li')){
+            let h = document.querySelector('.short-list li').offsetHeight,
+                list = document.querySelectorAll('.short-list li'),
+                len = list.length,
+                shortList = document.querySelector('.short-list');
+
+            if(direction === 1){
+                if(shortListIndex*h >= shortList.offsetHeight){
+                    shortList.scrollTop += direction*h;
+                }
+                if(shortListIndex*h >= shortList.scrollHeight){
+                    shortList.scrollTop = 0;
+                    shortListIndex = 0;
+                }
+            }else{
+                if(shortListIndex < 0){
+                    shortListIndex = len - 1;
+                    shortList.scrollTop = shortListIndex * h;
+                }
+                if((shortListIndex + 1) *h <= shortList.scrollTop){
+                    shortList.scrollTop += direction*h;
+                }
+            }
+
+            for(let i = 0; i < len; i++){
+                list[i].className = list[i].className.replace(/\son/g, '');
+            }
+            document.querySelector('.s-'+shortListIndex) && (document.querySelector('.s-'+shortListIndex).className += ' on');
+        }
     }
 
     emojiBtnHandle = () => {
@@ -99,10 +189,18 @@ class ChatSend extends Component{
         });
     }
 
+    beforeUpload = (file) => {
+        const isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error('Image must smaller than 2MB!');
+        }
+        return isLt2M;
+    }
+
     render(){
         let {sendMessage, cid, csid} = this.props,
-            {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue} = this.state,
-            that = this,
+            {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue, isShortShow} = this.state,
+            _self = this,
             props = {
                 name: 'image',
                 action: '/messages/customer/'+cid+'/cs/'+csid+'/image',
@@ -110,12 +208,13 @@ class ChatSend extends Component{
                 headers: {
                     authorization: 'authorization-text',
                 },
+                beforeUpload: _self.beforeUpload,
                 onChange(info) {
                     let status = info.file.status;
 
                     if(status === 'uploading'){
                         if(info.event){
-                            that.setState({
+                            _self.setState({
                                 isShowProcess: true,
                                 percent: Math.ceil(info.event.percent)
                             });
@@ -125,13 +224,13 @@ class ChatSend extends Component{
                             sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original+'|'+info.file.response.msg.w+'|'+info.file.response.msg.h);
                         }
                         message.success(info.file.name+' file uploaded successfully', 2, function(){
-                            that.setState({
+                            _self.setState({
                                 isShowProcess: false
                             });
                         });
                     }else if(status === 'error') {
                         message.error(info.file.name+' file upload failed.', 2, function(){
-                            that.setState({
+                            _self.setState({
                                 isShowProcess: false
                             });
                         });
@@ -159,12 +258,15 @@ class ChatSend extends Component{
                     </div>
                 </div>
                 <div className="chat-text">
+                {isShortShow && <ChatShortcut shortCutSelecterClick={this.shortCutSelecterClick} csid={csid} isShow={isShortShow}  />}
                 <Input
                     type="textarea"
                     className="chat-textarea"
                     onPressEnter={this.sendMessage}
-                    placeholder={isSendReady ? "" : "Input text and press enter to send(max 256 words)"}
+                    placeholder={isSendReady ? "" : "Enter message.Type ;to bring up shortcuts."}
                     onChange={this.textChangeHandle}
+                    onKeyUp={this.onKeyup}
+                    onKeyDown={this.onKeyDown}
                     value={textereaValue}
                     onFocus={this.textFocusHandle}
                     onBlur={this.blurHandle}

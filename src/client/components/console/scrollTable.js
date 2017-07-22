@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Spin } from 'antd';
 import LimitedInfiniteScroll from './scroller';
-import { formatDate } from './utils';
 
 export default class ScrollTable extends Component {
 
@@ -18,7 +17,7 @@ export default class ScrollTable extends Component {
                     <td>{renderCustomer(item.cid, item)}</td>
                     <td>{item.csName}</td>
                     <td>{item.csEmail}</td>
-                    <td>{formatDate(item.updatedAt)}</td>
+                    <td>{item.updatedAt}</td>
                 </tr>
             );
         });

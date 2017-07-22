@@ -22,8 +22,9 @@ Shortcut.findById = function (uuid, callback) {
 Shortcut.create = function (shortcut, callback) {
 
     models.Shortcut.create(shortcut).then(function (data) {
+        var pureData = data.get({plain: true});
 
-        return callback(null, data);
+        return callback(null, pureData);
 
     }).catch(function (err) {
         logger.error(err);
@@ -58,17 +59,13 @@ Shortcut.delete = function (condition, callback) {
     });
 };
 
-Shortcut.listAndCount = function (condition, order, pageSize, pageNum, callback) {
+Shortcut.listAndCount = function (condition, order, callback) {
 
     order = order || [['createdAt', 'DESC']];
-    pageSize = pageSize || 10;
-    pageNum = pageNum || 0;
 
     var filter = {
         where: condition,
-        order: order,
-        offset: pageSize * pageNum,
-        limit: pageSize
+        order: order
     };
 
     models.Shortcut.findAndCountAll(filter).then(function (data) {
@@ -84,14 +81,41 @@ Shortcut.listAndCount = function (condition, order, pageSize, pageNum, callback)
 
 Shortcut.listAll = function (attributes, condition, callback) {
 
-    attributes = attributes || ['type', 'csid', 'shortcut', 'message'];
+    attributes = attributes || ['type', 'csid', 'shortcut', 'msg'];
 
     models.Shortcut.findAll({
         attributes: attributes,
         where: condition
     }).then(function (data) {
 
-        return callback(null, data);
+        var pureData = _.map(data, function (item) {
+            return item.get({plain: true});
+        });
+
+        return callback(null, pureData);
+
+    }).catch(function (err) {
+        logger.error(err);
+
+        return callback(err);
+    });
+};
+
+Shortcut.findAll = function (condition, order, callback) {
+    order = order || [['createdAt', 'DESC']];
+
+    var filter = {
+        where: condition,
+        order: order
+    };
+
+    models.Shortcut.findAll(filter).then(function (data) {
+
+        var pureData = _.map(data, function (item) {
+            return item.get({plain: true});
+        });
+
+        return callback(null, pureData);
 
     }).catch(function (err) {
         logger.error(err);

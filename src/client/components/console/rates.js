@@ -15,7 +15,6 @@ export default class Rates extends Component {
     state = {
         dataSource: [],
         sortedInfo: null,
-        loading: false,
         month: defaultMonth
     };
 
@@ -47,15 +46,12 @@ export default class Rates extends Component {
                     });
 
                     _component.setState({
-                        dataSource: data.msg,
-                        loading: false
+                        dataSource: data.msg
                     });
                 } else {
-                    _component.setState({loading: false});
                     message.error(data.msg, 4);
                 }
             }).catch(function (e) {
-                _component.setState({loading: false});
                 message.error(e.message, 4);
             });
     };
@@ -84,7 +80,7 @@ export default class Rates extends Component {
     };
 
     render() {
-        let { dataSource,sortedInfo, month, loading } = this.state;
+        let { dataSource,sortedInfo, month } = this.state;
         sortedInfo = sortedInfo || {};
 
         let defaultPickerMonth = moment(month);
@@ -111,7 +107,6 @@ export default class Rates extends Component {
                         dataSource={ dataSource }
                         sortedInfo={ sortedInfo }
                         month={ month || defaultMonth }
-                        loading={ loading }
                         onChange={ this.handleChange }/>
                 </div>
             </div>

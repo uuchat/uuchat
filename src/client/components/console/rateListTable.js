@@ -19,7 +19,7 @@ export default class RateListTable extends Component {
                 sorter: true, sortOrder: sorter.columnKey === 'rate' && sorter.order
             },
             {
-                title: 'createdAt', dataIndex: 'createdAt', key: 'createdAt', render: formatDate,
+                title: 'createdAt', dataIndex: 'createdAt', key: 'createdAt', render: (value) => formatDate(value),
                 sorter: true, sortOrder: sorter.columnKey === 'createdAt' && sorter.order
             }
         ];

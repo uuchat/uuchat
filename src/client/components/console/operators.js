@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
-import { Table, Breadcrumb, message, Button, Modal, Form, Input } from 'antd';
+import { Table, Breadcrumb, message, Button, Modal, Input } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
 import ActionDropDown from './actionDropDown';
-import { formatDate } from './utils';
 import { emptyTableLocale } from './constants';
+import { sortFilterByProps, formatDate } from './utils';
 
 const Search = Input.Search;
 const Confirm = Modal.confirm;
@@ -14,7 +14,9 @@ export default class Operators extends Component {
         dataSource: [],
         StoreDataSource: [],
         visible: false,
-        searchText: ''
+        searchText: '',
+        sortedInfo: {},
+        pagination: {}
     };
 
     rowSelection = {
@@ -27,11 +29,10 @@ export default class Operators extends Component {
 
     showModal = () => this.setState({visible: true});
 
-    handleOk = (e) => {
+    handleOk = (form, e) => {
         e.preventDefault();
 
         const _self = this;
-        const form = _self.form;
 
         form.validateFields((err, values) => {
             if (err) return;
@@ -70,25 +71,31 @@ export default class Operators extends Component {
         });
     };
 
-    saveFormRef = (form) => this.form = form;
     handleCancel = () => this.setState({visible: false});
 
     handleSearchChange = (e) => {
         e.preventDefault();
 
-        const { StoreDataSource } = this.state;
+        let { pagination, dataSource, StoreDataSource } = this.state;
 
         const reg = new RegExp(e.target.value, 'gi');
 
+        dataSource = StoreDataSource.filter((record) => {
+            return record.email.match(reg);
+        })
+
+        pagination.total = dataSource.length;
+
         this.setState({
             searchText: e.target.value,
-            dataSource: StoreDataSource.filter((record) => {
-                return record.email.match(reg);
-            })
+            dataSource,
+            pagination
         });
     };
 
     getDataSource = () => {
+        let { pagination } = this.state;
+
         const _component = this;
 
         fetch('/customersuccesses')
@@ -105,15 +112,17 @@ export default class Operators extends Component {
                             avatar: item.photo,
                             name: item.name,
                             email: item.email,
-                            createTime: formatDate(item.createdAt)
+                            createAt: item.createdAt
                         });
                     });
+
+                    pagination.total = sourceList.length;
+
                     let st = {
+                        pagination,
                         dataSource: sourceList,
                         StoreDataSource: sourceList
                     };
-
-                    st.StoreDataSource = sourceList;
 
                     if (data.msg[0]) st.superUser = data.msg[0].csid;
 
@@ -126,7 +135,7 @@ export default class Operators extends Component {
             });
     };
 
-    handleMenuClick = function (e, value) {
+    handleMenuClick = (e, value) => {
         const _self = this;
         if (e.key === '1') {
             _self.showModal();
@@ -140,7 +149,7 @@ export default class Operators extends Component {
         }
     };
 
-    onDeleteItem = function (key) {
+    onDeleteItem = (key) => {
         const _self = this;
 
         fetch('/customersuccesses/' + key, {
@@ -171,14 +180,32 @@ export default class Operators extends Component {
         );
     };
 
+    handleChange = (pagination, filters, sorter) => {
+        this.setState({pagination, sortedInfo: sorter});
+    };
+
+    handleReset = (value) => {
+        let { pagination, dataSource, StoreDataSource } = this.state;
+        dataSource = StoreDataSource;
+
+        pagination.current = 1;
+        pagination.total = StoreDataSource.length;
+
+        // Init current page when searching.
+        this.setState({
+            pagination,
+            sortedInfo: {},
+            searchText: '',
+            dataSource
+        });
+    };
+
     componentDidMount () {
         this.getDataSource();
     };
 
     render() {
-        const WrappedCustomerSuccessForm = Form.create()(CustomerSuccessForm);
-
-        let { dataSource, visible, confirmLoading } = this.state;
+        let { dataSource, visible, confirmLoading, sortedInfo, searchText, pagination } = this.state;
 
         let avatarRender = (avatar) =>
             (<img className="user-avatar"
@@ -192,13 +219,20 @@ export default class Operators extends Component {
                 title: 'avatar', dataIndex: 'avatar', key: 'avatar', render: avatarRender
             },
             {
-                title: 'email', dataIndex: 'email', key: 'email'
+                title: 'email', dataIndex: 'email', key: 'email',
+                sorter: (a, b) => sortFilterByProps(a, b, 'email'),
+                sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order
             },
             {
-                title: 'name', dataIndex: 'name', key: 'name'
+                title: 'name', dataIndex: 'name', key: 'name',
+                sorter: (a, b) => sortFilterByProps(a, b, 'name'),
+                sortOrder: sortedInfo.columnKey === 'name' && sortedInfo.order
             },
             {
-                title: 'createTime', dataIndex: 'createTime', key: 'createTime'
+                title: 'createTime', dataIndex: 'createAt', key: 'createAt',
+                sorter: (a, b) => sortFilterByProps(a, b, 'createAt'),
+                sortOrder: sortedInfo.columnKey === 'createAt' && sortedInfo.order,
+                render:(value) => formatDate(value)
             },
             {
                 title: 'Action', dataIndex: '', key: 'csid', render: this.renderAction
@@ -214,23 +248,29 @@ export default class Operators extends Component {
                 <div className="content-body">
                     <div className="table-deals">
                         <div className="table-search">
-                            <Search placeholder="search email" style={{ width: 200 }}
+                            <Search placeholder="search email"
+                                    style={{ width: 200 }}
+                                    value={ searchText }
                                     onChange={ this.handleSearchChange }/>
                         </div>
                         <div className="table-operations">
+                            <Button type="ghost" onClick={ this.handleReset }>Reset</Button>
                             <Button type="ghost" onClick={this.showModal}>Create</Button>
-                            <WrappedCustomerSuccessForm
+                            <CustomerSuccessForm
                                 visible={visible}
                                 onOk={this.handleOk}
                                 confirmLoading={confirmLoading}
                                 onCancel={this.handleCancel}
-                                ref={this.saveFormRef}
                                 />
                         </div>
                     </div>
 
-                    <Table rowSelection={this.rowSelection} dataSource={dataSource} columns={columns}
-                           locale={emptyTableLocale}/>
+                    <Table rowSelection={this.rowSelection}
+                           dataSource={dataSource}
+                           columns={columns}
+                           locale={emptyTableLocale}
+                           pagination={ pagination }
+                           onChange={ this.handleChange }/>
                 </div>
             </div>
         );

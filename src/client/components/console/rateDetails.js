@@ -12,11 +12,14 @@ export default class Rates extends Component {
     state = {
         csSource: [],
         dataSource: [],
+        pagination: {},
         month: moment().format('YYYY-MM'),
         rateValue: null
     };
 
     getDataSource = ()=> {
+        let { pagination } = this.state;
+
         const _component = this;
 
         let queryUrl = '/console/rates/cs/';
@@ -25,6 +28,7 @@ export default class Rates extends Component {
         queryUrl += "?1=1";
 
         if (this.state.rateValue) queryUrl += "&rate=" + this.state.rateValue;
+        if (pagination.current) queryUrl += "&pageNum=" + (pagination.current - 1);
 
         fetch('/customersuccesses')
             .then((res) => res.json())
@@ -41,6 +45,8 @@ export default class Rates extends Component {
             .then((data) => {
                 if (200 === data.code) {
 
+                    pagination.total = data.msg.count;
+
                     data.msg.rows.forEach((item) => {
                         item.key = item.uuid;
                         let csFilters = this.state.csSource.filter((element) => element.csid === item.csid);
@@ -49,7 +55,8 @@ export default class Rates extends Component {
                     });
 
                     _component.setState({
-                        dataSource: data.msg.rows
+                        dataSource: data.msg.rows,
+                        pagination
                     });
                 } else {
                     message.error(data.msg, 4);
@@ -65,18 +72,26 @@ export default class Rates extends Component {
 
     handleRadioChange = (e) => {
         let rateValue = e.target.value;
-        this.setState({rateValue}, this.getDataSource);
+
+        let { pagination } = this.state;
+        pagination.current = 1;
+
+        this.setState({ rateValue, pagination }, this.getDataSource);
+    };
+
+    handleChange = (pagination, filters, sorter) => {
+        this.setState({pagination}, this.getDataSource);
     };
 
     render() {
-        let { dataSource, month } = this.state;
+        let { dataSource, month, pagination } = this.state;
 
         const columns = [
             {title: 'email', dataIndex: 'csEmail', key: 'csEmail'},
             {title: 'name', dataIndex: 'csName', key: 'csName'},
             {title: 'customer', dataIndex: 'cid', key: 'cid', render: getCustomerName},
             {title: 'rate', dataIndex: 'rate', key: 'rate'},
-            {title: 'createAt', dataIndex: 'createdAt', key: 'createdAt', render: formatDate}
+            {title: 'createAt', dataIndex: 'createdAt', key: 'createdAt', render: (value)=>formatDate(value)}
         ];
 
         return (
@@ -100,7 +115,11 @@ export default class Rates extends Component {
                         </div>
                     </div>
 
-                    <Table locale={ emptyTableLocale } dataSource={ dataSource } columns={ columns }/>
+                    <Table locale={ emptyTableLocale }
+                           dataSource={ dataSource }
+                           columns={ columns }
+                           pagination={ pagination }
+                           onChange={ this.handleChange }/>
                 </div>
             </div>
         );

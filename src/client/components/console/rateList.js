@@ -18,7 +18,6 @@ export default class RateList extends Component {
         csSource: [],
         dataSource: [],
         pagination: {},
-        loading: false,
         filter: this.filter,
         sorter: {}
     };
@@ -27,8 +26,6 @@ export default class RateList extends Component {
         const _component = this;
 
         let { filter,pagination, sorter } = this.state;
-
-        _component.setState({loading: true});
 
         let queryUrl = '/rates?1=1';
 
@@ -65,15 +62,12 @@ export default class RateList extends Component {
 
                     _component.setState({
                         pagination: pagination,
-                        dataSource: data.msg.rows,
-                        loading: false
+                        dataSource: data.msg.rows
                     });
                 } else {
-                    _component.setState({loading: false});
                     message.error(data.msg, 4);
                 }
             }).catch((e) => {
-                _component.setState({loading: false});
                 message.error(e.message, 4);
             })
     }
@@ -90,13 +84,12 @@ export default class RateList extends Component {
         // Init current page when searching.
         let {pagination} = this.state;
         pagination.current = 1;
-        this.setState({pagination});
 
-        this.setState({filter: value}, this.getDataSource);
+        this.setState({pagination, filter: value}, this.getDataSource);
     };
 
     render() {
-        let { csSource, dataSource, pagination, loading, sorter } = this.state;
+        let { csSource, dataSource, pagination, sorter } = this.state;
 
         const searchProps = {
             filter: this.filter,
@@ -116,7 +109,6 @@ export default class RateList extends Component {
                     <RateListTable locale={ emptyTableLocale }
                            dataSource={ dataSource }
                            pagination={ pagination }
-                           loading={ loading }
                            sorter={ sorter }
                            onChange={ this.handleChange }/>
                 </div>

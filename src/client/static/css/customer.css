@@ -41,6 +41,8 @@
     width: 400px;
     background-color: #fff;
     border-radius: 5px;
+    -webkit-transition: all 0.7s ease-in-out;
+    transition: all 0.7s ease-in-out;
 }
 .chat-console .chat-body{
     height: 590px;
@@ -50,8 +52,8 @@
     border-radius: 10px;
     box-shadow: 0 5px 40px rgba(0,0,0,.16)!important;
 }
-.chat-console .chat-body.chat-body-hidden{
-    display: none;
+.chat-console.chat-console-hidden{
+    bottom: -100%;
 }
 .chat-console .chat-header{
     padding: 0 20px;

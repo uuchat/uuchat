@@ -1,0 +1,85 @@
+.shortcut{
+    position: absolute;
+    border:1px solid #000;
+    left: 5px;
+    bottom:105px;
+    z-index: 1000;
+    width: calc(100% - 10px);
+    max-height: 220px;
+    background: #fff;
+    box-shadow: 0px 2px 4px rgba(0,0,0,0.25);
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+.short-head{
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #e1e1e1;
+    padding: 8px 10px;
+    font-size: 12px;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+}
+
+.short-list{
+    overflow-y: auto;
+    max-height: 180px;
+}
+.short-list .shortListUl li{
+    font-size: 13px;
+    width: 100%;
+    padding: 9px 15px;
+    line-height: 150%;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.short-list .shortListUl li:hover,
+.short-list .shortListUl li.on{
+    background-color: #faed94;
+}
+
+.short-list li:last-child{
+    border-radius: 0 0 5px 5px;
+}
+.short-list li .key-name{
+    display:inline-block;
+    margin-right: 8px;
+    width: 130px;
+    float: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+    font-weight: bold;
+}
+.short-list li .key-value{
+    display:block;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+.short-empty{
+    padding: 20px 10px;
+    font-size: 14px;
+    font-weigth: bold;
+}
+
+/* short-item-setting */
+.short-item-setting{
+    display: none;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    border-radius: 100%;
+    background: url(../images/setting.png) no-repeat center center;
+    background-size: 100% 100%;
+}
+.short-item-setting:hover{
+    background: url(../images/setting_selected.png) no-repeat center center;
+    background-size: 100% 100%;
+}
+.set-item-label{
+    margin-top: 10px;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 14px;
+}

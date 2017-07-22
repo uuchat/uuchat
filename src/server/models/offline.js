@@ -23,7 +23,7 @@ module.exports = function (sequelize, DataTypes) {
             status: {
                 type: DataTypes.INTEGER,
                 defaultValue: 0,
-                comment: '0: pending，1: processing， 2: finished',
+                comment: '0: pending，1: processing， 2: finished'
             },
             csid: {
                 type: DataTypes.STRING(64),

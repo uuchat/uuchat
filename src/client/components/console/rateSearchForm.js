@@ -174,9 +174,9 @@ class RateSearchForm extends Component {
                 <Col {...TwoColProps} xl={{ span: 10 }} md={{ span: 24 }} sm={{ span: 24 }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <div>
-                            <Button style={{ marginLeft: 8 }} type="primary" size="large" className="margin-right"
+                            <Button style={{ marginLeft: 8 }} type="primary" className="margin-right"
                                     onClick={ this.handleSubmit }>Search</Button>
-                            <Button style={{ marginLeft: 8 }} size="large" onClick={ this.handleReset }>Reset</Button>
+                            <Button style={{ marginLeft: 8 }} onClick={ this.handleReset }>Reset</Button>
                         </div>
                     </div>
                 </Col>

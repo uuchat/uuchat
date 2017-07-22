@@ -47,7 +47,7 @@ class ChatMessage extends Component{
     optionSelect = (e) => {
         e.stopPropagation();
         let type = e.target.getAttribute('data-type'),
-            that = this;
+            _self = this;
 
         if('m' === type){
             this.setState({
@@ -55,10 +55,10 @@ class ChatMessage extends Component{
             });
         }else if('t' === type){
             let onlineLists = [],
-                ocl = that.state.OnlineCustomerList;
+                ocl = _self.state.OnlineCustomerList;
 
             for(let i in ocl){
-                if(i !== that.props.csid){
+                if(i !== _self.props.csid){
                     onlineLists.push({
                         name: i,
                         info: ocl[i]
@@ -66,26 +66,26 @@ class ChatMessage extends Component{
                 }
             }
             onlineListModal = Modal.info({
-                    title: 'Online customer success lists',
-                    okText: 'Ok',
-                    content: (
-                        <div>
-                            {onlineLists.length > 0 ? onlineLists.map((cs, i) =>
-                                    <div key={i} className="online-item">
-                                        <span className="online-avatar fl"> {cs.info[1] !=='' ? <img width="100%" src={cs.info[1]} alt="" /> : <img width="100%" src={require('../static/images/contact.png')} alt="" /> }</span>
-                                        <span className="online-name fl"> {cs.info[0]}</span>
-                                        <span className="online-btn fr" data-csid={cs.name} onClick={this.transfer}>Transfer</span>
-                                    </div>
-                            ) :
-                                <h2>There has no another online customerSuccess!</h2>
-                            }
-                       </div>
-                    ),
-                    onOk(){
-                        that.setState({
-                            isMarkShow: false
-                        });
-                   }
+                title: 'Online customer success lists',
+                okText: 'Ok',
+                content: (
+                    <div>
+                        {onlineLists.length > 0 ? onlineLists.map((cs, i) =>
+                                <div key={i} className="online-item">
+                                    <span className="online-avatar fl"> {cs.info[1] !=='' ? <img width="100%" src={cs.info[1]} alt="" /> : <img width="100%" src={require('../static/images/contact.png')} alt="" /> }</span>
+                                    <span className="online-name fl"> {cs.info[0]}</span>
+                                    <span className="online-btn fr" data-csid={cs.name} onClick={this.transfer}>Transfer</span>
+                                </div>
+                        ) :
+                            <h2>There has no another online customerSuccess!</h2>
+                        }
+                   </div>
+                ),
+                onOk(){
+                    _self.setState({
+                        isMarkShow: false
+                    });
+               }
             });
         }
     }
@@ -103,15 +103,16 @@ class ChatMessage extends Component{
         });
     }
     markColorSelect = (e) => {
-        let t = e.target,
-            that = this,
+        let {cid, csid, socket} = this.props,
+            t = e.target,
+            _self = this,
             markedList = this.state.markedList;
 
         if(t.tagName.toLowerCase() === 'span') {
-            this.props.socket.emit('cs.marked', this.props.cid, this.props.csid, parseInt(t.innerHTML, 10), function (type) {
+            socket.emit('cs.marked', cid, csid, parseInt(t.innerHTML, 10), function (type) {
                 if (type) {
-                    markedList[that.props.cid]=parseInt(t.innerHTML, 10);
-                    that.setState({
+                    markedList[cid]=parseInt(t.innerHTML, 10);
+                    _self.setState({
                         markedList: markedList
                     });
                 }
@@ -127,13 +128,13 @@ class ChatMessage extends Component{
         }
     }
     transfer = (e) => {
-        let t = e.target,
-            csid = t.getAttribute('data-csid'),
-            that = this;
+        let {socket, cid, transferHandle} = this.props,
+            t = e.target,
+            csid = t.getAttribute('data-csid');
 
-        this.props.socket.emit('cs.dispatch', csid, this.props.cid, function(success){
+       socket.emit('cs.dispatch', csid, cid, function(success){
             if(success){
-                that.props.transferHandle(that.props.cid);
+                transferHandle(cid);
                 onlineListModal.destroy();
             }
         });
@@ -141,20 +142,20 @@ class ChatMessage extends Component{
     }
 
     render(){
-        let markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
-            cIndex = String2int(this.props.cid),
+        let {markedList, visible, isMarkShow} = this.state,
+            {cid, marked, chatRoleName, messageLists, csAvatar} = this.props,
+            markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
+            cIndex = String2int(cid),
             avatar = '',
-            marked = this.state.markedList[this.props.cid] ? this.state.markedList[this.props.cid] : this.props.marked;
+            hasMarked = markedList[cid] ? markedList[cid] : marked;
 
-
-        avatar = <div className={"avatar-color avatar-icon-"+cIndex} >{this.props.chatRoleName.substr(0,1).toUpperCase()}</div>;
-
+        avatar = <div className={"avatar-color avatar-icon-"+cIndex} >{chatRoleName.substr(0,1).toUpperCase()}</div>;
 
         return (
             <div className="chat-message">
-                <div className="message-title">U-{this.props.chatRoleName.toUpperCase()}
+                <div className="message-title">U-{chatRoleName.toUpperCase()}
                     <div className="chat-tags fr" onClick={this.marked}>...
-                         <ul className="more-options" style={{display: !this.state.isMarkShow ? 'none' : 'block'}} onClick={this.optionSelect}>
+                         <ul className="more-options" style={{display: !isMarkShow ? 'none' : 'block'}} onClick={this.optionSelect}>
                             <span className="caret"></span>
                             <h3>List Actions <span className="fr options-close" onClick={this.markOk}>╳</span></h3>
                             <li data-type="m">Mark</li>
@@ -164,13 +165,13 @@ class ChatMessage extends Component{
                             title="Mark customer for favorite color"
                             okText="Ok"
                             cancelText="Cancel"
-                            visible={this.state.visible}
+                            visible={visible}
                             onOk={this.markOk}
                             onCancel={this.markCancel}
                         >
                             <div className="mark-color-list" onClick={this.markColorSelect}>
                                 {markArr.map((m ,i)=>
-                                        <span key={i} className={"mark-tag tag-"+m+(marked === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
+                                        <span key={i} className={"mark-tag tag-"+m+(hasMarked === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
                                 )}
                             </div>
                         </Modal>
@@ -178,8 +179,14 @@ class ChatMessage extends Component{
                 </div>
                 <div className="message-lists" ref="list">
                     {
-                        this.props.messageLists && this.props.messageLists.map((msg, index) =>
-                            <ChatMessageItem key={index} ownerType={msg.msgType} ownerAvatar={ (msg.msgType === 1 ) ? this.props.csAvatar : avatar } ownerText={msg.msgText} time={msg.msgTime} />
+                        messageLists && messageLists.map((msg, index) =>
+                            <ChatMessageItem
+                                    key={index}
+                                    ownerType={msg.msgType}
+                                    ownerAvatar={ (msg.msgType === 1 ) ? csAvatar : avatar }
+                                    ownerText={msg.msgText} time={msg.msgTime}
+                                    shortSetting={true}
+                                    />
                         )
                     }
                 </div>

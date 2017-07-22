@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ChatMessageShortcut from './chatMessageShortcut';
 
 class ChatMessageItem extends Component{
 
@@ -10,7 +11,7 @@ class ChatMessageItem extends Component{
             str += '<p class="offline-email">name: '+msg.name+'</p>';
             str += '<p class="offline-email">email: '+msg.email+'</p>';
         }else {
-            str = msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
+            str = msg.replace(/&nbsp;/g, ' ').replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
                 return '<a href="' + match + '" target="_blank">' + match + '</a>';
             });
         }
@@ -28,13 +29,14 @@ class ChatMessageItem extends Component{
         return str;
     }
     render(){
-        let {ownerAvatar, ownerType, time, ownerText} = this.props,
+        let {ownerAvatar, ownerType, time, ownerText, shortSetting} = this.props,
             imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
             imgSrc = ownerText,
             isImg = false,
             isOld = false,
             img = '',
-            flClass = 'fl';
+            flClass = 'fl',
+            shortCutSet;
 
         if(typeof time === 'string'){
             time = new Date(time);
@@ -56,6 +58,7 @@ class ChatMessageItem extends Component{
 
         if(ownerType===1 || ownerType === 3){
             flClass = isOld ? 'fr done' : 'fr';
+            shortCutSet = shortSetting ? <ChatMessageShortcut content={isImg ? '' : ownerText} /> : '';
         }
 
         return (
@@ -70,6 +73,7 @@ class ChatMessageItem extends Component{
                         : this.msgConver(ownerText)
                     }
                 </div>
+                {shortCutSet}
             </div>
         );
 

@@ -96,7 +96,6 @@ function shortcutRoutes(app, middleware, controllers){
     app.patch('/shortcuts/:uuid', controllers.shortcutController.patch);
     app.delete('/shortcuts/:uuid', controllers.shortcutController.delete);
     app.get('/shortcuts/cs/:csid', controllers.shortcutController.list);
-    app.post('/shortcuts/cs/:csid', controllers.shortcutController.create);
     app.get('/shortcuts/cs/:csid/all', controllers.shortcutController.listAll);
 }
 

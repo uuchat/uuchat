@@ -24,14 +24,16 @@ describe('controllers', function () {
      });
      });*/
 
-    var cid, csid, mid, rid;
+    var baseUrl = 'http://127.0.0.1:9688';
+
+    var cid, csid, mid, rid, sid;
 
     describe('#customerSuccess', function () {
 
         describe('POST /register', function () {
             it('should response with json', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/register',
+                    url: baseUrl + '/register',
                     form: {email: 'jian@163.com', passwd: 'qaz123'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -46,7 +48,7 @@ describe('controllers', function () {
         describe('POST /login', function () {
             it('should response with json', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/login',
+                    url: baseUrl + '/login',
                     form: {email: 'jian@163.com', passwd: 'qaz123'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -60,7 +62,7 @@ describe('controllers', function () {
         describe('POST /logout', function () {
             it('should response with json', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/logout',
+                    url: baseUrl + '/logout',
                     form: {email: 'jian@163.com', passwd: 'qaz123'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -74,7 +76,7 @@ describe('controllers', function () {
         describe('PATCH /customersuccesses/:csid', function () {
             it('should response with json', function (done) {
                 request.patch({
-                    url: 'http://127.0.0.1:9688' + '/customersuccesses/' + csid,
+                    url: baseUrl + '/customersuccesses/' + csid,
                     form: {name: 'suse'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -89,10 +91,10 @@ describe('controllers', function () {
             it('should response with success', function (done) {
                 var formData = {
                     // Pass data via Streams
-                    avatars: fs.createReadStream(__dirname + '/../../client/static/images/user_avatar.png')
+                    avatars: fs.createReadStream(__dirname + '/../../client/static/images/contact.png')
                 };
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/customersuccesses/' + csid + '/avatar',
+                    url: baseUrl + '/customersuccesses/' + csid + '/avatar',
                     formData: formData
                 }, function (err, res) {
                     assert.ifError(err);
@@ -105,7 +107,7 @@ describe('controllers', function () {
 
         describe('GET /customersuccesses/:csid/avatar', function () {
             it('should response with success', function (done) {
-                request.get('http://127.0.0.1:9688' + '/customersuccesses/' + csid + '/avatar', function (err, res) {
+                request.get(baseUrl + '/customersuccesses/' + csid + '/avatar', function (err, res) {
                     assert.ifError(err);
                     var customersuccess = JSON.parse(res.body);
                     assert.equal(customersuccess.code, 200);
@@ -117,7 +119,7 @@ describe('controllers', function () {
         describe('PUT /customersuccesses/:csid/passwd', function () {
             it('should response with success', function (done) {
                 request.put({
-                    url: 'http://127.0.0.1:9688' + '/customersuccesses/' + csid + '/passwd',
+                    url: baseUrl + '/customersuccesses/' + csid + '/passwd',
                     form: {passwd: 'resetpasswd'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -131,7 +133,7 @@ describe('controllers', function () {
         describe('DELETE /customersuccesses/:csid', function () {
             it('should response with json', function (done) {
                 request.delete({
-                    url: 'http://127.0.0.1:9688' + '/customersuccesses/' + csid
+                    url: baseUrl + '/customersuccesses/' + csid
                 }, function (err, res) {
                     assert.ifError(err);
                     var cs = JSON.parse(res.body);
@@ -147,7 +149,7 @@ describe('controllers', function () {
         describe('POST /customers/', function () {
             it('should response with success', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/customers',
+                    url: baseUrl + '/customers',
                     form: {url: 'uuchat.com'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -161,7 +163,7 @@ describe('controllers', function () {
 
         describe('GET /customers/:uuid', function () {
             it('should response with rate data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/customers/' + cid, function (err, res) {
+                request.get(baseUrl + '/customers/' + cid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -172,7 +174,7 @@ describe('controllers', function () {
 
         describe('GET /customers/cid/:cid', function () {
             it('should response with success', function (done) {
-                request.get('http://127.0.0.1:9688' + '/customers/cid/' + cid, function (err, res) {
+                request.get(baseUrl + '/customers/cid/' + cid, function (err, res) {
                     assert.ifError(err);
                     var customer = JSON.parse(res.body);
                     assert.equal(customer.code, 200);
@@ -184,7 +186,7 @@ describe('controllers', function () {
         describe('PATCH /customers/:uuid', function () {
             it('should response with success', function (done) {
                 request.patch({
-                    url: 'http://127.0.0.1:9688' + '/customers/' + cid,
+                    url: baseUrl + '/customers/' + cid,
                     form: {name: 'customer', ip: '127.0.0.1'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -198,7 +200,7 @@ describe('controllers', function () {
         describe('PATCH /customers/cid/:cid', function () {
             it('should response with success', function (done) {
                 request.patch({
-                    url: 'http://127.0.0.1:9688' + '/customers/cid/' + cid,
+                    url: baseUrl + '/customers/cid/' + cid,
                     form: {}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -212,7 +214,7 @@ describe('controllers', function () {
 
         describe('DELETE /customers/:uuid', function () {
             it('should response with rate data', function (done) {
-                request.delete('http://127.0.0.1:9688' + '/customers/' + cid, function (err, res) {
+                request.delete(baseUrl + '/customers/' + cid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -227,7 +229,7 @@ describe('controllers', function () {
         describe('POST /messages/customer/:cid/cs/customer:csid', function () {
             it('should response with success', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/messages/customer/' + cid + '/cs/' + csid,
+                    url: baseUrl + '/messages/customer/' + cid + '/cs/' + csid,
                     form: {message: 'hello'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -241,7 +243,7 @@ describe('controllers', function () {
 
         describe('GET /messages/customer/:cid/cs/customer:csid', function () {
             it('should response with object list', function (done) {
-                request.get('http://127.0.0.1:9688' + '/messages/customer/' + cid + '/cs/' + csid, function (err, res) {
+                request.get(baseUrl + '/messages/customer/' + cid + '/cs/' + csid, function (err, res) {
                     assert.ifError(err);
                     var message = JSON.parse(res.body);
                     assert.equal(message.code, 200);
@@ -254,10 +256,10 @@ describe('controllers', function () {
             it('should response with success', function (done) {
                 var formData = {
                     // Pass data via Streams
-                    image: fs.createReadStream(__dirname + '/../../client/static/images/user_avatar.png')
+                    image: fs.createReadStream(__dirname + '/../../client/static/images/contact.png')
                 };
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/messages/customer/' + cid + '/cs/' + csid + '/image',
+                    url: baseUrl + '/messages/customer/' + cid + '/cs/' + csid + '/image',
                     formData: formData
                 }, function (err, res) {
                     assert.ifError(err);
@@ -270,7 +272,7 @@ describe('controllers', function () {
 
         describe('GET /messages/:uuid', function () {
             it('should response with message data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/messages/' + mid, function (err, res) {
+                request.get(baseUrl + '/messages/' + mid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -281,7 +283,7 @@ describe('controllers', function () {
 
         describe('GET /messages/customer/:cid', function () {
             it('should response with message data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/messages/customer/' + cid, function (err, res) {
+                request.get(baseUrl + '/messages/customer/' + cid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -292,7 +294,7 @@ describe('controllers', function () {
 
         describe('DELETE /messages/:uuid', function () {
             it('should response with message data', function (done) {
-                request.delete('http://127.0.0.1:9688' + '/messages/' + mid, function (err, res) {
+                request.delete(baseUrl + '/messages/' + mid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -308,7 +310,7 @@ describe('controllers', function () {
         describe('POST /rates/', function () {
             it('should response with success', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/rates',
+                    url: baseUrl + '/rates',
                     form: {cid: cid, csid: csid, rate: 80}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -322,7 +324,7 @@ describe('controllers', function () {
 
         describe('GET /rates/report', function () {
             it('should response with rate data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/rates/report', function (err, res) {
+                request.get(baseUrl + '/rates/report', function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -334,7 +336,7 @@ describe('controllers', function () {
 
         describe('GET /rates/:uuid', function () {
             it('should response with rate data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/rates/' + rid, function (err, res) {
+                request.get(baseUrl + '/rates/' + rid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -345,7 +347,7 @@ describe('controllers', function () {
 
         describe('GET /rates/customer/:cid', function () {
             it('should response with rate data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/rates/customer/' + cid, function (err, res) {
+                request.get(baseUrl + '/rates/customer/' + cid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     done();
@@ -355,7 +357,7 @@ describe('controllers', function () {
 
         describe('GET /rates/customersuccess/:csid', function () {
             it('should response with rate data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/rates/customersuccess/' + csid, function (err, res) {
+                request.get(baseUrl + '/rates/customersuccess/' + csid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -367,7 +369,7 @@ describe('controllers', function () {
         describe('PATCH /rates/:uuid', function () {
             it('should response with success info', function (done) {
                 request.patch({
-                    url: 'http://127.0.0.1:9688' + '/rates/' + rid,
+                    url: baseUrl + '/rates/' + rid,
                     form: {rate: 90}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -379,7 +381,7 @@ describe('controllers', function () {
 
         describe('DELETE /rates/:uuid', function () {
             it('should response with rate data', function (done) {
-                request.delete('http://127.0.0.1:9688' + '/rates/' + rid, function (err, res) {
+                request.delete(baseUrl + '/rates/' + rid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -394,7 +396,7 @@ describe('controllers', function () {
         describe('POST /offlines', function () {
             it('should response with success', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/offlines',
+                    url: baseUrl + '/offlines',
                     form: {name: 'jian', email: 'j60017268@gmail.com', content: 'test'}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -412,7 +414,7 @@ describe('controllers', function () {
         describe('POST /chathistories/cs/:csid/customer/:cid', function () {
             it('should response with success', function (done) {
                 request.post({
-                    url: 'http://127.0.0.1:9688' + '/chathistories/cs/' + csid + '/customer/' + cid,
+                    url: baseUrl + '/chathistories/cs/' + csid + '/customer/' + cid,
                     form: {}
                 }, function (err, res) {
                     assert.ifError(err);
@@ -426,7 +428,7 @@ describe('controllers', function () {
 
         describe('GET /chathistories/cs/:csid', function () {
             it('should response with list', function (done) {
-                request.get('http://127.0.0.1:9688' + '/chathistories/cs/' + csid, function (err, res) {
+                request.get(baseUrl + '/chathistories/cs/' + csid, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -437,7 +439,7 @@ describe('controllers', function () {
 
         describe('GET /chathistories/cs/:csid/latestmonth', function () {
             it('should response with message data', function (done) {
-                request.get('http://127.0.0.1:9688' + '/chathistories/cs/' + csid + '/latestmonth', function (err, res) {
+                request.get(baseUrl + '/chathistories/cs/' + csid + '/latestmonth', function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -446,5 +448,104 @@ describe('controllers', function () {
             });
         });
 
+    });
+
+    describe('#shortcut', function () {
+
+        describe('POST /shortcuts', function () {
+            it('should response with success', function (done) {
+                request.post({
+                    url: baseUrl + '/shortcuts',
+                    form: {
+                        shortcuts:'hello',
+                        message:'Hello, welcome to uuchat.What is your problem?'
+                    }
+                }, function (err, res) {
+                    assert.ifError(err);
+                    var shortcut = JSON.parse(res.body);
+                    assert.equal(shortcut.code, 200);
+                    sid = shortcut.msg.uuid;
+                    done();
+                });
+            });
+        });
+
+        describe('POST /shortcuts/cs/:csid', function () {
+            it('should response with success', function (done) {
+                request.post({
+                    url: baseUrl + '/shortcuts/cs/' + csid,
+                    form: {
+                        shortcuts:'address',
+                        message:'Please send to shenzhen nanshan software park 4B#2F'
+                    }
+                }, function (err, res) {
+                    assert.ifError(err);
+                    var shortcut = JSON.parse(res.body);
+                    assert.equal(shortcut.code, 200);
+                    done();
+                });
+            });
+        });
+
+        describe('GET /shortcuts', function () {
+            it('should response with list', function (done) {
+                request.get(baseUrl + '/shortcuts', function (err, res) {
+                    assert.ifError(err);
+                    var data = JSON.parse(res.body);
+                    assert.equal(data.code, 200);
+                    done();
+                });
+            });
+        });
+
+        describe('GET /shortcuts/cs/:csid', function () {
+            it('should response with list', function (done) {
+                request.get(baseUrl + '/shortcuts/cs/' + csid, function (err, res) {
+                    assert.ifError(err);
+                    var data = JSON.parse(res.body);
+                    assert.equal(data.code, 200);
+                    done();
+                });
+            });
+        });
+    });
+
+    describe('GET /shortcuts/cs/:csid/all', function () {
+        it('should response with list', function (done) {
+            request.get(baseUrl + '/shortcuts/cs/' + csid + '/all', function (err, res) {
+                assert.ifError(err);
+                var data = JSON.parse(res.body);
+                assert.equal(data.code, 200);
+                done();
+            });
+        });
+    });
+
+    describe('PATCH /shortcuts/cs/:csid', function () {
+        it('should response with success', function (done) {
+            request.patch({
+                url: baseUrl + '/shortcuts/' + sid,
+                form: {
+                    shortcuts:'address',
+                    message:'Please send to shenzhen nanshan software park 1B'
+                }
+            }, function (err, res) {
+                assert.ifError(err);
+                var shortcut = JSON.parse(res.body);
+                assert.equal(shortcut.code, 200);
+                done();
+            });
+        });
+    });
+
+    describe('DELETE /shortcuts', function () {
+        it('should response with success', function (done) {
+            request.delete(baseUrl + '/shortcuts/' + sid, function (err, res) {
+                assert.ifError(err);
+                var data = JSON.parse(res.body);
+                assert.equal(data.code, 200);
+                done();
+            });
+        });
     });
 });

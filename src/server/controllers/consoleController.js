@@ -196,7 +196,7 @@ consoleController.getMonthlyRateReport = function (req, res, next) {
 
 consoleController.getMonthlyRateList = function (req, res, next) {
 
-    var condition = {};
+    var condition = {csid: req.params.csid};
 
     var monthInterval = getMonthInterval(req.params.month);
     condition.createdAt = {

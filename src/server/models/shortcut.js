@@ -23,7 +23,8 @@ module.exports = function (sequelize, DataTypes) {
             tableName: 'shortcut',
             indexes: [
                 {
-                    fields: ['type', 'csid']
+                    fields: ['type', 'csid', 'shortcut'],
+                    unique: true
                 }
             ]
         });

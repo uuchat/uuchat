@@ -115,13 +115,13 @@
             var ct = this.template(),
                 ctNode = document.createElement('div');
 
-            ctNode.setAttribute('class', 'chat-console');
+            ctNode.setAttribute('class', 'chat-console chat-console-hidden');
             ctNode.innerHTML = ct;
             doc.body.appendChild(ctNode);
         },
         ctrol: function(){
             addEvent($('.chat-btn'), 'click', function(e){
-                toggleClass($('.chat-body'), 'chat-body-hidden');
+                toggleClass($('.chat-console'), 'chat-console-hidden');
                 toggleClass(this, 'chat-btn-close');
 
                 $('.chat-nums').style.display = 'none';
@@ -234,7 +234,7 @@
             UUCT.socket.on('error', UUCT.socketError);
         },
         template: function(){
-            var str = '<div class="chat-body chat-body-hidden">';
+            var str = '<div class="chat-body">';
             str +='<div class="chat-header"><div class="chat-avatar"><img class="avatar-img" src="'+UUCT.domain+'/static/images/ua.png" /></div><div class="chat-name"></div></div>';
             str +='<div class="chat-main">';
             str +='<div class="chat-loading"><div class="bounce bounce1"></div><div class="bounce bounce2"></div><div class="bounce bounce3"></div></div>';
@@ -337,7 +337,7 @@
                 str += '<a href="'+UUCT.domain+'/'+imgSrc[1] +'" target="_blank">';
                 str += '<img src="'+UUCT.domain+'/'+imgSrc[0] +'" width="'+imgSrc[2]+'" height="'+imgSrc[3]+'" alt="" /></a>';
             }else{
-                str = msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#\/%?=~_|!:,.;]*)/g, function(match){
+                str = msg.replace(/&nbsp;/g, ' ').replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#\/%?=~_|!:,.;]*)/g, function(match){
                     return '<a href="'+match+'" target="_blank">'+match+'</a>';
                 });
             }
@@ -550,10 +550,22 @@
 
                 $('.chat-upload') && addEvent($('.chat-upload'), 'change', function(e){
 
-                   var data = new FormData();
-                    data.append('image', e.target.files[0]);
+                   var data = new FormData(),
+                       isLt2M = 0;
 
                     if(!e.target.files[0]){
+                        return false;
+                    }
+                    data.append('image', e.target.files[0]);
+
+                    isLt2M = e.target.files[0].size / 1024 /1024;
+
+                    if(isLt2M >= 2){
+                        $('.chat-msg').innerHTML += '<div class="upload-tips">Image must smaller than 2MB!</div>';
+                        this.value = '';
+                        setTimeout(function(){
+                            $('.upload-tips').parentNode.removeChild($('.upload-tips'));
+                        }, 2000);
                         return false;
                     }
 
@@ -574,7 +586,7 @@
                            if(d.loaded === d.total){
                                setTimeout(function(){
                                    $('.upload-tips').parentNode.removeChild($('.upload-tips'));
-                               }, 2000);
+                               }, 2500);
                            }
                        },
                        success: function(data){
@@ -657,7 +669,7 @@
                     vertify = false;
                 }
 
-                if(email === '' || !/^[0-9a-z_A-Z]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)){
+                if(email === '' || !/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)){
                     addClass($('.offline-email'), 'error');
                     vertify = false;
                 }

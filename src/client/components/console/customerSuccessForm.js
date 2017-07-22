@@ -3,7 +3,7 @@ import { Modal, Form, Input, Tooltip, Icon } from 'antd';
 
 const FormItem = Form.Item;
 
-export default class CustomerSuccessForm extends Component {
+class CustomerSuccessForm extends Component {
 
     state = {
         confirmDirty: false
@@ -50,7 +50,7 @@ export default class CustomerSuccessForm extends Component {
         return (
             <Modal title="Create customer session"
                    visible={visible}
-                   onOk={onOk}
+                   onOk={onOk.bind(this, this.props.form)}
                    confirmLoading={confirmLoading}
                    onCancel={onCancel}
                 >
@@ -125,3 +125,5 @@ export default class CustomerSuccessForm extends Component {
         );
     }
 }
+
+export default Form.create()(CustomerSuccessForm);

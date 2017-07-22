@@ -1,5 +1,7 @@
 "use strict";
 
+var moment = require('moment');
+var _ = require('lodash');
 var utils = require('../utils');
 var ChatHistory = require('../database/chatHistory');
 
@@ -65,6 +67,12 @@ chatHistoryController.search = function (req, res, next) {
 
     return ChatHistory.listAndCount(condition, order, pageSize, pageNum, function (err, chatHistories) {
         if (err) return next(err);
+
+        chatHistories.rows = chatHistories.rows.map(function(item){
+            item = item.get({plain: true});
+            item.updatedAt = moment(item.updatedAt).format('YYYY-MM-DD HH:mm');
+            return _.omit(item, ['marked', 'createdAt']);
+        });
 
         return res.json({code: 200, msg: chatHistories});
     });

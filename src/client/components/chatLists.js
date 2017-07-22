@@ -23,12 +23,12 @@ class ChatList extends Component{
         this.getList();
     }
     getList = () => {
-        let that = this;
+        let _self = this;
         fetch('/chathistories/cs/'+this.props.csid+'/latestmonth').then(function(d){
             return d.json();
         }).then(function(d){
             if(200 === d.code){
-                that.setState({
+                _self.setState({
                     hasList: true,
                     chatLists: d.msg
                 });
@@ -75,8 +75,8 @@ class ChatList extends Component{
     }
 
     fetchHistory = (cid, csid) => {
-        let that = this,
-            csAvatar = that.props.csAvatar ? that.props.csAvatar : require('../static/images/contact.png') ;
+        let _self = this,
+            csAvatar = _self.props.csAvatar ? _self.props.csAvatar : require('../static/images/contact.png') ;
 
         fetch('/messages/customer/'+cid+'/cs/'+csid)
             .then((data) => data.json())
@@ -92,7 +92,7 @@ class ChatList extends Component{
                 });
 
                 chatHistory[cid] = historyMessage;
-                that.renderHistroy(cid);
+                _self.renderHistroy(cid);
 
             })
             .catch(function(e){});
@@ -115,27 +115,26 @@ class ChatList extends Component{
 
     render(){
 
-        let state = this.state,
+        let {hisCid, chatLists, filterMark, hisTitle, isHisVis} = this.state,
             chatArr = [],
-            chatListsArr = state.chatLists,
             markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
-            chatHistoryData = chatHistory[state.hisCid],
-            historyColorIndex = String2int(state.hisCid);
+            chatHistoryData = chatHistory[hisCid],
+            historyColorIndex = String2int(hisCid);
 
-        for(let i = 0, l = chatListsArr.length; i < l; i++){
+        for(let i = 0, l = chatLists.length; i < l; i++){
 
-            if((state.filterMark !== 8) && state.filterMark !== chatListsArr[i].marked){
+            if((filterMark !== 8) && filterMark !== chatLists[i].marked){
                 continue;
             }
 
             chatArr.push(
-                <li key={i} data-cid={chatListsArr[i].cid}>
+                <li key={i} data-cid={chatLists[i].cid}>
                     <div className="chat-avatar fl">
-                        <span className={"avatar-icon avatar-icon-"+String2int(chatListsArr[i].cid)} >{chatListsArr[i].cid.substr(0,1).toUpperCase()}</span>
+                        <span className={"avatar-icon avatar-icon-"+String2int(chatLists[i].cid)} >{chatLists[i].cid.substr(0,1).toUpperCase()}</span>
                     </div>
                     <div className="chat-list-name fr">
-                        <h2 className="text-overflow">U-{chatListsArr[i].cid.substr(0, 6).toUpperCase()}</h2>
-                        <span className={"marked-tag marked-"+(chatListsArr[i].marked ? chatListsArr[i].marked  : '7')}></span>
+                        <h2 className="text-overflow">U-{chatLists[i].cid.substr(0, 6).toUpperCase()}</h2>
+                        <span className={"marked-tag marked-"+(chatLists[i].marked ? chatLists[i].marked  : '7')}></span>
                     </div>
                 </li>
             );
@@ -145,12 +144,12 @@ class ChatList extends Component{
             <div className="contact-list">
                 <div className="mark-filter mark-color-list" onClick={this.filterMarked}>Filter :&nbsp;&nbsp;<span data-marked="8" className="mark-tag mark-tag-all">All</span>
                     {markArr.map((m ,i)=>
-                        <span key={i} data-marked={i+1} className={"mark-tag tag-"+m+(state.filterMark === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
+                        <span key={i} data-marked={i+1} className={"mark-tag tag-"+m+(filterMark === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
                     )}
                 </div>
                 <Modal
-                    title={state.hisTitle}
-                    visible={state.isHisVis}
+                    title={hisTitle}
+                    visible={isHisVis}
                     footer={null}
                     onCancel={this.historyClose}
                     className={"history-header history-header-"+historyColorIndex}
@@ -159,7 +158,7 @@ class ChatList extends Component{
                         {chatHistoryData && chatHistoryData.map((msg ,index)=>
                             <ChatMessageItem key={index} ownerType={msg.msgType}
                                 ownerAvatar={ msg.msgAvatar ? msg.msgAvatar :
-                                    <div className={"avatar-color avatar-icon-"+historyColorIndex} >{state.hisCid.substr(0, 1).toUpperCase()}</div> }
+                                    <div className={"avatar-color avatar-icon-"+historyColorIndex} >{hisCid.substr(0, 1).toUpperCase()}</div> }
                                 ownerText={msg.msgText} time={msg.msgTime}
                             />
                         )}
