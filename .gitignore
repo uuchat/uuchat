@@ -33,6 +33,8 @@ start.sh
 coverage
 
 build
+dist
+config.json
 *.log
 
 /content/data/*
