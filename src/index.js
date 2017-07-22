@@ -109,7 +109,7 @@ module.exports.listen = function () {
 };
 
 function baseHtmlRoute(app, middlewareDev) {
-    app.use(express.static(path.join(__dirname, '../build')));
+    app.use(express.static(path.join(__dirname, '../dist')));
     //need filter css, js, images files
     app.use(fileFilters);
     app.use(session({
@@ -122,33 +122,37 @@ function baseHtmlRoute(app, middlewareDev) {
     }));
 
     app.get('/', middleware.jsCDN, function response(req, res) {
-        var html = path.join(__dirname, '../build/app.ejs');
+        var html = path.join(__dirname, '../dist/index.html');
+        htmlRender(middlewareDev, res, html);
+    });
+    app.get('/login', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../dist/app.ejs');
         var cdnFile = getCNDFile(req, null);
         cdnFile['socketIO'] = '';
         ejsRender(middlewareDev, cdnFile, res, html);
     });
     app.get('/demo', function response(req, res) {
-        var html = path.join(__dirname, '../build/customer.html');
+        var html = path.join(__dirname, '../dist/customer.html');
         htmlRender(middlewareDev, res, html);
     });
     app.get('/search', middleware.jsCDN, function response(req, res) {
-        var html = path.join(__dirname, '../build/search.ejs');
+        var html = path.join(__dirname, '../dist/search.ejs');
         ejsRender(middlewareDev, getCNDFile(req, null), res, html);
     });
     app.get('/console', middleware.jsCDN, function response(req, res) {
-        var html = path.join(__dirname, '../build/console.ejs');
+        var html = path.join(__dirname, '../dist/console.ejs');
         ejsRender(middlewareDev, getCNDFile(req, ['momentMinJS']), res, html);
     });
     app.get('/console/index', middleware.jsCDN, function response(req, res) {
         if (!req.session.csid) {
             res.redirect('/console');
         }
-        var html = path.join(__dirname, '../build/console.ejs');
+        var html = path.join(__dirname, '../dist/console.ejs');
         ejsRender(middlewareDev, getCNDFile(req, ['momentMinJS']), res, html);
     });
     app.get('/chat', middleware.jsCDN, function response(req, res) {
         if (!req.session.csid) {
-            res.redirect('/');
+            res.redirect('/login');
         }else {
             var customerSuccess = require('./server/socket.io/customerSuccess');
             var csid = req.session.csid;
@@ -157,11 +161,11 @@ function baseHtmlRoute(app, middlewareDev) {
                 customerSuccess.create({csid: csid, name: req.session.csName, photo: req.session.photo});
             }
         }
-        var html = path.join(__dirname, '../build/app.ejs');
+        var html = path.join(__dirname, '../dist/app.ejs');
         ejsRender(middlewareDev, getCNDFile(req, ['socketIO']), res, html);
     });
     app.get('/register', middleware.jsCDN, function response(req, res) {
-        var html = path.join(__dirname, '../build/app.ejs');
+        var html = path.join(__dirname, '../dist/app.ejs');
         var cdnFile = getCNDFile(req, null);
         cdnFile['socketIO'] = '';
         ejsRender(middlewareDev, cdnFile, res, html);
@@ -173,7 +177,7 @@ function baseHtmlRoute(app, middlewareDev) {
         res.setHeader("P3P", "CP=CAO PSA OUR"); // For IE set cookie
         req.inframUrl = req.query.r;
         setupSession(req, res);
-        var html = path.join(__dirname, '../build/storage.html');
+        var html = path.join(__dirname, '../dist/storage.html');
         //htmlRender(middlewareDev, res, html);
         ejsRender(middlewareDev, autoCNDFile(req, null, ['socketIO']), res, html);
     });
