@@ -20,7 +20,7 @@
   "contributors": "https://github.com/uuchat/uuchat/graphs/contributors",
   "license": "BSD-3-Clause",
   "dependencies": {
-    "antd": "^2.10.2",
+    "antd": "2.10.2",
     "async": "~2.4.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.17.1",
