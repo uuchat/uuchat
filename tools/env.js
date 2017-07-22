@@ -18,7 +18,7 @@ function getClientEnvironment(publicUrl) {
             'socketIO': "<%- socketIO %>",
             'momentMinJS': "<%- momentMinJS %>"
         });
-    var stringified = {
+    var stringFiled = {
         'process.env': Object
             .keys(raw)
             .reduce((env, key) => {
@@ -27,7 +27,7 @@ function getClientEnvironment(publicUrl) {
             }, {})
     };
 
-    return {raw, stringified};
+    return {raw, stringFiled};
 }
 
 module.exports = getClientEnvironment;

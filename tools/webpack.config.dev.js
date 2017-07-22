@@ -26,7 +26,7 @@ module.exports = {
     entry: {
         'app': [
             require.resolve('./polyfills'),
-            paths.appIndexJs,
+            paths.appIndexJS,
             hotMiddlewareScript
         ],
         'console': [
@@ -135,7 +135,7 @@ module.exports = {
             chunks: ['search']
         }),
         new CopyWebpackPlugin(base.copyWebpackPlugin),
-        new webpack.DefinePlugin(env.stringified),
+        new webpack.DefinePlugin(env.stringFiled),
         new webpack.HotModuleReplacementPlugin(),
         new CaseSensitivePathsPlugin(),
         new WatchMissingNodeModulesPlugin(paths.appNodeModules)

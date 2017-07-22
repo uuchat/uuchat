@@ -24,7 +24,7 @@ var cssFilename = 'static/css/[name].[contenthash:8].css';
 
 process.noDeprecation = true;
 
-if (env.stringified['process.env'].NODE_ENV !== '"production"') {
+if (env.stringFiled['process.env'].NODE_ENV !== '"production"') {
     throw new Error('Production builds must have NODE_ENV=production.');
 }
 
@@ -57,7 +57,7 @@ module.exports = {
             "antd/lib/pagination"
             ],
         "app": [
-            paths.appIndexJs
+            paths.appIndexJS
         ],
         'console': [
             paths.consoleIndexJS

@@ -49,9 +49,6 @@ var defaultConfig = {
         {
             from: paths.appSrc + '/client/static/css/customer.css',
             to: paths.appBuild + '/static/css/customer.css',
-            transform: function (content, absoluteFrom) {
-                return cleanCSS(content);
-            }
         },
         {
             from: paths.appSrc + '/client/views/customer/storage.html',
@@ -77,10 +74,31 @@ var defaultConfig = {
             from: paths.customerHtml,
             to: paths.appBuild + '/customer.html',
             transform: function (content, absoluteFrom) {
-                var result = (content + '').replace(/127.0.0.1:9688/g,
+                var result = (content + '').replace(/uuchat.io/g,
                     nconf.get('app:address') + ':' + nconf.get('app:port'));
                 return result;
             }
+        },
+        {
+            from: paths.appContent + '/html/index.html',
+            to: paths.appBuild + '/index.html',
+            transform: function (content, absoluteFrom) {
+                var result = (content + '').replace(/uuchat.io/g,
+                    nconf.get('app:address') + ':' + nconf.get('app:port'));
+                return result;
+            }
+        },
+        {
+            from: paths.appContent + '/html/static/css',
+            to: paths.appBuild + '/static/css'
+        },
+        {
+            from: paths.appContent + '/html/static/img',
+            to: paths.appBuild + '/static/img'
+        },
+        {
+            from: paths.appContent + '/html/static/js',
+            to: paths.appBuild + '/static/js'
         }
     ],
     node: {

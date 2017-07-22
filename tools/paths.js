@@ -44,9 +44,10 @@ function getServedPath(appPackageJson) {
 
 module.exports = {
     appIco: resolveApp('src/client/static/images/uuchat.ico'),
-    appBuild: resolveApp('build'),
+    appBuild: resolveApp('dist'),
+    appContent: resolveApp('content'),
     appHtml: resolveApp('src/client/views/app.html'),
-    appIndexJs: resolveApp('src/client/views/app.js'),
+    appIndexJS: resolveApp('src/client/views/app.js'),
     appPackageJson: resolveApp('package.json'),
     appSrc: resolveApp('src'),
     consoleHtml: resolveApp('src/client/views/console/index.html'),

@@ -15,7 +15,7 @@ var measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
 var printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
 var useYarn = fs.existsSync(paths.yarnLockFile);
 
-if (!checkRequiredFiles([paths.appHtml, paths.appIndexJs])) {
+if (!checkRequiredFiles([paths.appHtml, paths.appIndexJS])) {
     process.exit(1);
 }
 
@@ -68,7 +68,7 @@ function build(previousFileSizes) {
 
         console.log('File sizes after gzip:');
         console.log();
-        printFileSizesAfterBuild(stats, previousFileSizes);
+        printFileSizesAfterBuild(stats, previousFileSizes, paths.appBuild);
         console.log();
 
         var appPackage = require(paths.appPackageJson);
