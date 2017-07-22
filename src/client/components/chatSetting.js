@@ -91,6 +91,12 @@ class ChatSetting extends Component{
     }
     shortcutSet = () => {
         let csid = this.props.csid;
+        if(this.state.setContent){
+            this.setState({
+                isSetVisible: true
+            });
+            return false;
+        }
         import('./console/shortcuts').then(s => {
             this.setState({
                 setContent: <s.default csid={csid} />,

@@ -6,7 +6,7 @@ var Sequelize = require('../models').Sequelize;
 var logger = require('../logger');
 
 function Shortcut() {
-    var shortcutCache = [];
+    this.shortcutCache = [];
 }
 
 /**
@@ -16,8 +16,9 @@ Shortcut.prototype.init = function () {
     var _self = this;
 
     shortcutDB.findAll(null, null, function (err, data) {
-
-        _self.shortcutCache = data || [];
+        if (data && data.length) {
+            _self.shortcutCache = data;
+        }
 
         logger.info('load shortcut cache:', _self.shortcutCache.length);
     });

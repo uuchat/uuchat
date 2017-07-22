@@ -70,11 +70,11 @@
     height: 30px;
     cursor: pointer;
     border-radius: 100%;
-    background: url(../images/setting.png) no-repeat center center;
+    background: url(../images/share.png) no-repeat center center;
     background-size: 100% 100%;
 }
 .short-item-setting:hover{
-    background: url(../images/setting_selected.png) no-repeat center center;
+    background: url(../images/share_selected.png) no-repeat center center;
     background-size: 100% 100%;
 }
 .set-item-label{

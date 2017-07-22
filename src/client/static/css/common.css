@@ -137,8 +137,12 @@ input, select {
     top: 40%;
     left: 50%;
     margin-left: -75px;
-    width: 150px;
+    width: 180px;
     text-align: center;
+}
+.chat-loading .uu-logo{
+    margin-bottom: 5px;
+    font-size: 18px;
 }
 .chat-loading .bounce{
     display: inline-block;

@@ -23,7 +23,7 @@ export default (loader, collection) => (
             if (this.state.Component) {
                 return ( <this.state.Component { ...this.props } { ...collection } />)
             }else{
-                return (<div className="chat-loading"><div className="bounce bounce1"></div><div className="bounce bounce2"></div><div className="bounce bounce3"></div></div>);
+                return (<div className="chat-loading"><div className="uu-logo">Power by uuchat.io</div><div className="bounce bounce1"></div><div className="bounce bounce2"></div><div className="bounce bounce3"></div></div>);
             }
         }
     }
