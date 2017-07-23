@@ -4,7 +4,7 @@ A powerful customer success platform ! demo: [http://uuchat.io](http://uuchat.io
 
 ## Requirements
 
-* Node version 4.0.0 or greater
+* Node version 4.3.1 or greater
 * [Optional]MySQL version 5.0 or greater
 * [Optional]Redis, version 2.8.9 or greater
 
@@ -26,7 +26,7 @@ for contextify
 
 **build and run**<br />
 &nbsp;&nbsp;&nbsp;&nbsp;a script for the following commands: <br />
->&nbsp;&nbsp;&nbsp;&nbsp;npm install <br />
+>&nbsp;&nbsp;&nbsp;&nbsp;npm  <br />
 >&nbsp;&nbsp;&nbsp;&nbsp;node tools/build.js <br />
 >&nbsp;&nbsp;&nbsp;&nbsp;node index.js <br />
 
@@ -46,7 +46,7 @@ Set your own information in `src > config.json` . something like 'name' , 'ip ad
  you can add other customer success with uuchat, see chat history, rate ,
  some statistics information etc...
 
-> warning: we did not test with IE browser! <br />
+> warning: we did not test with IE browser! and we suggest to login /chat or /console with chrome.<br />
 
 ## Setup your database
 
@@ -77,7 +77,7 @@ more than 5, we suggest you use redis for session store.
 
 Copy and paste this code above the last `</body>` tag on your site.
 This code is fully asynchronous and won't delay the load time of your page.
-you can see in `build > customer.html` , like this: 
+you can see in `dist > customer.html` , like this: 
 ```
 <!-- begin uuchat code  -->
 <script type="text/javascript">
