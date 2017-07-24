@@ -18,7 +18,7 @@ function customerSuccessRoutes(app, middleware, controllers) {
 
     app.patch('/customersuccesses/:csid', controllers.customerSuccessController.update);
     app.delete('/customersuccesses/:csid', controllers.customerSuccessController.delete);
-    app.post('/customersuccesses/:csid/avatar', middleware.upload.uploadAvatar,
+    app.post('/customersuccesses/:csid/avatar', middleware.uploadAvatar,
         controllers.customerSuccessController.uploadAvatar);
     app.get('/customersuccesses/:csid/avatar', controllers.customerSuccessController.getAvatar);
     app.put('/customersuccesses/:csid/passwd', controllers.customerSuccessController.updatePasswd);
@@ -47,7 +47,7 @@ function messageRoutes(app, middleware, controllers) {
     app.get('/messages/cs/:csid/search', controllers.messageController.search);
     app.get('/messages/cs/:csid/search/latestmonth', controllers.messageController.searchLatestMonth);
     app.options('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate));
-    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.upload.uploadImage,
+    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage,
         controllers.customerSessionController.checkMonthlyUploadSize);
 }
 

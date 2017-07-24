@@ -15,7 +15,7 @@ middleware.applyCSRF = csrf();
 require('./upload')(middleware);
 require('./sign')(middleware);
 
-middleware.corsOptionsDelegate = function (req, callback) {
+middleware.corsOptionsDelegate = function (req, next) {
     var whiteList = nconf.get('app:image_upload_white_list');
     var first = _.head(whiteList);
     if (!_.isUndefined(first)) {
@@ -23,19 +23,19 @@ middleware.corsOptionsDelegate = function (req, callback) {
             var corsOptions;
             if (whiteList.indexOf(req.header('Origin')) !== -1) {
                 corsOptions = { origin: true };
-                callback(null, corsOptions);
+                next(null, corsOptions);
             }else{
                 corsOptions = { origin: false };
-                callback(new Error('Not allowed by CORS'));
+                next(new Error('Not allowed by CORS'));
             }
 
         } else {
             var corsOptions = { origin: true };
-            callback(null, corsOptions);
+            next(null, corsOptions);
         }
     } else {
         var corsOptions = { origin: true };
-        callback(null, corsOptions);
+        next(null, corsOptions);
     }
 };
 
