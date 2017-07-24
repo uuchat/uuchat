@@ -147,6 +147,22 @@ SocketCustomerSuccessEvents.rate = function(cid, fn) {
     }
 };
 
+SocketCustomerSuccessEvents.shortcuts = function(shortcuts, fn) {
+    if (customerSuccessList.onlineNum() === 0) return;
+
+    var list = customerSuccessList.list();
+
+    //emit all online customer success;
+    _.forIn(list, function (value, key) {
+        if (value.socket) {
+            value.socket.emit("cs.shortcuts", shortcuts);
+        } else {
+            logger.error("because customer success if offline,  emit cs.shortcuts error: csid = %d", key)
+        }
+    });
+    fn(true);
+};
+
 SocketCustomerSuccessEvents.offlineMessage = function(cid, csid, msg, fn) {
     try {
         logger.info("offline message to: " + cid);
