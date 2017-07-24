@@ -15,7 +15,7 @@ function Shortcut() {
 Shortcut.prototype.init = function () {
     var _self = this;
 
-    shortcutDB.findAll(null, null, function (err, data) {
+    shortcutDB.findAllForCacheInit(function (err, data) {
         if (data && data.length) {
             _self.shortcutCache = data;
         }

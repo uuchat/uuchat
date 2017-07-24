@@ -123,3 +123,28 @@ Shortcut.findAll = function (condition, order, callback) {
         return callback(err);
     });
 };
+
+Shortcut.findAllForCacheInit = function (callback) {
+    var order = [['shortcut', 'ASC']];
+
+    models.Shortcut.findAll({
+        order: order
+    }).then(function (data) {
+
+        var pureData = _.map(data, function (item) {
+            return item.get({plain: true});
+        });
+
+        return callback(null, pureData);
+
+    }).catch(function (err) {
+        if (err.message && err.message.indexOf('no such table') > -1) {
+
+            models.Shortcut.sync();
+        } else {
+            logger.error(err);
+        }
+
+        return callback(err);
+    });
+};
