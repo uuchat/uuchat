@@ -2,6 +2,7 @@
 
 var assert = require('assert');
 var async = require('async');
+var nconf = require('nconf');
 
 var io = require('socket.io-client');
 
@@ -15,9 +16,11 @@ var cookies = request.jar();
 var customerSuccessSocket;
 var customerSocket;
 
+var baseUrl = 'http://' + nconf.get('app:address') + ':' + nconf.get('app:port');
+
 request.get(
     {
-        url: 'http://192.168.31.68:9688/test/cs',
+        url: baseUrl + '/test/cs',
         jar: cookies
     },
     function (err, res, body) {
@@ -25,9 +28,10 @@ request.get(
             console.log('Error: ', err);
             process.exit(0);
         }
-        customerSuccessSocket = require('socket.io-client')('http://192.168.31.68:9688/cs',
-            {forceNew: true, reconnectionAttempts:5,
-                reconnectionDelay:2000 ,  timeout: 10000,
+        customerSuccessSocket = require('socket.io-client')(baseUrl + '/cs',
+            {
+                forceNew: true, reconnectionAttempts: 5,
+                reconnectionDelay: 2000, timeout: 10000,
                 extraHeaders: {
                     'Cookie': res.headers['set-cookie']
                 }
@@ -95,7 +99,7 @@ request.get(
                 next();
             },
             function () {
-                setTimeout(function(){
+                setTimeout(function () {
                     customerSuccessSocket.emit("cs.disconnect", csid);
                 }, 3000);
             }
@@ -111,7 +115,7 @@ request.get(
 
 request.get(
     {
-        url: 'http://192.168.31.68:9688/test',
+        url: baseUrl + '/test',
         jar: cookies
     },
     function (err, res, body) {
@@ -120,7 +124,7 @@ request.get(
             process.exit(0);
         }
 
-        customerSocket = require('socket.io-client')('http://192.168.31.68:9688/c',
+        customerSocket = require('socket.io-client')(baseUrl + '/c',
             {
                 forceNew: true, reconnectionAttempts: 5,
                 reconnectionDelay: 2000, timeout: 10000,
@@ -134,41 +138,41 @@ request.get(
             console.log("-------------- customerSocket connect!");
         });
 
-        customerSocket.on('cs.message',function(csid, msg){
+        customerSocket.on('cs.message', function (csid, msg) {
             console.log("---------cs.message from------------");
             console.log(csid);
             console.log("---------message------------");
             console.log(msg);
         });
 
-        customerSocket.on('cs.dispatch',function(to){
+        customerSocket.on('cs.dispatch', function (to) {
             console.log("---------cs.dispatch------------");
             console.log(to);
         });
 
-        customerSocket.on('disconnect',function(){
+        customerSocket.on('disconnect', function () {
             console.log("-------------- customerSocket cs.disconnect!");
         });
 
-        customerSocket.on('c.queue.shift',function(csid){
+        customerSocket.on('c.queue.shift', function (csid) {
             console.log("---------c.queue.shift------------");
             console.log(csid);
         });
 
-        customerSocket.on('c.queue.update',function(num){
+        customerSocket.on('c.queue.update', function (num) {
             console.log("---------c.queue.update------------");
             console.log(num);
         });
 
-        customerSocket.on('cs.close',function(){
+        customerSocket.on('cs.close', function () {
             console.log("---------cs.close------------");
         });
 
-        customerSocket.on('disconnect',function(){
+        customerSocket.on('disconnect', function () {
             console.log("---------disconnect------------");
         });
 
-        customerSocket.on('cs.status',function(){
+        customerSocket.on('cs.status', function () {
             console.log("---------cs.status------------");
         });
 
@@ -196,7 +200,7 @@ request.get(
                 });
             },
             function () {
-                setTimeout(function(){
+                setTimeout(function () {
                     customerSocket.emit("c.disconnect", cid);
                     process.exit();
                 }, 5000);
@@ -212,11 +216,6 @@ request.get(
 );
 
 
-
-
-
-
-
 describe('socket.io', function () {
     var request = require('request');
     var cookies = request.jar();
@@ -228,10 +227,10 @@ describe('socket.io', function () {
 
     before(function (done) {
         async.series([
-            function(done) {
+            function (done) {
                 request.get(
                     {
-                        url: 'http://192.168.31.68:9688/test/cs',
+                        url: baseUrl + '/test/cs',
                         jar: cookies
                     },
                     function (err, res, body) {
@@ -239,9 +238,10 @@ describe('socket.io', function () {
                             console.log('Error: ', err);
                             process.exit(0);
                         }
-                        customerSuccessSocket = require('socket.io-client')('http://192.168.31.68:9688/cs',
-                            {forceNew: true, reconnectionAttempts:5,
-                                reconnectionDelay:2000 ,  timeout: 10000,
+                        customerSuccessSocket = require('socket.io-client')(baseUrl + '/cs',
+                            {
+                                forceNew: true, reconnectionAttempts: 5,
+                                reconnectionDelay: 2000, timeout: 10000,
                                 extraHeaders: {
                                     'Cookie': res.headers['set-cookie']
                                 }
@@ -288,10 +288,10 @@ describe('socket.io', function () {
                     }
                 );
             },
-            function(done) {
+            function (done) {
                 request.get(
                     {
-                        url: 'http://192.168.31.68:9688/test',
+                        url: baseUrl + '/test',
                         jar: cookies
                     },
                     function (err, res, body) {
@@ -300,7 +300,7 @@ describe('socket.io', function () {
                             process.exit(0);
                         }
 
-                        customerSocket = require('socket.io-client')('http://192.168.31.68:9688/c',
+                        customerSocket = require('socket.io-client')(baseUrl + '/c',
                             {
                                 forceNew: true, reconnectionAttempts: 5,
                                 reconnectionDelay: 2000, timeout: 10000,
@@ -314,37 +314,37 @@ describe('socket.io', function () {
                         //    console.log("-------------- customerSocket connect!");
                         //});
 
-                        customerSocket.on('cs.message',function(csid, msg){
+                        customerSocket.on('cs.message', function (csid, msg) {
                             console.log("---------cs.message from------------");
                             console.log(csid);
                             console.log("---------message------------");
                             console.log(msg);
                         });
 
-                        customerSocket.on('cs.dispatch',function(to){
+                        customerSocket.on('cs.dispatch', function (to) {
                             console.log("---------cs.dispatch------------");
                             console.log(to);
                         });
 
-                        customerSocket.on('disconnect',function(){
+                        customerSocket.on('disconnect', function () {
                             console.log("-------------- customerSocket disconnect!");
                         });
 
-                        customerSocket.on('c.queue.shift',function(csid){
+                        customerSocket.on('c.queue.shift', function (csid) {
                             console.log("---------c.queue.shift------------");
                             console.log(csid);
                         });
 
-                        customerSocket.on('c.queue.update',function(num){
+                        customerSocket.on('c.queue.update', function (num) {
                             console.log("---------c.queue.update------------");
                             console.log(num);
                         });
 
-                        customerSocket.on('cs.close',function(){
+                        customerSocket.on('cs.close', function () {
                             console.log("---------cs.close------------");
                         });
 
-                        customerSocket.on('cs.status',function(){
+                        customerSocket.on('cs.status', function () {
                             console.log("---------cs.status------------");
                         });
 
@@ -408,8 +408,6 @@ describe('socket.io', function () {
     });
 
 });
-
-
 
 
 //customerSocket.request.headers.cookie = res.header['set-cookie'];
