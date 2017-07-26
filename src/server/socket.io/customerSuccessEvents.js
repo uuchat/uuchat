@@ -266,10 +266,6 @@ SocketCustomerSuccessEvents.logout = function(socket, csid, fn) {
     fn(true);
 };
 
-/**
- * disconnect only refresh online info， then add use to offline queue;
- * @param csid
- */
 SocketCustomerSuccessEvents.disconnect = function(csid) {
     logger.info("customer success = %s disconnect start!", csid);
     customerSuccessList.get(csid).socket = {}; // set socket null;

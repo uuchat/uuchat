@@ -45,9 +45,6 @@ Sockets.init = function (server) {
     setInterval(customerSuccessEvents.refreshOnlineInfo, nconf.get('app:onlineInfoRefreshTime'));
 };
 
-/**
- * listening socket.io service
- */
 function listening() {
     //socket.io for customer success (cs)
     io.of('/cs').on('connection', function (socket) {
@@ -114,8 +111,7 @@ function listening() {
 
     //socket.io for customer (c)
     io.of('/c').on('connection', function (socket) {
-        // select customer success
-        //socket.on('c.select', function(cid, name, fn) {
+
         socket.on('c.select', function(fn) {
             winston.info("customer emit c.select!");
             var cid = socket.request.session.cid;
@@ -148,7 +144,6 @@ function authorize(socket, callback) {
     if (!request) {
         return callback(new Error('[[error:not-authorized]]'));
     }
-    //winston.info("start authorize!");
     async.waterfall([
         function (next) {
             cookieParser(request, {}, next);
