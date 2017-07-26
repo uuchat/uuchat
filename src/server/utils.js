@@ -41,11 +41,7 @@ utils.lsof = function (port, fn) {
             v = v.split(/\s+/);
             var k = {};
             var finalField = v[headers.length];
-            /*istanbul ignore else*/
             if (finalField) {
-                // There is one more field than there are headers. Interpret that state info.
-                // These are things like '(LISTEN)' or '(ESTABLISHED)'. Save it into the state
-                // field minus the parenthesis and lowercased
                 k['state'] = finalField.substring(1, finalField.length - 1).toLowerCase();
                 v.pop();
             }
