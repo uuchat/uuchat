@@ -23,6 +23,7 @@ var compress = require('compression');
 var ejs = require('ejs');
 
 var middleware = require('./server/middleware');
+var model = require('./server/models');
 
 var connectRedis = require("connect-redis")(session);
 var storeRedis = new connectRedis({
@@ -60,7 +61,7 @@ server.on('error', function (err) {
     }
 });
 
-server.sessionStore = function() {
+server.sessionStore = function () {
     var redisHost = nconf.get('redis:host');
     if (_.isEmpty(redisHost)) {
         var SequelizeStore = require('connect-session-sequelize')(session.Store);
@@ -76,6 +77,10 @@ server.sessionStore = function() {
 
 module.exports.listen = function () {
     async.waterfall([
+        function (next) {
+            //initial database
+            model.init(next);
+        },
         function (next) {
             setupExpress(app, next);
             next();
@@ -153,7 +158,7 @@ function baseHtmlRoute(app, middlewareDev) {
     app.get('/chat', middleware.jsCDN, function response(req, res) {
         if (!req.session.csid) {
             res.redirect('/login');
-        }else {
+        } else {
             var customerSuccess = require('./server/socket.io/customerSuccess');
             var csid = req.session.csid;
             winston.info(req.session);
@@ -213,7 +218,7 @@ function setupExpress(app, callback) {
     app.use('/public', express.static(path.join(__dirname, '../content/html')));
 
     app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({ extended: false }));
+    app.use(bodyParser.urlencoded({extended: false}));
     app.use(cookieParser(nconf.get('socket.io:secretKey')));
 
     app.use(useragent.express());
@@ -262,11 +267,11 @@ function setupExpress(app, callback) {
     setupAutoLocale(app, callback);
 
     // catch 404 and forward to error handler
-    app.use(function(req, res, next) {
+    app.use(function (req, res, next) {
         logger.error("~~~~~~ has 404 error, please see browser console log!");
         res.status(404).send('can not find page!');
     });
-    app.use(function(err, req, res, next) {
+    app.use(function (err, req, res, next) {
         logger.error("~~~~~~ has 503 error!");
         logger.error(err.stack);
         res.status(503).send('system has problem.');
@@ -362,15 +367,15 @@ function autoCNDFile(req, defaultKeys, keys) {
         isoCode = nconf.get('CDN:DEFAULT');
     }
 
-    var js = nconf.get('CDN:'+ isoCode);
+    var js = nconf.get('CDN:' + isoCode);
     var rtnArray;
-    if(!_.isEmpty(js)) {
+    if (!_.isEmpty(js)) {
         rtnArray = js
     } else {
         let d = nconf.get('CDN:DEFAULT');
         rtnArray = nconf.get('CDN:' + d);
     }
-    return _.reduce(rtnArray, function(result, value, key) {
+    return _.reduce(rtnArray, function (result, value, key) {
         if (_.indexOf(defaultKeys, key) >= 0) {
             result[key] = value;
         }
@@ -380,7 +385,7 @@ function autoCNDFile(req, defaultKeys, keys) {
 
 //check redis has started;
 
-function checkRedisStarted(callback){
+function checkRedisStarted(callback) {
     var redisHost = nconf.get('redis:host');
     if (!_.isEmpty(redisHost)) {
         utils.lsof(nconf.get('redis:port'), function (data) {
@@ -430,8 +435,8 @@ function expressListen() {
     server.on('listening', function onListening() {
         var addr = server.address();
         var bind = typeof addr === 'string' ?
-            'pipe ' + addr :
-            'port ' + addr.port;
+        'pipe ' + addr :
+        'port ' + addr.port;
         winston.info('Listening on ' + bind);
     });
 }
