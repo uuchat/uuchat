@@ -2,61 +2,51 @@
 
 var fs = require("fs");
 var path = require("path");
-var  _ = require("lodash");
+var _ = require("lodash");
 var Sequelize = require("sequelize");
-var databaseConfig = require('../../config.json').database;
-var sequelize;
+var nconf = require('nconf');
+var shortcutCache = require('../cache/shortcut');
 
-if (process.env.DATABASE_URL) {
-    sequelize = new Sequelize(process.env.DATABASE_URL, databaseConfig);
-} else {
-    sequelize = new Sequelize(databaseConfig.database, databaseConfig.username, databaseConfig.password, databaseConfig);
-}
+var model = module.exports;
 
-var db = {};
+model.init = function (callback) {
+    var databaseConfig = process.env.NODE_ENV === 'test' ? nconf.get('test_database') : nconf.get('database');
 
-fs.readdirSync(__dirname)
-    .filter(function (file) {
+    var sequelize;
+
+    if (process.env.DATABASE_URL) {
+        sequelize = new Sequelize(process.env.DATABASE_URL, databaseConfig);
+    } else {
+        sequelize = new Sequelize(databaseConfig.database, databaseConfig.username, databaseConfig.password, databaseConfig);
+    }
+
+    var db = {};
+
+    fs.readdirSync(__dirname).filter(function (file) {
         return (file.indexOf(".") !== 0) && (file !== "index.js");
-    })
-    .forEach(function (file) {
+    }).forEach(function (file) {
         var model = sequelize.import(path.join(__dirname, file));
         db[model.name] = model;
     });
 
-_.keys(db).forEach(function (modelName) {
-    if ("associate" in db[modelName]) {
-        db[modelName].associate(db);
-    }
-});
+    _.keys(db).forEach(function (modelName) {
+        if ("associate" in db[modelName]) {
+            db[modelName].associate(db);
+        }
+    });
 
-/**
- * Sync this Model to the DB, that is create the table.
- * @param options
- * @returns {Promise}
- */
-function sync(options){
-    return sequelize.sync(options);
-}
 
-/**
- * Drop the table represented by this Model
- * @param options
- * @returns {Promise}
- */
-function drop(options){
-    return sequelize.drop(options);
-}
+    Object.assign(model, db);
 
-db.sequelize = sequelize;
-db.Sequelize = Sequelize;
-db.sync = sync;
-db.drop = drop;
+    model.sequelize = sequelize;
 
-//if (global.env === 'production') {
-    // bug: It will not create correct column when column has a alias name .
-    // db.sync({ alter: true });
-    db.sync();
-//}
+    //sync table
+    model.sequelize.sync().then(function(){
+        shortcutCache.init();
+        callback();
+    });
+};
 
-module.exports = db;
+model.Sequelize = Sequelize;
+
+module.exports = model;

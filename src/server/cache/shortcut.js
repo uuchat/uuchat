@@ -15,7 +15,9 @@ function Shortcut() {
 Shortcut.prototype.init = function () {
     var _self = this;
 
-    shortcutDB.findAllForCacheInit(function (err, data) {
+    var order = [['shortcut', 'ASC']];
+
+    shortcutDB.findAll(null, order,function (err, data) {
         if (data && data.length) {
             _self.shortcutCache = data;
         }
@@ -141,7 +143,7 @@ Shortcut.prototype.listAll = function (attributes, condition, callback) {
     callback(null, data);
 };
 
-var shortcutInstance = new Shortcut();
-shortcutInstance.init();
+var shortcutCache = new Shortcut();
+//shortcutCache.init();
 
-module.exports = shortcutInstance;
+module.exports = shortcutCache;
