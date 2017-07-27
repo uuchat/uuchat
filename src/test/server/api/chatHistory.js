@@ -4,33 +4,25 @@ var request = require('request');
 var assert = require('assert');
 var nconf = require('nconf');
 var fs = require('fs');
-
-if (!nconf.get('app:address')) {
-    require('../../common');
-}
-
-var baseUrl = 'http://' + nconf.get('app:address') + ':' + nconf.get('app:port');
-
+var baseUrl = require('../../common').baseUrl;
+var csMock = require('../mock/customerSuccess');
+var customerMock = require('../mock/customerSession');
 
 describe('api', function () {
     var cid, csid;
 
     before(function (done) {
-        request.post({
-            url: baseUrl + '/register',
-            form: {email: 'cs@gmail.com', passwd: 'pass123'}
-        }, function (err, res) {
-            var data = JSON.parse(res.body);
-            csid = data.msg.csid;
-            done();
-        });
+        setTimeout(function(){
+            csMock.create(function (res) {
+                var data = JSON.parse(res.body);
+                csid = data.msg.csid;
+                done();
+            });
+        }, 500);
     });
 
     before(function (done) {
-        request.post({
-            url: baseUrl + '/customers',
-            form: {url: 'uuchat.com'}
-        }, function (err, res) {
+        customerMock.create(function (res) {
             var customer = JSON.parse(res.body);
             cid = customer.msg.cid;
             done();
@@ -38,17 +30,11 @@ describe('api', function () {
     });
 
     after(function (done) {
-        request.delete({
-            url: baseUrl + '/customersuccesses/' + csid
-        }, function (err, res) {
-            done();
-        });
+        csMock.delete(csid, done);
     });
 
     after(function (done) {
-        request.delete(baseUrl + '/customers/' + cid, function (err, res) {
-            done();
-        });
+        customerMock.delete(cid, done);
     });
 
     describe('#chatHistory', function () {

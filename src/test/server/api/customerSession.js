@@ -5,11 +5,7 @@ var assert = require('assert');
 var nconf = require('nconf');
 var fs = require('fs');
 
-if (!nconf.get('app:address')) {
-    require('../../common');
-}
-
-var baseUrl = 'http://' + nconf.get('app:address') + ':' + nconf.get('app:port');
+var baseUrl = require('../../common').baseUrl;
 
 describe('api', function () {
 
