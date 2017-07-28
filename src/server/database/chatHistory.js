@@ -139,7 +139,7 @@ ChatHistory.listAndCount = function (condition, order, pageSize, pageNum, callba
     });
 };
 
-ChatHistory.Count = function (options, callback) {
+ChatHistory.count = function (options, callback) {
 
     options = options || {};
 

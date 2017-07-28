@@ -123,7 +123,7 @@ Offline.listAndCount = function (condition, order, pageSize, pageNum, callback) 
     });
 };
 
-Offline.Count = function (options, callback) {
+Offline.count = function (options, callback) {
 
     options = options || {};
 

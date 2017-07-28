@@ -19,22 +19,22 @@ consoleController.getNumbers = function (req, res, next) {
 
     async.parallel([
         function (callback) {
-            ChatHistory.Count({where: {createdAt: {$gte: today}}}, function (err, data) {
+            ChatHistory.count({where: {createdAt: {$gte: today}}}, function (err, data) {
                 return callback(err, {dailyChats: data});
             });
         },
         function (callback) {
-            Offline.Count({where: {createdAt: {$gte: today}}}, function (err, data) {
+            Offline.count({where: {createdAt: {$gte: today}}}, function (err, data) {
                 return callback(err, {offlineCustomers: data});
             });
         },
         function (callback) {
-            Rate.Count({where: {createdAt: {$gte: today}}}, function (err, data) {
+            Rate.count({where: {createdAt: {$gte: today}}}, function (err, data) {
                 return callback(err, {dailyRates: data});
             });
         },
         function (callback) {
-            Rate.Count({
+            Rate.count({
                 where: {
                     createdAt: {$gte: today},
                     rate: {
@@ -80,17 +80,17 @@ consoleController.getMonthlyData = function (req, res, next) {
 
     async.parallel([
         function (callback) {
-            ChatHistory.Count({where: condition}, function (err, data) {
+            ChatHistory.count({where: condition}, function (err, data) {
                 return callback(err, {chats: data});
             });
         },
         function (callback) {
-            Message.Count({where: condition}, function (err, data) {
+            Message.count({where: condition}, function (err, data) {
                 return callback(err, {messages: data});
             });
         },
         function (callback) {
-            Offline.Count({where: condition}, function (err, data) {
+            Offline.count({where: condition}, function (err, data) {
                 return callback(err, {offlineMessages: data});
             });
         },

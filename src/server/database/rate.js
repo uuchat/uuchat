@@ -120,7 +120,7 @@ Rate.aggregate = function (attributes, condition, callback) {
     });
 };
 
-Rate.Count = function (options, callback) {
+Rate.count = function (options, callback) {
 
     options = options || {};
 

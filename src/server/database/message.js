@@ -124,7 +124,7 @@ Message.listAndCount = function (condition, order, pageSize, pageNum, callback) 
     });
 };
 
-Message.Count = function (options, callback) {
+Message.count = function (options, callback) {
 
     options = options || {};
 
