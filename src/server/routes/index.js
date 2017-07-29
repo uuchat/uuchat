@@ -113,7 +113,15 @@ module.exports = function (app, middleware, callback) {
 
     router.use(function (err, req, res, next) {
         logger.error(err);
-        res.status(500).json({code: 500, msg: 'internal server error'});
+        switch (err.message) {
+            case 'Not allowed by CORS':
+                logger.error("cors error");
+                res.json({code: 2001, msg: err.message});
+                break;
+            default:
+                res.status(500).json({code: 500, msg: 'internal server error'});
+                break;
+        }
     });
 
     app.use('/', router);

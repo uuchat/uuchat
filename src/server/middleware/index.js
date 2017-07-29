@@ -21,7 +21,9 @@ middleware.corsOptionsDelegate = function (req, next) {
     if (!_.isUndefined(first)) {
         if (_.startsWith(first, 'http')) {
             var corsOptions;
-            if (whiteList.indexOf(req.header('Origin')) !== -1) {
+            //req.header('Origin')
+            var origin = req.protocol + '://' + req.get('host');
+            if (whiteList.indexOf(origin) !== -1) {
                 corsOptions = { origin: true };
                 next(null, corsOptions);
             }else{
