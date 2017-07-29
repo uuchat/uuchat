@@ -42,7 +42,7 @@
     var UUCT = {
         domain: (w.UUCHAT && w.UUCHAT.domain)|| '',
         socket: null,
-        timeStart: 0,
+        timeStart: new Date(),
         timeOutSeconds: 2700000,
         timeOutTimer: null,
         chat: {
@@ -168,6 +168,7 @@
                 };
 
                 xhr.upload.onprogress = params.progress;
+                params.error && (xhr.onerror = params.error);
 
                 if(params.type == 'GET') {
                     xhr.open(params.type, params.url + '?' + params.data, true);
@@ -313,7 +314,11 @@
 
             if(0 === role){
                 cls += 'chat-to';
-                cls += isOld ? ' done' : '';
+                if(/(png|jpg|gif|jpeg)\|/g.test(msg)){
+                    cls += isOld ? ' done-img' : '';
+                }else{
+                    cls += isOld ? ' done' : '';
+                }
             }else{
                 cls = 'chat-from';
                 name = UUCT.chat.csName;
@@ -518,11 +523,13 @@
         socketDisconnect: function(){
             var timeNow = UUCT.dateISOFomat(new Date()),
                 tips = 'The customerSuccess has offline, you can try it by refesh the browser at latter';
-
             if(timeNow.getTime() - UUCT.timeStart.getTime() > UUCT.timeOutSeconds){
                 tips = 'Long time no chat, disconnect, you can try it by refesh the browser at latter';
             }
-
+            if(!$('.chat-msg')){
+                var msg = UUCT.tempMsg();
+                $('.chat-main').innerHTML = msg;
+            }
             UUCT.msgTranslate({
                 role: 1,
                 msg: tips,
@@ -550,7 +557,8 @@
 
                 $('.chat-upload') && addEvent($('.chat-upload'), 'change', function(e){
 
-                   var data = new FormData(),
+                   var _self = this,
+                       data = new FormData(),
                        isLt2M = 0;
 
                     if(!e.target.files[0]){
@@ -585,7 +593,7 @@
 
                            if(d.loaded === d.total){
                                setTimeout(function(){
-                                   $('.upload-tips').parentNode.removeChild($('.upload-tips'));
+                                   $('.upload-tips') && $('.upload-tips').parentNode.removeChild($('.upload-tips'));
                                }, 2500);
                            }
                        },
@@ -593,6 +601,15 @@
                            var d = JSON.parse(data);
                            if(d.code === 200){
                                UUCT.socketSendMessage(d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h);
+                           }
+                       },
+                       error: function(e){
+                           _self.value = '';
+                           if($('.upload-tips')){
+                               $('.upload-tips').innerHTML = 'upload image has cros error.';
+                               setTimeout(function(){
+                                   $('.upload-tips') && $('.upload-tips').parentNode.removeChild($('.upload-tips'));
+                               }, 2500);
                            }
                        }
                    });
@@ -714,7 +731,12 @@
 
             UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(success){
                 if(success){
-                    addClass($('.t-'+d), 'done')
+                    if(/(png|jpg|jpeg|gif)\|/g.test(msg)){
+                        addClass($('.t-'+d), 'done-img');
+                    }else{
+                        addClass($('.t-'+d), 'done');
+                    }
+
                 }else{
                     UUCT.msgTranslate({
                         role: 1,

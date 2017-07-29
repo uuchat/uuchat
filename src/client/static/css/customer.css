@@ -156,6 +156,9 @@
 .chat-item.chat-to.done .chat-caret{
     border-left: 6px solid #1f8ceb;
 }
+.chat-item.chat-to.done-img .chat-caret{
+    border-left: 6px solid #f4f7f9;
+}
 .chat-item.chat-from .chat-caret{
     left: -6px;
     top: 26px;
@@ -203,6 +206,9 @@
 .chat-console .chat-to.done .chat-text{
     background-color: #1f8ceb;
     color: #fff;
+}
+.chat-console .chat-to.done-img .chat-text{
+    background-color: #f4f7f9;
 }
 .chat-console .rate-box{
     padding: 0 10px;
