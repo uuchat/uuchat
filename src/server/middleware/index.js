@@ -21,14 +21,19 @@ middleware.corsOptionsDelegate = function (req, next) {
     if (!_.isUndefined(first)) {
         if (_.startsWith(first, 'http')) {
             var corsOptions;
-            //req.header('Origin')
-            var origin = req.protocol + '://' + req.get('host');
-            if (whiteList.indexOf(origin) !== -1) {
+
+            if (whiteList.indexOf(req.header('Origin')) !== -1) {
                 corsOptions = { origin: true };
                 next(null, corsOptions);
             }else{
-                corsOptions = { origin: false };
-                next(new Error('Not allowed by CORS'));
+                var origin = req.protocol + '://' + req.get('Referer').split('//')[1].split('/')[0];
+                if (whiteList.indexOf(origin) !== -1) {
+                    corsOptions = {origin: true};
+                    next(null, corsOptions);
+                } else {
+                    corsOptions = { origin: false };
+                    next(new Error('Not allowed by CORS'));
+                }
             }
 
         } else {
