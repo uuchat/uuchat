@@ -13,7 +13,7 @@ class ShortList extends Component{
         return (
             <li className={'s-'+num+' '+(num<=0 ? 'on' : '')} onClick={this.selectClick}>
                 <span className="key-name">{';'+name}</span>
-                <span className="key-value">{value}</span>
+                <span className="key-value">{value.replace(/(^\s*)/g, '')}</span>
             </li>
         );
     }
@@ -34,7 +34,7 @@ class ChatShortcut extends Component{
     constructor(){
         super();
         this.state = {
-            isFetchList: false
+            fetchList: shortCutLists
         };
     }
 
@@ -49,15 +49,12 @@ class ChatShortcut extends Component{
             let newSC = localStorage.getItem("newShortcut");
             if(newSC){
                 let newScObj = JSON.parse(newSC);
-                shortCutLists.shift({
-                    shortcut: newScObj.shortcut,
-                    msg:newScObj.msg
-                });
+                shortCutLists.unshift(newScObj);
                 localStorage.setItem('newShortcut', "");
             }
 
             this.setState({
-                isFetchList: true
+                fetchList: shortCutLists
             });
             return;
         }
@@ -67,7 +64,7 @@ class ChatShortcut extends Component{
                 if(data.code === 200){
                     shortCutLists = data.msg
                     _self.setState({
-                        isFetchList: true
+                        fetchList: shortCutLists
                     });
                 }
             })
@@ -75,6 +72,7 @@ class ChatShortcut extends Component{
     }
 
     render(){
+        let {fetchList} = this.state;
         return (
             <div className="shortcut">
                 <div className="short-head">
@@ -85,7 +83,7 @@ class ChatShortcut extends Component{
                 </div>
                 <div className="short-list">
                     <ul className="shortListUl">
-                        {shortCutLists.length > 0 && shortCutLists.map((s, i)=>
+                        {fetchList.length > 0 && fetchList.map((s, i)=>
                                 <ShortList key={i} num={i} name={s.shortcut} value={s.msg} shortCutSelecterClick={this.props.shortCutSelecterClick} />
                         )}
                     </ul>

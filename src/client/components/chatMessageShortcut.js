@@ -45,6 +45,7 @@ class ChatMessageShortcut extends Component{
     }
     render(){
         let { content } = this.props;
+        content = content.replace(/&nbsp;/g, ' ').replace(/(^\s*)/g, '').replace(/&gt;/g, '>').replace(/&lt;/g, '<');
 
         return (
             <div className="short-item-setting" onClick={this.setShortcut}>
@@ -64,7 +65,7 @@ class ChatMessageShortcut extends Component{
                             <p className="set-item-label">Shortcut</p>
                             <Input defaultValue="" addonBefore=";" ref="shortKey" />
                             <p className="set-item-label">Expanded Message</p>
-                            <Input type="textarea" defaultValue={content.replace(/&nbsp;/g, ' ').replace(/&gt;/g, '>').replace(/&lt;/g, '<')} ref="shortValue" />
+                            <Input type="textarea" defaultValue={content} ref="shortValue" />
                          </div>
                      </div>
                   </Modal>

@@ -94,7 +94,7 @@ class ChatSend extends Component{
 
         if(keyCode === 9 || keyCode === 13){
             if(document.querySelector('.short-list .on')){
-                this.insertToCursorPosition(val.replace(new RegExp(cmd, 'g'), ' '), ' '+document.querySelector('.short-list .on .key-value').innerHTML+' ');
+                this.insertToCursorPosition(val.replace(new RegExp(cmd, 'g'), ' '), document.querySelector('.short-list .on .key-value').innerHTML+' ');
             }
             this.setState({
                 isShortShow: false
