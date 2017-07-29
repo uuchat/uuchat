@@ -2,7 +2,6 @@
 
 var request = require('request');
 var assert = require('assert');
-var nconf = require('nconf');
 var fs = require('fs');
 var baseUrl = require('../../common').baseUrl;
 var csMock = require('../mock/customerSuccess');

@@ -15,3 +15,4 @@ before(function (done) {
 });
 
 exports.baseUrl = 'http://' + nconf.get('app:address') + ':' + nconf.get('app:port');
+exports.localUrl = 'http://127.0.0.1:' + nconf.get('app:port');
