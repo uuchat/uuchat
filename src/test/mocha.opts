@@ -1,6 +1,6 @@
-src/test/server/api/*.js
+src/test/server/*/*.js
 --recursive
 --require src/test/setup.js
 --growl
 --reporter dot
---timeout 20000
+--timeout 25000

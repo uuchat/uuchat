@@ -12,13 +12,11 @@ describe('api', function () {
     var cid, csid;
 
     before(function (done) {
-        setTimeout(function(){
-            csMock.create(function (res) {
-                var data = JSON.parse(res.body);
-                csid = data.msg.csid;
-                done();
-            });
-        }, 500);
+        csMock.create(function (res) {
+            var data = JSON.parse(res.body);
+            csid = data.msg.csid;
+            done();
+        });
     });
 
     before(function (done) {
