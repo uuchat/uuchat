@@ -12,7 +12,7 @@ function Shortcut() {
 /**
  * load cache
  */
-Shortcut.prototype.init = function () {
+Shortcut.prototype.init = function (callback) {
     var _self = this;
 
     var order = [['shortcut', 'ASC']];
@@ -23,6 +23,8 @@ Shortcut.prototype.init = function () {
         }
 
         logger.info('load shortcut cache:', _self.shortcutCache.length);
+
+        if(callback) callback();
     });
 };
 

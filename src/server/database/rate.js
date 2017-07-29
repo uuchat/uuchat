@@ -32,6 +32,19 @@ Rate.create = function (rate, fn) {
     });
 };
 
+Rate.insert = function (rate, callback) {
+
+    models.Rate.create(rate).then(function (data) {
+
+        callback(null, data);
+
+    }).catch(function (err) {
+        logger.error(err);
+
+        callback(err);
+    });
+};
+
 Rate.update = function (rate, condition, callback) {
 
     models.Rate.update(rate, {where: condition}).then(function (data) {

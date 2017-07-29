@@ -11,7 +11,6 @@ var model = module.exports;
 
 model.init = function (callback) {
     var databaseConfig = process.env.NODE_ENV === 'test' ? nconf.get('test_database') : nconf.get('database');
-
     var sequelize;
 
     if (process.env.DATABASE_URL) {
@@ -42,8 +41,7 @@ model.init = function (callback) {
 
     //sync table
     model.sequelize.sync().then(function(){
-        shortcutCache.init();
-        callback();
+        shortcutCache.init(callback);
     });
 };
 
