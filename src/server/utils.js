@@ -1,5 +1,7 @@
 'use strict';
 
+var os = require('os');
+
 var crypto = require('crypto');
 var nconf = require('nconf');
 var _ = require('lodash');
@@ -76,6 +78,26 @@ utils.getIP = function(req) {
         (req.connection.socket && req.connection.socket.remoteAddress);
 
     return ip.match(new RegExp(/((\d+)\.){3}(\d+)/g))[0];
+};
+
+utils.getServerIPs = function() {
+    var ifaces = os.networkInterfaces(),
+        ips = [
+            'localhost'
+        ];
+
+    Object.keys(ifaces).forEach(function (ifname) {
+        ifaces[ifname].forEach(function (iface) {
+            // only support IPv4
+            if (iface.family !== 'IPv4') {
+                return;
+            }
+
+            ips.push(iface.address);
+        });
+    });
+
+    return ips;
 };
 
 utils.setupIOSCode = function(req, ip, next) {

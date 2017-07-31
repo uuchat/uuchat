@@ -1,6 +1,7 @@
 'use strict';
 
 var fs = require('fs');
+var url = require('url');
 var csrf = require('csurf');
 
 var async = require('async');
@@ -16,33 +17,40 @@ require('./upload')(middleware);
 require('./sign')(middleware);
 
 middleware.corsOptionsDelegate = function (req, next) {
-    var whiteList = nconf.get('app:image_upload_white_list');
-    var first = _.head(whiteList);
-    if (!_.isUndefined(first)) {
-        if (_.startsWith(first, 'http')) {
-            var corsOptions;
+    var ips = utils.getServerIPs();
+    var hostname = url.parse(req.get('Referer')).hostname;
+    if (ips.indexOf(hostname) > -1) { //local IPS
+        corsOptions = {origin: true};
+        next(null, corsOptions);
+    } else {
+        var whiteList = nconf.get('app:image_upload_white_list');
+        var first = _.head(whiteList);
+        if (!_.isUndefined(first)) {
+            if (_.startsWith(first, 'http')) {
+                var corsOptions;
 
-            if (whiteList.indexOf(req.header('Origin')) !== -1) {
-                corsOptions = { origin: true };
-                next(null, corsOptions);
-            }else{
-                var origin = req.protocol + '://' + req.get('Referer').split('//')[1].split('/')[0];
-                if (whiteList.indexOf(origin) !== -1) {
-                    corsOptions = {origin: true};
+                if (whiteList.indexOf(req.header('Origin')) !== -1) {
+                    corsOptions = { origin: true };
                     next(null, corsOptions);
-                } else {
-                    corsOptions = { origin: false };
-                    next(new Error('Not allowed by CORS'));
+                }else{
+                    var origin = req.protocol + '://' + req.get('Referer').split('//')[1].split('/')[0];
+                    if (whiteList.indexOf(origin) !== -1) { //firefox
+                        corsOptions = {origin: true};
+                        next(null, corsOptions);
+                    } else {
+                        corsOptions = { origin: false };
+                        next(new Error('Not allowed by CORS'));
+                    }
                 }
-            }
 
+            } else {
+                var corsOptions = { origin: true };
+                next(null, corsOptions);
+            }
         } else {
             var corsOptions = { origin: true };
             next(null, corsOptions);
         }
-    } else {
-        var corsOptions = { origin: true };
-        next(null, corsOptions);
     }
 };
 
