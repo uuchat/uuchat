@@ -48,6 +48,9 @@ describe('middleware', function () {
                     };
                     request.post({
                         url: baseUrl + '/messages/customer/' + cid + '/cs/' + csid + '/image',
+                        headers:{
+                            referer: baseUrl
+                        },
                         formData: formData
                     }, function (err, res) {
                         assert.ifError(err);
@@ -65,6 +68,9 @@ describe('middleware', function () {
                     };
                     request.post({
                         url: localUrl + '/messages/customer/' + cid + '/cs/' + csid + '/image',
+                        headers:{
+                            referer: localUrl
+                        },
                         formData: formData
                     }, function (err, res) {
                         assert.ifError(err);
