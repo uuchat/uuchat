@@ -41,16 +41,16 @@ function start() {
 }
 
 function checkCORS() {
-    var whiteList = nconf.get('app:image_upload_white_list');
-    var first = _.head(whiteList);
-    if (!_.isUndefined(first)) {
-        if (!_.startsWith(first, 'http')) {
-            winston.info();
-            winston.info('---------------------------------');
-            winston.info('You need set white list domain,\n\t in \'src > config.json\', ' +
-                '\n\t otherwise, has CORS risk !');
-            winston.info('---------------------------------');
-        }
+    var whiteList = nconf.get('app:whitelist');
+    if(_.isUndefined(whiteList) || _.isEmpty(whiteList)){
+        return ;
+    }
+    if (whiteList.indexOf("*") > -1) {
+        winston.info();
+        winston.info('---------------------------------');
+        winston.info('You need set white list domain,\n\t in \'src > config.json\', ' +
+            '\n\t otherwise, has CORS risk !');
+        winston.info('---------------------------------');
     }
 }
 
