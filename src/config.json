@@ -7,7 +7,7 @@
     "lineupRefreshTime": 3000,
     "onlineInfoRefreshTime": 300000,
     "cookieDomain": "",
-    "image_upload_white_list": ["http://uuchat.io", "http://github.io"],
+    "whitelist": ["uuchat.io", "*.github.io"],
     "relative_path": "/"
   },
   "database": {
