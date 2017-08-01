@@ -2,7 +2,6 @@
 
 var _ = require('lodash');
 var shortcutDB = require('../database/shortcut');
-var Sequelize = require('../models').Sequelize;
 var logger = require('../logger');
 
 function Shortcut() {
@@ -15,16 +14,18 @@ function Shortcut() {
 Shortcut.prototype.init = function (callback) {
     var _self = this;
 
+    _self.Sequelize = require('../models').Sequelize;
+
     var order = [['shortcut', 'ASC']];
 
-    shortcutDB.findAll(null, order,function (err, data) {
+    shortcutDB.findAll(null, order, function (err, data) {
         if (data && data.length) {
             _self.shortcutCache = data;
         }
 
         logger.info('load shortcut cache:', _self.shortcutCache.length);
 
-        if(callback) callback();
+        if (callback) callback();
     });
 };
 
@@ -50,7 +51,7 @@ Shortcut.prototype.create = function (shortcut, callback) {
     // cache filter
     var shortcutFilter = _.filter(this.shortcutCache, condition);
 
-    if (shortcutFilter.length) return callback(new Sequelize.UniqueConstraintError());
+    if (shortcutFilter.length) return callback(new _self.Sequelize.UniqueConstraintError());
 
     return shortcutDB.create(shortcut, function (err, data) {
         if (err) return callback(err);
@@ -81,7 +82,7 @@ Shortcut.prototype.update = function (shortcut, condition, callback) {
         // cache filter
         var shortcutFilter = _.filter(this.shortcutCache, filterCondition);
 
-        if (shortcutFilter.length) return callback(new Sequelize.UniqueConstraintError());
+        if (shortcutFilter.length) return callback(new _self.Sequelize.UniqueConstraintError());
     }
 
     shortcutDB.update(shortcut, condition, function (err, data) {
@@ -143,6 +144,13 @@ Shortcut.prototype.listAll = function (attributes, condition, callback) {
     });
 
     callback(null, data);
+};
+
+Shortcut.prototype.count = function (condition, callback) {
+    // cache filter
+    var shortcutFilter = _.filter(this.shortcutCache, condition);
+
+    callback(null, shortcutFilter.length);
 };
 
 var shortcutCache = new Shortcut();

@@ -17,7 +17,8 @@ class ChatSend extends Component{
             isShowProcess: false,
             isShortShow: false,
             percent: 0,
-            textereaValue: ""
+            textereaValue: "",
+            matchText: ';'
         };
     }
 
@@ -71,7 +72,8 @@ class ChatSend extends Component{
             val = tg.value,
             keyCode = e.keyCode,
             sIndex = tg.selectionStart,
-            cmd = val.substr(sIndex - 2, 2);
+            matchVal = val.slice(0, sIndex),
+            matchArr;
 
         if(keyCode === 38 && this.state.isShortShow){
             shortListIndex--;
@@ -82,10 +84,9 @@ class ChatSend extends Component{
             this.shortCutsSelector(1);
         }
 
-        if(/(\s;)|(^;$)/.test(cmd)){
-            this.setState({
-                isShortShow: true
-            });
+        if(/(\s;\w*)|(^;\w*)/.test(matchVal)){
+            matchArr = matchVal.match(/(\s;\w*)|(^;\w*)/g);
+            this.shortCutFilter(matchArr);
         }else{
             this.setState({
                 isShortShow: false
@@ -94,12 +95,32 @@ class ChatSend extends Component{
 
         if(keyCode === 9 || keyCode === 13){
             if(document.querySelector('.short-list .on')){
-                this.insertToCursorPosition(val.replace(new RegExp(cmd, 'g'), ' '), document.querySelector('.short-list .on .key-value').innerHTML+' ');
+                this.insertToCursorPosition(val.replace(new RegExp(matchArr[matchArr.length - 1], 'g'), ' '), document.querySelector('.short-list .on .key-value').innerHTML+' ');
             }
             this.setState({
                 isShortShow: false
             });
         }
+    }
+
+    shortCutFilter = (matchArr) => {
+       let shortcutLists = localStorage.getItem("shortcutList"),
+           mtext = matchArr[matchArr.length - 1].replace(' ', ''),
+           isShortShow = false,
+           matchReg = new RegExp(mtext.slice(1), 'ig');
+
+        shortcutLists = JSON.parse(shortcutLists);
+
+        for(let i = 0, l = shortcutLists.length; i < l; i++){
+            if(matchReg.test(shortcutLists[i].shortcut)){
+                isShortShow = true;
+                break;
+            }
+        }
+        this.setState({
+            matchText: mtext,
+            isShortShow: isShortShow
+        });
     }
 
     shortCutSelecterClick = (val) => {
@@ -199,7 +220,7 @@ class ChatSend extends Component{
 
     render(){
         let {sendMessage, cid, csid} = this.props,
-            {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue, isShortShow} = this.state,
+            {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue, isShortShow, matchText} = this.state,
             _self = this,
             props = {
                 name: 'image',
@@ -258,7 +279,7 @@ class ChatSend extends Component{
                     </div>
                 </div>
                 <div className="chat-text">
-                {isShortShow && <ChatShortcut shortCutSelecterClick={this.shortCutSelecterClick} csid={csid} isShow={isShortShow}  />}
+                {isShortShow && <ChatShortcut shortCutSelecterClick={this.shortCutSelecterClick} csid={csid} matchText={matchText}  />}
                 <Input
                     type="textarea"
                     className="chat-textarea"

@@ -92,7 +92,7 @@ function consoleRoutes(app, middleware, controllers) {
 
 function shortcutRoutes(app, middleware, controllers){
     app.get('/shortcuts', controllers.shortcutController.list);
-    app.post('/shortcuts', controllers.shortcutController.create);
+    app.post('/shortcuts', controllers.shortcutController.checkCount, controllers.shortcutController.create);
     app.patch('/shortcuts/:uuid', controllers.shortcutController.patch);
     app.delete('/shortcuts/:uuid', controllers.shortcutController.delete);
     app.get('/shortcuts/cs/:csid', controllers.shortcutController.list);

@@ -119,6 +119,20 @@ shortcutController.listAll = function (req, res, next) {
     });
 };
 
+shortcutController.checkCount = function(req, res, next){
+    var csid = req.params.csid || '';
+
+    var condition = getCondition(csid);
+
+    Shortcut.count(condition, function(err, data){
+        if(err) return next(err);
+
+        if(data - 30 >= 0) return res.json({code: 9003, msg: 'shortcut_exceed'});
+
+        return next();
+    });
+};
+
 function getCondition(csid) {
     return {
         type: csid ? 1 : 0,

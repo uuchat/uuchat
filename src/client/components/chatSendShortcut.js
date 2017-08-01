@@ -52,7 +52,7 @@ class ChatShortcut extends Component{
                 shortCutLists.unshift(newScObj);
                 localStorage.setItem('newShortcut', "");
             }
-
+            localStorage.setItem("shortcutList", JSON.stringify(shortCutLists));
             this.setState({
                 fetchList: shortCutLists
             });
@@ -63,6 +63,7 @@ class ChatShortcut extends Component{
             .then((data)=>{
                 if(data.code === 200){
                     shortCutLists = data.msg
+                    localStorage.setItem("shortcutList", JSON.stringify(shortCutLists));
                     _self.setState({
                         fetchList: shortCutLists
                     });
@@ -72,7 +73,19 @@ class ChatShortcut extends Component{
     }
 
     render(){
-        let {fetchList} = this.state;
+        let {fetchList} = this.state,
+            {matchText, shortCutSelecterClick} = this.props,
+            shortListArr = [];
+
+        for(let i = 0, l = fetchList.length; i < l; i++){
+            let matchReg= new RegExp(matchText.slice(1), 'ig'),
+                s = fetchList[i];
+
+            if(matchReg.test(s.shortcut)){
+                shortListArr.push(s);
+            }
+        }
+
         return (
             <div className="shortcut">
                 <div className="short-head">
@@ -83,8 +96,8 @@ class ChatShortcut extends Component{
                 </div>
                 <div className="short-list">
                     <ul className="shortListUl">
-                        {fetchList.length > 0 && fetchList.map((s, i)=>
-                                <ShortList key={i} num={i} name={s.shortcut} value={s.msg} shortCutSelecterClick={this.props.shortCutSelecterClick} />
+                        {shortListArr.map((s, i)=>
+                            <ShortList key={i} num={i} name={s.shortcut} value={s.msg} shortCutSelecterClick={shortCutSelecterClick} />
                         )}
                     </ul>
                 </div>
