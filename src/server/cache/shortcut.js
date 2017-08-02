@@ -20,6 +20,10 @@ Shortcut.prototype.init = function (callback) {
 
     shortcutDB.findAll(null, order, function (err, data) {
         if (data && data.length) {
+            _.each(data, function (item) {
+                item.id = _self.createKey(item.uuid);
+            });
+
             _self.shortcutCache = data;
         }
 
@@ -56,6 +60,8 @@ Shortcut.prototype.create = function (shortcut, callback) {
     return shortcutDB.create(shortcut, function (err, data) {
         if (err) return callback(err);
 
+        data.id = _self.createKey(data.uuid);
+
         //create cache
         _self.shortcutCache.push(data);
 
@@ -85,6 +91,8 @@ Shortcut.prototype.update = function (shortcut, condition, callback) {
         if (shortcutFilter.length) return callback(new _self.Sequelize.UniqueConstraintError());
     }
 
+    condition = {uuid: this.shortcutCache[index].uuid};
+
     shortcutDB.update(shortcut, condition, function (err, data) {
         if (err) return callback(err);
 
@@ -92,7 +100,7 @@ Shortcut.prototype.update = function (shortcut, condition, callback) {
         _.merge(_self.shortcutCache[index], shortcut);
         _self.shortcutCache[index].updatedAt = new Date();
 
-        return callback(null, data);
+        return callback(null, _self.shortcutCache[index]);
     });
 };
 
@@ -105,13 +113,16 @@ Shortcut.prototype.delete = function (condition, callback) {
     // no data in cache
     if (index === -1) return callback();
 
+    condition = {uuid: this.shortcutCache[index].uuid};
+
     shortcutDB.delete(condition, function (err, data) {
         if (err) return callback(err);
 
+        var deleteShortCut = _self.shortcutCache[index];
         //delete cache
         _self.shortcutCache.splice(index, 1);
 
-        return callback(null, data);
+        return callback(null, deleteShortCut);
     });
 };
 
@@ -151,6 +162,10 @@ Shortcut.prototype.count = function (condition, callback) {
     var shortcutFilter = _.filter(this.shortcutCache, condition);
 
     callback(null, shortcutFilter.length);
+};
+
+Shortcut.prototype.createKey = function (uuid) {
+    return uuid.slice(0, 8);
 };
 
 var shortcutCache = new Shortcut();

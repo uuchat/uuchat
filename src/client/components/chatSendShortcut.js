@@ -8,10 +8,24 @@ class ShortList extends Component{
         e.stopPropagation();
         this.props.shortCutSelecterClick(document.querySelector('.s-'+this.props.num+' .key-value').innerHTML);
     }
+    mouseoverHandle = (e) => {
+
+        let shortcutList = document.querySelectorAll('.shortListUl li'),
+            tg = e.target;
+
+        for(let i = 0, l = shortcutList.length; i < l; i++){
+            shortcutList[i].className = 's-'+i;
+        }
+
+        if(tg.tagName.toLowerCase() === 'li'){
+            tg.className += ' on';
+            this.props.shortcutMouseover(tg.getAttribute('data-num'));
+        }
+    }
     render(){
         let {num, name, value} = this.props;
         return (
-            <li className={'s-'+num+' '+(num<=0 ? 'on' : '')} onClick={this.selectClick}>
+            <li className={'s-'+num+(num === 0 ? ' on' : '')} onClick={this.selectClick} data-num={num} onMouseOver={this.mouseoverHandle}>
                 <span className="key-name">{';'+name}</span>
                 <span className="key-value">{value.replace(/(^\s*)/g, '')}</span>
             </li>
@@ -49,7 +63,23 @@ class ChatShortcut extends Component{
             let newSC = localStorage.getItem("newShortcut");
             if(newSC){
                 let newScObj = JSON.parse(newSC);
-                shortCutLists.unshift(newScObj);
+
+                if(newScObj.action === "INSERT"){
+                    shortCutLists.unshift(newScObj);
+                }else if(newScObj.action === "UPDATE"){
+                    for(let i = 0, l = shortCutLists.length; i < l; i++){
+                        if(shortCutLists[i].id === newScObj.id){
+                            shortCutLists[i] = newScObj;
+                        }
+                    }
+                }else if(newScObj.action === "DELETE"){
+                    for(let i = 0, l = shortCutLists.length; i < l; i++){
+                        if(shortCutLists[i].id === newScObj.id){
+                            
+                        }
+                    }
+                }
+
                 localStorage.setItem('newShortcut', "");
             }
             localStorage.setItem("shortcutList", JSON.stringify(shortCutLists));
@@ -74,7 +104,7 @@ class ChatShortcut extends Component{
 
     render(){
         let {fetchList} = this.state,
-            {matchText, shortCutSelecterClick} = this.props,
+            {matchText, shortCutSelecterClick, shortcutMouseover} = this.props,
             shortListArr = [];
 
         for(let i = 0, l = fetchList.length; i < l; i++){
@@ -85,7 +115,6 @@ class ChatShortcut extends Component{
                 shortListArr.push(s);
             }
         }
-
         return (
             <div className="shortcut">
                 <div className="short-head">
@@ -97,7 +126,7 @@ class ChatShortcut extends Component{
                 <div className="short-list">
                     <ul className="shortListUl">
                         {shortListArr.map((s, i)=>
-                            <ShortList key={i} num={i} name={s.shortcut} value={s.msg} shortCutSelecterClick={shortCutSelecterClick} />
+                            <ShortList key={i} num={i} name={s.shortcut} value={s.msg} shortCutSelecterClick={shortCutSelecterClick} shortcutMouseover={shortcutMouseover} />
                         )}
                     </ul>
                 </div>

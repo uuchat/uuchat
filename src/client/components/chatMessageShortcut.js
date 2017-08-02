@@ -31,7 +31,7 @@ class ChatMessageShortcut extends Component{
             },
             body: bodyData
         }).then(d=>d.json()).then(data=>{
-            localStorage.setItem('newShortcut', '{"shortcut": "'+shortKey+'","msg": "'+shortValue+'"}');
+            localStorage.setItem('newShortcut', '{"shortcut": "'+shortKey+'","msg": "'+shortValue+'", "action":"INSERT"}');
             _self.toggleSet(false);
         }).catch((e)=>{});
     }

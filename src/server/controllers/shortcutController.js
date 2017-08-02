@@ -4,6 +4,7 @@ var async = require('async');
 var nconf = require('nconf');
 var _ = require('lodash');
 var Shortcut = require('../cache/shortcut');
+var SocketAdapter = require('../socket.io/SocketAdapter');
 var utils = require('../utils');
 
 var shortcutController = module.exports;
@@ -37,6 +38,11 @@ shortcutController.create = function (req, res, next) {
             return next(err);
         }
 
+        if (data.type === 0) {
+            SocketAdapter.shortcuts('INSERT', _.pick(data, ['id', 'shortcut', 'msg']), function (result) {
+
+            });
+        }
 
         return res.json({code: 200, msg: data});
     });
@@ -47,7 +53,7 @@ shortcutController.patch = function (req, res, next) {
         shortcut: req.body.shortcut,
         msg: req.body.msg
     };
-    var condition = {uuid: req.params.uuid};
+    var condition = {id: req.params.id};
 
     Shortcut.update(shortcut, condition, function (err, data) {
         if (err) {
@@ -58,16 +64,27 @@ shortcutController.patch = function (req, res, next) {
             }
             return next(err);
         }
+        if (data.type === 0) {
+            SocketAdapter.shortcuts('UPDATE', _.pick(data, ['id', 'shortcut', 'msg']), function (result) {
+
+            });
+        }
 
         return res.json({code: 200, msg: 'success update'});
     });
 };
 
 shortcutController.delete = function (req, res, next) {
-    var condition = {uuid: req.params.uuid};
+    var condition = {id: req.params.id};
 
     Shortcut.delete(condition, function (err, data) {
         if (err) return next(err);
+
+        if (data.type === 0) {
+            SocketAdapter.shortcuts('DELETE', _.pick(data, ['id', 'shortcut', 'msg']), function (result) {
+
+            });
+        }
 
         return res.json({code: 200, msg: 'success delete'});
     });
@@ -99,7 +116,7 @@ shortcutController.listAll = function (req, res, next) {
             getCondition(csid)
         ]
     };
-    var attributes = ['type', 'shortcut', 'msg'];
+    var attributes = ['id', 'type', 'shortcut', 'msg'];
 
     Shortcut.listAll(attributes, condition, function (err, data) {
         if (err) return next(err);
@@ -119,15 +136,15 @@ shortcutController.listAll = function (req, res, next) {
     });
 };
 
-shortcutController.checkCount = function(req, res, next){
+shortcutController.checkCount = function (req, res, next) {
     var csid = req.params.csid || '';
 
     var condition = getCondition(csid);
 
-    Shortcut.count(condition, function(err, data){
-        if(err) return next(err);
+    Shortcut.count(condition, function (err, data) {
+        if (err) return next(err);
 
-        if(data - 30 >= 0) return res.json({code: 9003, msg: 'shortcut_exceed'});
+        if (data - 30 >= 0) return res.json({code: 9003, msg: 'shortcut_exceed'});
 
         return next();
     });

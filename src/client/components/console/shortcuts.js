@@ -39,8 +39,8 @@ export default class Shortcuts extends Component {
 
                     let dataSource = data.msg.rows.map(function (item) {
                         return {
-                            key: item.uuid,
-                            uuid: item.uuid,
+                            key: item.id,
+                            id: item.id,
                             shortcut: item.shortcut,
                             msg: item.msg,
                             createdAt: item.createdAt
@@ -121,7 +121,7 @@ export default class Shortcuts extends Component {
         form.validateFields((err, values) => {
             if (err) return;
 
-            let url = '/shortcuts/' + (modalType === 'Create' ? '' : initialData.uuid);
+            let url = '/shortcuts/' + (modalType === 'Create' ? '' : initialData.id);
             let method = modalType === 'Create' ? 'POST' : 'PATCH';
             let body = 'shortcut=' + values.shortcut + '&msg=' + values.msg;
 
@@ -234,7 +234,7 @@ export default class Shortcuts extends Component {
                 render: (value)=>formatDate(value)
             },
             {
-                title: 'Action', dataIndex: '', key: 'uuid', render: this.renderAction
+                title: 'Action', dataIndex: '', key: 'id', render: this.renderAction
             }
         ];
 
