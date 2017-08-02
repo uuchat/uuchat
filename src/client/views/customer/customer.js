@@ -398,6 +398,7 @@
                                 if(success){
                                     setTimeout(function(){
                                         UUCT.socket.close();
+                                        UUCT.socket = null;
                                         $('.chat-main').innerHTML = '<div class="reconnect-btn"><img width="32" src="'+UUCT.domain+'/static/images/write.png">New Conversation</div>';
                                         addEvent($('.reconnect-btn'), 'click', function(){
                                             UUCT.createSocket();
@@ -408,6 +409,15 @@
                         });
                     })(i)
                 }
+
+            }else if(msgObj.msg === 2){
+                var str = '';
+                str += '<div class="new-conversation">Click to New Conversation</div>';
+                chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
+
+                addEvent($('.new-conversation'), 'click', function(){
+                    UUCT.createSocket();
+                });
 
             }else{
                 chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, msgObj.time));
@@ -535,8 +545,10 @@
                 msg: tips,
                 time: new Date()
             });
+            UUCT.socketReconnectTips();
             $('.chat-name').innerHTML = UUCT.chat.csName;
             this.close();
+            UUCT.socket = null;
         },
         socketCsSelect: function(type, data){
             if(1 === type){
@@ -717,6 +729,13 @@
                 });
             });
         },
+        socketReconnectTips: function(){
+            UUCT.msgTranslate({
+                role: 1,
+                msg: 2,
+                time: new Date()
+            });
+        },
         socketSendMessage: function(msg){
             UUCT.socketEmitMessage(UUCT.cutStr(msg, 256));
         },
@@ -768,6 +787,7 @@
                 msg: 'The customerSuccess is offline!',
                 time: new Date()
             });
+            UUCT.socketReconnectTips();
         },
         socketCsStatus: function(status){
             if(1 === status){
@@ -783,6 +803,7 @@
                 msg: 'The customerSuccess is offline!',
                 time: new Date()
             });
+            UUCT.socketReconnectTips();
         },
         socketQueueUpdate: function(pos){
             if($('.line-num')){

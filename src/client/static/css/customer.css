@@ -169,6 +169,14 @@
 .chat-item .chat-text img{
     max-width: 100%;
 }
+.chat-item .chat-text .new-conversation{
+    padding: 5px 10px;
+    border-radius: 20px;
+    background-color:#7c92b0;
+    color: #fff;
+    cursor: pointer;
+    font-size: 12px;
+}
 .chat-to .chat-text a{
     color: #fff;
 }

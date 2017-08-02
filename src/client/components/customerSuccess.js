@@ -67,6 +67,7 @@ class CustomerSuccess extends Component{
         sio.on('c.message', this.cMessage);
         sio.on('c.disconnect', this.cDisconnect);
         sio.on('cs.customer.offline', this.csCustomerOffline);
+        sio.on('cs.shortcut', this.csShortcuts);
         sio.on('error', this.socketError);
         this.setState({
             socket: sio
@@ -621,6 +622,10 @@ class CustomerSuccess extends Component{
     }
     chatListHide = () => {
         document.querySelector('.customerSuccess-left').className='customerSuccess-left';
+    }
+    csShortcuts = (action, shortcut) => {
+        shortcut.action = action;
+        localStorage.setItem('newShortcut', JSON.stringify(shortcut))
     }
     render(){
 

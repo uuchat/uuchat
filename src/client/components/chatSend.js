@@ -4,7 +4,7 @@ import ChatShortcut from './chatSendShortcut';
 import EmojiPicker from './chatEmoji';
 import {cutStr} from './utils';
 
-let shortListIndex=0;
+let shortListIndex=0, shortcutWord;
 
 class ChatSend extends Component{
 
@@ -13,12 +13,13 @@ class ChatSend extends Component{
         this.state = {
             isSendReady: false,
             isEmojiShow: false,
-            socket: props.socket,
             isShowProcess: false,
             isShortShow: false,
+            socket: props.socket,
             percent: 0,
             textereaValue: "",
-            matchText: ';'
+            matchText: ';',
+            sNum: 0
         };
     }
 
@@ -31,7 +32,6 @@ class ChatSend extends Component{
     blurHandle = () => {
         let that = this;
         this.props.statusHandle(2);
-
         setTimeout(function(){
             that.setState({
                 isShortShow: false
@@ -67,7 +67,6 @@ class ChatSend extends Component{
     }
 
     onKeyup = (e) => {
-
         let tg = e.target,
             val = tg.value,
             keyCode = e.keyCode,
@@ -95,7 +94,7 @@ class ChatSend extends Component{
 
         if(keyCode === 9 || keyCode === 13){
             if(document.querySelector('.short-list .on')){
-                this.insertToCursorPosition(val.replace(new RegExp(matchArr[matchArr.length - 1], 'g'), ' '), document.querySelector('.short-list .on .key-value').innerHTML+' ');
+                this.insertToCursorPosition(val.replace(new RegExp(shortcutWord, 'g'), ' '), document.querySelector('.short-list .on .key-value').innerHTML+' ');
             }
             this.setState({
                 isShortShow: false
@@ -104,33 +103,44 @@ class ChatSend extends Component{
     }
 
     shortCutFilter = (matchArr) => {
-       let shortcutLists = localStorage.getItem("shortcutList"),
+       let shortcutLists = localStorage.getItem("shortcutList") || [],
            mtext = matchArr[matchArr.length - 1].replace(' ', ''),
            isShortShow = false,
            matchReg = new RegExp(mtext.slice(1), 'ig');
 
-        shortcutLists = JSON.parse(shortcutLists);
+        shortcutWord = mtext;
 
-        for(let i = 0, l = shortcutLists.length; i < l; i++){
-            if(matchReg.test(shortcutLists[i].shortcut)){
-                isShortShow = true;
-                break;
+        if(shortcutLists.length > 0){
+            shortcutLists = JSON.parse(shortcutLists);
+            for(let i = 0, l = shortcutLists.length; i < l; i++){
+                if(matchReg.test(shortcutLists[i].shortcut)){
+                    isShortShow = true;
+                    break;
+                }
             }
+        }else{
+            isShortShow = true;
         }
+
         this.setState({
             matchText: mtext,
             isShortShow: isShortShow
         });
     }
 
+    shortcutMouseover = (i) => {
+        shortListIndex = i;
+    }
+
     shortCutSelecterClick = (val) => {
-        this.insertToCursorPosition(this.state.textereaValue.replace(/(\s;)|(^;)/g, ''), ' '+val);
+        //shortListIndex = 0;
+        this.insertToCursorPosition(this.state.textereaValue.replace(new RegExp(shortcutWord, 'g'), ''), ' '+val);
     }
 
     shortCutsSelector = (direction) => {
         if(document.querySelector('.shortListUl li')){
-            let h = document.querySelector('.short-list li').offsetHeight,
-                list = document.querySelectorAll('.short-list li'),
+            let h = document.querySelector('.shortListUl li').offsetHeight,
+                list = document.querySelectorAll('.shortListUl li'),
                 len = list.length,
                 shortList = document.querySelector('.short-list');
 
@@ -151,11 +161,13 @@ class ChatSend extends Component{
                     shortList.scrollTop += direction*h;
                 }
             }
-
             for(let i = 0; i < len; i++){
-                list[i].className = list[i].className.replace(/\son/g, '');
+                if(i === shortListIndex){
+                    list[i].className += ' on';
+                }else{
+                    list[i].className = 's-'+i;
+                }
             }
-            document.querySelector('.s-'+shortListIndex) && (document.querySelector('.s-'+shortListIndex).className += ' on');
         }
     }
 
@@ -259,6 +271,10 @@ class ChatSend extends Component{
                 }
             };
 
+        if(!isShortShow){
+            shortListIndex = 0;
+        }
+
         return (
             <div className="chat-send">
                 <Progress type="circle" percent={percent} className="upload-process" width={60} style={{display: isShowProcess ? 'block' : 'none'}} />
@@ -279,7 +295,7 @@ class ChatSend extends Component{
                     </div>
                 </div>
                 <div className="chat-text">
-                {isShortShow && <ChatShortcut shortCutSelecterClick={this.shortCutSelecterClick} csid={csid} matchText={matchText}  />}
+                {isShortShow && <ChatShortcut shortCutSelecterClick={this.shortCutSelecterClick} csid={csid} matchText={matchText} shortcutMouseover={this.shortcutMouseover} />}
                 <Input
                     type="textarea"
                     className="chat-textarea"
