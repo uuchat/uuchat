@@ -9,6 +9,7 @@ var customerSuccessList = require('./customerSuccess');
 var userAgent = require('./userAgent');
 var chatHistory = require('../database/chatHistory');
 var utils = require('../utils');
+var logger = require('../logger');
 
 var SocketAdapter = {};
 
@@ -62,6 +63,24 @@ SocketAdapter.emitCustomer = function (csid, cid) {
             ]);
         }
     }
+};
+
+
+SocketAdapter.shortcuts = function(action, shortcut, fn) {
+    if (customerSuccessList.onlineNum() === 0) return;
+    var list = customerSuccessList.list();
+
+    //emit all online customer success;
+    _.forIn(list, function (value, key) {
+        if (value.socket) {
+            value.socket.emit("cs.shortcut", action, shortcut);
+        } else {
+            logger.error("because customer success if offline,  emit cs.shortcuts error: csid = %d", key)
+        }
+    });
+
+    fn(true);
+
 };
 
 SocketAdapter.emitCustomerOfflineMessage = function (csid, data) {

@@ -90,10 +90,6 @@ function listening() {
             customerSuccessEvents.rate(cid, fn);
         });
 
-        socket.on('cs.shortcuts', function(shortcuts, fn) {
-            customerSuccessEvents.shortcuts(shortcuts, fn);
-        });
-
         socket.on('cs.logout', function(fn) {
             var session = socket.request.session;
             if (!session) return ;
