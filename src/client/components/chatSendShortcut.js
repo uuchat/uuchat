@@ -62,7 +62,7 @@ class ChatShortcut extends Component{
         if(shortCutLists.length > 0){
             let newSC = localStorage.getItem("newShortcut");
             if(newSC){
-                let newScObj = JSON.parse(newSC);
+                let newScObj = JSON.parse(newSC), index;
 
                 if(newScObj.action === "INSERT"){
                     shortCutLists.unshift(newScObj);
@@ -75,11 +75,11 @@ class ChatShortcut extends Component{
                 }else if(newScObj.action === "DELETE"){
                     for(let i = 0, l = shortCutLists.length; i < l; i++){
                         if(shortCutLists[i].id === newScObj.id){
-                            
+                            index = i;
                         }
                     }
+                    shortCutLists.splice(index, 1);
                 }
-
                 localStorage.setItem('newShortcut', "");
             }
             localStorage.setItem("shortcutList", JSON.stringify(shortCutLists));
