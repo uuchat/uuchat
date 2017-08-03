@@ -23,7 +23,7 @@ export default class ChatList extends Component {
                 });
             }).catch(function (e) {
             });
-    }
+    };
 
     componentDidMount () {
         let { cid, csid } = this.props;

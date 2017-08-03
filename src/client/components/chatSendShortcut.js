@@ -1,13 +1,65 @@
 import React, { Component } from 'react';
 import '../static/css/shortcut.css';
 
-let shortCutLists = [];
+
+let Shortcut = {
+    data: [],
+    newScObj: {},
+    getData: function(){
+        if(this.data.length > 0){
+            let newSc = localStorage.getItem("newShortcut");
+            if(newSc){
+                this.newScObj = JSON.parse(newSc);
+                switch(this.newScObj.action){
+                    case "INSERT":
+                        this.insertData();
+                        break;
+                    case "UPDATE":
+                        this.updateData();
+                        break;
+                    case "DELETE":
+                        this.deleteData();
+                        break;
+                    default:
+                        break;
+                }
+                localStorage.setItem('newShortcut', "");
+                localStorage.setItem("shortcutList", JSON.stringify(Shortcut.data));
+            }
+        }
+        return this.data;
+    },
+    setData: function(data){
+        this.data = data;
+        localStorage.setItem("shortcutList", JSON.stringify(data));
+    },
+    insertData: function(){
+        this.data.unshift(this.newScObj);
+    },
+    updateData: function(){
+        for(let i = 0, l = this.data.length; i < l; i++){
+            if(this.data[i].id === this.newScObj.id){
+                this.data[i] = this.newScObj;
+            }
+        }
+    },
+    deleteData: function(){
+        let index = 0;
+        for(let i = 0, l = this.data.length; i < l; i++){
+            if(this.data[i].id === this.newScObj.id){
+                index = i;
+            }
+        }
+        this.data.splice(index, 1);
+    }
+};
+
 
 class ShortList extends Component{
     selectClick = (e) => {
         e.stopPropagation();
         this.props.shortCutSelecterClick(document.querySelector('.s-'+this.props.num+' .key-value').innerHTML);
-    }
+    };
     mouseoverHandle = (e) => {
 
         let shortcutList = document.querySelectorAll('.shortListUl li'),
@@ -21,7 +73,7 @@ class ShortList extends Component{
             tg.className += ' on';
             this.props.shortcutMouseover(tg.getAttribute('data-num'));
         }
-    }
+    };
     render(){
         let {num, name, value} = this.props;
         return (
@@ -48,7 +100,7 @@ class ChatShortcut extends Component{
     constructor(){
         super();
         this.state = {
-            fetchList: shortCutLists
+            fetchList: []
         };
     }
 
@@ -57,50 +109,28 @@ class ChatShortcut extends Component{
     }
 
     getShortCutsList = () => {
-        let _self = this;
+        let _self = this,
+            shortcutData = Shortcut.getData();
 
-        if(shortCutLists.length > 0){
-            let newSC = localStorage.getItem("newShortcut");
-            if(newSC){
-                let newScObj = JSON.parse(newSC), index;
-
-                if(newScObj.action === "INSERT"){
-                    shortCutLists.unshift(newScObj);
-                }else if(newScObj.action === "UPDATE"){
-                    for(let i = 0, l = shortCutLists.length; i < l; i++){
-                        if(shortCutLists[i].id === newScObj.id){
-                            shortCutLists[i] = newScObj;
-                        }
-                    }
-                }else if(newScObj.action === "DELETE"){
-                    for(let i = 0, l = shortCutLists.length; i < l; i++){
-                        if(shortCutLists[i].id === newScObj.id){
-                            index = i;
-                        }
-                    }
-                    shortCutLists.splice(index, 1);
-                }
-                localStorage.setItem('newShortcut', "");
-            }
-            localStorage.setItem("shortcutList", JSON.stringify(shortCutLists));
+        if(shortcutData.length > 0){
             this.setState({
-                fetchList: shortCutLists
+                fetchList: shortcutData
             });
-            return;
+            return false;
         }
+
         fetch('/shortcuts/cs/'+this.props.csid+'/all')
             .then((d)=>d.json())
             .then((data)=>{
                 if(data.code === 200){
-                    shortCutLists = data.msg
-                    localStorage.setItem("shortcutList", JSON.stringify(shortCutLists));
+                    Shortcut.setData(data.msg);
                     _self.setState({
-                        fetchList: shortCutLists
+                        fetchList: data.msg
                     });
                 }
             })
             .catch((e)=>{});
-    }
+    };
 
     render(){
         let {fetchList} = this.state,
@@ -115,11 +145,12 @@ class ChatShortcut extends Component{
                 shortListArr.push(s);
             }
         }
+
         return (
             <div className="shortcut">
                 <div className="short-head">
-                    <span class="navigate-shortcuts">Navigate ↑ and ↓</span>
-                    <span class="hotkey-shortcuts">
+                    <span className="navigate-shortcuts">Navigate ↑ and ↓</span>
+                    <span className="hotkey-shortcuts">
                         &nbsp; &nbsp;<strong>Enter</strong> or <strong>Tab</strong> to select
                     </span>
                 </div>
@@ -130,7 +161,7 @@ class ChatShortcut extends Component{
                         )}
                     </ul>
                 </div>
-                {(shortCutLists.length === 0) && <ShortEmpty />}
+                {(shortListArr.length === 0) && <ShortEmpty />}
             </div>
         );
 

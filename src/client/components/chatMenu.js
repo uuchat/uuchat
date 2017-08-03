@@ -12,7 +12,7 @@ class ChatMenu extends Component{
         this.setState({
             isContentShow: !this.state.isContentShow
         });
-    }
+    };
 
     render(){
 

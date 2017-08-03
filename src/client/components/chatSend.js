@@ -28,7 +28,7 @@ class ChatSend extends Component{
             textereaValue: e.target.value.substr(0, 512)
         });
         this.props.statusHandle(1);
-    }
+    };
     blurHandle = () => {
         let that = this;
         this.props.statusHandle(2);
@@ -38,12 +38,12 @@ class ChatSend extends Component{
             });
         }, 500);
 
-    }
+    };
     textFocusHandle = () => {
         this.setState({
             isEmojiShow: false
         });
-    }
+    };
 
     sendMessage = (e) => {
         e.preventDefault();
@@ -59,12 +59,12 @@ class ChatSend extends Component{
             });
         }
 
-    }
+    };
     onKeyDown = (e) => {
         if(e.keyCode === 38 || e.keyCode === 40 || e.keyCode === 9){
             e.preventDefault();
         }
-    }
+    };
 
     onKeyup = (e) => {
         let tg = e.target,
@@ -100,7 +100,7 @@ class ChatSend extends Component{
                 isShortShow: false
             });
         }
-    }
+    };
 
     shortCutFilter = (matchArr) => {
        let shortcutLists = localStorage.getItem("shortcutList") || [],
@@ -126,16 +126,15 @@ class ChatSend extends Component{
             matchText: mtext,
             isShortShow: isShortShow
         });
-    }
+    };
 
     shortcutMouseover = (i) => {
         shortListIndex = i;
     }
 
     shortCutSelecterClick = (val) => {
-        //shortListIndex = 0;
-        this.insertToCursorPosition(this.state.textereaValue.replace(new RegExp(shortcutWord, 'g'), ''), ' '+val);
-    }
+        this.insertToCursorPosition(this.state.textereaValue.replace(new RegExp(shortcutWord, 'g'), ' '), ' '+val);
+    };
 
     shortCutsSelector = (direction) => {
         if(document.querySelector('.shortListUl li')){
@@ -169,17 +168,17 @@ class ChatSend extends Component{
                 }
             }
         }
-    }
+    };
 
     emojiBtnHandle = () => {
         this.setState({
             isEmojiShow: !this.state.isEmojiShow
         })
-    }
+    };
 
     addEmojiHandle = (emoji) => {
         this.insertToCursorPosition(this.state.textereaValue, emoji);
-    }
+    };
 
     insertToCursorPosition = (s1, s2) => {
         let obj = document.getElementsByClassName("chat-textarea")[0];
@@ -205,7 +204,7 @@ class ChatSend extends Component{
                 textereaValue: this.state.textereaValue+ s2 +" "
              });
         }
-    }
+    };
     rateHandle = (e) => {
         let {socket, cid} = this.props;
         Modal.confirm({
@@ -220,7 +219,7 @@ class ChatSend extends Component{
                 socket && socket.emit('cs.rate', cid, function(success){});
             }
         });
-    }
+    };
 
     beforeUpload = (file) => {
         const isLt2M = file.size / 1024 / 1024 < 2;
@@ -228,7 +227,7 @@ class ChatSend extends Component{
             message.error('Image must smaller than 2MB!');
         }
         return isLt2M;
-    }
+    };
 
     render(){
         let {sendMessage, cid, csid} = this.props,

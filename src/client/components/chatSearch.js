@@ -23,17 +23,17 @@ class ChatSearchItem extends Component{
             });
         }
         return <div dangerouslySetInnerHTML={{__html: str}}></div>;
-    }
+    };
     showHistory = (e) => {
         this.props.showHistory(this.props.cid);
-    }
+    };
     renderHistroy = (cid) => {
         this.setState({
             hisCid: cid,
             isHisVis: true,
             hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
         });
-    }
+    };
     render(){
         return (
             <li onClick={this.showHistory}>
@@ -98,7 +98,7 @@ class ChatSearch extends Component{
                 });
             }
         }).catch(function(e){});
-    }
+    };
     fetchHistory = (cid) => {
         let that = this,
             csAvatar = localStorage.getItem('uuchat.avatar') ? localStorage.getItem('uuchat.avatar') : require('../static/images/contact.png');
@@ -121,19 +121,19 @@ class ChatSearch extends Component{
 
             })
             .catch(function(e){});
-    }
+    };
     renderHistroy = (cid) => {
         this.setState({
             hisCid: cid,
             isHisVis: true,
             hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
         });
-    }
+    };
     historyClose = () => {
         this.setState({
             isHisVis: false
         });
-    }
+    };
     viewMore = () => {
         let that = this;
         fetch('/messages/cs/'+that.state.csid+'/search/latestmonth?msg='+searchContent+'&pageNum='+(pageNum * 5)).then(function(d){
@@ -158,12 +158,12 @@ class ChatSearch extends Component{
                 }
             }
         }).catch(function(e){});
-    }
+    };
     onSearchHandler = (e) => {
         if(e.target.value!==""){
             this.getSearchList(e.target.value);
         }
-    }
+    };
 
     render(){
         let state = this.state,

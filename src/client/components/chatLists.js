@@ -34,7 +34,7 @@ class ChatList extends Component{
                 });
             }
         }).catch(function(e){});
-    }
+    };
     showHistory = (e) => {
         let t = e.target,
             cid = '',
@@ -64,7 +64,7 @@ class ChatList extends Component{
             ulList[i].className = '';
         }
         _li.className='active';
-    }
+    };
 
     renderHistroy = (cid) => {
         this.setState({
@@ -72,7 +72,7 @@ class ChatList extends Component{
             isHisVis: true,
             hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
         });
-    }
+    };
 
     fetchHistory = (cid, csid) => {
         let _self = this,
@@ -96,7 +96,7 @@ class ChatList extends Component{
 
             })
             .catch(function(e){});
-    }
+    };
 
     filterMarked = (e) => {
         if(e.target.tagName.toLowerCase() === 'span'){
@@ -105,13 +105,13 @@ class ChatList extends Component{
                 filterMark: marked
             });
         }
-    }
+    };
 
     historyClose = () => {
         this.setState({
             isHisVis: false
         });
-    }
+    };
 
     render(){
 

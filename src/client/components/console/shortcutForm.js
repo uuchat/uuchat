@@ -10,7 +10,7 @@ class ShortcutForm extends Component {
             shortcut: '',
             msg: ''
         }
-    }
+    };
 
     render() {
         const { getFieldDecorator } = this.props.form;

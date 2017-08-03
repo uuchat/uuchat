@@ -72,7 +72,7 @@ class CustomerSuccess extends Component{
         this.setState({
             socket: sio
         });
-    }
+    };
 
     /***
      * cs.customer.list
@@ -95,7 +95,7 @@ class CustomerSuccess extends Component{
         for(let i = 0; i < data.length; i++){
             this.getMessageHistory(data[i].cid);
         }
-    }
+    };
 
     /***
      * cs.customer.one
@@ -129,7 +129,7 @@ class CustomerSuccess extends Component{
                 marked: marked
             }
         });
-    }
+    };
 
     /***
      * cs.dispatch
@@ -156,7 +156,7 @@ class CustomerSuccess extends Component{
                 }
             });
         }
-    }
+    };
 
     /***
      * cs.need.login
@@ -165,7 +165,7 @@ class CustomerSuccess extends Component{
         fn(true);
         this.state.socket.disconnect();
         window.location.href="/";
-    }
+    };
 
     /***
      * c.message
@@ -196,7 +196,7 @@ class CustomerSuccess extends Component{
             messageLists:  messageLists,
             chatNotify: chatNotify
         });
-    }
+    };
 
     /***
      * c.disconnect
@@ -223,7 +223,7 @@ class CustomerSuccess extends Component{
             },
             customerLists: customerLists
         });
-    }
+    };
 
     /***
      * cs.customer.offline
@@ -243,17 +243,17 @@ class CustomerSuccess extends Component{
         this.setState({
             customerLists: customerLists
         });
-    }
+    };
 
     /***
      * reconnect
      */
-    socketReconnect = () => {}
+    socketReconnect = () => {};
 
     /***
      * error
      */
-    socketError = () => {}
+    socketError = () => {};
 
     /***
      *
@@ -270,7 +270,7 @@ class CustomerSuccess extends Component{
                 isConnectErr: false
             });
         }
-    }
+    };
 
     /***
      *
@@ -300,7 +300,7 @@ class CustomerSuccess extends Component{
             messageLists: {},
             customerLists: []
         });
-    }
+    };
 
     /***
      *
@@ -311,7 +311,7 @@ class CustomerSuccess extends Component{
             e.preventDefault();
             return false;
         }
-    }
+    };
 
     /***
      *
@@ -339,7 +339,7 @@ class CustomerSuccess extends Component{
         });
 
         this.getMessageHistory(cid);
-    }
+    };
 
     /***
      *
@@ -374,7 +374,7 @@ class CustomerSuccess extends Component{
 
         }
 
-    }
+    };
     /***
      *
      * @returns {boolean}
@@ -388,7 +388,7 @@ class CustomerSuccess extends Component{
                 setting: (index === "3" ? 'setting_selected' : 'setting')
             }
         });
-    }
+    };
 
     /***
      *
@@ -449,7 +449,7 @@ class CustomerSuccess extends Component{
                 });
             }
         });
-    }
+    };
 
     /***
      * socketTransfer
@@ -481,7 +481,7 @@ class CustomerSuccess extends Component{
                 name: name
             }
         });
-    }
+    };
     /***
      *
      * User login out
@@ -515,7 +515,7 @@ class CustomerSuccess extends Component{
                 });
             }
         });
-    }
+    };
 
     /***
      *
@@ -523,7 +523,7 @@ class CustomerSuccess extends Component{
      */
     statusHandle = (type) => {
         this.state.socket.emit('cs.status', this.state.customerSelect.cid, type, function(state){})
-    }
+    };
 
     /***
      * get customerSuccess and customer chat history
@@ -561,7 +561,7 @@ class CustomerSuccess extends Component{
 
             })
             .catch(function(e){});
-    }
+    };
 
     /***
      *
@@ -579,7 +579,7 @@ class CustomerSuccess extends Component{
             }
         }
         return cdata;
-    }
+    };
 
     /***
      * @returns {boolean}
@@ -607,7 +607,7 @@ class CustomerSuccess extends Component{
             });
         }
 
-    }
+    };
 
     /***
      * avatarHandle
@@ -616,17 +616,17 @@ class CustomerSuccess extends Component{
         this.setState({
             csAvatar: avatar
         });
-    }
+    };
     chatListShow = () => {
         document.querySelector('.customerSuccess-left').className += ' left-menu-show';
-    }
+    };
     chatListHide = () => {
         document.querySelector('.customerSuccess-left').className='customerSuccess-left';
-    }
+    };
     csShortcuts = (action, shortcut) => {
         shortcut.action = action;
         localStorage.setItem('newShortcut', JSON.stringify(shortcut))
-    }
+    };
     render(){
 
         let {customerLists, customerSelect, chatNotify, messageLists, isOnline, isConnectErr, csAvatar, csName, csEmail, menuIcons, csid, socket} = this.state,

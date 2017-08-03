@@ -70,7 +70,7 @@ export default class RateList extends Component {
             }).catch((e) => {
                 message.error(e.message, 4);
             })
-    }
+    };
 
     componentDidMount () {
         this.getDataSource();

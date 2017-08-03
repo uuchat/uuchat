@@ -17,7 +17,7 @@ class ChatMessageItem extends Component{
         }
         return <div dangerouslySetInnerHTML={{__html: str}}></div>;
     }
-    timeFomat(t){
+    timeFomat = (t) => {
         let str = '',
             h = t.getHours(),
             m = t.getMinutes();
@@ -27,7 +27,7 @@ class ChatMessageItem extends Component{
         str += (h <= 12) ? ' AM' : ' PM';
 
         return str;
-    }
+    };
     render(){
         let {ownerAvatar, ownerType, time, ownerText, shortSetting} = this.props,
             imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,

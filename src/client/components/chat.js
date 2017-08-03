@@ -13,7 +13,7 @@ class Chat extends Component{
 
     chatClickHandler = (e) => {
         this.props.onChatListClick(this.props.name, this.props.cid,  this.props.marked);
-    }
+    };
 
     msgFilter(msg){
         let imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
@@ -30,7 +30,7 @@ class Chat extends Component{
         this.setState({
             isOfflineShow: !isOfflineShow
         });
-    }
+    };
 
     render(){
 

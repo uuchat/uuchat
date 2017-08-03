@@ -20,7 +20,7 @@ class ChatSetting extends Component{
         this.setState({
             isAccountShow: !isAccountShow
         });
-    }
+    };
     accountSave = () => {
         let name = this.refs.name.refs.input.value,
             displayName = this.refs.displayName.refs.input.value,
@@ -50,13 +50,13 @@ class ChatSetting extends Component{
         }else{
             this.refs.name.refs.input.style.border = '1px solid red';
         }
-    }
+    };
     passwordHandle = () => {
         let isPasswordShow = this.state.isPasswordShow;
         this.setState({
             isPasswordShow: !isPasswordShow
         });
-    }
+    };
     passwordSave = (e) => {
         let _self = this,
             passwd = this.refs.passwd.refs.input.value.replace(/^\s$/g, ''),
@@ -88,7 +88,7 @@ class ChatSetting extends Component{
         .catch(function(e){
             message.error(e, 4);
         });
-    }
+    };
     shortcutSet = () => {
         let csid = this.props.csid;
         if(this.state.setContent){
@@ -103,12 +103,12 @@ class ChatSetting extends Component{
                 isSetVisible: true
             });
         }).catch(e=>{});
-    }
+    };
     shortcutClose = () => {
         this.setState({
             isSetVisible: false
         });
-    }
+    };
     render(){
         let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible} = this.state,
             {csid, avatarHandle, name} = this.props,

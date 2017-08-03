@@ -11,7 +11,7 @@ class ChatMessageShortcut extends Component{
     }
     setShortcut = () => {
         this.toggleSet(true);
-    }
+    };
     shortcutFetch = () => {
         let _self = this,
             shortKey = this.refs.shortKey.refs.input.value,
@@ -34,15 +34,15 @@ class ChatMessageShortcut extends Component{
             localStorage.setItem('newShortcut', '{"shortcut": "'+shortKey+'","msg": "'+shortValue+'", "action":"INSERT"}');
             _self.toggleSet(false);
         }).catch((e)=>{});
-    }
+    };
     shortcutCancel =  () => {
         this.toggleSet(false);
-    }
+    };
     toggleSet = (flag) => {
         this.setState({
             isSetShow: flag
         });
-    }
+    };
     render(){
         let { content } = this.props;
         content = content.replace(/&nbsp;/g, ' ').replace(/(^\s*)/g, '').replace(/&gt;/g, '>').replace(/&lt;/g, '<');

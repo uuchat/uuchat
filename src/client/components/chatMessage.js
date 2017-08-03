@@ -43,7 +43,7 @@ class ChatMessage extends Component{
         this.setState({
             isMarkShow: !isms
         });
-    }
+    };
     optionSelect = (e) => {
         e.stopPropagation();
         let type = e.target.getAttribute('data-type'),
@@ -88,20 +88,20 @@ class ChatMessage extends Component{
                }
             });
         }
-    }
+    };
     markOk = () => {
         this.setState({
             visible: false,
             isMarkShow: false
         });
-    }
+    };
 
     markCancel = () => {
         this.setState({
             visible: false,
             isMarkShow: false
         });
-    }
+    };
     markColorSelect = (e) => {
         let {cid, csid, socket} = this.props,
             t = e.target,
@@ -118,7 +118,7 @@ class ChatMessage extends Component{
                 }
             });
         }
-    }
+    };
 
     csOnlineInfo = (data) =>{
         if(Object.keys(this.state.OnlineCustomerList).length !== Object.keys(data).length){
@@ -126,7 +126,7 @@ class ChatMessage extends Component{
                   OnlineCustomerList: data
               });
         }
-    }
+    };
     transfer = (e) => {
         let {socket, cid, transferHandle} = this.props,
             t = e.target,
@@ -139,7 +139,7 @@ class ChatMessage extends Component{
             }
         });
 
-    }
+    };
 
     render(){
         let {markedList, visible, isMarkShow} = this.state,

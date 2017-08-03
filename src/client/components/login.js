@@ -9,7 +9,7 @@ class Login extends Component{
     static defaultProps = {
         fetchUrl: '/login',
         redirect: '/chat',
-    }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -55,7 +55,7 @@ class Login extends Component{
             }
         });
 
-    }
+    };
 
     render(){
         let { getFieldDecorator } = this.props.form;

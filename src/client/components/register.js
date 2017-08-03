@@ -42,11 +42,11 @@ class RegisterForm extends Component {
                 });
             }
         });
-    }
+    };
     handleConfirmBlur = (e) => {
         let value = e.target.value;
         this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-    }
+    };
     checkPassword = (rule, value, callback) => {
         let form = this.props.form;
         if(value && value !== form.getFieldValue('password')) {
@@ -54,17 +54,17 @@ class RegisterForm extends Component {
         }else {
             callback();
         }
-    }
+    };
     checkConfirm = (rule, value, callback) => {
         let form = this.props.form;
         if(value && this.state.confirmDirty) {
             form.validateFields(['confirm'], { force: true });
         }
         callback();
-    }
+    };
     hasErrors = (fieldsError) => {
         return Object.keys(fieldsError).some(field => fieldsError[field]);
-    }
+    };
     render() {
 
         let { getFieldDecorator, getFieldsError } = this.props.form;

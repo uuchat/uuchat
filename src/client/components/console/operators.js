@@ -82,7 +82,7 @@ export default class Operators extends Component {
 
         dataSource = StoreDataSource.filter((record) => {
             return record.email.match(reg);
-        })
+        });
 
         pagination.total = dataSource.length;
 
