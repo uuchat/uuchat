@@ -20,18 +20,20 @@ SocketAdapter.emitCustomerList = function (csid) {
         var users = customerSuccess.users;
 
         if (!_.isEmpty(users)) {
-            async.map(users, function(value, callback) {
+            async.map(users, function (value, callback) {
 
                 getMarkedByCid(value, csid, function (marked) {
                     var customer = customerList.get(value);
                     if (customer) {
-                        callback(null, {cid: value, name: customer.name,
-                            info: that.reqParamsFormSocket(value), marked: marked});
+                        callback(null, {
+                            cid: value, name: customer.name,
+                            info: that.reqParamsFormSocket(value), marked: marked
+                        });
                     }
                 });
 
-            }, function(err, data) {
-                if( err ) {
+            }, function (err, data) {
+                if (err) {
                     winston.log(err);
                 }
                 if (data.length > 0) {
@@ -48,7 +50,7 @@ SocketAdapter.emitCustomer = function (csid, cid) {
     if (!_.isEmpty(customerSuccess)) {
         var customer = customerList.get(cid);
         if (!_.isEmpty(customer)) {
-            var that = this.reqParamsFormSocket(cid) ;
+            var that = this.reqParamsFormSocket(cid);
             winston.info('emit cs.customer.one cid = %s and csid = %s', cid, csid);
             async.waterfall([
                 function (next) {
@@ -66,14 +68,17 @@ SocketAdapter.emitCustomer = function (csid, cid) {
 };
 
 
-SocketAdapter.shortcuts = function(action, shortcut, fn) {
+SocketAdapter.shortcuts = function (action, shortcut, fn) {
     if (customerSuccessList.onlineNum() === 0) return;
     var list = customerSuccessList.list();
 
     //emit all online customer success;
     _.forIn(list, function (value, key) {
         if (value.socket) {
-            value.socket.emit("cs.shortcut", action, shortcut);
+            try {
+                value.socket.emit("cs.shortcut", action, shortcut);
+            } catch (e) {
+            }
         } else {
             logger.error("because customer success if offline,  emit cs.shortcuts error: csid = %d", key)
         }
@@ -90,7 +95,7 @@ SocketAdapter.emitCustomerOfflineMessage = function (csid, data) {
     }
 };
 
-SocketAdapter.reqParamsFormSocket = function(cid) {
+SocketAdapter.reqParamsFormSocket = function (cid) {
     var ua = userAgent.get(cid);
 
     return {
