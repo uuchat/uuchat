@@ -32,7 +32,7 @@ describe('api', function () {
 
     describe('#shortcut', function () {
 
-        var pubSid, priSid;
+        var pubSid, priSid, pubId, priId;
 
         describe('POST /shortcuts', function () {
             it('should response with success', function (done) {
@@ -47,6 +47,7 @@ describe('api', function () {
                     var shortcut = JSON.parse(res.body);
                     assert.equal(shortcut.code, 200);
                     pubSid = shortcut.msg.uuid;
+                    pubId = shortcut.msg.id;
                     done();
                 });
             });
@@ -64,6 +65,7 @@ describe('api', function () {
                     var shortcut = JSON.parse(res.body);
                     assert.equal(shortcut.code, 200);
                     priSid = shortcut.msg.uuid;
+                    priId = shortcut.msg.id;
                     done();
                 });
             });
@@ -102,10 +104,10 @@ describe('api', function () {
             });
         });
 
-        describe('PATCH /shortcuts/:uuid', function () {
+        describe('PATCH /shortcuts/:id', function () {
             it('should response with success', function (done) {
                 request.patch({
-                    url: baseUrl + '/shortcuts/' + priSid,
+                    url: baseUrl + '/shortcuts/' + priId,
                     form: {
                         shortcut: 'address',
                         msg: 'Please send to shenzhen nanshan software park 1B'
@@ -121,7 +123,7 @@ describe('api', function () {
 
         describe('DELETE /shortcuts', function () {
             it('should response with success', function (done) {
-                request.delete(baseUrl + '/shortcuts/' + pubSid, function (err, res) {
+                request.delete(baseUrl + '/shortcuts/' + pubId, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
@@ -129,7 +131,7 @@ describe('api', function () {
                 });
             });
             it('should response with success', function (done) {
-                request.delete(baseUrl + '/shortcuts/' + priSid, function (err, res) {
+                request.delete(baseUrl + '/shortcuts/' + priId, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
                     assert.equal(data.code, 200);
