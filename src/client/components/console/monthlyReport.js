@@ -21,19 +21,19 @@ export default class MonthlyReport extends PureComponent {
                     <Col lg={12} md={24}>
                         <div>
                             <div>
-                                <div style={{padding:'10px 0',fontSize:'16px'}}>
-                                    <b>Monthly chats:<span style={{margin:'0 10px'}}>{ chats }</span></b>
+                                <div style={{padding: '10px 0', fontSize: '16px'}}>
+                                    <b>Monthly chats:<span style={{margin: '0 10px'}}>{ chats }</span></b>
                                 </div>
                             </div>
 
                             <div>
-                                <div style={{padding:'10px 0',fontSize:'16px'}}>
-                                    <b>Monthly messages:<span style={{margin:'0 10px'}}>{ messages }</span></b>
+                                <div style={{padding: '10px 0', fontSize: '16px'}}>
+                                    <b>Monthly messages:<span style={{margin: '0 10px'}}>{ messages }</span></b>
                                 </div>
                             </div>
                             <div>
-                                <div style={{padding:'10px 0',fontSize:'16px'}}><b>offline messages:</b></div>
-                                <div style={{padding:'10px 0',fontSize:'16px'}}>
+                                <div style={{padding: '10px 0', fontSize: '16px'}}><b>offline messages:</b></div>
+                                <div style={{padding: '10px 0', fontSize: '16px'}}>
                                     <Progress percent={ offlinePercent }
                                               format={ (percent) => offlineMessages }/>
                                 </div>
@@ -42,21 +42,21 @@ export default class MonthlyReport extends PureComponent {
                     </Col>
                     <Col lg={12} md={24}>
                         <Col lg={12} md={24}>
-                            <div style={{ textAlign:'center' }}>
+                            <div style={{ textAlign: 'center' }}>
                                 <Progress type="circle" percent={ favorablePercent }/>
 
-                                <div style={{padding:'10px 0'}}>favorable rates</div>
+                                <div style={{padding: '10px 0'}}>favorable rates</div>
                             </div>
                         </Col>
                         <Col lg={12} md={24}>
-                            <div style={{ textAlign:'center' }}>
+                            <div style={{ textAlign: 'center' }}>
                                 <Progress type="circle" percent={ criticalPercent} />
 
-                                <div style={{padding:'10px 0', color:'#f69899'}}>critical rates</div>
+                                <div style={{padding: '10px 0', color: '#f69899'}}>critical rates</div>
                             </div>
                         </Col>
 
-                        <div style={{ padding:'10px 0',textAlign:'center',fontSize:'16px' }}>
+                        <div style={{ padding: '10px 0', textAlign: 'center', fontSize: '16px' }}>
                             <b>Monthly rates: { rates }</b>
                         </div>
                     </Col>

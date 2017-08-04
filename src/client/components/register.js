@@ -14,7 +14,7 @@ class RegisterForm extends Component {
     handleSubmit = (e) =>{
         e.preventDefault();
         this.props.form.validateFieldsAndScroll((err, values) => {
-            if(!err) {
+            if (!err) {
                 fetch('/register', {
                     credentials: 'include',
                     method: 'POST',
@@ -25,7 +25,7 @@ class RegisterForm extends Component {
                 })
                 .then((res)=>res.json())
                 .then(function(d){
-                    if(200 === d.code){
+                    if (d.code === 200) {
                         localStorage.setItem('avatar', '');
                         localStorage.setItem('uuchat.csid', d.msg.csid);
                         localStorage.setItem('uuchat.email', d.msg.email);
@@ -33,7 +33,7 @@ class RegisterForm extends Component {
                         localStorage.setItem('uuchat.displayName', d.msg.displayName);
                         localStorage.setItem('uuchat.avatar', d.msg.photo);
                         window.location.href = "/chat";
-                    }else{
+                    } else {
                         message.error(d.msg, 4);
                     }
                 })
@@ -49,29 +49,29 @@ class RegisterForm extends Component {
     };
     checkPassword = (rule, value, callback) => {
         let form = this.props.form;
-        if(value && value !== form.getFieldValue('password')) {
+        if (value && value !== form.getFieldValue('password')) {
             callback('Two passwords that you enter is inconsistent!');
-        }else {
+        } else {
             callback();
         }
     };
     checkConfirm = (rule, value, callback) => {
         let form = this.props.form;
-        if(value && this.state.confirmDirty) {
+        if (value && this.state.confirmDirty) {
             form.validateFields(['confirm'], { force: true });
         }
         callback();
     };
     hasErrors = (fieldsError) => {
         return Object.keys(fieldsError).some(field => fieldsError[field]);
-    };
+    }
     render() {
 
         let { getFieldDecorator, getFieldsError } = this.props.form;
 
         return (
             <Row>
-                <Col xs={{span:24, offset: 0}} sm={{span: 20, offset: 2}} md={{span: 20, offset: 2}} lg={{span: 24, offset: 0}} xl={{span: 24, offset: 0}}>
+                <Col xs={{span: 24, offset: 0}} sm={{span: 20, offset: 2}} md={{span: 20, offset: 2}} lg={{span: 24, offset: 0}} xl={{span: 24, offset: 0}}>
                     <Form onSubmit={this.handleSubmit} layout="vertical">
                         <FormItem
                             label="E-mail"
@@ -79,10 +79,10 @@ class RegisterForm extends Component {
                             >
                             {getFieldDecorator('email', {
                                 rules: [{
-                                    type: 'email', message: 'The input is not valid E-mail!',
+                                    type: 'email', message: 'The input is not valid E-mail!'
                                 }, {
-                                    required: true, message: 'Please input your E-mail!',
-                                }],
+                                    required: true, message: 'Please input your E-mail!'
+                                }]
                             })(
                                 <Input />
                             )}
@@ -95,8 +95,8 @@ class RegisterForm extends Component {
                                 rules: [{
                                     required: true, message: 'Password must be no less than 6 characters!', min: 6
                                 }, {
-                                    validator: this.checkConfirm,
-                                }],
+                                    validator: this.checkConfirm
+                                }]
                             })(
                                 <Input type="password" />
                             )}
@@ -109,8 +109,8 @@ class RegisterForm extends Component {
                                 rules: [{
                                     required: true, message: 'Password must be no less than 6 characters!', min: 6
                                 }, {
-                                    validator: this.checkPassword,
-                                }],
+                                    validator: this.checkPassword
+                                }]
                             })(
                                 <Input type="password" onBlur={this.handleConfirmBlur} />
                             )}
@@ -119,7 +119,7 @@ class RegisterForm extends Component {
                             {getFieldDecorator('agreement', {
                                 valuePropName: 'checked',
                                 rules: [{
-                                    required: true, message: 'Please agreement!',
+                                    required: true, message: 'Please agreement!'
                                 }]
                             })(
                                 <Checkbox>I have read the <a href="">agreement</a></Checkbox>
@@ -140,7 +140,7 @@ const RegistrationForm = Form.create()(RegisterForm);
 
 class Register extends Component{
 
-    render(){
+    render() {
 
         return (
             <div className="uuchat-register">

@@ -49,7 +49,7 @@ export default class Operators extends Component {
                 body: body
             }).then((res)=>res.json())
                 .then(function (d) {
-                    if (200 === d.code) {
+                    if (d.code === 200) {
                         _self.setState({
                             visible: false
                         });
@@ -101,7 +101,7 @@ export default class Operators extends Component {
         fetch('/customersuccesses')
             .then((res)=>res.json())
             .then(function (data) {
-                if (200 === data.code) {
+                if (data.code === 200) {
 
                     let sourceList = [];
 
@@ -143,7 +143,7 @@ export default class Operators extends Component {
             Confirm({
                 title: 'Are you sure delete ' + value.email,
                 onOk(){
-                    _self.onDeleteItem(value.key)
+                    _self.onDeleteItem(value.key);
                 }
             });
         }
@@ -156,7 +156,7 @@ export default class Operators extends Component {
             method: 'DELETE'
         }).then((res)=>res.json())
             .then(function (d) {
-                if (200 === d.code) {
+                if (d.code === 200) {
                     _self.getDataSource();
                 } else {
                     message.error(d.msg, 4);
@@ -200,9 +200,9 @@ export default class Operators extends Component {
         });
     };
 
-    componentDidMount () {
+    componentDidMount() {
         this.getDataSource();
-    };
+    }
 
     render() {
         let { dataSource, visible, confirmLoading, sortedInfo, searchText, pagination } = this.state;
@@ -232,7 +232,7 @@ export default class Operators extends Component {
                 title: 'createTime', dataIndex: 'createAt', key: 'createAt',
                 sorter: (a, b) => sortFilterByProps(a, b, 'createAt'),
                 sortOrder: sortedInfo.columnKey === 'createAt' && sortedInfo.order,
-                render:(value) => formatDate(value)
+                render: (value) => formatDate(value)
             },
             {
                 title: 'Action', dataIndex: '', key: 'csid', render: this.renderAction

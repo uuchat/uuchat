@@ -8,7 +8,7 @@ class Chat extends Component{
         super();
         this.state={
             isOfflineShow: false
-        }
+        };
     }
 
     chatClickHandler = (e) => {
@@ -19,7 +19,7 @@ class Chat extends Component{
         let imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
             m = msg.replace && msg.replace(/#/gi, "<br />");
 
-        if(msg.replace && imgReg.test(m)){
+        if (msg.replace && imgReg.test(m)) {
             return  <img src={'/'+msg.split('|')[0]} alt="" />;
         }
         return <span dangerouslySetInnerHTML={{__html: m}}></span>;
@@ -38,9 +38,9 @@ class Chat extends Component{
             msg,
             cIndex = String2int(cid);
 
-        if(!type){
+        if (!type) {
 
-            if(newMsg && newMsg.length > 0 ){
+            if (newMsg && newMsg.length > 0 ) {
                 msg = newMsg[newMsg.length - 1];
             }
             return (
@@ -56,7 +56,7 @@ class Chat extends Component{
                     <div className="chat-notify" style={{display: (isActive || num === 0) ? 'none' : 'inline-block'}}>{num}</div>
                 </li>
              );
-        }else if(type){
+        } else if (type) {
 
             return (
                 <li onClick={this.offlineShow}>

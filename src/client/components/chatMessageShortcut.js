@@ -7,7 +7,7 @@ class ChatMessageShortcut extends Component{
         super();
         this.state={
             isSetShow: false
-        }
+        };
     }
     setShortcut = () => {
         this.toggleSet(true);
@@ -18,7 +18,7 @@ class ChatMessageShortcut extends Component{
             shortValue = this.refs.shortValue.refs.input.value,
             bodyData = 'csid='+(localStorage.getItem('uuchat.csid') || '')+'&shortcut='+shortKey+'&msg='+shortValue;
 
-        if(shortKey.replace(/^\s$/g, '') === ''){
+        if (shortKey.replace(/^\s$/g, '') === '') {
             _self.toggleSet(false);
             return false;
         }

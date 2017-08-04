@@ -21,8 +21,8 @@ class ChatMessage extends Component{
 
         let markedList = this.state.markedList;
 
-        if(!markedList[this.props.cid]){
-            markedList[this.props.cid] = this.props.marked
+        if (!markedList[this.props.cid]) {
+            markedList[this.props.cid] = this.props.marked;
         }
 
         this.setState({
@@ -49,20 +49,20 @@ class ChatMessage extends Component{
         let type = e.target.getAttribute('data-type'),
             _self = this;
 
-        if('m' === type){
+        if (type === 'm') {
             this.setState({
                 visible: true
             });
-        }else if('t' === type){
+        } else if (type === 't') {
             let onlineLists = [],
                 ocl = _self.state.OnlineCustomerList;
 
-            for(let i in ocl){
-                if(i !== _self.props.csid){
+            for (let i in ocl) {
+                if (i !== _self.props.csid){
                     onlineLists.push({
                         name: i,
                         info: ocl[i]
-                    })
+                    });
                 }
             }
             onlineListModal = Modal.info({
@@ -108,7 +108,7 @@ class ChatMessage extends Component{
             _self = this,
             markedList = this.state.markedList;
 
-        if(t.tagName.toLowerCase() === 'span') {
+        if (t.tagName.toLowerCase() === 'span') {
             socket.emit('cs.marked', cid, csid, parseInt(t.innerHTML, 10), function (type) {
                 if (type) {
                     markedList[cid]=parseInt(t.innerHTML, 10);
@@ -121,7 +121,7 @@ class ChatMessage extends Component{
     };
 
     csOnlineInfo = (data) =>{
-        if(Object.keys(this.state.OnlineCustomerList).length !== Object.keys(data).length){
+        if (Object.keys(this.state.OnlineCustomerList).length !== Object.keys(data).length) {
               this.setState({
                   OnlineCustomerList: data
               });
@@ -133,7 +133,7 @@ class ChatMessage extends Component{
             csid = t.getAttribute('data-csid');
 
        socket.emit('cs.dispatch', csid, cid, function(success){
-            if(success){
+            if (success) {
                 transferHandle(cid);
                 onlineListModal.destroy();
             }

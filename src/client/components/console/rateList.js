@@ -40,7 +40,7 @@ export default class RateList extends Component {
         fetch('/customersuccesses')
             .then((res) => res.json())
             .then(function (data) {
-                if (200 === data.code) {
+                if (data.code === 200) {
                     return _component.setState({
                         csSource: data.msg
                     });
@@ -50,7 +50,7 @@ export default class RateList extends Component {
             }).then(() => fetch(queryUrl))
             .then((res) => res.json())
             .then((data) => {
-                if (200 === data.code) {
+                if (data.code === 200) {
                     pagination.total = data.msg.count;
 
                     data.msg.rows.forEach((item) => {
@@ -69,7 +69,7 @@ export default class RateList extends Component {
                 }
             }).catch((e) => {
                 message.error(e.message, 4);
-            })
+            });
     };
 
     componentDidMount () {

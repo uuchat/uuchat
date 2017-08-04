@@ -36,14 +36,14 @@ export default class Transcripts extends Component {
         return fetch('/customersuccesses')
             .then((res) => res.json())
             .then(function (data) {
-                if (200 === data.code) {
+                if (data.code === 200) {
                     return _component.setState({
                         csSource: data.msg
                     });
                 } else {
                     message.error(data.msg, 4);
                 }
-            })
+            });
     };
 
     getDataSource = (pageNum) => {
@@ -58,7 +58,7 @@ export default class Transcripts extends Component {
         fetch(queryUrl)
             .then((res) => res.json())
             .then((data) => {
-                if (200 === data.code) {
+                if (data.code === 200) {
 
                     data.msg.rows.forEach((item) => {
                         item.key = item.uuid;

@@ -8,7 +8,7 @@ class Login extends Component{
 
     static defaultProps = {
         fetchUrl: '/login',
-        redirect: '/chat',
+        redirect: '/chat'
     };
 
     handleSubmit = (e) => {
@@ -16,7 +16,7 @@ class Login extends Component{
 
         this.props.form.validateFields((err, values) => {
 
-            if(!err) {
+            if (!err) {
 
                 let { fetchUrl, redirect } = this.props;
 
@@ -30,21 +30,21 @@ class Login extends Component{
                 })
                 .then((res)=>res.json())
                 .then(function(d){
-                    if(200 === d.code){
+                    if (d.code === 200) {
                         localStorage.setItem('uuchat.csid', d.msg.csid);
                         localStorage.setItem('uuchat.email', d.msg.email);
                         localStorage.setItem('uuchat.name', d.msg.name);
                         localStorage.setItem('uuchat.displayName', (d.msg.displayName ? d.msg.displayName : ''));
                         localStorage.setItem('uuchat.avatar', (d.msg.photo ? d.msg.photo : ''));
-                        if(document.querySelector('#uu-chat')) {
+                        if (document.querySelector('#uu-chat')) {
                             document.querySelector('#uu-chat').innerHTML = '<div class="chat-loading"><div class="bounce bounce1"></div><div class="bounce bounce2"></div><div class="bounce bounce3"></div></div>';
                         }
                         window.location.href = redirect;
-                    }else if(1002 === d.code){
+                    } else if (d.code === 1002) {
                         message.error('Email is not found', 4);
-                    }else if(1003 === d.code){
+                    } else if (d.code === 1003) {
                         message.error('User unauthorized ', 4);
-                    }else{
+                    } else {
                         message.error(d.msg, 4);
                     }
                 })
@@ -82,7 +82,7 @@ class Login extends Component{
                    <FormItem>
                         {getFieldDecorator('remember', {
                                 valuePropName: 'checked',
-                                initialValue: true,
+                                initialValue: true
                             })(
                                 <Checkbox>Remember me</Checkbox>
                         )}

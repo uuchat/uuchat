@@ -39,7 +39,7 @@ export default class Rates extends Component {
             .then((res)=>res.json())
             .then(function (data) {
 
-                if (200 === data.code) {
+                if (data.code === 200) {
 
                     data.msg.forEach(function (item) {
                         item.key = item.csid;
@@ -56,16 +56,16 @@ export default class Rates extends Component {
             });
     };
 
-    componentWillMount () {
+    componentWillMount() {
         const location = this.props.location;
         if (location.state) {
             this.setState({month: location.state.month});
         }
-    };
+    }
 
-    componentDidMount () {
+    componentDidMount() {
         this.getDataSource();
-    };
+    }
 
     handleChange = (pagination, filters, sorter) => {
         this.setState({

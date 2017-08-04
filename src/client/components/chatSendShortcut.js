@@ -6,11 +6,11 @@ let Shortcut = {
     data: [],
     newScObj: {},
     getData: function(){
-        if(this.data.length > 0){
+        if (this.data.length > 0) {
             let newSc = localStorage.getItem("newShortcut");
-            if(newSc){
+            if (newSc){
                 this.newScObj = JSON.parse(newSc);
-                switch(this.newScObj.action){
+                switch (this.newScObj.action) {
                     case "INSERT":
                         this.insertData();
                         break;
@@ -37,16 +37,16 @@ let Shortcut = {
         this.data.unshift(this.newScObj);
     },
     updateData: function(){
-        for(let i = 0, l = this.data.length; i < l; i++){
-            if(this.data[i].id === this.newScObj.id){
+        for (let i = 0, l = this.data.length; i < l; i++) {
+            if (this.data[i].id === this.newScObj.id) {
                 this.data[i] = this.newScObj;
             }
         }
     },
     deleteData: function(){
         let index = 0;
-        for(let i = 0, l = this.data.length; i < l; i++){
-            if(this.data[i].id === this.newScObj.id){
+        for (let i = 0, l = this.data.length; i < l; i++) {
+            if (this.data[i].id === this.newScObj.id) {
                 index = i;
             }
         }
@@ -65,11 +65,11 @@ class ShortList extends Component{
         let shortcutList = document.querySelectorAll('.shortListUl li'),
             tg = e.target;
 
-        for(let i = 0, l = shortcutList.length; i < l; i++){
+        for (let i = 0, l = shortcutList.length; i < l; i++) {
             shortcutList[i].className = 's-'+i;
         }
 
-        if(tg.tagName.toLowerCase() === 'li'){
+        if (tg.tagName.toLowerCase() === 'li') {
             tg.className += ' on';
             this.props.shortcutMouseover(tg.getAttribute('data-num'));
         }
@@ -112,7 +112,7 @@ class ChatShortcut extends Component{
         let _self = this,
             shortcutData = Shortcut.getData();
 
-        if(shortcutData.length > 0){
+        if (shortcutData.length > 0) {
             this.setState({
                 fetchList: shortcutData
             });
@@ -122,7 +122,7 @@ class ChatShortcut extends Component{
         fetch('/shortcuts/cs/'+this.props.csid+'/all')
             .then((d)=>d.json())
             .then((data)=>{
-                if(data.code === 200){
+                if (data.code === 200) {
                     Shortcut.setData(data.msg);
                     _self.setState({
                         fetchList: data.msg
@@ -137,11 +137,11 @@ class ChatShortcut extends Component{
             {matchText, shortCutSelecterClick, shortcutMouseover} = this.props,
             shortListArr = [];
 
-        for(let i = 0, l = fetchList.length; i < l; i++){
+        for (let i = 0, l = fetchList.length; i < l; i++) {
             let matchReg= new RegExp(matchText.slice(1), 'ig'),
                 s = fetchList[i];
 
-            if(matchReg.test(s.shortcut)){
+            if (matchReg.test(s.shortcut)) {
                 shortListArr.push(s);
             }
         }

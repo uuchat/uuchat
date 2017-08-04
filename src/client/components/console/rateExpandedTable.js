@@ -17,7 +17,7 @@ export default class RateExpandedTable extends Component {
                 sorter: (a, b) => sortFilterByProps(a, b, 'email'),
                 sortOrder: sortedInfo.columnKey === 'email' && sortedInfo.order,
                 render: (text, record) => (
-                    <Link to={{pathname: '/rates/'+record.csid, state:{month: month} }}>{ text }</Link> )
+                    <Link to={{pathname: '/rates/'+record.csid, state: {month: month} }}>{ text }</Link> )
             },
             {
                 title: 'name',

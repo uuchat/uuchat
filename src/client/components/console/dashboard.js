@@ -17,9 +17,9 @@ export default class Dashboard extends Component {
             .then((res)=>res.json())
             .then(function (data) {
 
-                if (200 === data.code) {
+                if (data.code === 200) {
                     _component.setState({
-                        numbersData : data.msg
+                        numbersData: data.msg
                     });
                 } else {
                     message.error(data.msg, 4);
@@ -36,7 +36,7 @@ export default class Dashboard extends Component {
             .then((res)=>res.json())
             .then(function (data) {
 
-                if (200 === data.code) {
+                if (data.code === 200) {
                     _component.setState({
                         monthlyData: data.msg
                     });

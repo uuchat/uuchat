@@ -94,7 +94,7 @@ class RateSearchForm extends Component {
     };
 
     render() {
-        const { filter, form:{ getFieldDecorator } } = this.props;
+        const { filter, form: { getFieldDecorator } } = this.props;
         const { csSource, rangePickerOpen,calendarFooterValue } = this.state;
 
         const initialCreatedAt = filter.createdAt;
@@ -121,11 +121,11 @@ class RateSearchForm extends Component {
             ];
 
             return (
-                <Radio.Group style={{padding:'8px 0'}} size='large'
+                <Radio.Group style={{padding: '8px 0'}} size='large'
                              defaultValue={ calendarFooterValue }
                              onChange={this.handleCalendarFooterChange}>
                     {intervalList.map((item)=>
-                        <Radio.Button style={{padding:'0 8px'}} value={item.key}>{item.text}</Radio.Button>
+                        <Radio.Button style={{padding: '0 8px'}} value={item.key}>{item.text}</Radio.Button>
                     )}
                 </Radio.Group>
             );

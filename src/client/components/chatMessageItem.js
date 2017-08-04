@@ -5,12 +5,12 @@ class ChatMessageItem extends Component{
 
     msgConver(msg){
         let str = '';
-        if(typeof msg === 'object'){
+        if (typeof msg === 'object') {
             str = '<span class="offline-name">Offline message</span>';
             str += '<p class="offline-content">'+msg.content+'</p>';
             str += '<p class="offline-email">name: '+msg.name+'</p>';
             str += '<p class="offline-email">email: '+msg.email+'</p>';
-        }else {
+        } else {
             str = msg.replace(/&nbsp;/g, ' ').replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
                 return '<a href="' + match + '" target="_blank">' + match + '</a>';
             });
@@ -28,7 +28,7 @@ class ChatMessageItem extends Component{
 
         return str;
     };
-    render(){
+    render() {
         let {ownerAvatar, ownerType, time, ownerText, shortSetting} = this.props,
             imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
             imgSrc = ownerText,
@@ -38,25 +38,25 @@ class ChatMessageItem extends Component{
             flClass = 'fl',
             shortCutSet;
 
-        if(typeof time === 'string'){
+        if (typeof time === 'string') {
             time = new Date(time);
             isOld = true;
         }
 
-        if(imgReg.test(imgSrc)){
+        if (imgReg.test(imgSrc)) {
             isImg = true;
             imgSrc = imgSrc.split('|');
         }
 
-        if(typeof ownerAvatar === 'string'){
-            img =  <img src={ownerAvatar} alt="avatar" title="avatar" />
-        }else{
-            if(ownerType===0 || ownerType===4){
+        if (typeof ownerAvatar === 'string') {
+            img =  <img src={ownerAvatar} alt="avatar" title="avatar" />;
+        } else {
+            if (ownerType===0 || ownerType===4){
                 img = ownerAvatar;
             }
         }
 
-        if(ownerType===1 || ownerType === 3){
+        if (ownerType===1 || ownerType === 3) {
             flClass = isOld ? 'fr done' : 'fr';
             shortCutSet = shortSetting ? <ChatMessageShortcut content={isImg ? '' : ownerText} /> : '';
         }

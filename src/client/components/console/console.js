@@ -64,7 +64,7 @@ export default class Console extends Component {
         fetch('/logout', {method: 'POST', headers: {'Content-Type': 'application/x-www-form-urlencoded'}})
             .then((res)=>res.json())
             .then(function (d) {
-                if (200 === d.code) {
+                if (d.code === 200) {
                     window.location.href = '/console';
                 }
             })
@@ -87,12 +87,12 @@ export default class Console extends Component {
         </span>);
 
         const menuList = [
-            {key: 'dashboard', type:'laptop', text:'Dashboard'},
-            {key: 'operators', type:'user', text:'Operators'},
-            {key: 'transcripts', type:'database', text:'Transcripts'},
-            {key: 'rates', type:'star-o', text:'Rate Report'},
-            {key: 'rateList', type:'star-o', text:'Rate List'},
-            {key: 'shortcuts', type:'tags-o', text:'Shortcuts'}
+            {key: 'dashboard', type: 'laptop', text: 'Dashboard'},
+            {key: 'operators', type: 'user', text: 'Operators'},
+            {key: 'transcripts', type: 'database', text: 'Transcripts'},
+            {key: 'rates', type: 'star-o', text: 'Rate Report'},
+            {key: 'rateList', type: 'star-o', text: 'Rate List'},
+            {key: 'shortcuts', type: 'tags-o', text: 'Shortcuts'}
         ];
 
         return (
@@ -127,23 +127,23 @@ export default class Console extends Component {
                     </Sider>
                     <Layout>
                         <Header style={{ background: '#fff', padding: 0, height: '47px', lineHeight: '47px' }}>
-                            <div style={{ float:'right' }}>
-                                <div style={{ display:'inline-block' }}>
+                            <div style={{ float: 'right' }}>
+                                <div style={{ display: 'inline-block' }}>
                                     <Button type="primary" onClick={(e)=> window.location.href='/chat'}>
                                         launch chat
                                     </Button>
-                                    <span style={{ borderLeft:'1px solid #a7def1',width:'1px',marginLeft:'20px' }}>
+                                    <span style={{ borderLeft: '1px solid #a7def1',width: '1px',marginLeft: '20px' }}>
                                     </span>
                                 </div>
                                 <div className="rightWarpper">
                                     <Menu mode="horizontal" onClick={this.handleHeaderClick}>
                                         <SubMenu title={ userTitle }>
                                             <Menu.Item key="whatIsNew">
-                                                <Icon style={{fontSize:18, color: '#8fc9fb'}} type="bell"/>
+                                                <Icon style={{fontSize: 18, color: '#8fc9fb'}} type="bell"/>
                                                 What's new
                                             </Menu.Item>
                                             <Menu.Item key="logout">
-                                                <Icon style={{fontSize:18, color: '#d4572f'}} type="poweroff"/>
+                                                <Icon style={{fontSize: 18, color: '#d4572f'}} type="poweroff"/>
                                                 Sign out
                                             </Menu.Item>
                                         </SubMenu>

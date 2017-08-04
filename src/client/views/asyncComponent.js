@@ -10,7 +10,7 @@ export default (loader, collection) => (
         }
 
         componentWillMount() {
-            if(!this.state.Component) {
+            if (!this.state.Component) {
                 loader().then((Component) => {
                     AsyncComponent.Component = Component;
 
@@ -20,9 +20,9 @@ export default (loader, collection) => (
         }
 
         render() {
-            if(this.state.Component) {
-                return (<this.state.Component { ...this.props } { ...collection } />)
-            }else{
+            if (this.state.Component) {
+                return (<this.state.Component { ...this.props } { ...collection } />);
+            } else {
                 return (<div className="chat-loading"><div className="uu-logo">Power by uuchat.io</div><div className="bounce bounce1"></div><div className="bounce bounce2"></div><div className="bounce bounce3"></div></div>);
             }
         }

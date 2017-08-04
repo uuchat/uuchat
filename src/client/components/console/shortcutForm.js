@@ -6,7 +6,7 @@ const FormItem = Form.Item;
 class ShortcutForm extends Component {
 
     static defaultProps={
-        initialData:{
+        initialData: {
             shortcut: '',
             msg: ''
         }

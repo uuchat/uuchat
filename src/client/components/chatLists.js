@@ -27,7 +27,7 @@ class ChatList extends Component{
         fetch('/chathistories/cs/'+this.props.csid+'/latestmonth').then(function(d){
             return d.json();
         }).then(function(d){
-            if(200 === d.code){
+            if (d.code === 200) {
                 _self.setState({
                     hasList: true,
                     chatLists: d.msg
@@ -41,18 +41,18 @@ class ChatList extends Component{
             _li,
             ulList;
 
-        if(t.tagName.toLowerCase() === 'li'){
+        if (t.tagName.toLowerCase() === 'li') {
             _li = t;
-        }else if(t.parentNode && t.parentNode.tagName.toLowerCase() === 'li' ){
+        } else if (t.parentNode && t.parentNode.tagName.toLowerCase() === 'li' ) {
             _li = t.parentNode;
-        }else if(t.parentNode.parentNode && t.parentNode.parentNode.tagName.toLowerCase() === 'li'){
+        } else if (t.parentNode.parentNode && t.parentNode.parentNode.tagName.toLowerCase() === 'li') {
             _li = t.parentNode.parentNode;
         }
         cid = _li.getAttribute('data-cid');
 
-        if(chatHistory[cid]){
+        if (chatHistory[cid]) {
             this.renderHistroy(cid);
-        }else{
+        } else {
             chatHistory[cid] = [];
             this.fetchHistory(cid, this.props.csid);
         }
@@ -60,7 +60,7 @@ class ChatList extends Component{
         ulList = _li.parentNode;
         ulList = ulList.getElementsByTagName('li');
 
-        for(let i = 0, l = ulList.length; i < l; i++){
+        for (let i = 0, l = ulList.length; i < l; i++) {
             ulList[i].className = '';
         }
         _li.className='active';
@@ -99,7 +99,7 @@ class ChatList extends Component{
     };
 
     filterMarked = (e) => {
-        if(e.target.tagName.toLowerCase() === 'span'){
+        if (e.target.tagName.toLowerCase() === 'span') {
             let marked = parseInt(e.target.getAttribute('data-marked'), 10) === 7 ? 0 : parseInt(e.target.getAttribute('data-marked'), 10);
             this.setState({
                 filterMark: marked
@@ -121,9 +121,9 @@ class ChatList extends Component{
             chatHistoryData = chatHistory[hisCid],
             historyColorIndex = String2int(hisCid);
 
-        for(let i = 0, l = chatLists.length; i < l; i++){
+        for (let i = 0, l = chatLists.length; i < l; i++) {
 
-            if((filterMark !== 8) && filterMark !== chatLists[i].marked){
+            if ((filterMark !== 8) && filterMark !== chatLists[i].marked) {
                 continue;
             }
 

@@ -26,7 +26,7 @@ class ChatSetting extends Component{
             displayName = this.refs.displayName.refs.input.value,
             _self = this;
 
-        if(name !==''){
+        if (name !=='') {
             fetch('/customersuccesses/'+this.props.csid, {
                 credentials: 'include',
                 method: 'PATCH',
@@ -37,7 +37,7 @@ class ChatSetting extends Component{
             })
             .then((res)=>res.json())
             .then(function(d){
-                if(200 === d.code){
+                if (d.code === 200) {
                     message.success('Save success!');
                     _self.setState({
                         isAccountShow: false
@@ -47,7 +47,7 @@ class ChatSetting extends Component{
             .catch(function(e){
                 message.error(e, 4);
             });
-        }else{
+        } else {
             this.refs.name.refs.input.style.border = '1px solid red';
         }
     };
@@ -62,7 +62,7 @@ class ChatSetting extends Component{
             passwd = this.refs.passwd.refs.input.value.replace(/^\s$/g, ''),
             cpasswd = this.refs.cpasswd.refs.input.value.replace(/^\s$/g, '');
 
-        if(passwd === '' || (passwd !== cpasswd)){
+        if (passwd === '' || (passwd !== cpasswd)) {
             message.error('password must be same as confirm password and can not be empty');
             return false;
         }
@@ -77,7 +77,7 @@ class ChatSetting extends Component{
         })
         .then((res)=>res.json())
         .then(function(d){
-            if(200 === d.code){
+            if (d.code === 200) {
                 message.success('Change passwd success!');
                 _self.setState({
                     isPasswordShow: false
@@ -91,7 +91,7 @@ class ChatSetting extends Component{
     };
     shortcutSet = () => {
         let csid = this.props.csid;
-        if(this.state.setContent){
+        if (this.state.setContent){
             this.setState({
                 isSetVisible: true
             });
@@ -119,19 +119,19 @@ class ChatSetting extends Component{
                 accept: 'image/*',
                 showUploadList: false,
                 headers: {
-                    authorization: 'authorization-text',
+                    authorization: 'authorization-text'
                 },
                 onChange(info) {
                     let file = info.file;
-                    if(file.status === 'uploading'){
-                        if(info.event){
+                    if (file.status === 'uploading') {
+                        if (info.event){
                             _self.setState({
                                 isUploading: true,
                                 percent: Math.ceil(info.event.percent)
                             });
                         }
-                    }else if(file.status === 'done') {
-                        if(200 === file.response.code){
+                    } else if (file.status === 'done') {
+                        if (file.response.code === 200) {
                             let photo = file.response.msg.photo;
                             localStorage.setItem('uuchat.avatar', photo);
                             avatarHandle(photo);
@@ -142,7 +142,7 @@ class ChatSetting extends Component{
                                 });
                             }, 800);
                         }
-                    }else if(file.status === 'error') {
+                    } else if (file.status === 'error') {
                         message.error(file.name+' file upload failed.');
                     }
                 }

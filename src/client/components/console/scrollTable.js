@@ -7,7 +7,7 @@ export default class ScrollTable extends Component {
     render() {
         const pageLimit = 10, pageStart = 1;
 
-        const { data:{total, list}, initPage, loadNextFunc, renderCustomer } = this.props;
+        const { data: {total, list}, initPage, loadNextFunc, renderCustomer } = this.props;
 
         let hasMore = total === undefined || list.length < total;
 

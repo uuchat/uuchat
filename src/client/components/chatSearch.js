@@ -13,12 +13,12 @@ class ChatSearchItem extends Component{
 
     msgConver = (msg) => {
         let str = '';
-        if(/"email":/g.test(msg)){
+        if (/"email":/g.test(msg)) {
             msg = JSON.parse(msg);
             str += '<span>Offline messages(email: '+msg.email+'): </span>';
             str += msg.content;
-        }else {
-            str = msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
+        } else {
+            str = msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function(match) {
                 return '<a href="' + match + '" target="_blank">' + match + '</a>';
             });
         }
@@ -34,7 +34,7 @@ class ChatSearchItem extends Component{
             hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
         });
     };
-    render(){
+    render() {
         return (
             <li onClick={this.showHistory}>
                 <div className={"fl search-avatar avatar-icon-"+String2int(this.props.cid)}>{this.props.cid.substr(0, 1).toUpperCase()}</div>
@@ -45,7 +45,7 @@ class ChatSearchItem extends Component{
 }
 
 class ChatSearch extends Component{
-    constructor(){
+    constructor() {
         super();
         this.state = {
             csid: localStorage.getItem('uuchat.csid') || '',
@@ -56,15 +56,15 @@ class ChatSearch extends Component{
             isViewMore: false
         };
     }
-    componentWillMount(){
+    componentWillMount() {
         let search = window.location.href,
             content = '';
 
-        if(search.indexOf('?search=') > -1){
+        if (search.indexOf('?search=') > -1) {
             search = search.split('?')[1].split('&');
 
-            for(let i = 0, l = search.length; i < l; i++){
-                if(search[i].indexOf('search=') > -1){
+            for (let i = 0, l = search.length; i < l; i++) {
+                if (search[i].indexOf('search=') > -1) {
                     content = search[i].split('=')[1];
                     break;
                 }
@@ -79,16 +79,16 @@ class ChatSearch extends Component{
         fetch('/messages/cs/'+that.state.csid+'/search?msg='+content).then(function(d){
             return d.json();
         }).then(function(d){
-            if(200 === d.code){
+            if (d.code === 200) {
                 let isView = true;
-                if(d.msg.length > 0){
+                if (d.msg.length > 0) {
                     pageNum++;
-                }else{
+                } else {
                     pageNum = 0;
                     message.info('There has no chats result aboute '+content, 4);
                 }
 
-                if(d.msg.length <5){
+                if (d.msg.length <5) {
                     isView = false;
                 }
 
@@ -139,19 +139,19 @@ class ChatSearch extends Component{
         fetch('/messages/cs/'+that.state.csid+'/search/latestmonth?msg='+searchContent+'&pageNum='+(pageNum * 5)).then(function(d){
             return d.json();
         }).then(function(d){
-            if(200 === d.code){
-                if(d.msg.length > 0) {
+            if (d.code === 200) {
+                if (d.msg.length > 0) {
                     let sList = that.state.searchList;
                     sList = sList.concat(d.msg);
                     pageNum++;
                     that.setState({
                         searchList: sList
                     });
-                }else{
+                } else {
                     pageNum = 0;
                     message.info('There has no more result!', 4);
                 }
-                if(d.msg.length < 5){
+                if (d.msg.length < 5) {
                     that.setState({
                         isViewMore: false
                     });
@@ -160,19 +160,19 @@ class ChatSearch extends Component{
         }).catch(function(e){});
     };
     onSearchHandler = (e) => {
-        if(e.target.value!==""){
+        if (e.target.value!=="") {
             this.getSearchList(e.target.value);
         }
     };
 
-    render(){
+    render() {
         let state = this.state,
             sArr = [],
             searchL = state.searchList,
             chatHistoryData = chatHistory[state.hisCid],
             historyColorIndex = String2int(state.hisCid);
 
-        for(let i = 0, l = searchL.length; i < l; i++){
+        for (let i = 0, l = searchL.length; i < l; i++) {
             sArr.push(<ChatSearchItem key={i} cid={searchL[i].cid} msg={searchL[i].msg}  showHistory={this.fetchHistory} />);
         }
 

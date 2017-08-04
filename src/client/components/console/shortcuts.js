@@ -34,7 +34,7 @@ export default class Shortcuts extends Component {
         fetch(queryUrl)
             .then((res)=>res.json())
             .then(function (data) {
-                if (200 === data.code) {
+                if (data.code === 200) {
                     pagination.total = data.msg.count;
 
                     let dataSource = data.msg.rows.map(function (item) {
@@ -87,7 +87,7 @@ export default class Shortcuts extends Component {
                 okText: 'OK',
                 cancelText: 'Cancel',
                 onOk(){
-                    _self.onDelete(value.key)
+                    _self.onDelete(value.key);
                 }
             });
         }
@@ -99,7 +99,7 @@ export default class Shortcuts extends Component {
         fetch('/shortcuts/' + key, {method: 'DELETE'})
             .then((res)=>res.json())
             .then(function (d) {
-                if (200 === d.code) {
+                if (d.code === 200) {
                     _self.getDataSource();
                 } else {
                     message.error(d.msg, 4);
@@ -129,7 +129,7 @@ export default class Shortcuts extends Component {
 
             this.createOrUpdateShortcut(url, method, body)
                 .then(function (d) {
-                    if (200 === d.code) {
+                    if (d.code === 200) {
                         _self.getDataSource();
                     } else {
                         message.error(d.msg, 4);

@@ -33,7 +33,7 @@ export default class Rates extends Component {
         fetch('/customersuccesses')
             .then((res) => res.json())
             .then(function (data) {
-                if (200 === data.code) {
+                if (data.code === 200) {
                     return _component.setState({
                         csSource: data.msg
                     });
@@ -43,7 +43,7 @@ export default class Rates extends Component {
             }).then(() => fetch(queryUrl))
             .then((res) => res.json())
             .then((data) => {
-                if (200 === data.code) {
+                if (data.code === 200) {
 
                     pagination.total = data.msg.count;
 
@@ -64,11 +64,11 @@ export default class Rates extends Component {
             }).catch((e) => message.error(e.message, 4));
     };
 
-    componentDidMount () {
+    componentDidMount() {
         const location = this.props.location;
         let month = location.state ? location.state.month : moment().format('YYYY-MM');
         this.setState({month}, this.getDataSource);
-    };
+    }
 
     handleRadioChange = (e) => {
         let rateValue = e.target.value;
@@ -110,7 +110,7 @@ export default class Rates extends Component {
                         <div className="table-operations">
 
                             <Button>
-                                <Link to={{pathname: '/rates', state:{month: month} }}>Back</Link>
+                                <Link to={{pathname: '/rates', state: {month: month} }}>Back</Link>
                             </Button>
                         </div>
                     </div>
