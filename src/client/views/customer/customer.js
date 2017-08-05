@@ -228,11 +228,32 @@
                 reconnectionDelay:2000 ,
                 timeout: 10000
             });
-            UUCT.socket.on('connect', UUCT.socketConnect);
-            UUCT.socket.on('connect_error', UUCT.socketConnectError);
-            UUCT.socket.on('disconnect', UUCT.socketDisconnect);
-            UUCT.socket.on('reconnect', UUCT.socketReconnect);
-            UUCT.socket.on('error', UUCT.socketError);
+            UUCT.socket.on('connect', this.socketConnect);
+            UUCT.socket.on('connect_error', this.socketConnectError);
+            UUCT.socket.on('disconnect', this.socketDisconnect);
+            UUCT.socket.on('reconnect', this.socketReconnect);
+            UUCT.socket.on('error', this.socketError);
+            UUCT.socket.on('cs.message', this.socketCsMessage);
+            UUCT.socket.on('cs.status', this.socketCsStatus);
+            UUCT.socket.on('cs.disconnect', this.socketCsDisconnect);
+            UUCT.socket.on('c.queue.update', this.socketQueueUpdate);
+            UUCT.socket.on('c.queue.shift', this.socketQueueShift);
+            UUCT.socket.on('cs.close.dialog', this.socketCloseDialog);
+            UUCT.socket.on('c.dispatch', this.socketDispatch);
+            UUCT.socket.on('cs.action.rate', this.socketActionRate);
+
+            addEvent(window, 'offline', function(){
+                if(UUCT.socket){
+                    UUCT.socket.close();
+                }
+            });
+            addEvent(window, 'online', function(){
+                if(UUCT.socket){
+                    UUCT.socket.open();
+                }else{
+                    UUCT.createSocket();
+                }
+            });
         },
         template: function(){
             var str = '<div class="chat-body">';
@@ -461,59 +482,7 @@
 
         },
         socketConnect: function(){
-            /***
-             *
-             * customer select
-             *
-             */
             this.emit('c.select', UUCT.socketCsSelect);
-
-            /***
-             *  On cs.message
-             *
-             */
-            this.on('cs.message', UUCT.socketCsMessage);
-            /***
-             *
-             *  On cs.status
-             */
-            this.on('cs.status', UUCT.socketCsStatus);
-            /***
-             *  On cs disconnect
-             *
-             */
-            this.on('cs.disconnect', UUCT.socketCsDisconnect);
-            /***
-             * c.queue.update'
-             */
-            this.on('c.queue.update', UUCT.socketQueueUpdate);
-            /***
-             * c.queue.shift
-             */
-            this.on('c.queue.shift', UUCT.socketQueueShift);
-            /***
-             * cs.close.dialog
-             */
-            this.on('cs.close.dialog', UUCT.socketCloseDialog)
-            /***
-             *  c.dispatch
-             */
-            this.on('c.dispatch', function(csid, name, avatar){
-                UUCT.chat.csid = csid;
-                UUCT.chat.name = name;
-                $('.chat-name').innerHTML = name;
-            });
-            /***
-             * cs.rate
-             */
-            this.on('cs.action.rate', function(){
-                UUCT.msgTranslate({
-                    role: 1,
-                    msg: 1,
-                    time: new Date()
-                });
-            });
-
         },
         socketConnectTimeOut: function(){
             UUCT.timeStart = UUCT.dateISOFomat(new Date());
@@ -592,7 +561,7 @@
                    $('.chat-msg').innerHTML += '<div class="upload-tips">Start upload ...</div>';
 
                    UUCT.ajax({
-                       url: UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image',
+                       url: UUCT.domain+'/messages/customer/'+UUCT.chat.cid+'/cs/'+UUCT.chat.csid+'/image?f=c',
                        type:'POST',
                        fileType: true,
                        data: data,
@@ -733,6 +702,18 @@
             UUCT.msgTranslate({
                 role: 1,
                 msg: 2,
+                time: new Date()
+            });
+        },
+        socketDispatch: function(csid, name, avatar){
+            UUCT.chat.csid = csid;
+            UUCT.chat.name = name;
+            $('.chat-name').innerHTML = name;
+        },
+        socketActionRate: function(){
+            UUCT.msgTranslate({
+                role: 1,
+                msg: 1,
                 time: new Date()
             });
         },
