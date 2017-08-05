@@ -11,6 +11,8 @@ var sharp = require('sharp');
 var crypto = require('crypto');
 var logger = require('../logger');
 var utils = require('../utils');
+var customerSession = require('../database/customerSession');
+
 
 module.exports = function (middleware) {
     var storage = multer.diskStorage({
@@ -42,10 +44,16 @@ module.exports = function (middleware) {
     });
 
     middleware.uploadImage = function (req, res, next) {
-        //res.header("Access-Control-Allow-Origin", "*");
-        //res.header("Access-Control-Allow-Headers", "X-Requested-With");
-        //res.header("Access-Control-Allow-Methods","PUT,POST,GET,DELETE,OPTIONS");
+        var condition = {cid: req.params.cid};
+        var who = req.query.f;
         async.waterfall([
+            function(next){
+                customerSession.findOne(condition, next);
+
+            },
+            function (customer, next) {
+                checkMonthFileSize(customer, req, next);
+            },
             function(next){
                 upload.single('image')(req, res, function (err) {
                     if (err) {
@@ -57,6 +65,10 @@ module.exports = function (middleware) {
                         next(new Error('upload-file-name-undefined'));
                     }
                     var originalname = req.file.originalname;
+
+                    var lastUploadSize = req.lastUploadSize;
+                    req.monthlyUploadSize = getYearMonth() + ',' + (parseInt(req.file.size) + parseInt(lastUploadSize));
+
                     next(null, fileName, originalname);
                 });
             },
@@ -70,6 +82,11 @@ module.exports = function (middleware) {
                     var original = path.join(getSavePath(nconf.get('images:savePath')), fileName);
                     var dest = path.join(getSavePath(nconf.get('images:savePath')),
                         raw.toString('hex') + path.extname(originalname).toLowerCase());
+
+                    if(!_.isUndefined(who)) { // only update customer
+                        updateMonthSize(req);
+                    }
+
                     next(null, original, dest);
                 });
             },
@@ -101,6 +118,14 @@ module.exports = function (middleware) {
         ], function (err, result) {
             if (err) {
                 switch (err.message) {
+                    case 'customer-not-found':
+                        winston.error(err.message);
+                        res.json({code: 5001, msg: err.message});
+                        break;
+                    case 'exceed-monthly-max-size':
+                        winston.error(err.message);
+                        res.json({code: 5002, msg: err.message});
+                        break;
                     case 'upload-file-has-error':
                         winston.error(err.message);
                         res.json({code: 5003, msg: err.message});
@@ -154,6 +179,51 @@ module.exports = function (middleware) {
         });
     };
 
+    function checkMonthFileSize(customer, req, next) {
+        if (!customer) next(new Error('customer-not-found'));
+        var yearMonth = getYearMonth();
+        var monthlyUploadSize = 0;
+        var uploadArray;
+
+        if (customer.upload) {
+            uploadArray = customer.upload.split(',');
+            monthlyUploadSize = uploadArray[1];
+            if (uploadArray[0] !== yearMonth) {
+                monthlyUploadSize = 0;
+            }
+        }
+
+        if (monthlyUploadSize > nconf.get("images:monthlyMaxSize")) {
+            next(new Error('exceed-monthly-max-size'));
+        }
+
+        req.lastUploadSize = monthlyUploadSize;
+        req.uploadCacheUUID = customer.uuid;
+
+        next();
+    }
+
+    function updateMonthSize(req) {
+        var monthlyUploadSize = req.monthlyUploadSize;
+        var upload = {upload: monthlyUploadSize};
+        var condition = {uuid: req.uploadCacheUUID};
+        customerSession.update(upload, condition, function () {
+
+        });
+    }
+
+    function getYearMonth() {
+        //https://stackoverflow.com/questions/3066586/get-string-in-yyyymmdd-format-from-js-date-object
+        Date.prototype.YYYYMM = function() {
+            var mm = this.getMonth() + 1; // getMonth() is zero-based
+
+            return [this.getFullYear(),
+                (mm>9 ? '' : '0') + mm
+            ].join('');
+        };
+        return new Date().YYYYMM();
+    }
+
     function getFileName(file) {
         var arr = file.originalname.split('.');
         var suffix = arr.pop();
@@ -178,4 +248,5 @@ module.exports = function (middleware) {
             fs.mkdir(dir);
         }
     }
+
 };

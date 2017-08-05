@@ -47,8 +47,7 @@ function messageRoutes(app, middleware, controllers) {
     app.get('/messages/cs/:csid/search', controllers.messageController.search);
     app.get('/messages/cs/:csid/search/latestmonth', controllers.messageController.searchLatestMonth);
     app.options('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate));
-    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage,
-        controllers.customerSessionController.checkMonthlyUploadSize);
+    app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage);
 }
 
 function rateRoutes(app, middleware, controllers) {
