@@ -179,6 +179,7 @@
 }
 .chat-to .chat-text a{
     color: #fff;
+    text-decoration: underline;
 }
 .chat-console .chat-role{
     margin-bottom: 2px;
