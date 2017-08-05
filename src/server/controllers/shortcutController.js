@@ -4,7 +4,7 @@ var async = require('async');
 var nconf = require('nconf');
 var _ = require('lodash');
 var Shortcut = require('../cache/shortcut');
-var SocketAdapter = require('../socket.io/SocketAdapter');
+var SocketAdapter = require('../socket.io/socketAdapter');
 var utils = require('../utils');
 
 var shortcutController = module.exports;
