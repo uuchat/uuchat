@@ -36,7 +36,7 @@ by default, eg: Ubuntu 16.10 with sqlite3, g++ ...
 
 ## Basic uuChat Configuration
 
-Set your own information in `src > config.json` . something like 'name' , 'ip address',
+&nbsp;&nbsp;&nbsp;&nbsp;Set your own information in `src > config.json` . something like 'name' , 'ip address',
 'port', db configuration etc. if you set nothing, and start uuChat.
  + you can take customer success page in &nbsp;&nbsp; `http://127.0.0.1:9688/chat` <br />
  first, you need register with your email , and than login into uuchat.
@@ -50,12 +50,25 @@ Set your own information in `src > config.json` . something like 'name' , 'ip ad
 
 ## Setup your database
 
-uuchat default run with sqlite3, if you don't want to install any database , you also can use uuchat.
+uuchat default run with sqlite3, if you don't want to install any database , you also can use uuchat. <br />
+
+node module of sqlite3 is not install by default, so, you need to `npm i sqlite3`
 
 ##### Session store
-if redis.host in `src > config.json` is "", session store default with your database configuration, but that
+&nbsp;&nbsp;&nbsp;&nbsp;If redis.host in `src > config.json` is "", session store default with your database configuration, but that
 not our suggestion, perhaps, most companies or blogers not need high performance. if you have online customers
-more than 5, we suggest you use redis for session store.
+more than 5, we suggest you use redis for session store.<br />
+
+&nbsp;&nbsp;&nbsp;&nbsp;Redis config like this:
+```
+"redis": {
+    "host": "127.0.0.1",
+    "port": 6379,
+    "ttl": 86400,
+    "db": 0
+  }
+```
+
 
 ##### MySQL configuration
 ```
@@ -75,7 +88,7 @@ more than 5, we suggest you use redis for session store.
 
 ## Install to your blog or website
 
-Copy and paste this code above the last `</body>` tag on your site.
+&nbsp;&nbsp;&nbsp;&nbsp;Copy and paste this code above the last `</body>` tag on your site.
 This code is fully asynchronous and won't delay the load time of your page.
 you can see in `dist > customer.html` , like this: 
 ```
@@ -84,7 +97,7 @@ you can see in `dist > customer.html` , like this:
     ;(function(u, c, h){
         u.UUCHAT = (function(){
             return {
-                domain: 'http://uuchat.io',
+                domain: 'http://uuchat.io', // change your own domain here
                 src: h
             };
         })();
