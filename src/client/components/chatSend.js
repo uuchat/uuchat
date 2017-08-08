@@ -255,11 +255,11 @@ class ChatSend extends Component{
                         if (info.file.response.code === 200) {
                             sendMessage(info.file.response.msg.resized+'|'+info.file.response.msg.original+'|'+info.file.response.msg.w+'|'+info.file.response.msg.h);
                         }
-                        message.success(info.file.name+' file uploaded successfully', 2, function(){
+                        setTimeout(function(){
                             _self.setState({
                                 isShowProcess: false
                             });
-                        });
+                        }, 2000);
                     } else if (status === 'error') {
                         message.error(info.file.name+' file upload failed.', 2, function(){
                             _self.setState({

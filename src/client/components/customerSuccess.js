@@ -489,7 +489,7 @@ class CustomerSuccess extends Component{
      */
     loginOut = (e) => {
         e.preventDefault();
-        let _self = this;
+        let { socket } = this.state;
         Modal.confirm({
             title: 'Login out',
             content: 'Do you comfirm login out?',
@@ -505,14 +505,12 @@ class CustomerSuccess extends Component{
                 .then((res)=>res.json())
                 .then(function(d){
                     if (d.code === 200){
-                        _self.state.socket.emit('cs.logout',function(type){});
-                        _self.state.socket.close();
+                        socket.emit('cs.logout',function(type){});
+                        socket.close();
                         window.location.href = '/login';
                     }
                 })
-                .catch(function(e){
-
-                });
+                .catch(function(e){});
             }
         });
     };
