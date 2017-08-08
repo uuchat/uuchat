@@ -29,7 +29,7 @@ Sockets.init = function (server) {
 
     if (process.env.NODE_ENV !== 'development') {
         var origins = nconf.get('socket.io:origins');
-        //io.origins(origins);
+        //io.origins(origins); Set allow source domain
         winston.info("[socket.io] transform access to origin: " + origins);
     }
 
