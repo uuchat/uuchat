@@ -1,0 +1,36 @@
+{
+  "notices": {
+    "api": {
+      "operators": {
+        "success_create": "success create",
+        "success_update": "success update",
+        "success_delete": "success delete"
+      },
+      "customer_success": {
+        "success_logout": "success logout"
+      }
+    }
+  },
+  "errors": {
+    "api": {
+      "customer_success": {
+        "params_missing": "params missing",
+        "email_validate_error": "email validate error",
+        "email_already_exists": "email already exists in system",
+        "email_not_found": "email is not found in system",
+        "passwd_validate_error": "password validate error",
+        "passwd_error": "Input password is error",
+        "forbidden_login": "forbidden login"
+      },
+      "rate":{
+        "create_rate_error":"create rate error"
+      },
+      "shortcut": {
+        "csid_null": "csid is null",
+        "shortcut_null": "shortcut is null",
+        "shortcuts_exceed": "exceed the shortcuts limit",
+        "shortcut_already_used": "shortcut is already used"
+      }
+    }
+  }
+}
