@@ -52,7 +52,7 @@ by default, eg: Ubuntu 16.10 with sqlite3, g++ ...
 
 uuchat default run with sqlite3, if you don't want to install any database , you also can use uuchat. <br />
 
-node module of sqlite3 is not install by default, so, you need to `npm i sqlite3`
+If node module of sqlite3 is not install by default, so, you need to `npm i sqlite3`
 
 ##### Session store
 &nbsp;&nbsp;&nbsp;&nbsp;If redis.host in `src > config.json` is "", session store default with your database configuration, but that
@@ -86,7 +86,7 @@ more than 5, we suggest you use redis for session store.<br />
 },
 ```
 
-## Install to your blog or website
+## Install to your website
 
 &nbsp;&nbsp;&nbsp;&nbsp;Copy and paste this code above the last `</body>` tag on your site.
 This code is fully asynchronous and won't delay the load time of your page.
