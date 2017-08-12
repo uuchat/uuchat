@@ -116,7 +116,14 @@ SocketCustomerEvents.message = function(cid, msg, fn) {
             logger.error(data);
         }
     });
-    customerSuccess.socket.emit("c.message", cid, msg);
+
+    try {
+        customerSuccess.socket.emit("c.message", cid, msg);
+    } catch(e) {
+        logger.error(e.message);
+        fn(false);
+    }
+
     fn(true);
 };
 

@@ -729,7 +729,30 @@
                 time: d
             });
 
-            UUCT.socket.emit('c.message', UUCT.chat.cid, msg, function(success){
+            function wdc(tout, cb) {
+                if ('function' === typeof tout) {
+                    cb = tout;
+                    tout = 5000;
+                }
+                var called = false;
+                var t = setTimeout(function () {
+                    if (!called) {
+                        called = true;
+                        cb(new Error('callback timeout'));
+                    }
+                }, tout);
+
+                return function () {
+                    clearTimeout(t);
+                    if (!called) {
+                        called = true;
+                        [].unshift.call(arguments, undefined);
+                        cb.apply(this, arguments);
+                    }
+                };
+            };
+
+            UUCT.socket.emit('c.message', UUCT.chat.cid, msg, wdc(function(err, success){
                 if(success){
                     if(/(png|jpg|jpeg|gif)\|/g.test(msg)){
                         addClass($('.t-'+d), 'done-img');
@@ -738,13 +761,19 @@
                     }
 
                 }else{
-                    UUCT.msgTranslate({
-                        role: 1,
-                        msg: 'The customerSuccess is offline!You can try it later',
-                        time: new Date()
-                    });
+                    $('.t-'+d).querySelector('.chat-text').innerHTML += '<span class="resend-btn" title="Click to resend">!</span>';
+                    var resendBtns = document.querySelectorAll('.resend-btn');
+
+                    for (var i = 0, l = resendBtns.length; i < l; i++) {
+                        (function(el){
+                            addEvent(el, "click", function(){
+                                var resendMsg = this.parentNode.innerHTML.replace('<span class="resend-btn" title="Click to resend">!</span>', '');
+                                UUCT.socketEmitMessage(UUCT.cutStr(resendMsg, 256));
+                            });
+                        })(resendBtns[i]);
+                    }
                 }
-            });
+            }));
         },
         socketCsMessage: function(cid, msg){
             var chatNums = $('.chat-nums');

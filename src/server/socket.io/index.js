@@ -51,6 +51,10 @@ function listening() {
 
         customerSuccessEvents.setup(socket);
 
+        socket.on('cs.watchdog', function(fn) {
+            fn(1);
+        });
+
         socket.on('cs.message', function(cid, msg, fn) {
             customerSuccessEvents.message(cid, msg, fn);
         });
@@ -107,6 +111,9 @@ function listening() {
 
     //socket.io for customer (c)
     io.of('/c').on('connection', function (socket) {
+        socket.on('c.watchdog', function(fn) {
+            fn(1);
+        });
 
         socket.on('c.select', function(fn) {
             winston.info("customer emit c.select!");
