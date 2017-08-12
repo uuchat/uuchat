@@ -6,6 +6,7 @@ var _ = require('lodash');
 var winston = require('winston');
 var path = require('path');
 var fs = require('fs');
+var chalk = require('chalk');
 
 var webServer = require('./src/index');
 var utils = require('./src/server/utils');
@@ -47,10 +48,10 @@ function checkCORS() {
     }
     if (whiteList.indexOf("*") > -1) {
         winston.info();
-        winston.info('---------------------------------');
-        winston.info('You need set white list domain,\n\t in \'src > config.json\', ' +
-            '\n\t otherwise, has CORS risk !');
-        winston.info('---------------------------------');
+        winston.info(chalk.red('---------------------------------'));
+        winston.info(chalk.bgRed('You need set white list domain,\n\t in \'src > config.json\', ' +
+            '\n\t otherwise, has CORS risk !'));
+        winston.info(chalk.red('---------------------------------'));
     }
 }
 
@@ -62,7 +63,7 @@ function checkLogFolder() {
 
 function checkSQLite() {
     if (nconf.get('database:dialect') === 'sqlite') {
-        winston.info('Database use sqlite');
+        winston.info(chalk.green('Database use sqlite3'));
         if (!utils.fileExistsSync('./content/data/uuchat.db')){
             require('./src/server/models/index');
         }
@@ -76,7 +77,7 @@ function restart() {
             action: 'restart'
         });
     } else {
-        winston.error('uuChat Could not restart. Shutting down.');
+        winston.error(chalk.red('uuChat Could not restart. Shutting down.'));
         shutdown(1);
     }
 }
@@ -84,10 +85,10 @@ function restart() {
 function shutdown(code) {
     winston.info('uuChat Shutdown (SIGTERM/SIGINT) Initialised.');
     //TODO close DB
-    winston.info('uuChat Database connection closed.');
+    winston.info(chalk.green('uuChat Database connection closed.'));
     webServer.server.close();
-    winston.info('uuChat Web server closed to connections.');
+    winston.info(chalk.green('uuChat Web server closed to connections.'));
 
-    winston.info('uuChat Shutdown complete.');
+    winston.info(chalk.green('uuChat Shutdown complete.'));
     process.exit(code || 0);
 }

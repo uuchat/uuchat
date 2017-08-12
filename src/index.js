@@ -331,7 +331,7 @@ function setupSession(req, res) {
         ua.url = req.protocol + '://' + req.get('host') + req.originalUrl;
     }
     userAgent.create(ua);
-    winston.info('Customer session had set');
+    //winston.info('Customer session had set');
 }
 
 function fileFilters(req, res, next) {
@@ -437,6 +437,8 @@ function expressListen() {
         var bind = typeof addr === 'string' ?
         'pipe ' + addr :
         'port ' + addr.port;
-        winston.info('Listening on ' + bind);
+        var chalk = require('chalk');
+        winston.info();
+        winston.info(chalk.green('Listening on ' + bind));
     });
 }
