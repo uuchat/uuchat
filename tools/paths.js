@@ -55,6 +55,7 @@ module.exports = {
     loginIndexJS: resolveApp('src/client/views/login/index.js'),
     customerHtml: resolveApp('src/client/views/customer/uuchat.html'),
     customerJS: resolveApp('src/client/views/customer/customer.js'),
+    storageJS: resolveApp('src/client/views/customer/storage.js'),
     customerLoaderJS: resolveApp('src/client/views/customer/loader.js'),
     searchHtml: resolveApp('src/client/views/customerSuccess/search.html'),
     searchJS: resolveApp('src/client/views/customerSuccess/search.js'),

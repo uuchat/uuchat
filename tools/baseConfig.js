@@ -55,6 +55,14 @@ var defaultConfig = {
             to: paths.appBuild + '/storage.html'
         },
         {
+            from: paths.storageJS,
+            to: paths.appBuild + '/storage.js',
+            transform: function (content, absoluteFrom) {
+                var code = (content + '').replace(/'..\/..'\+/g, '');
+                return minify(code);
+            }
+        },
+        {
             from: paths.customerJS,
             to: paths.appBuild + '/static/js/uuchat.js',
             transform: function (content, absoluteFrom) {
