@@ -53,7 +53,7 @@
     box-shadow: 0 5px 40px rgba(0,0,0,.16)!important;
 }
 .chat-console.chat-console-hidden{
-    bottom: -100%;
+    bottom: -150%;
 }
 .chat-console .chat-header{
     padding: 0 20px;

@@ -4,6 +4,7 @@
 
     i.cssText = "width:0px;height:0px;position:absolute;left:0px;bottom:0px;border:none;";
     iframe.setAttribute("src", u.UUCHAT.domain + "/s" + '?r=' + top.location);
+    iframe.setAttribute("id", "uuchatIframe");
     c.body.appendChild(iframe);
 
     if(u.attachEvent){

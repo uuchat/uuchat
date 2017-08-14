@@ -445,6 +445,7 @@
             }
 
             chatMsg && (chatMsg.scrollTop = chatMsg.scrollHeight);
+            UUCT.updateLocalStorage();
 
         },
         dateISOFomat: function(t){
@@ -454,6 +455,19 @@
             }else{
                 return new Date(t);
             }
+        },
+        updateLocalStorage: function(){
+            var uuchatIframe = doc.querySelector('#uuchatIframe'),
+                uuchatLocalStorage = uuchatIframe.contentWindow.localStorage,
+                storage = JSON.parse(uuchatLocalStorage.getItem('uuInfoData')),
+                d = new Date();
+
+            storage.time.chatTime = d.getTime();
+            storage.time.lastTime = d.getTime();
+            storage.userInfo.lastScreen = w.location.href;
+
+            uuchatLocalStorage.setItem("uuInfoData", JSON.stringify(storage));
+
         },
         initCustomer: function(data){
             var msg = UUCT.tempMsg(),
@@ -729,7 +743,7 @@
                 time: d
             });
 
-            function wdc(tout, cb) {
+            function watchDog(tout, cb) {
                 if ('function' === typeof tout) {
                     cb = tout;
                     tout = 5000;
@@ -752,7 +766,8 @@
                 };
             };
 
-            UUCT.socket.emit('c.message', UUCT.chat.cid, msg, wdc(function(err, success){
+
+            UUCT.socket && UUCT.socket.emit('c.message', UUCT.chat.cid, msg, watchDog(function(err, success){
                 if(success){
                     if(/(png|jpg|jpeg|gif)\|/g.test(msg)){
                         addClass($('.t-'+d), 'done-img');
