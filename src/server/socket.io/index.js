@@ -4,6 +4,7 @@ var _ = require('lodash');
 var nconf = require('nconf');
 var winston = require('winston');
 var async = require('async');
+var chalk = require('chalk');
 var cookieParser = require('cookie-parser')(nconf.get('socket.io:secretKey'));
 
 var customerEvents = require('./customerEvents');
@@ -30,7 +31,7 @@ Sockets.init = function (server) {
     if (process.env.NODE_ENV !== 'development') {
         var origins = nconf.get('socket.io:origins');
         //io.origins(origins); Set allow source domain
-        winston.info("[socket.io] transform access to origin: " + origins);
+        winston.info(chalk.red("[socket.io] transform access to origin: " + origins));
     }
 
     io.listen(server, {
@@ -156,7 +157,7 @@ function authorize(socket, callback) {
                 || request.signedCookies[nconf.get('socket.io:sessionKey')]
                 || '';
             if (_.isEmpty(sessionId)) {
-                winston.error("session id is null");
+                winston.error(chalk.red("session id is null"));
                 return next('[[error: session id is null]]');
             }
             sessionStore.get(sessionId, function (err, sessionData){
@@ -169,7 +170,7 @@ function authorize(socket, callback) {
                     //winston.info(request.headers);
                     //winston.info(request.cookie);
                 } else {
-                    winston.error("session is null");
+                    winston.error(chalk.red("session is null"));
                     return next('[[error: session is null]]');
                 }
                 next();
