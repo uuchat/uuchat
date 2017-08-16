@@ -28,10 +28,26 @@ var SocketCustomerEvents = {};
  */
 SocketCustomerEvents.select = function(socket, cid, name, fn) {
     var customer = customerList.get(cid);
+
+    if (_.isEmpty(customerSuccessList.select())) {
+        console.log("all cs not online");
+        fn(3, {"code": 1002, "msg": "all cs not online!"});
+        return;
+    }
+
     if (!_.isEmpty(customer)) { // has chat in other places;
         var _customerSuccess = customerSuccessList.get(customer.csid);
         if (!_.isEmpty(_customerSuccess)) {
             customer.socket = socket;
+
+            customerSuccessList.userPush(customer.csid, cid);
+            socketAdapter.emitCustomer(customer.csid, cid);
+            chatHistory.createOrUpdate(cid, customer.csid, function(success){
+                if (!success) {
+                    logger.error("chat history operation error. cid = %s and csid = %s", cid, customer.csid);
+                }
+            });
+
             selectAfter(cid, _customerSuccess, customer.csid, fn);
         }
         logger.log("customer = %s has online on other page", cid);
@@ -41,11 +57,6 @@ SocketCustomerEvents.select = function(socket, cid, name, fn) {
         customer = customerList.create({cid: cid, name: name});
     }
 
-    if (_.isEmpty(customerSuccessList.select())) {
-        logger.log("all cs not online");
-        fn(3, {"code": 1002, "msg": "all cs not online!"});
-        return;
-    }
     //select customer success
     var csid = customerSuccessList.select();
     customer.csid = csid;
