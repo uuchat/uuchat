@@ -133,7 +133,6 @@
         get: function() {
             return this.storageData;
         },
-        set: function() {},
         update: function(data) {
             var d = new Date(),
                 list = this.storageData.userInfo.screenList.toString();

@@ -224,8 +224,8 @@
 
             UUCT.socket = io(UUCT.domain+'/c', {
                 forceNew: true,
-                reconnectionAttempts:5,
-                reconnectionDelay:2000 ,
+                reconnectionAttempts: 5,
+                reconnectionDelay: 2000 ,
                 timeout: 10000
             });
             UUCT.socket.on('connect', this.socketConnect);
@@ -436,16 +436,16 @@
                 str += '<div class="new-conversation">Click to New Conversation</div>';
                 chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
 
-                addEvent($('.new-conversation'), 'click', function(){
-                    UUCT.createSocket();
-                });
-
             }else{
                 chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, msgObj.time));
             }
 
             chatMsg && (chatMsg.scrollTop = chatMsg.scrollHeight);
             UUCT.updateLocalStorage();
+
+            $('.new-conversation') && addEvent($('.new-conversation'), 'click', function(){
+                UUCT.createSocket();
+            });
 
         },
         dateISOFomat: function(t){
@@ -456,18 +456,24 @@
                 return new Date(t);
             }
         },
-        updateLocalStorage: function(){
+        updateLocalStorage: function(userInfo){
             var uuchatIframe = doc.querySelector('#uuchatIframe'),
                 uuchatLocalStorage = uuchatIframe.contentWindow.localStorage,
                 storage = JSON.parse(uuchatLocalStorage.getItem('uuInfoData')),
                 d = new Date();
 
+            if (!storage) {
+                return false;
+            }
+
             storage.time.chatTime = d.getTime();
             storage.time.lastTime = d.getTime();
             storage.userInfo.lastScreen = w.location.href;
-
+            if (userInfo) {
+                storage.userInfo.name = userInfo.name;
+                storage.userInfo.email = userInfo.email;
+            }
             uuchatLocalStorage.setItem("uuInfoData", JSON.stringify(storage));
-
         },
         initCustomer: function(data){
             var msg = UUCT.tempMsg(),
@@ -513,7 +519,7 @@
         socketConnectError: function(){
             $('.chat-main').innerHTML = '<div class="chat-offline"><div class="chat-error">Oh! no ! There has error !You can try it later again</div></div>';
         },
-        socketDisconnect: function(){
+        socketDisconnect: function(reason){
             var timeNow = UUCT.dateISOFomat(new Date()),
                 tips = 'The customerSuccess has offline, you can try it by refesh the browser at latter';
             if(timeNow.getTime() - UUCT.timeStart.getTime() > UUCT.timeOutSeconds){
@@ -522,6 +528,9 @@
             if(!$('.chat-msg')){
                 var msg = UUCT.tempMsg();
                 $('.chat-main').innerHTML = msg;
+            }
+            if($('.new-conversation')){
+                return false;
             }
             UUCT.msgTranslate({
                 role: 1,
@@ -693,6 +702,11 @@
                 if(!vertify){
                     return false;
                 }
+
+                UUCT.updateLocalStorage({
+                    name: name,
+                    email: email
+                });
 
                 UUCT.ajax({
                     url:UUCT.domain+'/offlines',
