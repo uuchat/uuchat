@@ -93,7 +93,6 @@
 })(window, document)
 ;(function (w, doc) {
 
-
     var UStorage = {
         storageData: {
             time: {
@@ -110,7 +109,8 @@
                 city: "",
                 country: "",
                 email: "",
-                UserID: ""
+                UserID: "",
+                isOpen: false
             },
             browser: {
                 language: "",
@@ -118,6 +118,25 @@
                 browserVersion: "",
                 OS: ""
             }
+        },
+        set: function (d) {
+
+            this.storageData.time.lastTime = d.time;
+            this.storageData.time.chatTime = d.time;
+
+            if (d.name) {
+                this.storageData.userInfo.name = d.name;
+            }
+
+            if (d.email) {
+                this.storageData.userInfo.email = d.email;
+            }
+
+            if (d.isOpen) {
+                this.storageData.userInfo.isOpen = d.isOpen;
+            }
+
+            localStorage.setItem("uuInfoData", JSON.stringify(this.storageData));
         },
         init: function() {
             if (w.localStorage) {
@@ -135,51 +154,55 @@
         },
         update: function(data) {
             var d = new Date(),
-                list = this.storageData.userInfo.screenList.toString();
+                sd = this.storageData,
+                list = sd.userInfo.screenList.toString();
 
-            this.storageData.time.lastTime = d.getTime();
+            sd.time.lastTime = d.getTime();
 
-            if(list.indexOf(doc.referrer) < 0){
-                this.storageData.userInfo.screenList.push(doc.referrer);
+            if (doc.referrer !='' && list.indexOf(doc.referrer) < 0) {
+                sd.userInfo.lastScreen  = doc.referrer;
+                sd.userInfo.screenList.push(doc.referrer);
             }
 
-            this.storageData.userInfo.lastScreen  = doc.referrer;
-
-            if(data){
-                this.storageData.userInfo.city  = data.city;
-                this.storageData.userInfo.country  = data.country;
-                this.storageData.userInfo.email  = data.email;
-                this.storageData.userInfo.UserID  = data.UserID;
-                this.storageData.browser.browser  = data.browser;
-                this.storageData.browser.browserVersion  = data.browserVersion;
-                this.storageData.browser.OS  = data.OS;
+            if (data) {
+                sd.userInfo.city     = data.city;
+                sd.userInfo.country  = data.country;
+                sd.userInfo.email    = data.email;
+                sd.userInfo.UserID   = data.UserID;
+                sd.browser.browser   = data.browser;
+                sd.browser.browserVersion  = data.browserVersion;
+                sd.browser.OS  = data.OS;
             }
 
-            localStorage.setItem("uuInfoData", JSON.stringify(this.storageData));
+            this.storageData = sd;
+
+            localStorage.setItem("uuInfoData", JSON.stringify(sd));
         },
         createStorageData: function() {
-            var d = new Date();
+            var d = new Date(),
+                sd = this.storageData;
 
 
-            if(this.storageData.time.firstTime === ""){
-                this.storageData.time.firstTime = d.getTime();
+            if (sd.time.firstTime === "") {
+                sd.time.firstTime = d.getTime();
             }
-            if(this.storageData.time.lastTime === ""){
-                this.storageData.time.lastTime = d.getTime();
+            if (sd.time.lastTime === "") {
+                sd.time.lastTime = d.getTime();
             }
-            this.storageData.time.timezone = Math.ceil(d.getTimezoneOffset()/60);
-            this.storageData.userInfo.firstScreen = doc.referrer;
-            this.storageData.userInfo.lastScreen  = doc.referrer;
+            sd.time.timezone = Math.ceil(d.getTimezoneOffset()/60);
+            sd.userInfo.firstScreen = doc.referrer;
+            sd.userInfo.lastScreen  = doc.referrer;
 
-            this.storageData.userInfo.screenList.push(doc.referrer);
-            this.storageData.browser.language = (navigator.language || navigator.browserLanguage).toLowerCase();
+            sd.userInfo.screenList.push(doc.referrer);
+            sd.browser.language = (navigator.language || navigator.browserLanguage).toLowerCase();
 
+            this.storageData = sd;
 
-            localStorage.setItem("uuInfoData", JSON.stringify(this.storageData));
+            localStorage.setItem("uuInfoData", JSON.stringify(sd));
 
         },
         send: function() {
-            if(uuchatAjax){
+            if (uuchatAjax) {
                 uuchatAjax({
                     url:'/offlines',
                     type:'GET',
@@ -199,5 +222,10 @@
     UStorage.init();
     //UStorage.send();
 
+    w.addEventListener('message', function (e) {
+        e.data && UStorage.set(e.data);
+    });
 
-})(window, document)
+    w.postMessage(UStorage.storageData.userInfo.isOpen, '*');
+
+})(window, document);
