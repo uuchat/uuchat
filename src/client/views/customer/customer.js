@@ -59,6 +59,9 @@
                 this.loadScript(socketIO || 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js');
             }
             this.createCT();
+            w.addEventListener('message', function (e) {
+               console.log('e---', e.data)
+            });
         },
         loadStyle: function(arr){
 
@@ -457,23 +460,19 @@
             }
         },
         updateLocalStorage: function(userInfo){
-            var uuchatIframe = doc.querySelector('#uuchatIframe'),
-                uuchatLocalStorage = uuchatIframe.contentWindow.localStorage,
-                storage = JSON.parse(uuchatLocalStorage.getItem('uuInfoData')),
-                d = new Date();
 
-            if (!storage) {
-                return false;
-            }
+            var uuchatIF = doc.querySelector('#uuchatIframe').contentWindow,
+                d = new Date(),
+                data = {};
 
-            storage.time.chatTime = d.getTime();
-            storage.time.lastTime = d.getTime();
-            storage.userInfo.lastScreen = w.location.href;
-            if (userInfo) {
-                storage.userInfo.name = userInfo.name;
-                storage.userInfo.email = userInfo.email;
+            data.time = d.getTime();
+
+            if(userInfo){
+                data.name = userInfo.name;
+                data.email = userInfo.email;
             }
-            uuchatLocalStorage.setItem("uuInfoData", JSON.stringify(storage));
+            uuchatIF.postMessage(data, '*');
+
         },
         initCustomer: function(data){
             var msg = UUCT.tempMsg(),
