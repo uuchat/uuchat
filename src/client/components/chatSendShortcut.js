@@ -5,20 +5,20 @@ import '../static/css/shortcut.css';
 let Shortcut = {
     data: [],
     newScObj: {},
-    getData: function(){
+    init: function () {
         if (this.data.length > 0) {
             let newSc = localStorage.getItem("newShortcut");
             if (newSc){
                 this.newScObj = JSON.parse(newSc);
                 switch (this.newScObj.action) {
                     case "INSERT":
-                        this.insertData();
+                        this.insert();
                         break;
                     case "UPDATE":
-                        this.updateData();
+                        this.update();
                         break;
                     case "DELETE":
-                        this.deleteData();
+                        this.delete();
                         break;
                     default:
                         break;
@@ -27,23 +27,25 @@ let Shortcut = {
                 localStorage.setItem("shortcutList", JSON.stringify(Shortcut.data));
             }
         }
+    },
+    get: function(){
         return this.data;
     },
-    setData: function(data){
+    set: function(data){
         this.data = data;
         localStorage.setItem("shortcutList", JSON.stringify(data));
     },
-    insertData: function(){
+    insert: function(){
         this.data.unshift(this.newScObj);
     },
-    updateData: function(){
+    update: function(){
         for (let i = 0, l = this.data.length; i < l; i++) {
             if (this.data[i].id === this.newScObj.id) {
                 this.data[i] = this.newScObj;
             }
         }
     },
-    deleteData: function(){
+    delete: function(){
         let index = 0;
         for (let i = 0, l = this.data.length; i < l; i++) {
             if (this.data[i].id === this.newScObj.id) {
@@ -110,7 +112,10 @@ class ChatShortcut extends Component{
 
     getShortCutsList = () => {
         let _self = this,
-            shortcutData = Shortcut.getData();
+            shortcutData = [];
+
+        Shortcut.init();
+        shortcutData = Shortcut.get();
 
         if (shortcutData.length > 0) {
             this.setState({
@@ -123,7 +128,7 @@ class ChatShortcut extends Component{
             .then((d)=>d.json())
             .then((data)=>{
                 if (data.code === 200) {
-                    Shortcut.setData(data.msg);
+                    Shortcut.set(data.msg);
                     _self.setState({
                         fetchList: data.msg
                     });
