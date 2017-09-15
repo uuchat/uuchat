@@ -27,7 +27,7 @@ module.exports = function (sequelize, DataTypes) {
                 }
             },
             photo: DataTypes.STRING(128),
-            browser: DataTypes.STRING(256),
+            browser: DataTypes.STRING(32),
             version: {
                 type: DataTypes.STRING(32),
                 comment: 'browser version'

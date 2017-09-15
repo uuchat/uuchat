@@ -3,24 +3,11 @@
 var models = require('../models');
 var logger = require('../logger');
 
-var CustomerSession = module.exports;
+var CustomerStorage = module.exports;
 
-CustomerSession.findById = function (uuid, callback) {
+CustomerStorage.findById = function (uuid, callback) {
 
-    models.CustomerSession.findById(uuid).then(function (data) {
-
-        return callback(null, data);
-
-    }).catch(function (err) {
-        logger.error(err);
-
-        return callback(err);
-    });
-};
-
-CustomerSession.findOne = function (condition, callback) {
-
-    models.CustomerSession.findOne({where: condition}).then(function (data) {
+    models.CustomerStorage.findById(uuid).then(function (data) {
 
         return callback(null, data);
 
@@ -31,27 +18,22 @@ CustomerSession.findOne = function (condition, callback) {
     });
 };
 
-CustomerSession.create = function (customer, fn) {
+CustomerStorage.findOne = function (condition, callback) {
 
-    var customerSession = models.CustomerSession.build(customer);
+    models.CustomerStorage.findOne({where: condition}).then(function (data) {
 
-    if (!customerSession.cid) customerSession.cid = customerSession.uuid;
+        return callback(null, data);
 
-    customerSession.save().then(function () {
-        return fn(true);
     }).catch(function (err) {
         logger.error(err);
-        return fn(false);
+
+        return callback(err);
     });
 };
 
-CustomerSession.insert = function (customer, callback) {
+CustomerStorage.create = function (customerStorage, callback) {
 
-    var customerSession = models.CustomerSession.build(customer);
-
-    if (!customerSession.cid) customerSession.cid = customerSession.uuid;
-
-    customerSession.save().then(function (data) {
+    models.CustomerStorage.create(customerStorage).then(function (data) {
         return callback(null, data);
     }).catch(function (err) {
         logger.error(err);
@@ -60,9 +42,9 @@ CustomerSession.insert = function (customer, callback) {
 };
 
 
-CustomerSession.update = function (customer, condition, callback) {
+CustomerStorage.update = function (customerStorage, condition, callback) {
 
-    models.CustomerSession.update(customer, {where: condition}).then(function (data) {
+    models.CustomerStorage.update(customerStorage, {where: condition}).then(function (data) {
 
         return callback(null, data);
 
@@ -74,9 +56,9 @@ CustomerSession.update = function (customer, condition, callback) {
 };
 
 
-CustomerSession.delete = function (condition, callback) {
+CustomerStorage.delete = function (condition, callback) {
 
-    models.CustomerSession.destroy({where: condition}).then(function (data) {
+    models.CustomerStorage.destroy({where: condition}).then(function (data) {
 
         return callback(null, data);
 
@@ -88,13 +70,13 @@ CustomerSession.delete = function (condition, callback) {
 };
 
 
-CustomerSession.list = function (condition, order, pageSize, pageNum, callback) {
+CustomerStorage.list = function (condition, order, pageSize, pageNum, callback) {
 
     order = order || [['createdAt', 'DESC']];
     pageSize = pageSize || 10;
     pageNum = pageNum || 0;
 
-    models.CustomerSession.findAll({
+    models.CustomerStorage.findAll({
         where: condition,
         order: order,
         offset: pageSize * pageNum,
@@ -110,13 +92,13 @@ CustomerSession.list = function (condition, order, pageSize, pageNum, callback) 
     });
 };
 
-CustomerSession.listAndCount = function (condition, order, pageSize, pageNum, callback) {
+CustomerStorage.listAndCount = function (condition, order, pageSize, pageNum, callback) {
 
     order = order || [['createdAt', 'DESC']];
-    pageSize = pageSize || 10;
     pageNum = pageNum || 0;
+    pageSize = pageSize || 10;
 
-    models.CustomerSession.findAndCountAll({
+    models.CustomerStorage.findAndCountAll({
         where: condition,
         order: order,
         offset: pageSize * pageNum,

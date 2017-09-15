@@ -37,6 +37,15 @@ function customerSessionRoutes(app, middleware, controllers) {
     app.delete('/customers/:uuid', controllers.customerSessionController.delete);
 }
 
+function customerStorageRoutes(app, middleware, controllers) {
+    //var middlewares = [middleware.checkGlobalPrivacySettings];
+
+    app.post('/customerstorages/customer/:cid', controllers.customerStorageController.create);
+    app.patch('/customerstorages/customer/:cid', controllers.customerStorageController.update);
+
+    app.get('/customerstorages', controllers.customerStorageController.list);
+}
+
 function messageRoutes(app, middleware, controllers) {
     app.get('/messages/:uuid', controllers.messageController.get);
     app.delete('/messages/:uuid', controllers.messageController.delete);
@@ -103,6 +112,7 @@ module.exports = function (app, middleware, callback) {
 
     customerSuccessRoutes(router, middleware, controllers);
     customerSessionRoutes(router, middleware, controllers);
+    customerStorageRoutes(router, middleware, controllers);
     messageRoutes(router, middleware, controllers);
     rateRoutes(router, middleware, controllers);
     offlineRoutes(router, middleware, controllers);

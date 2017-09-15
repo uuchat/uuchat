@@ -4,6 +4,7 @@ var Controllers = module.exports;
 
 Controllers.customerSuccessController = require('./customerSuccessController');
 Controllers.customerSessionController = require('./customerSessionController');
+Controllers.customerStorageController = require('./customerStorageController');
 Controllers.messageController = require('./messageController');
 Controllers.rateController = require('./rateController');
 Controllers.offlineController = require('./offlineController');
