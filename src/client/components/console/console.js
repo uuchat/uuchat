@@ -9,6 +9,8 @@ const Dashboard = AsyncComponent(() => import('./dashboard')
     .then(module => module.default), { name: 'dashboard' });
 const Operators = AsyncComponent(() => import('./operators')
     .then(module => module.default), { name: 'operators' });
+const Customers = AsyncComponent(() => import('./customers')
+    .then(module => module.default), { name: 'customers' });
 const Transcripts = AsyncComponent(() => import('./transcripts')
     .then(module => module.default), { name: 'transcripts' });
 const Rates = AsyncComponent(() => import('./rates')
@@ -89,6 +91,7 @@ export default class Console extends Component {
         const menuList = [
             {key: 'dashboard', type: 'laptop', text: 'Dashboard'},
             {key: 'operators', type: 'user', text: 'Operators'},
+            {key: 'customers', type: 'user', text: 'customers'},
             {key: 'transcripts', type: 'database', text: 'Transcripts'},
             {key: 'rates', type: 'star-o', text: 'Rate Report'},
             {key: 'rateList', type: 'star-o', text: 'Rate List'},
@@ -158,6 +161,7 @@ export default class Console extends Component {
                                         <Route exact path="/" component={ Dashboard }/>
                                         <Route exact path="/dashboard" component={ Dashboard }/>
                                         <Route exact path="/operators" component={ Operators }/>
+                                        <Route exact path="/customers" component={ Customers }/>
                                         <Route exact path="/transcripts" component={ Transcripts }/>
                                         <Route exact path="/rates" component={ Rates }/>
                                         <Route exact path="/rateList" component={ RateList }/>
