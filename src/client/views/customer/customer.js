@@ -40,7 +40,7 @@
         }
     }
     var UUCT = {
-        domain: (w.UUCHAT && w.UUCHAT.domain)|| '',
+        domain: (w.UUCHAT && w.UUCHAT.domain) || '',
         socket: null,
         timeStart: new Date(),
         timeOutSeconds: 2700000,
@@ -59,9 +59,6 @@
                 this.loadScript(socketIO || 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js');
             }
             this.createCT();
-            w.addEventListener('message', function (e) {
-               console.log('e---', e.data)
-            });
         },
         loadStyle: function(arr){
 
@@ -123,12 +120,35 @@
             doc.body.appendChild(ctNode);
         },
         ctrol: function(){
+
+           /* if (localStorage && localStorage.getItem('consoleStatus')) {
+
+                console.log(localStorage.getItem('consoleStatus'), '|------');
+
+                if (localStorage.getItem('consoleStatus') == 'open') {
+                   /!* removeClass($('.chat-console'), 'chat-console-hidden');
+                    addClass($('.chat-btn'), 'chat-btn-close');
+                    $('.chat-nums').style.display = 'none';
+                    $('.chat-nums').innerHTML = 0;
+                    if(!UUCT.socket){
+                        UUCT.createSocket();
+                    }*!/
+                }
+
+            }*/
+
             addEvent($('.chat-btn'), 'click', function(e){
                 toggleClass($('.chat-console'), 'chat-console-hidden');
                 toggleClass(this, 'chat-btn-close');
 
                 $('.chat-nums').style.display = 'none';
                 $('.chat-nums').innerHTML = 0;
+
+               /* if (hasClass($('.chat-console'), 'chat-console-hidden')) {
+                    localStorage.setItem('consoleStatus', 'close');
+                } else {
+                    localStorage.setItem('consoleStatus', 'open');
+                }*/
 
                 if(!UUCT.socket){
                     UUCT.createSocket();
@@ -444,7 +464,9 @@
             }
 
             chatMsg && (chatMsg.scrollTop = chatMsg.scrollHeight);
-            UUCT.updateLocalStorage();
+            UUCT.updateLocalStorage({
+                action: 'updateChatTime'
+            });
 
             $('.new-conversation') && addEvent($('.new-conversation'), 'click', function(){
                 UUCT.createSocket();
@@ -465,12 +487,16 @@
                 d = new Date(),
                 data = {};
 
-            data.time = d.getTime();
+            data.lastTime = d.getTime();
+            data.chatTime = d.getTime();
+            data.cid = UUCT.chat.cid;
+            data.action = userInfo.action;
 
-            if(userInfo){
+            if(userInfo.action === 'updateUser'){
                 data.name = userInfo.name;
                 data.email = userInfo.email;
             }
+
             uuchatIF.postMessage(data, '*');
 
         },
@@ -483,6 +509,8 @@
             UUCT.chat.cid = data.cid;
             UUCT.chat.csid = data.csid;
             UUCT.chat.csName = data.name;
+
+            UUCT.updateLocalStorage({action: 'init'});
 
             $('.chat-name').innerHTML = data.name;
             $('.chat-main').innerHTML = msg;
@@ -510,7 +538,7 @@
                 var timeNow = UUCT.dateISOFomat(new Date());
                 if(timeNow.getTime() - UUCT.timeStart.getTime() > UUCT.timeOutSeconds){
                     clearInterval(UUCT.timeOutTimer);
-                    UUCT.socket.close();
+                    UUCT.socket && UUCT.socket.close();
                 }
             }, 2000);
 
@@ -518,7 +546,7 @@
         socketConnectError: function(){
             $('.chat-main').innerHTML = '<div class="chat-offline"><div class="chat-error">Oh! no ! There has error !You can try it later again</div></div>';
         },
-        socketDisconnect: function(reason){
+        socketDisconnect: function(){
             var timeNow = UUCT.dateISOFomat(new Date()),
                 tips = 'The customerSuccess has offline, you can try it by refesh the browser at latter';
             if(timeNow.getTime() - UUCT.timeStart.getTime() > UUCT.timeOutSeconds){
@@ -703,6 +731,7 @@
                 }
 
                 UUCT.updateLocalStorage({
+                    action: 'updateUser',
                     name: name,
                     email: email
                 });

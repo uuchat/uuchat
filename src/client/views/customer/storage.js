@@ -1,15 +1,14 @@
 ;(function (w, d) {
     var uuchatAjax = function(params){
         var params = params || {}
-        params.data = params.data || {},
+            params.data = params.data || {},
             json = params.jsonp ? jsonp(params) : json(params);
 
         function json(params){
             params.type = (params.type || 'GET').toUpperCase();
             !params.fileType && (params.data = formatParams(params.data));
 
-            var xhr = null,
-                org = window.location.protocol+'://'+window.location.host;
+            var xhr = null;
 
             xhr = new XMLHttpRequest() || new ActiveXObjcet('Microsoft.XMLHTTP');
 
@@ -93,50 +92,50 @@
 })(window, document)
 ;(function (w, doc) {
 
+    function extend(destination, source){
+        for(var property in source) {
+            if (destination.hasOwnProperty(property)) {
+                destination[property] = source[property];
+            }
+        }
+        return destination
+    }
+
     var UStorage = {
         storageData: {
-            time: {
-                firstTime: "",
-                lastTime: "",
-                chatTime: "",
-                timezone: ""
-            },
-            userInfo: {
-                name: "",
-                firstScreen: "",
-                screenList: [],
-                lastScreen: "",
-                city: "",
-                country: "",
-                email: "",
-                UserID: "",
-                isOpen: false
-            },
-            browser: {
-                language: "",
-                browser: "",
-                browserVersion: "",
-                OS: ""
-            }
+            firstTime: "",
+            lastTime: "",
+            chatTime: "",
+            timezone: "",
+            name: "",
+            email: "",
+            firstScreen: "",
+            screenList: [],
+            lastScreen: "",
+            city: "",
+            country: "",
+            language: "",
+            browser: "",
+            bv: "",
+            os: "",
+            cid: '',
+            isRefresh: false
         },
         set: function (d) {
-
-            this.storageData.time.lastTime = d.time;
-            this.storageData.time.chatTime = d.time;
-
-            if (d.name) {
-                this.storageData.userInfo.name = d.name;
+            if(this.storageData.isRefresh){
+                d.cid && this.patch(d.cid);
+                this.storageData.isRefresh = false;
+                return false;
             }
 
-            if (d.email) {
-                this.storageData.userInfo.email = d.email;
-            }
+            extend(this.storageData, d);
 
-            if (d.isOpen) {
-                this.storageData.userInfo.isOpen = d.isOpen;
+            if (d.action === 'init') {
+                this.storageData.cid = d.cid;
+                this.send();
             }
-
             localStorage.setItem("uuInfoData", JSON.stringify(this.storageData));
+
         },
         init: function() {
             if (w.localStorage) {
@@ -153,79 +152,81 @@
             return this.storageData;
         },
         update: function(data) {
-            var d = new Date(),
-                sd = this.storageData,
-                list = sd.userInfo.screenList.toString();
 
-            sd.time.lastTime = d.getTime();
+            this.storageData.lastTime = (new Date()).getTime();
 
-            if (doc.referrer !='' && list.indexOf(doc.referrer) < 0) {
-                sd.userInfo.lastScreen  = doc.referrer;
-                sd.userInfo.screenList.push(doc.referrer);
+            if ( this.storageData.screenList.toString().indexOf(doc.referrer.split('?')[0]) < 0) {
+                this.storageData.screenList.push(doc.referrer.split('?')[0]);
+            }
+            if(this.storageData.lastScreen != doc.referrer.split('?')[0]){
+                this.storageData.isRefresh = true;
+                this.storageData.lastScreen = doc.referrer.split('?')[0];
             }
 
-            if (data) {
-                sd.userInfo.city     = data.city;
-                sd.userInfo.country  = data.country;
-                sd.userInfo.email    = data.email;
-                sd.userInfo.UserID   = data.UserID;
-                sd.browser.browser   = data.browser;
-                sd.browser.browserVersion  = data.browserVersion;
-                sd.browser.OS  = data.OS;
-            }
+            extend(this.storageData, data);
 
-            this.storageData = sd;
-
-            localStorage.setItem("uuInfoData", JSON.stringify(sd));
+            localStorage.setItem("uuInfoData", JSON.stringify(this.storageData));
         },
         createStorageData: function() {
-            var d = new Date(),
-                sd = this.storageData;
+            var d = new Date();
 
+            this.storageData.firstTime = d.getTime();
+            this.storageData.lastTime = d.getTime();
+            this.storageData.timezone = Math.ceil(d.getTimezoneOffset()/60);
+            this.storageData.firstScreen = doc.referrer;
+            this.storageData.lastScreen  = doc.referrer;
 
-            if (sd.time.firstTime === "") {
-                sd.time.firstTime = d.getTime();
-            }
-            if (sd.time.lastTime === "") {
-                sd.time.lastTime = d.getTime();
-            }
-            sd.time.timezone = Math.ceil(d.getTimezoneOffset()/60);
-            sd.userInfo.firstScreen = doc.referrer;
-            sd.userInfo.lastScreen  = doc.referrer;
+            this.storageData.screenList.push(doc.referrer.split('?')[0]);
+            this.storageData.language = (navigator.language || navigator.browserLanguage).toLowerCase();
 
-            sd.userInfo.screenList.push(doc.referrer);
-            sd.browser.language = (navigator.language || navigator.browserLanguage).toLowerCase();
-
-            this.storageData = sd;
-
-            localStorage.setItem("uuInfoData", JSON.stringify(sd));
-
+            localStorage.setItem("uuInfoData", JSON.stringify(this.storageData));
         },
         send: function() {
             if (uuchatAjax) {
+                var SD = this.storageData;
                 uuchatAjax({
-                    url:'/offlines',
-                    type:'GET',
-                    jsonp: 'jsonpCallback',
-                    data: UStorage.storageData,
+                    url:'/customerstorages/customer/'+UStorage.storageData.cid,
+                    type:'POST',
+                    data: {
+                        firstTime: SD.firstTime,
+                        timezone: SD.timezone,
+                        firstScreen: SD.firstScreen,
+                        lastScreen: SD.lastScreen,
+                        language: SD.language
+                    },
                     success: function(d) {
+                        d = JSON.parse(d);
                         if (d.code === 200) {
-                            UStorage.update(d.data);
+                            UStorage.update(d.msg);
                         }
                     }
                 });
             }
+        },
+        patch: function (cid) {
+            uuchatAjax({
+                url:'/customerstorages/customer/'+cid,
+                type:'PATCH',
+                data: {
+                    lastTime: UStorage.storageData.lastTime,
+                    chatTime: UStorage.storageData.chatTime,
+                    lastScreen: UStorage.storageData.lastScreen
+                },
+                success: function(d) {
+                    d = JSON.parse(d);
+                    if (d.code === 200) {
+                        UStorage.update(d.msg);
+                    }
+                }
+            });
         }
     };
     w.UStorage = UStorage;
 
     UStorage.init();
-    //UStorage.send();
 
     w.addEventListener('message', function (e) {
         e.data && UStorage.set(e.data);
     });
-
-    w.postMessage(UStorage.storageData.userInfo.isOpen, '*');
 
 })(window, document);
