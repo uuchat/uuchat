@@ -343,11 +343,11 @@
 
 
 .chat-console  .chat-send-btns{
-    display: '';
     position: absolute;
-    top: 10px;
-    right: 10px;
-    width: 140px;
+    top: 13px;
+    right: 0;
+    padding-right: 10px;
+    height: 28px;
     text-align: right;
 }
 .chat-console  .chat-send-btns .chat-send-btn{
@@ -364,19 +364,20 @@
     background-color: transparent;
 }
 .chat-console  .chat-send-btns .chat-send-btn:focus{
-    outline: 'none';
+    outline: none;
 }
 .chat-console .emoji-lists{
     position: absolute;
-    bottom: 35px;
+    bottom: 41px;
     right: 0;
     padding: 5px;
     width: 220px;
     height: 170px;
     overflow-y: auto;
-    border-radius: 5px;
+    border-radius: 5px 0 0 0;
     border:1px solid #e8e8e8;
     background-color: #fff;
+    border-bottom: none;
 }
 .chat-console  .emoji-lists.emoji-lists-hidden{
     display: none;
