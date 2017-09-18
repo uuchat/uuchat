@@ -25,6 +25,8 @@ export default class Transcripts extends Component {
             title: 'U-' + (record.cid.substr(0, 6).toUpperCase()) + ' chats',
             width: '600px',
             content: <ChatList { ...record } />,
+            maskClosable: true,
+            closable: true,
             onOk() {
             }
         });

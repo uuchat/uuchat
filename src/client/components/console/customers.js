@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import { Table, Breadcrumb, message } from 'antd';
+import { Breadcrumb, message } from 'antd';
+import CustomerTable from './customerTable';
 import { emptyTableLocale } from './constants';
-import { sortFilterByProps, formatDate } from './utils';
 
 export default class Operators extends Component {
 
@@ -10,14 +10,6 @@ export default class Operators extends Component {
         searchText: '',
         sorter: {},
         pagination: {}
-    };
-
-    rowSelection = {
-        onChange: (selectedRowKeys, selectedRows) => {
-        },
-        getCheckboxProps: (record) => ({
-            disabled: record.key === this.state.superUser
-        })
     };
 
     getDataSource = () => {
@@ -61,29 +53,6 @@ export default class Operators extends Component {
     render() {
         let { dataSource, sorter, pagination } = this.state;
 
-        const columns = [
-            {
-                title: 'customer', dataIndex: 'cid', key: 'cid'
-            },
-            {
-                title: 'first screen', dataIndex: 'firstTime', key: 'firfirstTimestScreen',
-                sorter: (a, b) => sortFilterByProps(a, b, 'firstTime'),
-                sortOrder: sorter.columnKey === 'firstTime' && sorter.order,
-                render: (value) => formatDate(value)
-            },
-            {
-                title: 'last screen', dataIndex: 'lastTime', key: 'lastTime',
-                sorter: (a, b) => sortFilterByProps(a, b, 'lastTime'),
-                sortOrder: sorter.columnKey === 'lastTime' && sorter.order,
-                render: (value) => formatDate(value)
-            },
-            {
-                title: 'country', dataIndex: 'country', key: 'country',
-                sorter: (a, b) => sortFilterByProps(a, b, 'country'),
-                sortOrder: sorter.columnKey === 'country' && sorter.order
-            }
-        ];
-
         return (
             <div>
                 <Breadcrumb separator=">">
@@ -91,12 +60,11 @@ export default class Operators extends Component {
                 </Breadcrumb>
 
                 <div className="content-body">
-                    <Table rowSelection={this.rowSelection}
-                           dataSource={dataSource}
-                           columns={columns}
-                           locale={emptyTableLocale}
-                           pagination={ pagination }
-                           onChange={ this.handleChange }/>
+                    <CustomerTable locale={ emptyTableLocale }
+                                   dataSource={ dataSource }
+                                   sorter={ sorter }
+                                   pagination={ pagination }
+                                   onChange={ this.handleChange }/>
                 </div>
             </div>
         );

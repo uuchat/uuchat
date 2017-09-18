@@ -8,87 +8,100 @@ var customerStorageController = module.exports;
 
 customerStorageController.get = function (req, res, next) {
 
-    CustomerStorage.findById(req.params.uuid, function (err, customerSession) {
+    CustomerStorage.findById(req.params.uuid, function (err, customerStorage) {
 
         if (err) return next(err);
 
-        return res.json({code: 200, msg: customerSession});
+        return res.json({code: 200, msg: customerStorage});
+    });
+};
+
+customerStorageController.getScreens = function (req, res, next) {
+
+    CustomerStorage.findById(req.params.uuid, function (err, customerStorage) {
+
+        if (err) return next(err);
+
+        try {
+            return res.json({code: 200, msg: JSON.parse(customerStorage["screenList"])});
+        } catch (e) {
+            return next(e);
+        }
     });
 };
 
 customerStorageController.query = function (req, res, next) {
     var condition = {cid: req.params.cid};
 
-    CustomerStorage.findOne(condition, function (err, customerSession) {
+    CustomerStorage.findOne(condition, function (err, customerStorage) {
 
         if (err) return next(err);
 
-        return res.json({code: 200, msg: customerSession});
+        return res.json({code: 200, msg: customerStorage});
     });
 };
 
 customerStorageController.create = function (req, res, next) {
-    utils.setupIOSCode(req, utils.getIP(req), function () {
-        var customerStorage = {
-            cid: req.params.cid,
-            firstTime: req.body.firstTime,
-            lastTime: req.body.firstTime,
-            timezone: req.body.timezone,
-            firstScreen: req.body.firstScreen,
-            lastScreen: req.body.firstScreen,
-            language: req.body.language
-        };
+    var customerStorage = {
+        cid: req.params.cid,
+        firstTime: req.body.firstTime,
+        lastTime: req.body.firstTime,
+        timezone: req.body.timezone,
+        firstScreen: req.body.firstScreen,
+        lastScreen: req.body.firstScreen,
+        language: req.body.language
+    };
 
-        customerStorage.screenList = JSON.stringify([{
-            time: customerStorage.firstTime,
-            screen: customerStorage.firstScreen
-        }]);
+    customerStorage.screenList = JSON.stringify([{
+        time: customerStorage.firstTime,
+        screen: customerStorage.firstScreen
+    }]);
 
-        customerStorage.city = '';
-        customerStorage.country = req.session.isoCode;
+    customerStorage.city = req.body.city || '';
+    customerStorage.country = req.body.isoCode;
 
-        customerStorage.browser = req.useragent.browser || '';
-        customerStorage.bv = req.useragent.version || '';
-        customerStorage.os = req.useragent.os || '';
+    customerStorage.browser = req.useragent.browser || '';
+    customerStorage.bv = req.useragent.version || '';
+    customerStorage.os = req.useragent.os || '';
 
-        CustomerStorage.create(customerStorage, function (err, data) {
+    CustomerStorage.create(customerStorage, function (err, data) {
 
-            if (err) return next(err);
+        if (err) return next(err);
 
-            return res.json({
-                code: 200,
-                msg: _.pick(customerStorage, ['cid', 'city', 'country', 'browser', 'bv', 'os'])
-            });
+        return res.json({
+            code: 200,
+            msg: _.pick(customerStorage, ['cid', 'city', 'country', 'browser', 'bv', 'os'])
         });
     });
 };
 
 customerStorageController.update = function (req, res, next) {
-    utils.setupIOSCode(req, utils.getIP(req), function () {
-        var customerStorage = {
-            lastTime: req.body.lastTime,
-            chatTime: req.body.chatTime,
-            lastScreen: req.body.lastScreen
-        };
+    var customerStorage = {
+        lastTime: req.body.lastTime,
+        chatTime: req.body.chatTime,
+        lastScreen: req.body.lastScreen
+    };
 
-        customerStorage.city = '';
-        customerStorage.country = req.session.isoCode;
+    customerStorage.city = req.body.city || '';
+    customerStorage.country = req.body.isoCode;
 
-        var condition = {cid: req.params.cid};
+    var condition = {cid: req.params.cid};
 
-        CustomerStorage.findOne(condition, function (err, data) {
+    CustomerStorage.findOne(condition, function (err, data) {
+        if (err) return next(err);
+
+        // no data to update
+        if (!data) return res.json({code: 200, msg: _.pick(customerStorage, ['city', 'country'])});
+
+        customerStorage.screenList = data && data.screenList ? JSON.parse(data.screenList) : [];
+        customerStorage.screenList.push({time: customerStorage.lastTime, screen: customerStorage.lastScreen});
+        customerStorage.screenList = JSON.stringify(customerStorage.screenList);
+
+        CustomerStorage.update(customerStorage, condition, function (err, data) {
+
             if (err) return next(err);
 
-            customerStorage.screenList = data && data.screenList ? JSON.parse(data.screenList) : [];
-            customerStorage.screenList.push({time: customerStorage.lastTime, screen: customerStorage.lastScreen});
-            customerStorage.screenList = JSON.stringify(customerStorage.screenList);
-
-            CustomerStorage.update(customerStorage, condition, function (err, data) {
-
-                if (err) return next(err);
-
-                return res.json({code: 200, msg: _.pick(customerStorage, ['city', 'country'])});
-            });
+            return res.json({code: 200, msg: _.pick(customerStorage, ['city', 'country'])});
         });
     });
 };
