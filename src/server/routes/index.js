@@ -40,10 +40,12 @@ function customerSessionRoutes(app, middleware, controllers) {
 function customerStorageRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
 
-    app.post('/customerstorages/customer/:cid', controllers.customerStorageController.create);
-    app.patch('/customerstorages/customer/:cid', controllers.customerStorageController.update);
+    app.post('/customerstorages/customer/:cid', middleware.getCountry, controllers.customerStorageController.create);
+    app.patch('/customerstorages/customer/:cid', middleware.getCountry, controllers.customerStorageController.update);
 
     app.get('/customerstorages', controllers.customerStorageController.list);
+    app.get('/customerstorages/:uuid', controllers.customerStorageController.get);
+    app.get('/customerstorages/:uuid/screens', controllers.customerStorageController.getScreens);
 }
 
 function messageRoutes(app, middleware, controllers) {
@@ -98,7 +100,7 @@ function consoleRoutes(app, middleware, controllers) {
     app.get('/console/rates/cs/:csid/month/:month', controllers.consoleController.getMonthlyRateList);
 }
 
-function shortcutRoutes(app, middleware, controllers){
+function shortcutRoutes(app, middleware, controllers) {
     app.get('/shortcuts', controllers.shortcutController.list);
     app.post('/shortcuts', controllers.shortcutController.checkCount, controllers.shortcutController.create);
     app.patch('/shortcuts/:id', controllers.shortcutController.patch);

@@ -71,7 +71,7 @@ utils.getDaysInMonth = function (year, month) {
 };
 
 
-utils.getIP = function(req) {
+utils.getIP = function (req) {
     var ip = req.headers['x-forwarded-for'] ||
         req.connection.remoteAddress ||
         req.socket.remoteAddress ||
@@ -80,7 +80,7 @@ utils.getIP = function(req) {
     return ip.match(new RegExp(/((\d+)\.){3}(\d+)/g))[0];
 };
 
-utils.getServerIPs = function() {
+utils.getServerIPs = function () {
     var ifaces = os.networkInterfaces(),
         ips = [
             'localhost'
@@ -100,7 +100,7 @@ utils.getServerIPs = function() {
     return ips;
 };
 
-utils.setupIOSCode = function(req, ip, next) {
+utils.setupIOSCode = function (req, ip, next) {
     if (ip) {
         maxmind.open(nconf.get('mmdb:path'), (err, orgLookup) => {
             var ipInfo = orgLookup.get(ip);
@@ -120,6 +120,17 @@ utils.setupIOSCode = function(req, ip, next) {
     }
 };
 
+/**
+ * get country information via mmdb
+ * @param ip
+ * @param callback
+ */
+utils.getCountry = function (ip, callback) {
+    maxmind.open(nconf.get('mmdb:path'), (err, orgLookup) => {
+        if (err) return callback(err);
 
+        return callback(null, orgLookup.get(ip));
+    });
+};
 
 module.exports = utils;
