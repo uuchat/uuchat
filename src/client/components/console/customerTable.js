@@ -43,7 +43,7 @@ export default class CustomerTable extends Component {
                 title: 'first screen', dataIndex: 'firstTime', key: 'firstTime',
                 sorter: (a, b) => sortFilterByProps(a, b, 'firstTime'),
                 sortOrder: sorter.columnKey === 'firstTime' && sorter.order,
-                render: (value) => fromNow(value)
+                render: fromNow
             },
             {
                 title: 'last screen', dataIndex: 'lastTime', key: 'lastTime',

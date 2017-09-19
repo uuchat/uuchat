@@ -38,10 +38,10 @@ function customerSessionRoutes(app, middleware, controllers) {
 }
 
 function customerStorageRoutes(app, middleware, controllers) {
-    //var middlewares = [middleware.checkGlobalPrivacySettings];
+    var middlewares = [middleware.getIP, middleware.getCountry];
 
-    app.post('/customerstorages/customer/:cid', middleware.getCountry, controllers.customerStorageController.create);
-    app.patch('/customerstorages/customer/:cid', middleware.getCountry, controllers.customerStorageController.update);
+    app.post('/customerstorages/customer/:cid', middlewares, controllers.customerStorageController.create);
+    app.patch('/customerstorages/customer/:cid', middlewares, controllers.customerStorageController.update);
 
     app.get('/customerstorages', controllers.customerStorageController.list);
     app.get('/customerstorages/:uuid', controllers.customerStorageController.get);

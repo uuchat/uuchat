@@ -42,10 +42,12 @@ customerStorageController.query = function (req, res, next) {
 };
 
 customerStorageController.create = function (req, res, next) {
+    var firstTime = parseInt(req.body.firstTime) || new Date().getTime();
+
     var customerStorage = {
         cid: req.params.cid,
-        firstTime: req.body.firstTime,
-        lastTime: req.body.firstTime,
+        firstTime: firstTime,
+        lastTime: firstTime,
         timezone: req.body.timezone,
         firstScreen: req.body.firstScreen,
         lastScreen: req.body.firstScreen,
@@ -76,9 +78,12 @@ customerStorageController.create = function (req, res, next) {
 };
 
 customerStorageController.update = function (req, res, next) {
+    var lastTime = parseInt(req.body.lastTime) || new Date().getTime();
+    var chatTime = parseInt(req.body.chatTime) || new Date().getTime();
+
     var customerStorage = {
-        lastTime: req.body.lastTime,
-        chatTime: req.body.chatTime,
+        lastTime: lastTime,
+        chatTime: chatTime,
         lastScreen: req.body.lastScreen
     };
 

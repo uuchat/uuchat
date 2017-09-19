@@ -29,8 +29,14 @@ middleware.jsCDN = function (req, res, next) {
     }
 };
 
-middleware.getCountry = function (req, res, next) {
+middleware.getIP = function (req, res, next) {
     req.body.ip = utils.getIP(req);
+
+    return next();
+};
+
+
+middleware.getCountry = function (req, res, next) {
 
     utils.getCountry(req.body.ip, function (err, countryInfo) {
         if (err) {
