@@ -628,7 +628,7 @@ class CustomerSuccess extends Component{
     render(){
 
         let {customerLists, customerSelect, chatNotify, messageLists, isOnline, isConnectErr, csAvatar, csName, csEmail, menuIcons, csid, socket} = this.state,
-            cArr = [],
+            chatLists = [],
             Info = this.filterCustomerInfo(customerLists, customerSelect.cid);
 
         if (customerLists.length > 0) {
@@ -637,13 +637,30 @@ class CustomerSuccess extends Component{
 
                     let {msg, cid, name, type, marked} = chat,
                         num = (!chatNotify[cid]) ? 0 : chatNotify[cid],
-                        isActive = (customerSelect.cid === cid);
+                        isActive = (customerSelect.cid === cid),
+                        options = {};
 
                     if (type && type === 'offline') {
-                        cArr.push(<Chat key={index} email={msg} cid={cid} name={name} type={type} closeDialog={this.closeDialog}  />);
+                        options = {
+                            cid: cid,
+                            name: name,
+                            email: msg,
+                            type: type,
+                            closeDialog: this.closeDialog
+                        };
                     } else {
-                        cArr.push(<Chat key={index} marked={marked} cid={cid} newMsg={messageLists[cid]} name={name} num={num} closeDialog={this.closeDialog} onChatListClick={this.onChatListClick} isActive={isActive} />);
+                        options = {
+                            cid: cid,
+                            name: name,
+                            newMsg: messageLists[cid],
+                            isActive: isActive,
+                            num: num,
+                            marked: marked,
+                            closeDialog: this.closeDialog,
+                            onChatListClick: this.onChatListClick
+                        };
                     }
+                    chatLists.push(<Chat key={index} options={options} />);
                 }
             });
         }
@@ -691,7 +708,7 @@ class CustomerSuccess extends Component{
                                 <Tabs defaultActiveKey="1" onTabClick={this.menuIconClick}>
                                     <TabPane tab={<ChatIcon name={menuIcons.chat} />} key="1">
                                             <ul className="customer-lists">
-                                            {cArr}
+                                            {chatLists}
                                             </ul>
                                     </TabPane>
                                     <TabPane tab={<ChatIcon name={menuIcons.contact} />} key="2">

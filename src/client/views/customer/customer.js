@@ -644,7 +644,7 @@
                     val = _self.value;
                     val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
                     U.$('.send-pre').innerHTML = val;
-                    
+
                     if (13 === e.keyCode) {
                         if (val !== '') {
                             CHAT.socketSendMessage(val);

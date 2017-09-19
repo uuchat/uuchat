@@ -11,10 +11,6 @@ class Chat extends Component{
         };
     }
 
-    chatClickHandler = (e) => {
-        this.props.onChatListClick(this.props.name, this.props.cid,  this.props.marked);
-    };
-
     msgFilter(msg){
         let imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
             m = msg.replace && msg.replace(/#/gi, "<br />");
@@ -34,7 +30,7 @@ class Chat extends Component{
 
     render(){
 
-        let {cid, type, newMsg, isActive, name, num, closeDialog, email} = this.props,
+        let {cid, name, type, newMsg, isActive, num, email, marked, closeDialog, onChatListClick } = this.props.options,
             msg,
             cIndex = String2int(cid);
 
@@ -44,7 +40,7 @@ class Chat extends Component{
                 msg = newMsg[newMsg.length - 1];
             }
             return (
-                <li onClick={this.chatClickHandler} className={ isActive  ? 'active' : ''}>
+                <li onClick={(e) => onChatListClick(name, cid, marked)} className={ isActive  ? 'active' : ''}>
                     <div className="chat-avatar fl">
                         <span className={"avatar-icon avatar-icon-"+cIndex}>{name.substr(0,1).toUpperCase()}</span>
                     </div>
