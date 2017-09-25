@@ -14,9 +14,9 @@ try {
 }
 
 try {
-    CleanCSS =  require('clean-css');
+    CleanCSS = require('clean-css');
 } catch (e) {
-    CleanCSS =  require('html-webpack-plugin/node_modules/html-minifier/node_modules/clean-css');
+    CleanCSS = require('html-webpack-plugin/node_modules/html-minifier/node_modules/clean-css');
 }
 
 nconf.argv().env().file({
@@ -82,7 +82,11 @@ var defaultConfig = {
             from: paths.customerHtml,
             to: paths.appBuild + '/customer.html',
             transform: function (content, absoluteFrom) {
-                var result = (content + '').replace(/uuchat.io/g,
+                var result = content + '';
+                if (nconf.get('app:ssl')) {
+                    result = result.replace(/http:\/\/(uuchat.io)/g, "https://$1");
+                }
+                var result = result.replace(/uuchat.io/g,
                     nconf.get('app:address') + ':' + nconf.get('app:port'));
                 return result;
             }
@@ -91,7 +95,11 @@ var defaultConfig = {
             from: paths.appContent + '/html/index.html',
             to: paths.appBuild + '/index.html',
             transform: function (content, absoluteFrom) {
-                var result = (content + '').replace(/uuchat.io/g,
+                var result = content + '';
+                if (nconf.get('app:ssl')) {
+                    result = result.replace(/http:\/\/(uuchat.io)/g, "https://$1");
+                }
+                var result = result.replace(/uuchat.io/g,
                     nconf.get('app:address') + ':' + nconf.get('app:port'));
                 return result;
             }
