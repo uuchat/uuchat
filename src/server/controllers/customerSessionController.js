@@ -10,7 +10,7 @@ customerSessionController.get = function (req, res, next) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: customerSession});
+        return res.json({code: 200, msg: customerSession});
     });
 };
 
@@ -21,7 +21,7 @@ customerSessionController.query = function (req, res, next) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: customerSession});
+        return res.json({code: 200, msg: customerSession});
     });
 };
 
@@ -45,7 +45,7 @@ customerSessionController.create = function (req, res, next) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: data});
+        return res.json({code: 200, msg: data});
     });
 };
 
@@ -72,7 +72,7 @@ customerSessionController.update = function (req, res, next) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success update'});
+        return res.json({code: 200, msg: 'success update'});
     });
 };
 
@@ -83,6 +83,6 @@ customerSessionController.delete = function (req, res, next) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success delete'});
+        return res.json({code: 200, msg: 'success delete'});
     });
 };

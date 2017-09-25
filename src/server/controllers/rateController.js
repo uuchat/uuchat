@@ -11,7 +11,7 @@ rateController.get = function (req, res, next) {
     Rate.findById(req.params.uuid, function (err, rate) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: rate});
+        return res.json({code: 200, msg: rate});
     });
 };
 
@@ -26,7 +26,7 @@ rateController.create = function (req, res, next) {
     Rate.create(rate, function (success) {
         if (!success) return next(new Error('create rate error'));
 
-        res.json({code: 200, msg: "success"});
+        return res.json({code: 200, msg: "success"});
     });
 };
 
@@ -37,7 +37,7 @@ rateController.patch = function (req, res, next) {
     Rate.update(rate, condition, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success update'});
+        return res.json({code: 200, msg: 'success update'});
     });
 };
 
@@ -47,7 +47,7 @@ rateController.delete = function (req, res, next) {
     Rate.delete(condition, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success delete'});
+        return res.json({code: 200, msg: 'success delete'});
     });
 };
 
@@ -67,7 +67,7 @@ rateController.list = function (req, res, next) {
     Rate.listAndCount(condition, order, pageSize, pageNum, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: data});
+        return res.json({code: 200, msg: data});
     });
 };
 
@@ -76,13 +76,12 @@ rateController.search = function (req, res, next) {
 
     if (req.query.csid) condition.csid = req.query.csid;
     if (req.query.rate) condition.rate = req.query.rate;
-    if (req.query.createdAtStart) condition.createdAt = {$gte: req.query.createdAtStart};
-    if (req.query.createdAtEnd) condition.createdAt = {$lte: req.query.createdAtEnd};
-    if (req.query.createdAtStart && req.query.createdAtEnd) {
-        condition.createdAt = {
-            $gte: req.query.createdAtStart,
-            $lte: req.query.createdAtEnd
-        };
+
+    if (req.query.createdAtStart || req.query.createdAtEnd) {
+        condition.createdAt = {};
+
+        if (req.query.createdAtStart) condition.createdAt["$gte"] = req.query.createdAtStart;
+        if (req.query.createdAtEnd) condition.createdAt["$lte"] = req.query.createdAtEnd;
     }
 
     var order = [['createdAt', 'DESC']];

@@ -11,7 +11,7 @@ CustomerStorage.findById = function (uuid, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -24,7 +24,7 @@ CustomerStorage.findOne = function (condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -34,9 +34,12 @@ CustomerStorage.findOne = function (condition, callback) {
 CustomerStorage.create = function (customerStorage, callback) {
 
     models.CustomerStorage.create(customerStorage).then(function (data) {
+
         return callback(null, data);
-    }).catch(function (err) {
+
+    }, function (err) {
         logger.error(err);
+
         return callback(err);
     });
 };
@@ -48,7 +51,7 @@ CustomerStorage.update = function (customerStorage, condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -62,7 +65,7 @@ CustomerStorage.delete = function (condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -85,7 +88,7 @@ CustomerStorage.list = function (condition, order, pageSize, pageNum, callback) 
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -107,7 +110,7 @@ CustomerStorage.listAndCount = function (condition, order, pageSize, pageNum, ca
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);

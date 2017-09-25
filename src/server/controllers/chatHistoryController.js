@@ -17,7 +17,7 @@ chatHistoryController.create = function (req, res, next) {
     ChatHistory.insert(chatHistory, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: data});
+        return res.json({code: 200, msg: data});
     });
 };
 

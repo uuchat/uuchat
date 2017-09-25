@@ -10,12 +10,12 @@ ChatHistory.findById = function (uuid, callback) {
 
     models.ChatHistory.findById(uuid).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -23,12 +23,12 @@ ChatHistory.findOne = function (condition, callback) {
 
     models.ChatHistory.findOne({where: condition}).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -37,50 +37,67 @@ ChatHistory.createOrUpdate = function (cid, csid, fn) {
     chatHistory.cid = cid;
     chatHistory.csid = csid;
 
-    models.ChatHistory.findOne({ where: {cid: cid, csid: csid} }).then(function (data) {
-        if(data) {
-            return models.ChatHistory.update({'updatedAt': new Date()}, {fields: ['updatedAt'], 'where': {'uuid': data.uuid}})
-                .then(function () {
-                    return fn(true);
-                })
-                .catch(function (err) {
-                    logger.error(err);
-                    return fn(false);
-                });
+    models.ChatHistory.findOne({where: {cid: cid, csid: csid}}).then(function (data) {
+        if (data) {
+            return models.ChatHistory.update({'updatedAt': new Date()}, {
+                fields: ['updatedAt'],
+                'where': {'uuid': data.uuid}
+            }).then(function () {
+
+                return fn(true);
+
+            }, function (err) {
+
+                logger.error(err);
+
+                return fn(false);
+            });
         } else {
             return models.ChatHistory.create(chatHistory).then(function (data) {
+
                 return fn(true);
-            }).catch(function (err) {
+
+            }, function (err) {
+
                 logger.error(err);
+
                 return fn(false);
             });
         }
-    }).catch(function (err) {
+    }, function (err) {
+
         logger.error(err);
+
         return fn(false);
     });
 };
-
 
 
 ChatHistory.updateMarked = function (cid, csid, marked, fn) {
 
     models.ChatHistory.update({'marked': marked}, {fields: ['marked'], 'where': {'cid': cid, 'csid': csid}})
         .then(function () {
+
             fn(true);
-        })
-        .catch(function (err) {
+
+        }, function (err) {
+
             logger.error(err);
+
             fn(false);
         });
 };
 
 ChatHistory.insert = function (chatHistory, callback) {
+
     models.ChatHistory.create(chatHistory).then(function (data) {
-        callback(null, data);
-    }).catch(function (err) {
+
+        return callback(null, data);
+
+    }, function (err) {
         logger.error(err);
-        callback(err);
+
+        return callback(err);
     });
 };
 
@@ -88,12 +105,12 @@ ChatHistory.delete = function (condition, callback) {
 
     models.ChatHistory.destroy({where: condition}).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -111,7 +128,7 @@ ChatHistory.list = function (condition, order, pageSize, pageNum, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -132,7 +149,7 @@ ChatHistory.listAndCount = function (condition, order, pageSize, pageNum, callba
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -147,7 +164,7 @@ ChatHistory.count = function (options, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);

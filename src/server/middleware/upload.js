@@ -58,11 +58,11 @@ module.exports = function (middleware) {
                 upload.single('image')(req, res, function (err) {
                     if (err) {
                         logger.error(err);
-                        next(new Error('upload-file-has-error'));
+                        return next(new Error('upload-file-has-error'));
                     }
                     var fileName = req.file.filename;
                     if (_.isUndefined(fileName)) {
-                        next(new Error('upload-file-name-undefined'));
+                        return next(new Error('upload-file-name-undefined'));
                     }
                     var originalname = req.file.originalname;
 
@@ -76,7 +76,7 @@ module.exports = function (middleware) {
                 crypto.pseudoRandomBytes(16, function (err, raw) {
                     if (err) {
                         logger.error(err);
-                        next(new Error('crypto-name-has-error'));
+                        return next(new Error('crypto-name-has-error'));
                     }
 
                     var original = path.join(getSavePath(nconf.get('images:savePath')), fileName);
@@ -109,7 +109,7 @@ module.exports = function (middleware) {
                     .toFile(dest, function (err, inf) {
                             if (err) {
                                 logger.error(err);
-                                next(new Error('resize-file-has-error'));
+                                return next(new Error('resize-file-has-error'));
                             }
                             next(null, {code: 200, msg: {original: original, resized: dest, w: resizeWidth, h: resizeHeight}});
                         }
@@ -157,7 +157,7 @@ module.exports = function (middleware) {
             var file = req.file;
             if (err) {
                 logger.error(err);
-                next(new Error('upload-file-has-error'));
+                return next(new Error('upload-file-has-error'));
             }
             var fileName = req.file.filename;
             var original = path.join(getSavePath(nconf.get('images:savePath')), fileName);
@@ -180,7 +180,7 @@ module.exports = function (middleware) {
     };
 
     function checkMonthFileSize(customer, req, next) {
-        if (!customer) next(new Error('customer-not-found'));
+        if (!customer) return next(new Error('customer-not-found'));
         var yearMonth = getYearMonth();
         var monthlyUploadSize = 0;
         var uploadArray;
@@ -194,7 +194,7 @@ module.exports = function (middleware) {
         }
 
         if (monthlyUploadSize > nconf.get("images:monthlyMaxSize")) {
-            next(new Error('exceed-monthly-max-size'));
+           return next(new Error('exceed-monthly-max-size'));
         }
 
         req.lastUploadSize = monthlyUploadSize;

@@ -12,7 +12,7 @@ Offline.findById = function (uuid, callback) {
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);
@@ -23,12 +23,12 @@ Offline.create = function (offline, callback) {
 
     models.Offline.create(offline).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -37,8 +37,7 @@ Offline.updateStatusByUUID = function (status, csid, uuid, fn) {
     models.Offline.update({'status': status, 'csid': csid}, {fields: ['status', 'csid'], 'where': {'uuid': uuid}})
         .then(function () {
             fn(true);
-        })
-        .catch(function (err) {
+        }, function (err) {
             logger.error(err);
             fn(false);
         });
@@ -50,7 +49,7 @@ Offline.update = function (offline, condition, callback) {
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);
@@ -63,7 +62,7 @@ Offline.delete = function (condition, callback) {
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);
@@ -94,7 +93,7 @@ Offline.list = function (condition, order, pageSize, pageNum, callback) {
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);
@@ -116,7 +115,7 @@ Offline.listAndCount = function (condition, order, pageSize, pageNum, callback) 
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);
@@ -131,7 +130,7 @@ Offline.count = function (options, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);

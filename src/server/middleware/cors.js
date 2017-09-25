@@ -12,7 +12,7 @@ var ENABLE_CORS = {origin: true, maxAge: 86400},
 module.exports = function (middleware) {
     middleware.corsOptionsDelegate = function (req, next) {
         var ips = utils.getServerIPs();
-        var hostname = url.parse(req.get('Referer')).hostname;
+        var hostname = url.parse(req.get('Referer') || req.get('origin')).hostname; //Referer safari, origin firefox
         if (ips.indexOf(hostname) > -1) { //handleLocalIps
             return next(null, ENABLE_CORS);
         } else {
@@ -37,7 +37,7 @@ module.exports = function (middleware) {
             return next(null, ENABLE_CORS);
         }
         //check referer
-        var hostname = url.parse(req.get('Referer')).hostname;
+        var hostname = url.parse(req.get('Referer') || req.get('origin')).hostname; //Referer safari, origin firefox
         //winston.info(hostname);
         if (whiteList.indexOf(hostname) > -1) { //firefox
             return next(null, ENABLE_CORS);

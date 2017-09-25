@@ -11,7 +11,7 @@ messageController.get = function (req, res, next) {
     Message.findById(req.params.uuid, function (err, message) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: message});
+        return res.json({code: 200, msg: message});
     });
 };
 
@@ -27,7 +27,7 @@ messageController.create = function (req, res, next) {
     Message.insert(message, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: data});
+        return res.json({code: 200, msg: data});
     });
 };
 
@@ -57,7 +57,7 @@ messageController.delete = function (req, res, next) {
     Message.delete(condition, function (err, data) {
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success delete'});
+        return res.json({code: 200, msg: 'success delete'});
     });
 };
 

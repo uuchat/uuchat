@@ -11,7 +11,7 @@ CustomerSession.findById = function (uuid, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -24,7 +24,7 @@ CustomerSession.findOne = function (condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -39,7 +39,7 @@ CustomerSession.create = function (customer, fn) {
 
     customerSession.save().then(function () {
         return fn(true);
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
         return fn(false);
     });
@@ -52,8 +52,9 @@ CustomerSession.insert = function (customer, callback) {
     if (!customerSession.cid) customerSession.cid = customerSession.uuid;
 
     customerSession.save().then(function (data) {
+
         return callback(null, data);
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
         return callback(err);
     });
@@ -66,7 +67,7 @@ CustomerSession.update = function (customer, condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -80,7 +81,7 @@ CustomerSession.delete = function (condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -103,7 +104,7 @@ CustomerSession.list = function (condition, order, pageSize, pageNum, callback) 
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -125,7 +126,7 @@ CustomerSession.listAndCount = function (condition, order, pageSize, pageNum, ca
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);

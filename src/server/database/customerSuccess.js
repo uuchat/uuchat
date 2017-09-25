@@ -10,12 +10,12 @@ CustomerSuccess.findById = function (uuid, callback) {
 
     models.CustomerSuccess.findById(uuid).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -23,12 +23,12 @@ CustomerSuccess.findOne = function (condition, callback) {
 
     models.CustomerSuccess.findOne({where: condition}).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -53,7 +53,7 @@ CustomerSuccess.findAll = function (attributes, condition, order, callback) {
 
         return callback(null, pureData);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -64,11 +64,11 @@ CustomerSuccess.create = function (customerSuccess, callback) {
 
     models.CustomerSuccess.create(customerSuccess).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -78,7 +78,7 @@ CustomerSuccess.update = function (customerSuccess, condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -89,12 +89,12 @@ CustomerSuccess.delete = function (condition, callback) {
 
     models.CustomerSuccess.destroy({where: condition}).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -111,12 +111,12 @@ CustomerSuccess.list = function (condition, order, pageSize, pageNum, callback) 
         limit: pageSize
     }).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -135,7 +135,7 @@ CustomerSuccess.listAndCount = function (condition, order, pageSize, pageNum, ca
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);

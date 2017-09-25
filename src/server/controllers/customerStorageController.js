@@ -125,8 +125,16 @@ customerStorageController.delete = function (req, res, next) {
 customerStorageController.list = function (req, res, next) {
     var condition = {};
 
-    var order = [['createdAt', 'DESC']];
+    if (req.query.lastTimeStart || req.query.lastTimeEnd) {
+        condition.lastTime = {};
 
+        if (req.query.lastTimeStart) condition.lastTime['$gte'] = req.query.lastTimeStart;
+        if (req.query.lastTimeEnd) condition.lastTime ['$lte'] = req.query.lastTimeEnd;
+    }
+
+    if (req.query.country) condition.country = req.query.country;
+
+    var order = [['createdAt', 'DESC']];
     if (req.query.sortField) order = [[req.query.sortField, req.query.sortOrder === 'ascend' ? 'ASC' : 'DESC']];
 
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);

@@ -17,9 +17,9 @@ offlineController.create = function (req, res, next) {
         if (err) return next(err);
 
         if(callback){
-            res.end(callback+"("+JSON.stringify({"code":200, "msg":data})+")");
+            return res.end(callback+"("+JSON.stringify({"code":200, "msg":data})+")");
         }else{
-            res.json({"code":200, "msg":data});
+            return res.json({"code":200, "msg":data});
         }
 
     });

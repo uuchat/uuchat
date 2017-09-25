@@ -12,7 +12,7 @@ Rate.findById = function (uuid, callback) {
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);
@@ -25,7 +25,7 @@ Rate.create = function (rate, fn) {
 
         fn(true);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         fn(false);
@@ -36,12 +36,12 @@ Rate.insert = function (rate, callback) {
 
     models.Rate.create(rate).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -49,12 +49,12 @@ Rate.update = function (rate, condition, callback) {
 
     models.Rate.update(rate, {where: condition}).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -62,12 +62,12 @@ Rate.delete = function (condition, callback) {
 
     models.Rate.destroy({where: condition}).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -86,7 +86,7 @@ Rate.list = function (condition, order, pageSize, pageNum, callback) {
 
         callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         callback(err);
@@ -108,7 +108,7 @@ Rate.listAndCount = function (condition, order, pageSize, pageNum, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -124,12 +124,12 @@ Rate.aggregate = function (attributes, condition, callback) {
         raw: true
     }).then(function (data) {
 
-        callback(null, data);
+        return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
-        callback(err);
+        return callback(err);
     });
 };
 
@@ -141,7 +141,7 @@ Rate.count = function (options, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);

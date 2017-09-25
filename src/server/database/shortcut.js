@@ -12,7 +12,7 @@ Shortcut.findById = function (uuid, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -26,7 +26,7 @@ Shortcut.create = function (shortcut, callback) {
 
         return callback(null, pureData);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -39,7 +39,7 @@ Shortcut.update = function (shortcut, condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -52,7 +52,7 @@ Shortcut.delete = function (condition, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -72,7 +72,7 @@ Shortcut.listAndCount = function (condition, order, callback) {
 
         return callback(null, data);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -94,7 +94,7 @@ Shortcut.listAll = function (attributes, condition, callback) {
 
         return callback(null, pureData);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);
@@ -117,7 +117,7 @@ Shortcut.findAll = function (condition, order, callback) {
 
         return callback(null, pureData);
 
-    }).catch(function (err) {
+    }, function (err) {
         logger.error(err);
 
         return callback(err);

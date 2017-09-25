@@ -51,7 +51,7 @@ customerSuccessController.register = function (req, res, next) {
 
         createCSSocket(req, user);
 
-        res.json({
+        return res.json({
             code: 200, msg: {
                 csid: user.csid,
                 name: user.name,
@@ -106,7 +106,7 @@ customerSuccessController.login = function (req, res, next) {
 
         createCSSocket(req, user);
 
-        res.json({
+        return res.json({
             code: 200,
             msg: {
                 csid: user.csid,
@@ -165,7 +165,7 @@ customerSuccessController.loginConsole = function (req, res, next) {
 
         createCSSocket(req, user);
 
-        res.json({
+        return res.json({
             code: 200,
             msg: {
                 csid: user.csid,
@@ -181,7 +181,7 @@ customerSuccessController.loginConsole = function (req, res, next) {
 
 customerSuccessController.logout = function (req, res, next) {
     req.session.destroy();
-    res.json({code: 200, msg: 'success logout'});
+    return res.json({code: 200, msg: 'success logout'});
 };
 
 customerSuccessController.update = function (req, res, next) {
@@ -211,7 +211,7 @@ customerSuccessController.delete = function (req, res, next) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: 'success delete'});
+        return res.json({code: 200, msg: 'success delete'});
     });
 };
 
@@ -222,7 +222,7 @@ customerSuccessController.getAvatar = function (req, res, next) {
 
         if (err) return next(err);
 
-        res.json({code: 200, msg: {photo: customerSuccess.photo}});
+        return res.json({code: 200, msg: {photo: customerSuccess.photo}});
     });
 };
 
