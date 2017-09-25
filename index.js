@@ -8,15 +8,7 @@ var path = require('path');
 var fs = require('fs');
 var chalk = require('chalk');
 
-var webServer = require('./src/index');
-var utils = require('./src/server/utils');
-
 var DEFAULT_ENV = 'production';
-
-setupEnv();
-
-start();
-
 
 function setupEnv(){
     global.env = process.env.NODE_ENV || DEFAULT_ENV ;
@@ -27,6 +19,13 @@ function setupEnv(){
         file: path.join(__dirname, './src/config.json')
     });
 }
+
+setupEnv();
+
+var webServer = require('./src/index');
+var utils = require('./src/server/utils');
+
+start();
 
 function start() {
     checkSQLite();
