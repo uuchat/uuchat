@@ -77,7 +77,7 @@
                             params.error && params.error(status);
                         }
                     }
-                }
+                };
 
                 xhr.upload.onprogress = params.progress;
                 params.error && (xhr.onerror = params.error);
@@ -106,7 +106,7 @@
                     clearTimeout(script.timer);
                     window[callbackName] = null;
                     params.success && params.success(json);
-                }
+                };
                 script.src = params.url + '?' + data;
                 if(params.time) {
                     script.timer = setTimeout(function() {
@@ -205,9 +205,9 @@
         },
         init: function(){
             U.loadStyle([CHAT.domain+'/static/css/customer.css']);
-            if(U.isLtIe8()){
+            if (U.isLtIe8()) {
                 U.loadScript(CHAT.domain+'/static/images/socket.io.js', CHAT.ctrol);
-            }else{
+            } else {
                 var socketIO = localStorage.getItem ? localStorage.getItem('uuchat.skcdn', socketIO) : null;
                 U.loadScript(socketIO || 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js', CHAT.ctrol);
             }
@@ -259,16 +259,10 @@
             CHAT.socket.on('cs.action.rate', this.socketActionRate);
 
             U.addEvent(window, 'offline', function(){
-                if (CHAT.socket) {
-                    CHAT.socket.close();
-                }
+                CHAT.socket && CHAT.socket.close();
             });
             U.addEvent(window, 'online', function(){
-                if (CHAT.socket) {
-                    CHAT.socket.open();
-                } else {
-                    CHAT.createSocket();
-                }
+                CHAT.socket ? CHAT.socket.open() : CHAT.createSocket();
             });
         },
         template: function(){
@@ -294,8 +288,7 @@
             return str;
         },
         tempMsg: function(){
-            var str = '<div class="chat-msg"></div>';
-            return str;
+            return '<div class="chat-msg"></div>';
         },
         tempSend: function(){
             var str = '<div class="chat-send">';
@@ -385,14 +378,10 @@
             var chatMsg =  U.$('.chat-msg');
 
             if (msgObj.msg === 1) {
-
                 this.msgRate(chatMsg, msgObj);
-
             } else if(msgObj.msg === 2) {
-
                 var str = '<div class="new-conversation">Click to New Conversation</div>';
                 chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
-
             } else {
                 chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, msgObj.time));
             }
@@ -415,15 +404,14 @@
             str += '<p class="rate-title">Please rate the dialogue</p>';
             str += '<div class="rete-heart">';
             str += '<span class="rate-span">1</span><span class="rate-span">2</span><span class="rate-span">3</span><span class="rate-span">4</span><span class="rate-span">5</span>';
-            str +='</div>';
-            str +='<div class="rete-btn">Done</div></div>';
+            str += '</div><div class="rete-btn">Done</div></div>';
 
             chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
 
             var hearts = U.$('.rete-heart', true),
                 rateBtns = U.$('.rete-btn', true);
 
-            for(var i = 0, l = hearts.length; i < l; i++){
+            for (var i = 0, l = hearts.length; i < l; i++) {
                 (function(i){
                     var rateLevel = 5,
                         rate = hearts[i].children;
@@ -431,14 +419,14 @@
                         var e = e || w.event,
                             tg = e.target || e.srcElement;
 
-                        if(tg.tagName.toLowerCase() === 'span'){
+                        if (tg.tagName.toLowerCase() === 'span') {
                             var rateNum = tg.innerHTML;
                             rateLevel = rateNum;
 
-                            for(var j = 0; j < 5; j++){
-                                if(j < rateNum){
+                            for (var j = 0; j < 5; j++) {
+                                if (j < rateNum) {
                                     rate[j].className="rate-span active";
-                                }else{
+                                } else {
                                     rate[j].className="rate-span";
                                 }
                             }
@@ -450,7 +438,7 @@
                         chatMsg.scrollTop = chatMsg.scrollHeight;
 
                         CHAT.socket.emit('c.rate', CHAT.chat.cid, rateLevel, function (success) {
-                            if(success){
+                            if (success) {
                                 setTimeout(function(){
                                     CHAT.socket.close();
                                     CHAT.socket = null;
@@ -485,32 +473,31 @@
 
         },
         initCustomer: function(data){
-            var msg = CHAT.tempMsg(),
-                send = CHAT.tempSend(),
-                msgList = '',
-                src = (data.photo && data.photo !== '') ? data.photo : CHAT.domain+'/static/images/ua.png';
+            var msgList = '';
 
-            CHAT.chat.cid = data.cid;
-            CHAT.chat.csid = data.csid;
-            CHAT.chat.csName = data.name;
+            this.chat.cid = data.cid;
 
-            CHAT.updateLocalStorage({action: 'init'});
+            this.updateLocalStorage({action: 'init'});
+            this.initCustomerInfo(data.csid, data.name, data.photo);
 
-            U.$('.chat-name').innerHTML = data.name;
-            U.$('.chat-main').innerHTML = msg;
-            U.$('.chat-main').innerHTML += send;
-            U.$('.avatar-img').setAttribute("src", CHAT.domain+'/'+src);
+            U.$('.chat-main').innerHTML = this.tempMsg();
+            U.$('.chat-main').innerHTML += this.tempSend();
 
-            if(data.msg.length > 0){
-                for(var i = 0, l = data.msg.length; i < l; i++){
+            if (data.msg.length > 0) {
+                for (var i = 0, l = data.msg.length; i < l; i++) {
                     var msg = data.msg[i];
-                    if(msg.type !== 3 && msg.type !== 4){
-                        msgList += CHAT.tempMsgItem(msg.type, msg.msg, msg.createdAt);
+                    if (msg.type !== 3 && msg.type !== 4) {
+                        msgList += this.tempMsgItem(msg.type, msg.msg, msg.createdAt);
                     }
                 }
                 U.$('.chat-msg').innerHTML += msgList;
             }
-
+        },
+        initCustomerInfo: function (csid, name, avatar) {
+            CHAT.chat.csid = csid;
+            CHAT.chat.csName = name;
+            U.$('.chat-name').innerHTML = name;
+            U.$('.avatar-img').setAttribute("src", this.domain + '/' + (avatar || 'static/images/ua.png'));
         },
         socketConnect: function(){
             this.emit('c.select', CHAT.socketCsSelect);
@@ -519,22 +506,22 @@
             CHAT.timeStart = U.dateISOFomat(new Date()).getTime();
             clearInterval(CHAT.timeOutTimer);
             CHAT.timeOutTimer = setInterval(function(){
-                var timeNow = U.dateISOFomat(new Date());
-                if(timeNow.getTime() - CHAT.timeStart > CHAT.timeOutSeconds){
+                var timeNow = U.dateISOFomat(new Date()).getTime();
+                if(timeNow - CHAT.timeStart > CHAT.timeOutSeconds){
                     clearInterval(CHAT.timeOutTimer);
                     CHAT.socket && CHAT.socket.close();
                 }
-            }, 2000);
+            }, 5000);
         },
         socketConnectError: function(){
             U.$('.chat-main').innerHTML = '<div class="chat-offline"><div class="chat-error">There has error !You can try it later again</div></div>';
         },
         socketDisconnect: function(){
 
-            var timeNow = U.dateISOFomat(new Date()),
+            var timeNow = U.dateISOFomat(new Date()).getTime(),
                 tips = 'The customerSuccess has offline, you can try it by refesh the browser at latter';
 
-            if (timeNow.getTime() - CHAT.timeStart > CHAT.timeOutSeconds) {
+            if (timeNow - CHAT.timeStart > CHAT.timeOutSeconds) {
                 tips = 'Long time no chat, disconnect, you can try it by refesh the browser at latter';
             }
 
@@ -566,7 +553,7 @@
                 var e = e || window.event,
                     tg = e.target || e.srcElement;
 
-                if(tg.tagName.toLowerCase() === 'span'){
+                if (tg.tagName.toLowerCase() === 'span') {
                     U.$('.chat-send-area').value += tg.innerHTML;
                     U.$('.send-pre').innerHTML += tg.innerHTML;
                     U.$('.chat-send-area').focus();
@@ -577,16 +564,16 @@
 
                 var _self = this,
                     data = new FormData(),
-                    isLt2M = 0;
+                    fileSize = 0;
 
                 if(!e.target.files[0]){
                     return false;
                 }
                 data.append('image', e.target.files[0]);
 
-                isLt2M = e.target.files[0].size / 1024 /1024;
+                fileSize = e.target.files[0].size / 1024 /1024;
 
-                if(isLt2M >= 2){
+                if (fileSize >= 2) {
                     U.$('.chat-msg').innerHTML += '<div class="upload-tips">Image must smaller than 2MB!</div>';
                     this.value = '';
                     setTimeout(function(){
@@ -603,13 +590,13 @@
                     fileType: true,
                     data: data,
                     progress: function(d){
-                        if(d.total === 0){
+                        if (d.total === 0) {
                             U.$('.upload-tips').innerHTML = 'Upload failed!!!';
-                        }else{
+                        } else {
                             U.$('.upload-tips').innerHTML = 'Uploading '+Math.round(d.loaded/d.total*100)+ ' %';
                         }
 
-                        if(d.loaded === d.total){
+                        if (d.loaded === d.total) {
                             setTimeout(function(){
                                 U.$('.upload-tips') && U.$('.upload-tips').parentNode.removeChild(U.$('.upload-tips'));
                             }, 2500);
@@ -617,13 +604,13 @@
                     },
                     success: function(data){
                         var d = JSON.parse(data);
-                        if(d.code === 200){
+                        if (d.code === 200) {
                             CHAT.socketSendMessage(d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h);
                         }
                     },
                     error: function(e){
                         _self.value = '';
-                        if(U.$('.upload-tips')){
+                        if (U.$('.upload-tips')) {
                             U.$('.upload-tips').innerHTML = 'upload image has cros error.';
                             setTimeout(function(){
                                 U.$('.upload-tips') && U.$('.upload-tips').parentNode.removeChild(U.$('.upload-tips'));
@@ -639,20 +626,25 @@
                     val = '',
                     _self = this;
 
-
                 setTimeout(function () {
                     val = _self.value;
                     val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
-                    U.$('.send-pre').innerHTML = val;
+
+                    if (val.length > 0 && !/^(&nbsp;)*$/g.test(val)) {
+                        U.$('.send-pre').innerHTML = val
+                    } else {
+                        _self.value = '';
+                        U.$('.send-pre').innerHTML = '';
+                    }
 
                     if (13 === e.keyCode) {
-                        if (val !== '') {
+                        if (val && !/^#*$/g.test(val)) {
                             CHAT.socketSendMessage(val);
-                            U.$('.send-pre').innerHTML = '';
-                            _self.value = '';
-                            _self.focus();
                             U.addClass(U.$('.emoji-lists'), 'emoji-lists-hidden');
                         }
+                        _self.value = '';
+                        _self.focus();
+                        U.$('.send-pre').innerHTML = '';
                         e.returnValue = false;
                         e.preventDefault && e.preventDefault();
                     }
@@ -664,25 +656,20 @@
             });
         },
         socketCsSelect: function(type, data){
-            if(1 === type){
-
+            if (1 === type) {
                 CHAT.socketSelectSuccess(data);
-
-            }else if(2 === type){
-
+            } else if(2 === type) {
                 var queue = '<div class="chat-offline"><div class="line-up">Current queue number <i class="line-num">';
                 queue += data.num;
                 queue += '</i></div></div>';
                 U.$('.chat-main').innerHTML = queue;
-
-            }else if(3 === type){
+            } else if(3 === type) {
                 CHAT.customerSuccessOffline();
             }
         },
         customerSuccessOffline: function(){
-            var offline = CHAT.tempOffline();
 
-            U.$('.chat-main').innerHTML = offline;
+            U.$('.chat-main').innerHTML = CHAT.tempOffline();
             U.addEvent(U.$('.offline-name'), 'focus', function(){
                 U.removeClass(this, 'error');
             });
@@ -700,21 +687,21 @@
                     content = U.$('.offline-text').value,
                     vertify = true;
 
-                if(name === ''){
+                if (name === '') {
                     U.addClass(U.$('.offline-name'), 'error');
                     vertify = false;
                 }
 
-                if(email === '' || !/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)){
+                if (email === '' || !/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)) {
                     U.addClass(U.$('.offline-email'), 'error');
                     vertify = false;
                 }
 
-                if(content === ''){
+                if (content === '') {
                     U.addClass(U.$('.offline-text'), 'error');
                     vertify = false;
                 }
-                if(!vertify){
+                if (!vertify) {
                     return false;
                 }
 
@@ -754,9 +741,7 @@
             });
         },
         socketDispatch: function(csid, name, avatar){
-            CHAT.chat.csid = csid;
-            CHAT.chat.name = name;
-            U.$('.chat-name').innerHTML = name;
+            CHAT.initCustomerInfo(csid, name, avatar);
         },
         socketActionRate: function(){
             CHAT.msgTranslate({
@@ -769,8 +754,8 @@
             CHAT.socketEmitMessage(U.cutStr(msg, 256));
         },
         socketEmitMessage: function(msg){
-            var d = (new Date()).getTime();
-            CHAT.timeStart = U.dateISOFomat(new Date()).getTime();
+            var d = U.dateISOFomat(new Date()).getTime();
+            CHAT.timeStart = d;
             CHAT.msgTranslate({
                 role: 0,
                 msg: msg,
@@ -782,13 +767,13 @@
                     cb = tout;
                     tout = 5000;
                 }
-                var called = false;
-                var t = setTimeout(function () {
-                    if (!called) {
-                        called = true;
-                        cb(new Error('callback timeout'));
-                    }
-                }, tout);
+                var called = false,
+                    t = setTimeout(function () {
+                        if (!called) {
+                            called = true;
+                            cb(new Error('callback timeout'));
+                        }
+                    }, tout);
 
                 return function () {
                     clearTimeout(t);
@@ -798,18 +783,16 @@
                         cb.apply(this, arguments);
                     }
                 };
-            };
-
+            }
 
             CHAT.socket && CHAT.socket.emit('c.message', CHAT.chat.cid, msg, watchDog(function(err, success){
-                if(success){
-                    if(/(png|jpg|jpeg|gif)\|/g.test(msg)){
+                if (success) {
+                    if (/(png|jpg|jpeg|gif)\|/g.test(msg)) {
                         U.addClass(U.$('.t-'+d), 'done-img');
-                    }else{
+                    } else {
                         U.addClass(U.$('.t-'+d), 'done');
                     }
-
-                }else{
+                } else {
                     U.$('.t-'+d).querySelector('.chat-text').innerHTML += '<span class="resend-btn" title="Click to resend">!</span>';
                     var resendBtns = U.$('.resend-btn', true);
 
@@ -825,7 +808,6 @@
             }));
         },
         socketCsMessage: function(cid, msg){
-            var chatNums = U.$('.chat-nums');
             CHAT.timeStart = U.dateISOFomat(new Date()).getTime();
             CHAT.msgTranslate({
                 role: 1,
@@ -834,9 +816,8 @@
             });
 
             if(!U.hasClass(U.$('.chat-btn'), 'chat-btn-close')){
-                var n = chatNums.innerHTML;
-                n++;
-                chatNums.innerHTML = n;
+                var chatNums = U.$('.chat-nums');
+                chatNums.innerHTML = +chatNums.innerHTML + 1;
                 chatNums.style.display = 'block';
             }
         },
@@ -849,9 +830,9 @@
             CHAT.socketReconnectTips();
         },
         socketCsStatus: function(status){
-            if(1 === status){
+            if (1 === status) {
                 U.$('.chat-name').innerHTML = '<span class="status-title">Entering</span>';
-            }else if(2 === status){
+            } else if(2 === status) {
                 U.$('.chat-name').innerHTML = CHAT.chat.csName;
             }
         },
@@ -865,12 +846,12 @@
             CHAT.socketReconnectTips();
         },
         socketQueueUpdate: function(pos){
-            if(U.$('.line-num')){
+            if (U.$('.line-num')) {
                 U.$('.line-num').innerHTML = pos;
             }
         },
         socketQueueShift: function(d){
-            if(d){
+            if (d) {
                 CHAT.initCustomer(d);
                 CHAT.socketConnectTimeOut();
             }
@@ -901,6 +882,6 @@ var CHATemo=[{name:"grinning-smile-eyes",text:"\ud83d\ude01",code:"U+1F601"},{na
     text:"\ud83d\ude0b",code:"U+1F60B"},{name:"relieved",text:"\ud83d\ude0c",code:"U+1F60C"},{name:"heart-shaped",text:"\ud83d\ude0d",code:"U+1F60D"},{name:"smirking",text:"\ud83d\ude0f",code:"U+1F60F"},{name:"unamused",text:"\ud83d\ude12",code:"U+1F612"},{name:"cold-sweat",text:"\ud83d\ude13",code:"U+1F613"},{name:"pensive",text:"\ud83d\ude14",code:"U+1F614"},{name:"confounded",text:"\ud83d\ude16",code:"U+1F616"},{name:"throwing-kiss",text:"\ud83d\ude18",code:"U+1F618"},{name:"kissing-closed-eyes",text:"\ud83d\ude1a",
     code:"U+1F61A"},{name:"stuck-out-tongue",text:"\ud83d\ude1c",code:"U+1F61C"},{name:"tightly-closed-eyes",text:"\ud83d\ude1d",code:""},{name:"disappointed",text:"\ud83d\ude1e",code:"U+1F61E"},{name:"angry",text:"\ud83d\ude20",code:"U+1F620"},{name:"pouting",text:"\ud83d\ude21",code:"U+1F621"},{name:"crying",text:"\ud83d\ude22",code:"U+1F622"},{name:"persevering",text:"\ud83d\ude23",code:"U+1F623"},{name:"look-of-triumph",text:"\ud83d\ude24",code:"U+1F624"},{name:"disappointed-relieved",text:"\ud83d\ude25",
     code:"U+1F625"},{name:"fearful",text:"\ud83d\ude28",code:"U+1F628"},{name:"weary",text:"\ud83d\ude29",code:"U+1F629"},{name:"sleepy",text:"\ud83d\ude2a",code:"U+1F62A"},{name:"tired",text:"\ud83d\ude2b",code:"U+1F62B"},{name:"loudly-crying ",text:"\ud83d\ude2d",code:"U+1F62D"},{name:"mouth-cold-sweat",text:"\ud83d\ude30",code:"U+1F630"},{name:"screaming-in-fear",text:"\ud83d\ude31",code:"U+1F631"},{name:"astonished",text:"\ud83d\ude32",code:"U+1F632"},{name:"flushed",text:"\ud83d\ude33",code:"U+1F633"},
-    {name:"dizzy",text:"\ud83d\ude35",code:"U+1F635"},{name:"medical-mask",text:"\ud83d\ude37",code:"U+1F637"},{name:"hands-in-celebration",text:"\ud83d\ude4c",code:"U+1F64C"},{name:"folded-hands",text:"\ud83d\ude4f",code:"U+1F64F"},{name:"raised-first",text:"\u270a",code:"U+270A"},{name:"raised-hand",text:"\u270b",code:"U+270B"},{name:"victory-hand",text:"\u270c",code:"U+270C"},{name:"ok-hand-sign",text:"\ud83d\udc4c",code:"U+1F44C"},{name:"waving-hand-sign",text:"\ud83d\udc4b",code:"U+1F44B"},{name:"thumbs-up-sign",
+    {name:"dizzy",text:"\ud83d\ude35",code:"U+1F635"},{name:"medical-mask",text:"\ud83d\ude37",code:"U+1F637"},{name:"hands-in-celebration",text:"\ud83d\ude4c",code:"U+1F64C"},{name:"folded-hands",text:"\ud83d\ude4f",code:"U+1F64F"},{name:"raised-first",text:"\u270a\ufe0f",code:"U+270A"},{name:"raised-hand",text:"\u270b\ufe0f",code:"U+270B"},{name:"victory-hand",text:"\u270c\ufe0f",code:"U+270C"},{name:"ok-hand-sign",text:"\ud83d\udc4c",code:"U+1F44C"},{name:"waving-hand-sign",text:"\ud83d\udc4b",code:"U+1F44B"},{name:"thumbs-up-sign",
         text:"\ud83d\udc4d",code:"U+1F44D"},{name:"clapping-hands-sign",text:"\ud83d\udc4f",code:"U+1F44F"},{name:"kiss-mark",text:"\ud83d\udc8b",code:"U+1F48B"}];
 

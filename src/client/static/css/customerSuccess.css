@@ -288,6 +288,10 @@
     background: url(../images/chat.png) no-repeat center center;
     background-size: 100%;
 }
+.historyMessage .ant-modal-title,
+.historyMessage .ant-modal-close{
+    color: #fff;
+}
 /* offline content */
 .chat-offline-msg{
     margin-bottom: 20px;

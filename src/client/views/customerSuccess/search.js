@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import ChatSearch from '../../components/chatSearch';
+import ChatSearch from '../../components/menu/chatSearch';
 
 
 ReactDOM.render(

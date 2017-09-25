@@ -1,8 +1,13 @@
-;(function (w, d) {
-    var uuchatAjax = function(params){
-        var params = params || {}
-            params.data = params.data || {},
-            json = params.jsonp ? jsonp(params) : json(params);
+;(function (w, doc) {
+    var uuchatAjax = function(options){
+
+        var params = options || {};
+
+        if (options.jsonp) {
+            jsonp(params);
+        } else {
+            json(params);
+        }
 
         function json(params){
             params.type = (params.type || 'GET').toUpperCase();
@@ -13,34 +18,37 @@
             xhr = new XMLHttpRequest() || new ActiveXObjcet('Microsoft.XMLHTTP');
 
             xhr.onreadystatechange = function() {
-                if(xhr.readyState == 4) {
+                if (xhr.readyState == 4) {
                     var status = xhr.status;
                     if(status >= 200 && status < 300) {
-                        var response = '';
-                        var type = xhr.getResponseHeader('Content-type');
-                        if(type.indexOf('xml') !== -1 && xhr.responseXML) {
+
+                        var response = '',
+                            type = xhr.getResponseHeader('Content-type');
+
+                        if (type.indexOf('xml') !== -1 && xhr.responseXML) {
                             response = xhr.responseXML;
                         } else if(type === 'application/json') {
                             response = JSON.parse(xhr.responseText);
                         } else {
                             response = xhr.responseText;
-                        };
+                        }
 
                         params.success && params.success(response);
                     } else {
                         params.error && params.error(status);
                     }
-                };
+                }
             };
 
             xhr.upload.onprogress = params.progress;
             params.error && (xhr.onerror = params.error);
 
-            if(params.type == 'GET') {
+            if (params.type == 'GET') {
                 xhr.open(params.type, params.url + '?' + params.data, true);
                 xhr.send(null);
             } else {
                 xhr.open(params.type, params.url, true);
+                xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
                 xhr.send(params.data);
             }
         }
@@ -71,13 +79,13 @@
                     });
                 }, time);
             }
-        };
+        }
 
         function formatParams(data) {
             var arr = [];
-            for(var name in data) {
+            for (var name in data) {
                 arr.push(encodeURIComponent(name) + '=' + encodeURIComponent(data[name]));
-            };
+            }
             arr.push('v=' + random());
             return arr.join('&');
         }
@@ -87,7 +95,6 @@
     };
 
     w.uuchatAjax = uuchatAjax;
-
 
 })(window, document)
 ;(function (w, doc) {
@@ -130,7 +137,7 @@
 
             extend(this.storageData, d);
 
-            if (d.action === 'init') {
+            if (d.action === 'init' || d.action === 'updateUser') {
                 this.storageData.cid = d.cid;
                 this.send();
             }
@@ -182,7 +189,7 @@
             localStorage.setItem("uuInfoData", JSON.stringify(this.storageData));
         },
         send: function() {
-            if (uuchatAjax) {
+            if (UStorage.storageData.cid) {
                 var SD = this.storageData;
                 uuchatAjax({
                     url:'/customerstorages/customer/'+UStorage.storageData.cid,

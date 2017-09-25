@@ -1,4 +1,4 @@
-import CustomerSuccess from '../../components/customerSuccess';
+import CustomerSuccess from '../../components/message/customerSuccess';
 
 const CustomerSuccessView = CustomerSuccess;
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Route, Switch,BrowserRouter } from 'react-router-dom';
-import AsyncComponent from './asyncComponent.js';
+import AsyncComponent from '../components/common/asyncComponent.js';
 import LoginView from './login/index';
 import '../static/css/app.css';
 
