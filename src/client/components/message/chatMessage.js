@@ -126,12 +126,16 @@ class ChatMessage extends Component{
     };
     transfer = (e) => {
         let {socket, cid, transferHandle} = this.props,
+            _self = this,
             t = e.target,
             csid = t.getAttribute('data-csid');
 
        socket.emit('cs.dispatch', csid, cid, function(success){
             if (success) {
                 transferHandle(cid);
+                _self.setState({
+                    isMarkShow: false
+                });
                 onlineListModal.destroy();
             }
         });

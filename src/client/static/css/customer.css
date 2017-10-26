@@ -37,10 +37,10 @@
     position: fixed;
     right: 20px;
     bottom: 80px;
-    z-index:999;
+    z-index:1999;
     width: 400px;
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 10px 10px 5px 5px;
     -webkit-transition: all 0.7s ease-in-out;
     transition: all 0.7s ease-in-out;
 }
@@ -49,11 +49,15 @@
     height:500px\0;
     border-left: 1px solid #ccc\0;
     border-right: 1px solid #ccc\0;
+    border-bottom: 1px solid #ccc\0;
     border-radius: 10px;
     box-shadow: 0 5px 40px rgba(0,0,0,.16)!important;
 }
+:root .chat-console .chat-body{
+    border: none;
+}
 .chat-console.chat-console-hidden{
-    bottom: -150%;
+    bottom: -160%;
 }
 .chat-console .chat-header{
     padding: 0 20px;
@@ -66,6 +70,7 @@
 }
 .chat-console .status-title:after {
     content: ' .';
+    -webkit-animation: dots 1s steps(5, end) infinite;
     animation: dots 1s steps(5, end) infinite;
 }
 .chat-header  .chat-avatar{
@@ -221,6 +226,7 @@
     word-break: break-all;
     font-size: 14px;
     line-height: 18px;
+    font-family: "Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
 }
 .chat-console .chat-to .chat-text{
     float: right;
@@ -304,8 +310,6 @@
     background-color: #e9eaeb;
     border-radius: 0 0 5px 5px;
 }
-
-
 .chat-console  .chat-send-area{
     position:absolute;
     top: 0;
@@ -326,10 +330,9 @@
     word-spacing: 2px;
     -webkit-transition: background-color .2s ease,box-shadow .2s ease;
     transition: background-color .2s ease,box-shadow .2s ease;
+    font-family: "Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
 }
-.chat-console .chat-send-area:after{
-    content: 'Please Input and Press Enter';
-}
+
 .chat-console  .chat-send-area:hover,
 .chat-console  .chat-send-area:focus{
     background-color: #fff;
@@ -340,8 +343,6 @@
     border-bottom: 1px solid #eaeaea\0;
     outline:none;
 }
-
-
 .chat-console  .chat-send-btns{
     position: absolute;
     top: 13px;
@@ -391,6 +392,8 @@
     text-align: center;
     cursor: pointer;
     font-size: 18px;
+    font-family: "Apple Color Emoji","Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
+    color: #1f8ceb;
 }
 .chat-console .emoji-lists .emoji-item:hover{
     font-size: 20px;
@@ -425,14 +428,14 @@
     text-align: center;
     color: #fff;
     background-color:#1f8ceb;
-    border-radius: 100%;
+    border-radius: 200%;
     cursor: pointer;
     -wenkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
     -webkit-tap-highlight-color:rgba(0,0,0,0);
-    -webkit-animation: slideUp 0.5s linear;
-    animation: slideUp 0.5s linear;
+    -webkit-animation: slideUp 0.3s linear;
+    animation: slideUp 0.3s linear;
 }
 .chat-btn.chat-btn-open{
     background: #1f8ceb url(../images/c_w.png) no-repeat center center;
@@ -444,11 +447,21 @@
     transition: transform 0.3s linear;
 }
 .chat-btn.chat-btn-close:after{
-    content: '╳';
+    display: block;
+    content: '✕';
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+    font-size: 20px;
+    border-radius: 200%;
+    text-align: center;
 }
 .chat-btn.chat-btn-close:hover{
     -webkit-transform:rotate(180deg);
+    -moz-transform:rotate(180deg);
     transform:rotate(180deg);
+    -ms-transform:rotate(180deg);
+    background: rgba(31, 140, 235, 0.8);
 }
 .chat-btn .chat-nums{
     position: absolute;
@@ -471,8 +484,9 @@
 }
 
 .chat-offline .offline-title{
+    margin-top: 15px;
     margin-bottom: 20px;
-    padding: 5px 8px;
+    padding: 10px;
     background-color: #edeef0;
     border-radius: 5px;
     text-align: center;
@@ -492,7 +506,6 @@
     line-height: 30px;
     outline: none;
     font-size: 12px;
-    color: #a6aaaa;
     border: 1px solid transparent;
     border-bottom: 2px solid #c0c2c7;
 }
@@ -612,6 +625,22 @@
     }
     .chat-console .chat-send-text{
         width: 100%;
+    }
+}
+@-webkit-keyframes dots {
+    0%, 20% {
+        color: rgba(0,0,0,0);
+        text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);
+    }
+    40% {
+        color: white;
+        text-shadow: .25em 0 0 rgba(0,0,0,0), .5em 0 0 rgba(0,0,0,0);
+    }
+    60% {
+        text-shadow: .25em 0 0 white, .5em 0 0 rgba(0,0,0,0);
+    }
+    80%, 100% {
+        text-shadow: .25em 0 0 white, .5em 0 0 white;
     }
 }
 @keyframes dots {

@@ -93,34 +93,26 @@ class CustomerSuccess extends Component{
      * cs.customer.one
      */
     csCustomerOne = (data) => {
-        let customerLists = this.state.customerLists,
-            messageLists = this.state.messageLists,
-            cid = this.state.customerSelect.cid,
-            name = this.state.customerSelect.name,
-            marked = this.state.customerSelect.marked;
+
+        let customerLists = this.state.customerLists;
 
         customerLists.unshift(data);
-
-        if (!messageLists[data.cid]) {
-            if (customerLists.length <=1 ){
-                cid = data.cid;
-                name = data.name;
-                marked = data.marked;
-            }
-        } else {
-            cid = data.cid;
-            name = data.name;
-            marked = data.marked;
-        }
         this.getMessageHistory(data.cid);
-        this.setState({
-            customerLists: customerLists,
-            customerSelect: {
-                cid: cid,
-                name: name,
-                marked: marked
-            }
-        });
+
+        if (customerLists.length === 1) {
+            this.setState({
+                customerLists: customerLists,
+                customerSelect: {
+                    cid: data.cid,
+                    name: data.name,
+                    marked: data.marked
+                }
+            });
+        } else {
+            this.setState({
+                customerLists: customerLists
+            });
+        }
     };
 
     /***
@@ -199,7 +191,6 @@ class CustomerSuccess extends Component{
             cSelectName = this.state.customerSelect.name;
 
         customerLists.map((c, i)=> c.cid === cid && customerLists.splice(i, 1));
-
         if (customerLists.length > 0) {
             cSelectCid = customerLists[0].cid;
             cSelectName = customerLists[0].name;
@@ -207,7 +198,6 @@ class CustomerSuccess extends Component{
             cSelectCid = '';
             cSelectName = '';
         }
-
         this.setState({
             customerSelect: {
                 cid: cSelectCid,
@@ -512,7 +502,6 @@ class CustomerSuccess extends Component{
      *
      */
     filterCustomerInfo = (customer, cid) => {
-
         if (customer.length > 0) {
             for (let i = 0, l = customer.length; i < l; i++) {
                 if (customer[i].cid === cid) {

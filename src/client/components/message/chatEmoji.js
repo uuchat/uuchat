@@ -9,7 +9,7 @@ class EmojiPicker extends Component{
     }
 
     clickHandle(e){
-        this.props.addEmojiHandle(e.target.innerHTML+'  ');
+        this.props.addEmojiHandle(e.target.innerHTML+' ');
     }
 
     render(){

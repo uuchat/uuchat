@@ -237,6 +237,10 @@
 .history-header .ant-modal-header{
     border-radius: 2px 2px 0 0;
 }
+.history-header .ant-modal-title,
+.history-header .ant-modal-close{
+    color: #fff;
+}
 /* contact list */
 .customerSuccess-left .chat-avatar img{
     border-radius: 100%;
@@ -584,6 +588,7 @@
 .message-lists .message-item img{
     max-width: 100%;
     border-radius: 3px;
+    vertical-align: middle;
 }
 .offline-content{
     margin: 10px 0;
@@ -647,7 +652,7 @@
     height: calc(37vh);
 }
 .send-tools{
-    padding: 5px 30px;
+    padding: 8px;
     height: 40px;
     line-height: 25px;
 }
