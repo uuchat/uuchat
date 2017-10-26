@@ -130,6 +130,11 @@ function baseHtmlRoute(app, middlewareDev) {
         var html = path.join(__dirname, '../dist/index.html');
         htmlRender(middlewareDev, res, html);
     });
+    app.get('/webview', middleware.jsCDN, function response(req, res) {
+        setupSession(req, res);
+        var html = path.join(__dirname, '../dist/webview.html');
+        htmlRender(middlewareDev, res, html);
+    });
     app.get('/login', middleware.jsCDN, function response(req, res) {
         var html = path.join(__dirname, '../dist/app.ejs');
         var cdnFile = getCNDFile(req, null);

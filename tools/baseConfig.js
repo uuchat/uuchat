@@ -115,6 +115,26 @@ var defaultConfig = {
         {
             from: paths.appContent + '/html/static/js',
             to: paths.appBuild + '/static/js'
+        },
+        {
+            from: paths.appWebview,
+            to: paths.appBuild + '/webview.html'
+        },
+        {
+            from: paths.appWebviewCss,
+            to: paths.appBuild + '/static/css'
+        },
+        {
+            from: paths.appWebviewJs,
+            to: paths.appBuild + '/webview.js',
+            transform: function (content, absoluteFrom) {
+                var code = (content + '');
+                return minify(code);
+            }
+        },
+        {
+            from: paths.appWebviewSocket,
+            to: paths.appBuild + '/socket.io-2.0.3.min.js'
         }
     ],
     node: {
