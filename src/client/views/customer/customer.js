@@ -182,15 +182,26 @@
 
             };
         },
-        isLtIe8: function(){
-            var UA = navigator.userAgent,
-                isIE = UA.indexOf('MSIE') > -1,
-                v = isIE ? /\d+/.exec(UA.split(';')[1]) : 'no ie';
+        insertToCursorPosition: function(obj, s1, s2) {
+            obj.focus();
+            if (document.selection) {
+                var sel = document.selection.createRange();
+                sel.text = s2;
+            } else if (typeof obj.selectionStart === 'number' && typeof obj.selectionEnd === 'number') {
+                var startPos = obj.selectionStart,
+                    endPos = obj.selectionEnd,
+                    cursorPos = startPos,
+                    tmpStr = s1,
+                    s3 = tmpStr.substring(0, startPos) + s2 + tmpStr.substring(endPos, tmpStr.length);
 
-            return v <= 8;
+                obj.value = s3;
+                cursorPos += s2.length;
+                obj.selectionStart = obj.selectionEnd = cursorPos;
+            } else {
+                obj.value += s2;
+            }
         }
     };
-
 
     var CHAT = {
         domain: (w.UUCHAT && w.UUCHAT.domain) || '',
@@ -205,12 +216,8 @@
         },
         init: function(){
             U.loadStyle([CHAT.domain+'/static/css/customer.css']);
-            if (U.isLtIe8()) {
-                U.loadScript(CHAT.domain+'/static/images/socket.io.js', CHAT.ctrol);
-            } else {
-                var socketIO = localStorage.getItem ? localStorage.getItem('uuchat.skcdn', socketIO) : null;
-                U.loadScript(socketIO || 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js', CHAT.ctrol);
-            }
+            var socketIO = localStorage.getItem ? localStorage.getItem('uuchat.skcdn', socketIO) : null;
+            U.loadScript(socketIO || 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js', CHAT.ctrol);
             this.createCT();
         },
         createCT: function(){
@@ -294,7 +301,7 @@
             var str = '<div class="chat-send">';
             str += '<div class="chat-send-text">';
             str += '<pre class="send-pre"></pre>';
-            str += '<textarea placeholder="Input text and Press Enter (max 256 words)" class="chat-send-area" maxlength="256"></textarea>';
+            str += '<textarea placeholder="Input text and Press Enter" class="chat-send-area" maxlength="256"></textarea>';
             str += '<div class="chat-send-btns">';
             str += this.tempEmoji();
             str += '<label class="chat-send-btn chat-emoji-btn"></label>';
@@ -554,10 +561,12 @@
                     tg = e.target || e.srcElement;
 
                 if (tg.tagName.toLowerCase() === 'span') {
-                    U.$('.chat-send-area').value += tg.innerHTML;
+                    U.insertToCursorPosition(U.$('.chat-send-area'), U.$('.chat-send-area').value, tg.innerHTML);
                     U.$('.send-pre').innerHTML += tg.innerHTML;
-                    U.$('.chat-send-area').focus();
                 }
+            });
+            U.addEvent(U.$('.emoji-lists'), 'mouseleave', function(e){
+                U.toggleClass(U.$('.emoji-lists'), 'emoji-lists-hidden');
             });
 
             U.$('.chat-upload') && U.addEvent(U.$('.chat-upload'), 'change', function(e){
@@ -624,11 +633,12 @@
             U.addEvent(U.$('.chat-send-area'), 'keydown', function(e){
                 var e = e || w.event,
                     val = '',
-                    _self = this;
+                    _self = this,
+                    keyCode = e.keyCode ? e.keyCode : e.which;
 
                 setTimeout(function () {
                     val = _self.value;
-                    val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
+                    val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;');
 
                     if (val.length > 0 && !/^(&nbsp;)*$/g.test(val)) {
                         U.$('.send-pre').innerHTML = val
@@ -637,15 +647,15 @@
                         U.$('.send-pre').innerHTML = '';
                     }
 
-                    if (13 === e.keyCode) {
+                    if (13 === keyCode) {
                         if (val && !/^#*$/g.test(val)) {
                             CHAT.socketSendMessage(val);
                             U.addClass(U.$('.emoji-lists'), 'emoji-lists-hidden');
                         }
                         _self.value = '';
                         _self.focus();
-                        U.$('.send-pre').innerHTML = '';
-                        e.returnValue = false;
+                        U.$('.send-pre').innerText = '';
+                        e.returnValue && (e.returnValue = false);
                         e.preventDefault && e.preventDefault();
                     }
                 }, 0);
