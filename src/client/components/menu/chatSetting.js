@@ -12,6 +12,7 @@ class ChatSetting extends Component{
             isThemeSet: false,
             setContent: '',
             percent: 0,
+            bgOpacityNum: 7,
             avatar: require('../../static/images/contact.png')
         };
     }
@@ -114,6 +115,9 @@ class ChatSetting extends Component{
         let { customerSuccess } = this.props,
             op = e.target.value /10;
         customerSuccess.setState({bgThemeOpacity: op});
+        this.setState({
+            bgOpacityNum: e.target.value
+        });
         localStorage.setItem('bgThemeOpacity', op);
     };
     shortcutSet = () => {
@@ -137,7 +141,7 @@ class ChatSetting extends Component{
         });
     };
     render(){
-        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet } = this.state,
+        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet, bgOpacityNum } = this.state,
             {csid, avatarHandle, name} = this.props,
             _self = this,
             props = {
@@ -173,7 +177,8 @@ class ChatSetting extends Component{
                         message.error(file.name+' file upload failed.');
                     }
                 }
-            };
+            },
+            bgOpacity = localStorage.getItem('bgThemeOpacity') ? localStorage.getItem('bgThemeOpacity')*10 : 10;
 
         return (
             <ul className="customerSuccess-setting">
@@ -257,8 +262,8 @@ class ChatSetting extends Component{
                                 <img width="192" height="120" data-name="theme4" src={require('../../static/images/theme4.jpg')} alt=""/>
                                 <img width="192" height="120" data-name="theme5" src={require('../../static/images/theme5.jpg')} alt=""/>
                             </div>
-                            <p>Background opacity set</p>
-                            <input type="range" name="points" min="4" max="10" defaultValue={localStorage.getItem('bgThemeOpacity')*10} step="0.1" onChange={this.bgThemeOpacity} />
+                            <p>Background opacity set: {bgOpacityNum * 10} %</p>
+                            <input type="range" name="points" min="5" max="10" defaultValue={bgOpacity} step="0.1" onChange={this.bgThemeOpacity} />
                         </div>
                     </Modal>
                 </li>

@@ -21,8 +21,8 @@ class CustomerSuccess extends Component{
             csDisplayName: localStorage['uuchat.displayName'] || '',
             csEmail: localStorage['uuchat.email'] || '',
             csAvatar: localStorage['uuchat.avatar'] || '../../static/images/contact.png',
-            bgThemeImg: localStorage['bgThemeImg'] || '../../static/images/theme3.jpg',
-            bgThemeOpacity: localStorage['bgThemeOpacity'] || 0.5,
+            bgThemeImg: localStorage['bgThemeImg'] || '',
+            bgThemeOpacity: localStorage['bgThemeOpacity'] || 0.7,
             customerSelect: {
                 cid: '',
                 name: '',
@@ -521,11 +521,16 @@ class CustomerSuccess extends Component{
     render(){
 
         let {customerLists, customerSelect, messageLists, isOnline, isConnectErr, csAvatar, csid, socket, bgThemeImg, bgThemeOpacity} = this.state,
-            Info = this.filterCustomerInfo(customerLists, customerSelect.cid);
+            Info = this.filterCustomerInfo(customerLists, customerSelect.cid),
+            bgStyle = {};
+
+        if (bgThemeImg) {
+            bgStyle = {background: (!isOnline || isConnectErr) ? '' : 'url('+bgThemeImg+')', backgroundPosition: 'center center', backgroundSize: '100%'};
+        }
 
         return (
-            <div className={"uuchat-customerSuccess theme " + ((!isOnline || isConnectErr) ? " off" : "")}
-                 style={{background: (!isOnline || isConnectErr) ? '' : 'url('+bgThemeImg+')', backgroundPosition: 'center center', backgroundSize: '100%'}}>
+            <div className={"uuchat-customerSuccess " + ((!isOnline || isConnectErr) ? " off" : "") +" "+(bgThemeImg ? "theme" : "")}
+                 style={bgStyle}>
                     <Header customerSuccess={this} />
                     <Row className="customerSuccess-main" style={{background: 'rgba(255, 255, 255, '+bgThemeOpacity+')'}}>
                         <Col xs={24} sm={7} md={7} lg={6} xl={6}>
