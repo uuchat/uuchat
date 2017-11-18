@@ -124,9 +124,10 @@ class RegisterForm extends Component {
                             })(
                                 <Checkbox>I have read the <a href="">agreement</a></Checkbox>
                             )}
+                            <a className="Sign-in" href="/login">Logn in</a>
                         </FormItem>
                         <FormItem>
-                            <Button type="primary" htmlType="submit" size="large" disabled={this.hasErrors(getFieldsError())}>Register</Button>
+                            <Button type="primary" htmlType="submit" size="large" disabled={this.hasErrors(getFieldsError())}>Sign up</Button>
                         </FormItem>
                     </Form>
                 </Col>
@@ -144,7 +145,7 @@ class Register extends Component{
 
         return (
             <div className="uuchat-register">
-                <div className="register-header"><span>U</span></div>
+                <div className="register-header"><span></span></div>
                 <RegistrationForm />
             </div>
         );

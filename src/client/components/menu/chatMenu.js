@@ -109,7 +109,7 @@ class ChatMenu extends Component{
                         <ChatHistoryLists csid={csid} csAvatar={csAvatar} />
                     </TabPane>
                     <TabPane tab={<ChatIcon name={menuIcons.setting} />} key="3">
-                        <ChatSetting name={csName} csid={csid} avatarHandle={this.avatarHandle} />
+                        <ChatSetting name={csName} csid={csid} avatarHandle={this.avatarHandle} customerSuccess={this.props.customerSuccess} />
                     </TabPane>
                 </Tabs>
             </div>

@@ -9,6 +9,7 @@ class ChatSetting extends Component{
             isPasswordShow: false,
             isUploading: false,
             isSetVisible: false,
+            isThemeSet: false,
             setContent: '',
             percent: 0,
             avatar: require('../../static/images/contact.png')
@@ -89,6 +90,32 @@ class ChatSetting extends Component{
             message.error(e, 4);
         });
     };
+    themeSetting = () => {
+        let isThemeSet = this.state.isThemeSet;
+        this.setState({
+            isThemeSet: !isThemeSet
+        });
+    };
+    themeClose = () => {
+        this.setState({
+            isThemeSet: false
+        });
+    };
+    themeSelect = (e) => {
+        if (e.target.tagName.toLocaleLowerCase() === 'img') {
+            let { customerSuccess } = this.props,
+                theme = '../../static/images/'+e.target.getAttribute('data-name')+'.jpg';
+
+            customerSuccess.setState({bgThemeImg: theme});
+            localStorage.setItem('bgThemeImg', theme);
+        }
+    };
+    bgThemeOpacity = (e) => {
+        let { customerSuccess } = this.props,
+            op = e.target.value /10;
+        customerSuccess.setState({bgThemeOpacity: op});
+        localStorage.setItem('bgThemeOpacity', op);
+    };
     shortcutSet = () => {
         let csid = this.props.csid;
         if (this.state.setContent){
@@ -110,7 +137,7 @@ class ChatSetting extends Component{
         });
     };
     render(){
-        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible} = this.state,
+        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet } = this.state,
             {csid, avatarHandle, name} = this.props,
             _self = this,
             props = {
@@ -209,6 +236,30 @@ class ChatSetting extends Component{
                         footer={null}
                     >
                           {setContent}
+                    </Modal>
+                </li>
+                <li onClick={this.themeSetting}>Theme settings
+                    <Modal
+                        title="Theme select"
+                        visible={isThemeSet}
+                        cancelText="Cancel"
+                        okText="Save"
+                        width="45%"
+                        footer={null}
+                        onCancel={this.themeClose}
+                    >
+                        <div className="theme-setting">
+                            <p>Background images select:</p>
+                            <div className="theme-background" onClick={this.themeSelect}>
+                                <img width="192" height="120" data-name="theme1" src={require('../../static/images/theme1.jpg')} alt=""/>
+                                <img width="192" height="120" data-name="theme2" src={require('../../static/images/theme2.jpg')} alt=""/>
+                                <img width="192" height="120" data-name="theme3" src={require('../../static/images/theme3.jpg')} alt=""/>
+                                <img width="192" height="120" data-name="theme4" src={require('../../static/images/theme4.jpg')} alt=""/>
+                                <img width="192" height="120" data-name="theme5" src={require('../../static/images/theme5.jpg')} alt=""/>
+                            </div>
+                            <p>Background opacity set</p>
+                            <input type="range" name="points" min="4" max="10" defaultValue={localStorage.getItem('bgThemeOpacity')*10} step="0.1" onChange={this.bgThemeOpacity} />
+                        </div>
                     </Modal>
                 </li>
             </ul>

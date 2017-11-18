@@ -301,7 +301,7 @@
             var str = '<div class="chat-send">';
             str += '<div class="chat-send-text">';
             str += '<pre class="send-pre"></pre>';
-            str += '<textarea placeholder="Input text and Press Enter" class="chat-send-area" maxlength="256"></textarea>';
+            str += '<textarea placeholder="Input text and Press Enter" class="chat-send-area" maxlength="256" type="text"></textarea>';
             str += '<div class="chat-send-btns">';
             str += this.tempEmoji();
             str += '<label class="chat-send-btn chat-emoji-btn"></label>';
@@ -662,7 +662,7 @@
 
             });
             U.addEvent(U.$('.chat-send-area'), 'blur', function(e){
-                U.$('.send-pre').innerHTML = this.value;
+                U.$('.send-pre').innerHTML = this.value.replace(/^\s$/g, '');
             });
         },
         socketCsSelect: function(type, data){

@@ -12,7 +12,7 @@
 }
 .login-body .login-header {
     position: absolute;
-    top: -50px;
+    top: -70px;
     left: 0;
     width: 100%;
     line-height: 40px;
@@ -21,12 +21,10 @@
 }
 .login-body .login-header span{
     display: inline-block;
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-    color: #fff;
-    background-color: #108ee9;
-    font-size: 18px;
+    width: 64px;
+    height: 64px;
+    background: url(../images/uuchat_logo_128.png) no-repeat center center;
+    background-size: 100%;
 }
 .login-body label{
     font-size: 14px;

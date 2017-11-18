@@ -21,6 +21,7 @@
     line-height: 30px;
     background-color: #f3f2f1;
     box-shadow: 0 1px 2px #ccc;
+    background: #fff url(../images/uuchat_logo_48.png) no-repeat center center;
 }
 .uuchat-customerSuccess.off .customerSuccess-header{
     background-color:#353359;
@@ -115,6 +116,9 @@
     position: relative;
     padding: 10px;
     margin-bottom: 15px;
+}
+.customerSuccess-left li:first-child{
+    margin-top: 10px;
 }
 .customerSuccess-left li:after,
 .customerSuccess-left li:before{
@@ -247,7 +251,13 @@
 }
 .customerSuccess-left .contact-list{
     height: calc(75vh);
+}
+.customerSuccess-left .customer-lists{
+    height: 100%;
     overflow-y: auto;
+}
+.customerSuccess-left .customer-lists::-webkit-scrollbar{
+    display: none;
 }
 .customerSuccess-left .contact-list li{
     position: relative;
@@ -527,7 +537,19 @@
     border-radius: 3px;
     cursor: pointer;
 }
-
+.theme-setting p{
+    color: #000;
+}
+.theme-background{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.theme-background img{
+    margin: 5px;
+    cursor: pointer;
+}
 /* online customer lists */
 .online-item{
     padding: 2px;
@@ -564,6 +586,9 @@
 .message-lists .message-item{
     margin: 10px 0;
     overflow: hidden;
+}
+.message-lists::-webkit-scrollbar{
+    display: none;
 }
 .message-lists .message-item:hover .short-item-setting{
     display: block;
@@ -889,6 +914,40 @@
 #UUCHAT-Search .search-list .more-search{
     text-align: center;
 }
+.theme,
+.theme .customerSuccess-left li{
+    color: #000;
+}
+.theme .customerSuccess-left li:hover{
+    background: rgba(255, 255, 255, 0.85);
+}
+.theme .customerSuccess-main{
+    background: rgba(255, 255, 255, 0.7);
+    box-shadow: none;
+    border: none;
+    color: #000;
+}
+.theme .customerSuccess-header{
+    opacity: 0.8;
+    box-shadow: none;
+}
+.theme .customerSuccess-left,
+.theme .ant-tabs-bar,
+.theme .customerSuccess-right,
+.theme .chat-message,
+.theme .user-header,
+.theme .message-title{
+    border-color: rgba(50, 20, 10, 0.9);
+}
+.theme .customerSuccess-left li .chat-notify{
+    background: rgba(0, 0, 0, 0.5);
+}
+.theme .message-lists .message-item p{
+    color: #000;
+}
+.theme .customerSuccess-left li .chat-close{
+    background: rgba(0, 0, 0, 0.5);
+}
 
 @media screen and (min-width: 768px) and (max-width: 979px){
     .uuchat-customerSuccess .customerSuccess-main{
@@ -924,6 +983,7 @@
     }
     .customerSuccess-header{
        height: 30px;
+       background-position: 10% center;
     }
     .customerSuccess-header .status-bar{
        display:none;

@@ -9,7 +9,7 @@ class Header extends Component{
             stat = 1;
 
         if (state.isConnectErr) {
-            this.createSocket();
+            this.props.customerSuccess.createSocket();
             notification.close("errNotifyKey");
         } else {
             if (status) {

@@ -13,7 +13,7 @@
 
 .register-header{
     position: absolute;
-    top: -50px;
+    top: -70px;
     left: 0;
     width: 100%;
     line-height: 40px;
@@ -22,14 +22,18 @@
 }
 .register-header span{
     display: inline-block;
-    width: 40px;
-    height: 40px;
+    width: 64px;
+    height: 64px;
     border-radius: 100%;
     color: #fff;
-    background-color: #108ee9;
+    background: url(../images/uuchat_logo_64.png) no-repeat center center;
 }
 .uuchat-register label{
     font-size: 14px;
+}
+.uuchat-register .Sign-in{
+    display: inline-block;
+    float: right;
 }
 
 @media screen and (max-width: 640px){

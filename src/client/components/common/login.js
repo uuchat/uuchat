@@ -61,7 +61,7 @@ class Login extends Component{
         let { getFieldDecorator } = this.props.form;
         return (
             <div className="login-body">
-                <div className="login-header"> <span>U</span> </div>
+                <div className="login-header"> <span></span> </div>
                 <Form onSubmit={this.handleSubmit} className="login-form">
                     <FormItem>
                          {
@@ -87,7 +87,7 @@ class Login extends Component{
                                 <Checkbox>Remember me</Checkbox>
                         )}
                         <a className="login-form-forgot" href="">Forgot password</a>
-                        <Button type="primary" htmlType="submit" className="login-form-button"> Log in </Button> Or <a href="/register">register now!</a>
+                        <Button type="primary" htmlType="submit" className="login-form-button">Log in </Button> Or <a href="/register">Sign up!</a>
                     </FormItem>
                 </Form>
             </div>
