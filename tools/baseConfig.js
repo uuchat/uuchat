@@ -93,8 +93,8 @@ var defaultConfig = {
         },
         {
             from: paths.appContent + '/html/index.html',
-            to: paths.appBuild + '/index.html',
-            transform: function (content, absoluteFrom) {
+            to: paths.appBuild + '/index.html'
+            /*transform: function (content, absoluteFrom) {
                 var result = content + '';
                 if (nconf.get('app:ssl')) {
                     result = result.replace(/http:\/\/(uuchat.io)/g, "https://$1");
@@ -102,7 +102,7 @@ var defaultConfig = {
                 var result = result.replace(/uuchat.io/g,
                     nconf.get('app:address') + ':' + nconf.get('app:port'));
                 return result;
-            }
+            }*/
         },
         {
             from: paths.appContent + '/html/static/css',
