@@ -252,7 +252,9 @@ SocketCustomerSuccessEvents.logout = function(socket, csid, fn) {
 
 SocketCustomerSuccessEvents.disconnect = function(csid) {
     logger.info("customer success = %s disconnect start!", csid);
-    customerSuccessList.get(csid).socket = {}; // set socket null;
+    disconnect(csid);
+    customerSuccessList.delete(csid);
+    //customerSuccessList.get(csid).socket = {}; // set socket null;
     logger.info("refresh online info");
     this.refreshOnlineInfo();
     logger.info("customer success disconnected!");
