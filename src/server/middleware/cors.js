@@ -31,7 +31,7 @@ module.exports = function (middleware) {
             return next(null, ENABLE_CORS);
         }
         //check origin
-        var origin = url.parse(req.header('Origin')).hostname;
+        var origin = url.parse(req.header('Origin') || req.get('Referer')).hostname;
         //winston.info(origin);
         if (whiteList.indexOf(origin) > -1) {
             return next(null, ENABLE_CORS);
