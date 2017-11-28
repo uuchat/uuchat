@@ -53,7 +53,6 @@
     "sharp": "^0.17.3",
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
-    "socket.io-redis": "^5.1.0",
     "uuid": "^3.0.0",
     "validator": "^7.0.0",
     "winston": "^2.3.1",

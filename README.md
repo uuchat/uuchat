@@ -1,11 +1,11 @@
-## <img alt="uuchat" src="http://i.imgur.com/endrrcC.png" />
+## <img alt="uuchat" src="./src/client/static/images/uuchat_logo_128.png" />
 
 A powerful customer success platform ! demo: [http://uuchat.io](http://uuchat.io)
 
 ## Requirements
 
 * Node version 4.3.1 or greater
-* [Optional]MySQL version 5.6 or greater
+* [Optional]MySQL version 5.0 or greater
 * [Optional]Redis, version 2.8.9 or greater
 
 #### Important Note for Windows Users
@@ -36,10 +36,13 @@ by default, eg: Ubuntu 16.10 with sqlite3, g++ ...
 
 ## Basic uuChat Configuration
 
-&nbsp;&nbsp;&nbsp;&nbsp;Set base information in `src > config.json` . if you set nothing, and start uuChat.
- + Customer success page in: &nbsp;&nbsp; `http://127.0.0.1:9688/chat` 
- + customer demo page in:   &nbsp;&nbsp; `http://127.0.0.1:9688/demo` 
- + Console page is : `http://127.0.0.1:9688/console` . <br />
+&nbsp;&nbsp;&nbsp;&nbsp;Set your own information in `src > config.json` . something like 'name' , 'ip address',
+'port', db configuration etc. if you set nothing, and start uuChat.
+ + you can take customer success page in &nbsp;&nbsp; `http://127.0.0.1:9688/chat` <br />
+ first, you need register with your email , and than login into uuchat.
+ + customer demo page in  &nbsp;&nbsp; `http://127.0.0.1:9688/demo` . <br />
+ click button on the bottom of page , chat with customer success.
+ + our console page is : `http://127.0.0.1:9688/console` . <br />
  you can add other customer success with uuchat, see chat history, rate ,
  some statistics information etc...
 

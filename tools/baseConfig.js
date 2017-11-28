@@ -106,7 +106,10 @@ var defaultConfig = {
         },
         {
             from: paths.appContent + '/html/static/css',
-            to: paths.appBuild + '/static/css'
+            to: paths.appBuild + '/static/css',
+            transform: function (content, absoluteFrom) {
+                return cleanCSS(content);
+            }
         },
         {
             from: paths.appContent + '/html/static/img',
@@ -122,7 +125,10 @@ var defaultConfig = {
         },
         {
             from: paths.appWebviewCss,
-            to: paths.appBuild + '/static/css'
+            to: paths.appBuild + '/static/css',
+            transform: function (content, absoluteFrom) {
+                return cleanCSS(content);
+            }
         },
         {
             from: paths.appWebviewJs,
