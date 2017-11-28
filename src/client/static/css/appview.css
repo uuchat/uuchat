@@ -418,7 +418,8 @@ html, body{
     display: inline-block;
 }
 .chat-btns .input-text:focus:before{
-    content: '';
+    content: '.';
+    color: #fff;
 }
 .chat-btns .input-text.blur{
     overflow: hidden;

@@ -11,7 +11,7 @@ module.exports = function (sequelize, DataTypes) {
             name: DataTypes.STRING(64),
             displayName: {
                 type: DataTypes.STRING(128),
-                    field: 'display_name'
+                field: 'display_name'
             },
             email: {
                 type: DataTypes.STRING(128),
@@ -24,7 +24,9 @@ module.exports = function (sequelize, DataTypes) {
             timezone: {
                 type: DataTypes.INTEGER,
                 defaultValue: -5
-            }
+            },
+            background: DataTypes.STRING(128),
+            opacity: DataTypes.FLOAT
         }, {
             tableName: 'customer_success',
             indexes: [

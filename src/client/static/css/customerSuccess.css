@@ -1,6 +1,10 @@
 .uuchat-customerSuccess{
     height: 100%;
     background-color:#f6f5f5;
+    background-size: cover;
+    background-position: center center;
+    background-repeat: no-repeat;
+    overflow-y: auto;
 }
 .uuchat-customerSuccess.off{
     background-color:#353359;
@@ -76,7 +80,6 @@
 
 .customerSuccess-header .user-avatar{
     text-align: right;
-    cursor: pointer;
 }
 .customerSuccess-header .m-menu{
     display: none;
@@ -537,20 +540,97 @@
     border-radius: 3px;
     cursor: pointer;
 }
-.theme-setting p{
+.change-passwd p{
+    margin-top: 10px;
+    line-height: 20px;
+    font-weight: bold;
+}
+.theme-setting h4{
+    line-height: 30px;
     color: #000;
+    font-size: 16px;
+}
+.theme-setting h4 i{
+    color: #FF0000;
+}
+.theme-setting .background-menu{
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+.theme-setting .background-menu h3{
+    text-align: center;
+    font-size: 16px;
+}
+.theme-setting .menu-item{
+    display: inline-block;
+    margin: 0 1%;
+    width: 30%;
+    height: 7pc;
+    cursor: pointer;
+}
+.theme-setting .menu-item img{
+    border-radius: 5px;
+}
+.theme-setting .menu-item img:hover{
+    box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 .theme-background{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    justify-content: center;
+    padding: 5px 6px;
+    height: 270px;
+    overflow: auto;
+    box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.1) inset;
+    border-radius: 5px;
 }
-.theme-background img{
-    margin: 5px;
+
+.theme-background span{
+    position: relative;
+    display: inline-block;
+    margin: 3px;
+    width: 154px;
+    height: 118px;
+    border-radius: 4px;
+    background: #039be5;
+    background-size: cover;
+    background-position: center center;
     cursor: pointer;
 }
-/* online customer lists */
+.theme-background span.color-type:last-child{
+    box-shadow:0 0 1px 1px rgba(0, 0, 0, 0.2);
+    background-image:-webkit-linear-gradient(-52deg, #fff 0%, #fff 50%, #ff0000 50%, #ff0000 52%, #fff 52%, #fff);
+    background-image:linear-gradient(-37deg, #fff 0%, #fff 50%, #ff0000 50%, #ff0000 52%, #fff 52%, #fff);
+}
+.theme-background span a{
+    display: block;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 30px;
+    color: #fff;
+    line-height: 30px;
+    text-align: center;
+    font-size: 12px;
+    background: rgba(0, 0, 0, 0.5);
+}
+.theme-background span:hover{
+    opacity: 0.8;
+}
+.theme-background img{
+    margin: 10px;
+    cursor: pointer;
+}
+.theme-background .loading{
+    display: block;
+    margin: 120px auto 0 auto;
+    font-style: normal;
+    font-size: 16px;
+    color: #000;
+}
+    /* online customer lists */
 .online-item{
     padding: 2px;
     margin-bottom: 5px;
@@ -868,6 +948,9 @@
     text-align: center;
     color: #1f8ceb;
 }
+#UUCHAT-Search .customerSuccess-header{
+    background-position: 10px center;
+}
 #UUCHAT-Search .search-user-info{
     margin: 0 auto;
     width: 800px;
@@ -906,7 +989,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
-    display: box;
+    display: flex;
     line-clamp: 2;
     box-orient: vertical;
 }

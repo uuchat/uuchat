@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <title>Feed back</title>
+    <style>
+        *{
+            padding: 0;
+            margin: 0;
+        }
+        ul,li{
+            list-style: none;
+        }
+        html, body{
+            height: 100%;
+        }
+        [contenteditable=true]:empty:before{
+            content: attr(placeholder);
+            display: block; /* For Firefox */
+        }
+        .feed{
+            position: relative;
+            margin: 0 auto;
+            padding: 0 2%;
+            min-height: 100%;
+            min-width: 320px;
+            max-width: 640px;
+            background: rgba(0, 0, 0, 0.02);
+        }
+        .head{
+            position: relative;
+            padding: 10px 0;
+            height: 40px;
+            line-height: 40px;
+            font-size: 1.15em;
+            text-align: center;
+            overflow: hidden;
+        }
+        .head:before{
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            width: 200%;
+            height: 200%;
+            transform-origin: 0 0;
+            -webkit-transform: scale(0.5,0.5);
+            transform: scale(0.5,0.5);
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+        .feed-list li{
+            margin: 15px 5px;
+            font-size: 14px;
+            -webkit-tap-highlight-color:rgba(0,0,0,0);
+            tap-highlight-color:rgba(0,0,0,0);
+            color: rgba(0, 0, 0, 0.5);
+        }
+        .feed-list li:last-child{
+            margin-top: 20px;
+        }
+        .feed-list li input[type=checkbox]{
+            margin-left: -20px;
+            width: 20px;
+            height: 20px;
+            vertical-align: middle;
+            background: #fff;
+            border: none;
+            visibility: hidden;
+        }
+        .feed-list li label{
+            display: block;
+            position: relative;
+            padding-left: 24px;
+            cursor: pointer;
+            word-break: break-all;
+        }
+        .feed-list li span{
+            position: absolute;
+            display: inline-block;
+            left: 0;
+            top: 0;
+            width: 18px;
+            height: 18px;
+            line-height: 18px;
+            background: #fff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+            font-size: 16px;
+            color: #fff;
+            text-align: center;
+            -webkit-transition: all 0.1s linear;
+            transition: all 0.1s linear;
+        }
+        .feed-list li span i{
+            display: inline-block;
+            width: 10px;
+            height: 5px;
+            border-left: 2px solid #fff;
+            border-bottom: 2px solid #fff;
+            -webkit-transform: rotate(45deg) translateY(-3px) translateX(3px);
+            transform: rotate(-45deg) translateY(-3px) translateX(3px);
+        }
+        .feed-list li input[type=checkbox]:checked + span{
+            display: inline-block;
+            background: #2ecc71;
+            border-color: #2ecc71;
+        }
+        .feed-list li input[type=text],
+        .feed-list li .description{
+            display: none;
+            margin-top: 5px;
+            margin-left: 2%;
+            padding: 1%;
+            width: 94%;
+            line-height: 20px;
+            min-height: 20px;
+            word-break: break-all;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+            color: rgba(0 ,0 , 0, 0.9);
+        }
+        .feed-list li .description.on{
+            display: block;
+        }
+        .feed-list li .description:focus{
+            border: none;
+            outline: none;
+            border-bottom: 2px solid #00a854;
+        }
+        .email{
+            display: inline-block;
+            height: 25px;
+            line-height: 25px;
+            width: 87%;
+            border: none;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.4);
+            background: none;
+        }
+        .email:focus{
+            border: none;
+            outline: none;
+            border-bottom: 2px solid #00a854;
+        }
+        .btn-submit{
+            position: relative;
+            margin-top: 30px;
+            width: 100%;
+            line-height: 2.5em;
+            font-size: 16px;
+            font-weight: normal;
+            text-align: center;
+            color: #fff;
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 3px;
+            cursor: not-allowed;
+            overflow: hidden;
+        }
+        .btn-submit.enable{
+            background: #0085fd;
+            cursor: pointer;
+        }
+        .btn-submit .submit-tips{
+            position: absolute;
+            right: -100%;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            font-size: 14px;
+            border-radius: 2px;
+            -webkit-transition: right 0.5s linear;
+            transition: right 0.5s linear;
+        }
+        .btn-submit .submit-tips.on{
+            right: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="feed">
+        <div class="head">What's your problem?</div>
+        <input type="hidden" class="classType" value="<%=classid %>" />
+        <ul class="feed-list">
+            <% if(properties){
+                properties.forEach(function(item){
+            %>
+                <li>
+                    <label for="<%=item.uuid %>">
+                        <input type="checkbox" id="<%=item.uuid %>" data-type="<%=item.type?'m':'s' %>">
+                        <span><i></i></span>
+                        <%=item.desc %>
+                    </label>
+                    <% if(item.type){ %>
+                    <div contenteditable="true" class="description" placeholder="Type something ..."></div>
+                    <% } %>
+                </li>
+            <%
+                });
+            } %>
+            <li>
+                Email: <input type="email" placeholder="(Optional)" class="email" />
+            </li>
+        </ul>
+        <div class="btn-submit">SUBMIT<div class="submit-tips">Sorry, the system is busy, please try again later</div></div>
+    </div>
+    <script>
+        ;(function() {
+
+            var TOOL = {
+                $$: function (el) {
+                    if (arguments.length > 1) {
+                        return document.querySelectorAll(el);
+                    }
+                    return document.querySelector(el);
+                },
+                addEvent: function(el, event, cb) {
+                    el.addEventListener(event, cb ,false);
+                },
+                ajax: function (options) {
+                    var xhr = new XMLHttpRequest(),
+                        defaults = {
+                            type: 'GET',
+                            url: '',
+                            data: null,
+                            dataType: 'json',
+                            success: null,
+                            error: null
+                        };
+
+                    for ( k in options) {
+                        defaults[k] = options[k];
+                    }
+
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4) {
+                            var status = xhr.status;
+                            if (status >= 200 && status < 300) {
+                                var response = '',
+                                    type = xhr.getResponseHeader('Content-type');
+
+                                if (type.indexOf('xml') !== -1 && xhr.responseXML) {
+                                    response = xhr.responseXML;
+                                } else if(type === 'application/json') {
+                                    response = JSON.parse(xhr.responseText);
+                                } else {
+                                    response = xhr.responseText;
+                                }
+
+                                defaults.success && defaults.success(response);
+                            } else {
+                                defaults.error && defaults.error(status);
+                            }
+                        }
+                    };
+
+                    defaults.error && (xhr.onerror = defaults.error);
+
+                    if (defaults.type === 'GET') {
+                        xhr.open(defaults.type, defaults.url, true);
+                        xhr.send(null)
+                    } else {
+                        xhr.open(defaults.type, defaults.url, true);
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                        xhr.send(defaults.data);
+                    }
+                }
+            };
+
+            var emailReg = /^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g,
+                baseUrl = '/feedbacks/class/',
+                FEED = {
+                isPosting: false,
+                checkBoxList: TOOL.$$('.feed-list input[type=checkbox]', 'all'),
+                init: function (){
+                    this.addCheckboxEvent();
+                    this.sumbitFeedBack();
+                    this.emailInputChange();
+                },
+                addCheckboxEvent: function() {
+
+                    for (var i = 0, l = FEED.checkBoxList.length; i < l; i++) {
+                        (function (el) {
+                            TOOL.addEvent(el, 'click', function(e) {
+
+                                var type = this.getAttribute('data-type'),
+                                    checkedBoxList = TOOL.$$('input[type=checkbox]:checked', 'all'),
+                                    submit = TOOL.$$('.btn-submit'),
+                                    description;
+
+                                if (type === 'm') {
+                                    description = this.parentNode.parentNode.querySelector('.description');
+                                    description.classList.toggle('on');
+                                }
+
+                                if (checkedBoxList.length > 0) {
+                                    submit.classList.add('enable');
+                                } else {
+                                    submit.classList.remove('enable');
+                                }
+
+                            });
+                        })(FEED.checkBoxList[i]);
+                    }
+                },
+                sumbitFeedBack: function () {
+                    TOOL.addEvent(TOOL.$$('.btn-submit'), 'click', function(e) {
+                        e.preventDefault();
+                        if (!this.classList.contains('enable') || FEED.isPosting) {
+                            return false
+                        }
+
+                        var classid = TOOL.$$('.classType').value,
+                            email = TOOL.$$('.email').value,
+                            checkedBoxLists = TOOL.$$('input[type=checkbox]:checked', 'all'),
+                            postData = {
+                                email: '',
+                                feedback: []
+                            };
+
+                        if (email !== '' && emailReg.test(email)) {
+                            postData.email = email;
+                        }
+                        for (var i = 0, l = checkedBoxLists.length; i < l; i++) {
+                            var data = {};
+
+                            data.id = checkedBoxLists[i].getAttribute('id');
+
+                            if (checkedBoxLists[i].getAttribute('data-type') === 'm') {
+                                var description = checkedBoxLists[i].parentNode.parentNode.querySelector('.description');
+                                if (description.innerText != '') {
+                                    data.content = description.innerText;
+                                }
+                            }
+                            postData.feedback.push(data);
+                        }
+
+                        var postDataString = 'email=' + postData.email;
+                        postDataString += '&feedback=' + JSON.stringify(postData.feedback);
+
+                        FEED.isPosting = true;
+
+                        TOOL.ajax({
+                            type: 'POST',
+                            url: baseUrl+classid,
+                            data: postDataString,
+                            success: function (d) {
+                                var data = JSON.parse(d);
+                                if (data.code === 200) {
+                                    FEED.showSubmitTips('Thank you for your feedback', 'ok');
+                                } else {
+                                    FEED.showSubmitTips('Sorry, the system is busy, please try again later', 'error');
+                                }
+                                FEED.initChecklist();
+                            }
+                        });
+                    });
+                },
+                initChecklist: function () {
+                    for (var i = 0, l = FEED.checkBoxList.length; i < l; i++) {
+                        FEED.checkBoxList[i].checked = false;
+                        if (FEED.checkBoxList[i].parentNode.parentNode.querySelector('.description') ) {
+                            FEED.checkBoxList[i].parentNode.parentNode.querySelector('.description').innerHTML = '';
+                            FEED.checkBoxList[i].parentNode.parentNode.querySelector('.description').classList.remove('on');
+                        }
+                    }
+                    TOOL.$$('.email').value = '';
+                    TOOL.$$('.btn-submit').classList.remove('enable');
+                },
+                showSubmitTips: function(text, cls) {
+                    var tips = TOOL.$$('.submit-tips'),
+                        bgColor = {
+                            ok: '#2ecc71',
+                            error: '#cc0000'
+                        };
+
+                    tips.innerHTML = text;
+                    tips.style.background = bgColor[cls];
+                    tips.classList.add('on');
+
+                    setTimeout(function() {
+                        tips.classList.remove('on');
+                        FEED.isPosting = false;
+                    }, 4000);
+                },
+                emailInputChange: function() {
+                    TOOL.addEvent(TOOL.$$('.email'), 'change',function(e){
+                        var email = this.value;
+                        if (!/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)) {
+                            this.style.borderColor = '#ff0000';
+                        }
+                    });
+                }
+            };
+            FEED.init();
+        })();
+    </script>
+</body>
+</html>

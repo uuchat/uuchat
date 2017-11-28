@@ -38,11 +38,9 @@ shortcutController.create = function (req, res, next) {
             return next(err);
         }
 
-        if (data.type === 0) {
-            SocketAdapter.shortcuts('INSERT', _.pick(data, ['id', 'shortcut', 'msg']), function (result) {
+        SocketAdapter.shortcuts('INSERT', _.pick(data, ['id', 'shortcut', 'type', 'msg']), function (result) {
 
-            });
-        }
+        });
 
         return res.json({code: 200, msg: data});
     });
@@ -64,11 +62,10 @@ shortcutController.patch = function (req, res, next) {
             }
             return next(err);
         }
-        if (data.type === 0) {
-            SocketAdapter.shortcuts('UPDATE', _.pick(data, ['id', 'shortcut', 'msg']), function (result) {
 
-            });
-        }
+        SocketAdapter.shortcuts('UPDATE', _.pick(data, ['id', 'shortcut', 'type', 'msg']), function (result) {
+
+        });
 
         return res.json({code: 200, msg: 'success update'});
     });
@@ -80,11 +77,9 @@ shortcutController.delete = function (req, res, next) {
     Shortcut.delete(condition, function (err, data) {
         if (err) return next(err);
 
-        if (data.type === 0) {
-            SocketAdapter.shortcuts('DELETE', _.pick(data, ['id', 'shortcut', 'msg']), function (result) {
+        SocketAdapter.shortcuts('DELETE', _.pick(data, ['id', 'shortcut', 'type', 'msg']), function (result) {
 
-            });
-        }
+        });
 
         return res.json({code: 200, msg: 'success delete'});
     });

@@ -573,24 +573,25 @@
 
                 var _self = this,
                     data = new FormData(),
+                    fileName = e.target.files[0],
                     fileSize = 0;
 
-                if(!e.target.files[0]){
+                if(!fileName){
                     return false;
                 }
-                data.append('image', e.target.files[0]);
 
-                fileSize = e.target.files[0].size / 1024 /1024;
+                if (!/(.jpg|.gif|.png)$/g.test(fileName.name)) {
+                    showUploadImageTips('Image format must be jpg 、png、gif');
+                    return false;
+                }
+
+                fileSize = fileName.size / 1024 /1024;
 
                 if (fileSize >= 2) {
-                    U.$('.chat-msg').innerHTML += '<div class="upload-tips">Image must smaller than 2MB!</div>';
-                    this.value = '';
-                    setTimeout(function(){
-                        U.$('.upload-tips').parentNode.removeChild(U.$('.upload-tips'));
-                    }, 2000);
+                    showUploadImageTips('Image must smaller than 2MB!');
                     return false;
                 }
-
+                data.append('image', fileName);
                 U.$('.chat-msg').innerHTML += '<div class="upload-tips">Start upload ...</div>';
 
                 U.ajax({
@@ -599,15 +600,16 @@
                     fileType: true,
                     data: data,
                     progress: function(d){
+                        var uploadTips = U.$('.upload-tips') || null;
                         if (d.total === 0) {
-                            U.$('.upload-tips').innerHTML = 'Upload failed!!!';
+                            uploadTips.innerHTML = 'Upload failed!!!';
                         } else {
-                            U.$('.upload-tips').innerHTML = 'Uploading '+Math.round(d.loaded/d.total*100)+ ' %';
+                            uploadTips.innerHTML = 'Uploading '+Math.round(d.loaded/d.total*100)+ ' %';
                         }
 
                         if (d.loaded === d.total) {
                             setTimeout(function(){
-                                U.$('.upload-tips') && U.$('.upload-tips').parentNode.removeChild(U.$('.upload-tips'));
+                                U.$('.chat-msg').removeChild(U.$('.upload-tips'));
                             }, 2500);
                         }
                     },
@@ -619,10 +621,11 @@
                     },
                     error: function(e){
                         _self.value = '';
-                        if (U.$('.upload-tips')) {
-                            U.$('.upload-tips').innerHTML = 'upload image has cros error.';
+                        var uploadTips = U.$('.upload-tips') || null;
+                        if (uploadTips) {
+                            uploadTips.innerHTML = 'upload image has cros error.';
                             setTimeout(function(){
-                                U.$('.upload-tips') && U.$('.upload-tips').parentNode.removeChild(U.$('.upload-tips'));
+                                U.$('.chat-msg').removeChild(U.$('.upload-tips'));
                             }, 2500);
                         }
                     }
@@ -664,6 +667,14 @@
             U.addEvent(U.$('.chat-send-area'), 'blur', function(e){
                 U.$('.send-pre').innerHTML = this.value.replace(/^\s$/g, '');
             });
+
+            function showUploadImageTips(text) {
+                U.$('.chat-msg').innerHTML += '<div class="upload-tips">'+text+'</div>';
+                this.value = '';
+                setTimeout(function(){
+                    U.$('.upload-tips').parentNode.removeChild(U.$('.upload-tips'));
+                }, 2000);
+            }
         },
         socketCsSelect: function(type, data){
             if (1 === type) {

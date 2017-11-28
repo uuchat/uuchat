@@ -146,7 +146,10 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 }
             });
             LIB.addEvent(edit, 'DOMSubtreeModified', function () {
-                UCM.chatStatus(true);
+                var val = edit.innerHTML.replace(/<\/?[^>]*>/g, '').replace(/&nbsp;/ig, '').replace(/ /ig, '');
+                if (val.length > 0) {
+                    UCM.chatStatus(true);
+                }
             });
             LIB.addEvent(edit, 'blur', function (e) {
                 e.target.innerHTML && LIB.addClass(this, 'activation');
@@ -160,8 +163,13 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 }
 
                 setTimeout(function () {
-                    var message = e.target.innerHTML.replace(/^\s$/, '');
-                    UCM.chatStatus(message && true);
+                    var message = e.target.innerHTML.replace(/<\/?[^>]*>/g, '').replace(/&nbsp;/ig, '').replace(/ /ig, '');
+                    if (message.length > 0) {
+                        UCM.chatStatus(true);
+                    } else {
+                        e.target.innerHTML = '';
+                        UCM.chatStatus(false);
+                    }
                 }, 0);
 
             });

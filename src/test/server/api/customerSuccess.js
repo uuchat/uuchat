@@ -113,6 +113,20 @@ describe('api', function () {
             });
         });
 
+        describe('PUT /customersuccesses/:csid/theme', function () {
+            it('should response with success', function (done) {
+                request.put({
+                    url: baseUrl + '/customersuccesses/' + csid + '/theme',
+                    form: {background: 'red', opacity: 0.2}
+                }, function (err, res) {
+                    assert.ifError(err);
+                    var data = JSON.parse(res.body);
+                    assert.equal(data.code, 200);
+                    done();
+                });
+            });
+        });
+
         describe('DELETE /customersuccesses/:csid', function () {
             it('should response with json', function (done) {
                 request.delete({

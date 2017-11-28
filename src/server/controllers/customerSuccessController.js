@@ -41,7 +41,7 @@ customerSuccessController.register = function (req, res, next) {
         }
     ], function (err, user) {
         if (err) {
-            if(err.name === 'SequelizeUniqueConstraintError'){
+            if (err.name === 'SequelizeUniqueConstraintError') {
                 return res.status(403).json({
                     code: 1005, msg: 'email_already_exists'
                 });
@@ -52,14 +52,8 @@ customerSuccessController.register = function (req, res, next) {
         createCSSocket(req, user);
 
         return res.json({
-            code: 200, msg: {
-                csid: user.csid,
-                name: user.name,
-                displayName: user.displayName,
-                email: user.email,
-                photo: user.photo,
-                timezone: user.timezone
-            }
+            code: 200,
+            msg: _.pick(user, ['csid', 'name', 'displayName', 'email', 'photo', 'timezone', 'background', 'opacity'])
         });
     });
 };
@@ -108,14 +102,7 @@ customerSuccessController.login = function (req, res, next) {
 
         return res.json({
             code: 200,
-            msg: {
-                csid: user.csid,
-                name: user.name,
-                displayName: user.displayName,
-                email: user.email,
-                photo: user.photo,
-                timezone: user.timezone
-            }
+            msg: _.pick(user, ['csid', 'name', 'displayName', 'email', 'photo', 'timezone', 'background', 'opacity'])
         });
     });
 };
@@ -142,11 +129,11 @@ customerSuccessController.loginConsole = function (req, res, next) {
         },
         function (users, callback) {
 
-            if (!users || ! users.length) return res.status(404).json({code: 1003, msg: 'email_not_found'});
+            if (!users || !users.length) return res.status(404).json({code: 1003, msg: 'email_not_found'});
 
             var user = users[0];
 
-            if(user.email !== customerSuccess.email) return res.status(401).json({code: 1003, msg: 'forbid_login'});
+            if (user.email !== customerSuccess.email) return res.status(401).json({code: 1003, msg: 'forbid_login'});
 
             bcrypt.compare(customerSuccess.passwd, user.passwd).then(function (result) {
 
@@ -215,7 +202,6 @@ customerSuccessController.delete = function (req, res, next) {
     });
 };
 
-
 customerSuccessController.getAvatar = function (req, res, next) {
 
     CustomerSuccess.findById(req.params.csid, function (err, customerSuccess) {
@@ -261,6 +247,22 @@ customerSuccessController.updatePasswd = function (req, res, next) {
             return CustomerSuccess.update(customerSuccess, condition, callback);
         }
     ], function (err, result) {
+        if (err) return next(err);
+
+        return res.json({code: 200, msg: 'success update'});
+    });
+};
+
+customerSuccessController.updateTheme = function (req, res, next) {
+    var customerSuccess = {
+        'background': req.body.background,
+        'opacity': req.body.opacity
+    };
+
+    var condition = {csid: req.params.csid};
+
+    return CustomerSuccess.update(customerSuccess, condition, function (err, data) {
+
         if (err) return next(err);
 
         return res.json({code: 200, msg: 'success update'});

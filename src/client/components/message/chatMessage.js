@@ -182,7 +182,7 @@ class ChatMessage extends Component{
                 <div className="message-lists" ref="list">
                     {messageLists && messageLists.map((msg, index) =>
                             <ChatMessageItem
-                                    key={index}
+                                    key={msg.msgTime}
                                     ownerType={msg.msgType}
                                     ownerAvatar={ (msg.msgType === 1 ) ? csAvatar : avatar }
                                     ownerText={msg.msgText}

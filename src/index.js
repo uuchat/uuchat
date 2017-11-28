@@ -25,14 +25,6 @@ var ejs = require('ejs');
 var middleware = require('./server/middleware');
 var model = require('./server/models');
 
-var connectRedis = require("connect-redis")(session);
-var storeRedis = new connectRedis({
-    host: nconf.get('redis:host'),
-    port: nconf.get('redis:port'),
-    ttl: nconf.get('redis:ttl'),
-    db: 0
-});
-
 var utils = require('./server/utils');
 var logger = require('./server/logger');
 var userAgent = require('./server/socket.io/userAgent');
@@ -71,6 +63,14 @@ server.sessionStore = function () {
             db: sequelize
         });
     } else {
+        var connectRedis = require("connect-redis")(session);
+        var storeRedis = new connectRedis({
+            host: nconf.get('redis:host'),
+            port: nconf.get('redis:port'),
+            ttl: nconf.get('redis:ttl'),
+            db: 0
+        });
+        
         return storeRedis;
     }
 };
@@ -228,7 +228,6 @@ function setupExpress(app, callback) {
 
     app.use(useragent.express());
     setupFavicon(app);
-    app.use(compress());
     if (global.env === 'development') {
         var webpack = require('webpack');
         var webpackMiddleware = require('webpack-dev-middleware');
@@ -258,6 +257,7 @@ function setupExpress(app, callback) {
         baseHtmlRoute(app, null);
         app.enable('cache');
         app.enable('minification');
+        app.use(compress());
     }
 
     app.set('view engine', 'html');

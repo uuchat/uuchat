@@ -21,7 +21,9 @@ function customerSuccessRoutes(app, middleware, controllers) {
     app.post('/customersuccesses/:csid/avatar', middleware.uploadAvatar,
         controllers.customerSuccessController.uploadAvatar);
     app.get('/customersuccesses/:csid/avatar', controllers.customerSuccessController.getAvatar);
+
     app.put('/customersuccesses/:csid/passwd', controllers.customerSuccessController.updatePasswd);
+    app.put('/customersuccesses/:csid/theme', controllers.customerSuccessController.updateTheme);
 
     app.get('/customersuccesses', controllers.customerSuccessController.list);
 }
@@ -109,6 +111,13 @@ function shortcutRoutes(app, middleware, controllers) {
     app.get('/shortcuts/cs/:csid/all', controllers.shortcutController.listAll);
 }
 
+function feedbackRoutes(app, middleware, controllers) {
+    app.post('/feedbacks/class/:classid', cors(middleware.corsOptionsDelegate), controllers.feedbackController.create);
+    app.get('/feedbackmetas', controllers.feedbackMetaController.list);
+    app.post('/feedbackmetas/class/:classid/page', controllers.feedbackMetaController.createPage);
+    app.post('/feedbackmetas/class/:classid/properties', controllers.feedbackMetaController.createProperty);
+}
+
 module.exports = function (app, middleware, callback) {
     var router = express.Router();
 
@@ -121,6 +130,7 @@ module.exports = function (app, middleware, callback) {
     chatHistoryRoutes(router, middleware, controllers);
     consoleRoutes(router, middleware, controllers);
     shortcutRoutes(router, middleware, controllers);
+    feedbackRoutes(router, middleware, controllers);
 
     router.use(function (err, req, res, next) {
         logger.error(err);

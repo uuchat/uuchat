@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Modal, Input, Upload, Icon, message } from 'antd';
+import Theme from './chatTheme';
 
 class ChatSetting extends Component{
     constructor(){
@@ -12,7 +13,7 @@ class ChatSetting extends Component{
             isThemeSet: false,
             setContent: '',
             percent: 0,
-            bgOpacityNum: 7,
+            opacity: localStorage['bgThemeOpacity'] || 0.7,
             avatar: require('../../static/images/contact.png')
         };
     }
@@ -98,26 +99,36 @@ class ChatSetting extends Component{
         });
     };
     themeClose = () => {
+        let csid = localStorage.getItem('uuchat.csid'),
+            bgThemeImg = localStorage.getItem('bgThemeImg'),
+            bgThemeOpacity = localStorage.getItem('bgThemeOpacity');
+
+        fetch('/customersuccesses/'+csid+'/theme', {
+            credentials: 'include',
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'background='+bgThemeImg+'&opacity='+bgThemeOpacity
+        }).then(res => res.json()).then(d => {});
         this.setState({
             isThemeSet: false
         });
     };
-    themeSelect = (e) => {
-        if (e.target.tagName.toLocaleLowerCase() === 'img') {
+    backgroundSelect = (e) => {
+        if (e.target.tagName.toLocaleLowerCase() === 'span') {
             let { customerSuccess } = this.props,
-                theme = '../../static/images/'+e.target.getAttribute('data-name')+'.jpg';
+                theme = e.target.getAttribute('data-value');
 
             customerSuccess.setState({bgThemeImg: theme});
             localStorage.setItem('bgThemeImg', theme);
         }
     };
-    bgThemeOpacity = (e) => {
+    themeOpacityChange = (e) => {
         let { customerSuccess } = this.props,
-            op = e.target.value /10;
+            op = e.target.value;
+        this.setState({opacity: op});
         customerSuccess.setState({bgThemeOpacity: op});
-        this.setState({
-            bgOpacityNum: e.target.value
-        });
         localStorage.setItem('bgThemeOpacity', op);
     };
     shortcutSet = () => {
@@ -141,7 +152,7 @@ class ChatSetting extends Component{
         });
     };
     render(){
-        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet, bgOpacityNum } = this.state,
+        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet, opacity } = this.state,
             {csid, avatarHandle, name} = this.props,
             _self = this,
             props = {
@@ -177,14 +188,13 @@ class ChatSetting extends Component{
                         message.error(file.name+' file upload failed.');
                     }
                 }
-            },
-            bgOpacity = localStorage.getItem('bgThemeOpacity') ? localStorage.getItem('bgThemeOpacity')*10 : 10;
+            };
 
         return (
             <ul className="customerSuccess-setting">
                 <li onClick={this.accountHandle}>Your account
                     <Modal
-                        title={"Editing "+name}
+                        title={"Edit "+name}
                         visible={isAccountShow}
                         cancelText="Cancel"
                         okText="Save"
@@ -193,21 +203,21 @@ class ChatSetting extends Component{
                     >
                         <div>
                             <div className="account-item">
-                                <p>Contact email</p>
+                                <p>Contact email:</p>
                                 <Input value={localStorage['uuchat.email']} readOnly />
                             </div>
                             <div className="account-item">
-                                <p>Display name</p>
+                                <p>Display name:</p>
                                 <Input defaultValue={(localStorage['uuchat.displayName'] !=='' ? localStorage['uuchat.displayName'] : name)} ref="displayName" />
                             </div>
                             <div className="account-item">
-                                <p>Username</p>
+                                <p>Username:</p>
                                 <Input defaultValue={name} ref="name" />
                             </div>
                             <div className="account-item">
                                 <p>Operator photo(100x100)</p>
                                 <div className="avatar-box">
-                                    <img src={(localStorage['uuchat.avatar'] !=='' ? localStorage['uuchat.avatar'] : avatar)} alt="" />
+                                    <img width="112" height="112" src={(localStorage['uuchat.avatar'] !=='' ? localStorage['uuchat.avatar'] : avatar)} alt="" />
                                     <div className="avatar-process" style={{display: isUploading ? 'block' : 'none'}}>{percent}%</div>
                                 </div>
                                 <div className="avatar-upload"><Upload {...props}><Icon type="upload" /> Upload </Upload> </div>
@@ -225,10 +235,10 @@ class ChatSetting extends Component{
                         onOk={this.passwordSave}
                     >
                         <div className="change-passwd">
-                            <p>Change password</p>
+                            <p>New password</p>
                             <Input type="password" placeholder="min 6 words" ref="passwd" />
-                            <p>Confirn</p>
-                            <Input type="password" placeholder="comfirn password" ref="cpasswd" />
+                            <p>Confirm new password</p>
+                            <Input type="password" placeholder="Confirm password" ref="cpasswd" />
                         </div>
                     </Modal>
                 </li>
@@ -243,28 +253,17 @@ class ChatSetting extends Component{
                           {setContent}
                     </Modal>
                 </li>
-                <li onClick={this.themeSetting}>Theme settings
+                <li onClick={this.themeSetting}>Change background
                     <Modal
-                        title="Theme select"
+                        title="Change background"
                         visible={isThemeSet}
                         cancelText="Cancel"
                         okText="Save"
-                        width="45%"
+                        width="700"
                         footer={null}
                         onCancel={this.themeClose}
                     >
-                        <div className="theme-setting">
-                            <p>Background images select:</p>
-                            <div className="theme-background" onClick={this.themeSelect}>
-                                <img width="192" height="120" data-name="theme1" src={require('../../static/images/theme1.jpg')} alt=""/>
-                                <img width="192" height="120" data-name="theme2" src={require('../../static/images/theme2.jpg')} alt=""/>
-                                <img width="192" height="120" data-name="theme3" src={require('../../static/images/theme3.jpg')} alt=""/>
-                                <img width="192" height="120" data-name="theme4" src={require('../../static/images/theme4.jpg')} alt=""/>
-                                <img width="192" height="120" data-name="theme5" src={require('../../static/images/theme5.jpg')} alt=""/>
-                            </div>
-                            <p>Background opacity set: {bgOpacityNum * 10} %</p>
-                            <input type="range" name="points" min="5" max="10" defaultValue={bgOpacity} step="0.1" onChange={this.bgThemeOpacity} />
-                        </div>
+                        <Theme backgroundSelect={this.backgroundSelect} themeOpacityChange={this.themeOpacityChange} opacity={opacity} />
                     </Modal>
                 </li>
             </ul>

@@ -31,7 +31,6 @@ SocketCustomerEvents.select = function(socket, cid, name, fn) {
 
     if (_.isEmpty(customerSuccessList.select())) {
         console.log("all cs not online");
-        customerList.delete(cid);
         fn(3, {"code": 1002, "msg": "all cs not online!"});
         return;
     }

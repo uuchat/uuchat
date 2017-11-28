@@ -222,9 +222,13 @@ class ChatSend extends Component{
     };
 
     beforeUpload = (file) => {
-        const isLt2M = file.size / 1024 / 1024 < 2;
+        let isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
             message.error('Image must smaller than 2MB!');
+        }
+        if (!/(.jpg|.png|.gif|.jpeg)/g.test(file.name)) {
+            message.error('Image type must be jpg、jpeg、png、gif!');
+            isLt2M = false;
         }
         return isLt2M;
     };

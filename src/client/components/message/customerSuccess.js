@@ -525,11 +525,16 @@ class CustomerSuccess extends Component{
             bgStyle = {};
 
         if (bgThemeImg) {
-            bgStyle = {background: (!isOnline || isConnectErr) ? '' : 'url('+bgThemeImg+')', backgroundPosition: 'center center', backgroundSize: '100%'};
+            bgThemeImg = bgThemeImg.split('::');
+            if (bgThemeImg[0] === 'photo') {
+                bgStyle = {backgroundImage: (!isOnline || isConnectErr) ? '' : 'url('+bgThemeImg[1]+')'};
+            } else if (bgThemeImg[0] === 'color') {
+                bgStyle = {background: bgThemeImg[1]};
+            }
         }
 
         return (
-            <div className={"uuchat-customerSuccess " + ((!isOnline || isConnectErr) ? " off" : "") +" "+(bgThemeImg ? "theme" : "")}
+            <div className={"uuchat-customerSuccess " + ((!isOnline || isConnectErr) ? " off" : "") +" "+(bgThemeImg[1] ? "theme" : "")}
                  style={bgStyle}>
                     <Header customerSuccess={this} />
                     <Row className="customerSuccess-main" style={{background: 'rgba(255, 255, 255, '+bgThemeOpacity+')'}}>

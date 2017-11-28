@@ -12,10 +12,9 @@ var cookies = request.jar();
 
 var baseUrl = 'http://' + nconf.get('app:address') + ':' + nconf.get('app:port');
 
-var cURL = baseUrl + '/c';
 var csURL = baseUrl + '/cs';
 
-var globalCid = 'c1898';
+var globalCID = 'c1898';
 
 describe('socket.io', function () {
     var customerSuccessSocket;
@@ -53,7 +52,7 @@ describe('socket.io', function () {
                         });
 
                         customerSuccessSocket.on('c.message', function (cid, msg) {
-                            assert.equal(cid, globalCid);
+                            assert.equal(cid, globalCID);
                         });
 
                         customerSuccessSocket.on('cs.customer.list', function (list) {
@@ -94,7 +93,7 @@ describe('socket.io', function () {
                             process.exit(0);
                         }
 
-                        customerSocket = require('socket.io-client')(cURL,
+                        customerSocket = require('socket.io-client')(baseUrl + '/c',
                             {
                                 forceNew: true, reconnectionAttempts: 5,
                                 reconnectionDelay: 2000, timeout: 10000,
@@ -169,7 +168,7 @@ describe('socket.io', function () {
 
     it('should select one customer success!', function () {
         console.log("------------");
-        customerSocket.emit("c.select", globalCid, name, function (ok, data) {
+        customerSocket.emit("c.select", globalCID, name, function (ok, data) {
             console.log(ok);
             console.log(data);
             assert.equal(ok, 2);
@@ -177,7 +176,7 @@ describe('socket.io', function () {
     });
 
     it('should customer emit message!', function () {
-        customerSocket.emit("c.message", globalCid, "hello", function (ok) {
+        customerSocket.emit("c.message", globalCID, "hello", function (ok) {
             assert.equal(ok, true);
         });
     });
@@ -189,7 +188,7 @@ describe('socket.io', function () {
     });
 
     it('should customer disconnect!', function () {
-        customerSocket.emit("disconnect", globalCid, function (ok) {
+        customerSocket.emit("disconnect", globalCID, function (ok) {
             assert.equal(ok, true);
         });
     });

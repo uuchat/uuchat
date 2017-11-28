@@ -158,7 +158,8 @@ class ChatHistoryLists extends Component{
                     <div className="message-lists chat-lists-history">
                         {chatHistoryData && chatHistoryData.map((msg ,index)=>
                             <ChatMessageItem
-                                key={index} ownerType={msg.msgType}
+                                key={msg.msgTime}
+                                ownerType={msg.msgType}
                                 ownerAvatar={ msg.msgAvatar ?
                                     msg.msgAvatar :
                                     <div className={"avatar-color avatar-icon-"+historyColorIndex} >{hisCid.substr(0, 1).toUpperCase()}</div>

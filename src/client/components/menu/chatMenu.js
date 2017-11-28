@@ -30,11 +30,11 @@ class ChatMenu extends Component{
         });
     };
 
-    onSearchHandler = (e) => {
-        if (e.target.value === '') {
-            e.preventDefault();
+    onSearchHandler = (value) => {
+        if (value === '') {
             return false;
         }
+        document.querySelector('#search-form').submit();
     };
 
     chatListHide = () => {
@@ -83,7 +83,7 @@ class ChatMenu extends Component{
                             onChatListClick: onChatListClick
                         };
                     }
-                    chatLists.push(<Chat key={index} options={options} />);
+                    chatLists.push(<Chat key={cid} options={options} />);
                 }
             });
         }
@@ -91,10 +91,10 @@ class ChatMenu extends Component{
         return (
             <div className="customerSuccess-left" onClick={this.chatListHide}>
                 <div className="left-menu">
-                    <form method="get" action="/search" target="_blank" className="">
+                    <form method="get" action="/search" target="_blank" id="search-form">
                         <Input.Search
-                            placeholder="Type text and enter"
-                            onPressEnter={this.onSearchHandler}
+                            placeholder="Type text and press Enter"
+                            onSearch={this.onSearchHandler}
                             name="search"
                         />
                     </form>

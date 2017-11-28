@@ -36,6 +36,8 @@ class Login extends Component{
                         localStorage.setItem('uuchat.name', d.msg.name);
                         localStorage.setItem('uuchat.displayName', (d.msg.displayName ? d.msg.displayName : ''));
                         localStorage.setItem('uuchat.avatar', (d.msg.photo ? d.msg.photo : ''));
+                        localStorage.setItem('bgThemeImg', (d.msg.background ? d.msg.background : ''));
+                        localStorage.setItem('bgThemeOpacity', (d.msg.opacity ? d.msg.opacity : 0.7));
                         if (document.querySelector('#uu-chat')) {
                             document.querySelector('#uu-chat').innerHTML = '<div class="chat-loading"><div class="bounce bounce1"></div><div class="bounce bounce2"></div><div class="bounce bounce3"></div></div>';
                         }
