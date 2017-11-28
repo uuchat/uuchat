@@ -85,6 +85,7 @@ export default class FeedbackSettings extends Component {
             let body = 'checkedProperties=' + JSON.stringify(checkedProperties);
 
             let data = await fetchAsync(createPageUrl, {
+                credentials: 'include',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -103,11 +104,18 @@ export default class FeedbackSettings extends Component {
 
     handleCreateItem = async (e) => {
         try {
+            let { itemValue, radioValue, checkBoxOptions } = this.state;
+
             let createItemUrl = '/feedbackmetas/class/' + this.state.classid + '/properties';
-            let body = 'desc=' + this.state.itemValue;
-            body += '&type=' + this.state.radioValue;
+            let body = 'desc=' + itemValue;
+            body += '&type=' + radioValue;
+
+            if (checkBoxOptions.indexOf(itemValue) !== -1) {
+                return message.error('Input already exists', 4);
+            }
 
             let data = await fetchAsync(createItemUrl, {
+                credentials: 'include',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
@@ -125,11 +133,14 @@ export default class FeedbackSettings extends Component {
                 properties.push(data.msg);
             }
 
-            var checkBoxOptions = properties.map(function (item) {
-                return item.desc;
+            this.setState({
+                expand: false,
+                checkBoxOptions: properties.map(function (item) {
+                    return item.desc;
+                }),
+                itemValue: '',
+                radioValue: 0
             });
-
-            this.setState({expand: false, checkBoxOptions, itemValue: '', radioValue: 0});
 
         } catch (e) {
             message.error(e.msg, 4);

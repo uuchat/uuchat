@@ -21,14 +21,11 @@ feedbackController.create = function (req, res, next) {
 
     if (!req.body.feedback) return res.json({code: 9001, msg: 'no feedback'});
     try {
-        var fdres = JSON.parse(req.body.feedback);
 
         var feedback = {
             class: req.params.classid,
             email: req.body.email,
-            feedback: fdres.map(function (item) {
-                return ({uuid: item.id, content:item.content});
-            })
+            feedback: JSON.parse(req.body.feedback)
         };
 
         Feedback.create(feedback, function (err, data) {
@@ -52,12 +49,9 @@ feedbackController.delete = function (req, res, next) {
 };
 
 feedbackController.list = function (req, res, next) {
-    var csid = req.params.csid || '';
+    var condition = {};
 
-    var condition = getCondition(csid);
-
-    var order = [['class', 'ASC']];
-    if (req.query.sortField) order = [[req.query.sortField, req.query.sortOrder === 'ascend' ? 'ASC' : 'DESC']];
+    var order = [['createdAt', 'DESC']];
 
     Feedback.listAndCount(condition, order, function (err, data) {
         if (err) return next(err);
