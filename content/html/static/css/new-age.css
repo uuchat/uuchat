@@ -106,6 +106,23 @@ p {
 .navbar-default .nav > li.active > a:focus:hover {
   background-color: transparent;
 }
+#mainNav{
+    height: 80px;
+}
+.navbar-default .nav > li > a{
+    line-height: 60px;
+}
+.navbar-default .uuchat-logo{
+    display: inline-block;
+    margin-right: 10px;
+    margin-top: -5px;
+    width: 64px;
+    height: 64px;
+    vertical-align: middle;
+    background: url(../img/uuchat_logo_128.png) no-repeat center center;
+    background-size: 100%;
+    border-radius: 100%;
+}
 @media (min-width: 768px) {
   .navbar-default {
     background-color: transparent;
@@ -253,6 +270,21 @@ section.download .badges .badge-link img {
     font-size: 70px;
   }
 }
+@media (max-width: 640px) {
+    #demo {
+        padding: 50px 0;
+        min-height: 0;
+    }
+    header .header-content{
+        padding-top: 0;
+    }
+}
+@media (max-width: 978px) {
+    #demo a{
+        display: block;
+        margin-top: 20px;
+    }
+}
 section.features .section-heading {
   margin-bottom: 100px;
 }
@@ -299,12 +331,13 @@ section.cta {
   min-height: 1000px;
   overflow-y: hidden;
   position: relative;
-  -webkit-background-size: cover;
-  -moz-background-size: cover;
-  background-size: cover;
-  -o-background-size: cover;
-  background-position: center;
+  -webkit-background-size: contain;
+  -moz-background-size: contain;
+  background-size: contain;
+  -o-background-size: contain;
+  background-position: center center;
   background-image: url('../img/uuchat-index.png');
+  background-repeat: no-repeat;
   padding: 250px 0;
 }
 section.cta .cta-content {

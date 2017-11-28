@@ -9,6 +9,7 @@
     <meta name="author" content="">
 
     <title>uuchat - A powerful customer success platform !</title>
+    <link rel="shortcut icon" href="static/img/favicon.ico">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
@@ -40,7 +41,7 @@
         <div class="container">
             <!-- Brand and toggle get grouped for better mobile display -->
             <div class="navbar-header">
-                <a class="navbar-brand page-scroll" href="#page-top">UUChat</a>
+                <a class="navbar-brand page-scroll" href="#page-top"><i class="uuchat-logo"></i>UUChat</a>
             </div>
 
             <!-- Collect the nav links, forms, and other content for toggling -->
@@ -98,9 +99,9 @@
                 <h2>Chat with your visitors with browser anywhere.</h2>
                 <h3>Help customers who’s on your website and which they are visitor.</h3>
                 <br />
-                <a href="http://uuchat.io/demo" class="btn btn-outline btn-xl page-scroll">Start as customer</a>
-                <a href="http://uuchat.io/login" class="btn btn-outline btn-xl page-scroll">Start as customer success</a>
-                <a href="http://uuchat.io/console" class="btn btn-outline btn-xl page-scroll">Goto console</a>
+                <a href="/demo" class="btn btn-outline btn-xl page-scroll">Start as customer</a>
+                <a href="/login" class="btn btn-outline btn-xl page-scroll">Start as customer success</a>
+                <a href="/console" class="btn btn-outline btn-xl page-scroll">Goto console</a>
             </div>
         </div>
         <div class="overlay"></div>
@@ -204,7 +205,7 @@
     ;(function(u, c, h){
         u.UUCHAT = (function(){
             return {
-                domain: 'http://uuchat.io',
+                domain: '',
                 src: h
             };
         })();
@@ -214,7 +215,7 @@
         s.src = u.UUCHAT.domain+h;
         r.parentNode.insertBefore(s,r);
 
-    })(window, document, "/static/js/loader.js", );
+    })(window, document, "/static/js/loader.js");
 </script>
 <!-- end uuchat code  -->
 
