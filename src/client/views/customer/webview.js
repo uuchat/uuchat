@@ -114,8 +114,8 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         cid: '',
         csid: '',
         csName: '',
-        csPhoto: 'http://192.168.31.224:9688/static/images/contact.png',
-        domain: 'http://192.168.31.224:9688',
+        csPhoto: '/static/images/contact.png',
+        domain: '',
         maxTimes: 2700000,
         startTime: 0,
         clockTimer: null,
@@ -426,7 +426,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             this.csid = data.csid;
             this.csName = data.name;
 
-            data.photo && (this.csPhoto = 'http://192.168.31.224:9688/' + data.photo);
+            data.photo && (this.csPhoto = UCM.domain + data.photo);
 
             LIB.$('#title').innerHTML = data.name;
 
@@ -583,7 +583,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         socketDispatch: function (csid, name, avatar) {
             UCM.csid = csid;
             UCM.csName = name;
-            avatar && (UCM.csPhoto = 'http://192.168.31.224:9688/' + avatar);
+            avatar && (UCM.csPhoto = UCM.domain + avatar);
             LIB.$('#title').innerHTML = name;
         },
         socketActionRate: function () {

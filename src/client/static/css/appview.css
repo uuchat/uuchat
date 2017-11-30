@@ -278,12 +278,12 @@ html, body{
     display: inline-block;
     width: 30px;
     height: 30px;
-    background: url('../../static/images/heart_blue_selected.png') no-repeat center center;
+    background: url('../../static/images/heart.svg') no-repeat center center;
     background-size: 100% 100%;
     text-indent: -9999em;
 }
 .body .rate-body span.on{
-    background: url('../../static/images/heart_selected.png') no-repeat center center;
+    background: url('../../static/images/heart_selected_red.svg') no-repeat center center;
     background-size: 100% 100%;
 }
 .body .rate-submit{

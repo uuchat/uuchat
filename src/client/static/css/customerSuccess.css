@@ -850,7 +850,7 @@
     background-size: 100% 100%;
 }
 .send-tools .tool-box .rate-icon:hover{
-    background:url(../images/heart_selected.svg) no-repeat center center;
+    background:url(../images/heart_selected_red.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-text{
