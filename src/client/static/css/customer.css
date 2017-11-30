@@ -256,16 +256,13 @@
     height: 32px;
     margin-right: 5px;
     color: red;
-    background: url(../images/heart.png) no-repeat center center;
-    background: url(../images/heart_ie8.png) no-repeat center center\0;
+    background: url(../images/heart.svg) no-repeat center center;
     background-size: 100% 100%;
-    border-radius: 100%;
     text-indent: -99999em;
     cursor: pointer;
 }
 .rete-heart span.active{
-    background: url(../images/heart_selected.png) no-repeat center center;
-    background: url(../images/heart_selected_ie8.png) no-repeat center center\0;
+    background: url(../images/heart_selected_red.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-console .rete-btn{
@@ -403,19 +400,19 @@
 }
 
 .chat-console .chat-file-btn{
-    background: url(../images/image.png) no-repeat center center;
+    background: url(../images/upload.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-console .chat-file-btn:hover{
-    background: url(../images/image_selected.png) no-repeat center center;
+    background: url(../images/upload_selected.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-console .chat-emoji-btn{
-    background: url(../images/smile_ie8.png) no-repeat center center;
+    background: url(../images/emoji.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-console .chat-emoji-btn:hover{
-    background: url(../images/smile_selected_ie8.png) no-repeat center center;
+    background: url(../images/emoji_selected.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-btn{

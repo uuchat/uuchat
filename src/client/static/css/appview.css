@@ -351,29 +351,29 @@ html, body{
     transform: rotate(-45deg);
 }
 .chat-btns .camera{
-    background: url(../../static/images/camera.gif) no-repeat center center;
+    background: url(../../static/images/photo_camera.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-btns .photo{
     margin-left: 12%;
-    background: url(../../static/images/photo.gif) no-repeat center center;
+    background: url(../../static/images/picture.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-btns .emoji{
     right: 13%;
     z-index: 9999;
     border-radius: 100%;
-    background: #0085fd url(../../static/images/emoji.png) no-repeat center center;
+    background:  url(../../static/images/emoji_selected_blue.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-btns .praise{
     right: 4%;
-    background: #0085fd url(../../static/images/praise2.png) no-repeat center center;
+    background: url(../../static/images/praise2.png) no-repeat center center;
     background-size: 100% 100%;
 }
 
 .chat-btns .send{
-    background: #0085fd url(../../static/images/send.png) no-repeat center center;
+    background: url(../../static/images/send.png) no-repeat center center;
     background-size: 100% 100%;
 }
 

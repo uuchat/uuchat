@@ -13,7 +13,7 @@ const Transcripts = AsyncComponent(() =>import('./transcripts/transcripts').then
 const Rates = AsyncComponent(() =>import('./ratereport/rates').then(module => module.default));
 const RateDetails = AsyncComponent(() =>import('./ratereport/rateDetails').then(module => module.default));
 const Shortcuts = AsyncComponent(() =>import('./shortcuts/shortcuts').then(module => module.default));
-const FeedbackSettings = AsyncComponent(() =>import('./feedback/feedbackSettings').then(module => module.default));
+const FeedbackSetting = AsyncComponent(() =>import('./feedbacks/feedbackSetting').then(module => module.default));
 
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -93,7 +93,7 @@ export default class Console extends Component {
             {key: 'rates', type: 'star-o', text: 'Rate Report'},
             {key: 'rateList', type: 'star-o', text: 'Rate List'},
             {key: 'shortcuts', type: 'tags-o', text: 'Shortcuts'}
-            //,{key: 'feedbackSettings', type: 'setting', text: 'Feedback Settings'}
+            ,{key: 'feedbackSettings', type: 'setting', text: 'Feedback Settings'}
         ];
 
         return (
@@ -165,7 +165,7 @@ export default class Console extends Component {
                                         <Route exact path="/rateList" component={ RateList }/>
                                         <Route exact path="/shortcuts" component={ Shortcuts }/>
                                         <Route exact path="/rates/:csid" component={ RateDetails }/>
-                                        <Route exact path="/feedbackSettings" component={ FeedbackSettings }/>
+                                        <Route exact path="/feedbackSettings" component={ FeedbackSetting }/>
                                     </Switch>
                                 </div>
                             </Router>

@@ -779,12 +779,12 @@
     display: inline-block;
     width: 20px;
     height: 20px;
-    background: url(../images/smile.png) no-repeat center center;
+    background: url(../images/emoji.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-send .send-tools .emoji-icon:hover,
 .chat-send .send-tools .emoji-icon.active{
-    background: url(../images/smile_selected.png) no-repeat center center;
+    background: url(../images/emoji_selected.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 
@@ -792,11 +792,11 @@
     display: inline-block;
     width: 20px;
     height: 20px;
-    background: url(../images/image.png) no-repeat center center;
+    background: url(../images/upload.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-send .send-tools .upload-icon:hover{
-    background: url(../images/image_selected.png) no-repeat center center;
+    background: url(../images/upload_selected.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-send .send-tools .upload-icon:before{
@@ -846,11 +846,11 @@
     display: inline-block;
     width: 20px;
     height: 20px;
-    background:url(../images/heart.png) no-repeat center center;
+    background:url(../images/heart.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .send-tools .tool-box .rate-icon:hover{
-    background:url(../images/heart_blue_selected.png) no-repeat center center;
+    background:url(../images/heart_selected.svg) no-repeat center center;
     background-size: 100% 100%;
 }
 .chat-text{
@@ -1020,7 +1020,7 @@
 .theme .chat-message,
 .theme .user-header,
 .theme .message-title{
-    border-color: rgba(50, 20, 10, 0.9);
+    border-color: rgba(50, 20, 10, 0.2);
 }
 .theme .customerSuccess-left li .chat-notify{
     background: rgba(0, 0, 0, 0.5);
