@@ -32,7 +32,7 @@ var userAgent = require('./server/socket.io/userAgent');
 if (nconf.get('app:ssl')) {
     server = require('https').createServer({
         key: fs.readFileSync(nconf.get('app:ssl').key),
-        cert: fs.readFileSync(nconf.get('app:ssl').cert),
+        cert: fs.readFileSync(nconf.get('app:ssl').cert)
     }, app);
 } else {
     server = require('http').createServer(app);
@@ -70,7 +70,7 @@ server.sessionStore = function () {
             ttl: nconf.get('redis:ttl'),
             db: 0
         });
-        
+
         return storeRedis;
     }
 };
@@ -115,6 +115,7 @@ module.exports.listen = function () {
 
 function baseHtmlRoute(app, middlewareDev) {
     app.use(express.static(path.join(__dirname, '../dist')));
+    app.use(express.static(path.join(__dirname, '../dist/app')));
     //need filter css, js, images files
     app.use(fileFilters);
     app.use(session({
@@ -132,7 +133,7 @@ function baseHtmlRoute(app, middlewareDev) {
     });
     app.get('/webview', middleware.jsCDN, function response(req, res) {
         setupSession(req, res);
-        var html = path.join(__dirname, '../dist/webview.html');
+        var html = path.join(__dirname, '../dist/app/index.html');
         htmlRender(middlewareDev, res, html);
     });
     app.get('/login', middleware.jsCDN, function response(req, res) {
@@ -216,6 +217,14 @@ function setupExpress(app, callback) {
     //app.set('showStackError', true);
     //app.disable('x-powered-by'); // http://expressjs.com/zh-cn/advanced/best-practice-security.html
     //app.set('json spaces', process.env.NODE_ENV === 'development' ? 4 : 0);
+
+    app.use(require("morgan")(
+            global.env === 'development' ? 'tiny' : 'combined',
+            { stream: {
+                    write: message => logger.info(message.trim())
+                }
+            }
+    ));
 
     app.use('/static/images', express.static(path.join(__dirname, './client/static/images')));
     app.use('/content/upload', express.static(path.join(__dirname, '../content/upload')));

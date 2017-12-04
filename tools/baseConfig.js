@@ -84,7 +84,7 @@ var defaultConfig = {
             transform: function (content, absoluteFrom) {
                 var result = content + '';
                 if (nconf.get('app:ssl')) {
-                    result = result.replace(/http:\/\/(uuchat.io)/g, "https://$1");
+                    result = result.replace(/https:\/\/(uuchat.io)/g, "https://$1");
                 }
                 var result = result.replace(/uuchat.io/g,
                     nconf.get('app:address') + ':' + nconf.get('app:port'));
@@ -92,17 +92,8 @@ var defaultConfig = {
             }
         },
         {
-            from: paths.appContent + '/html/index.html',
+            from: paths.appContent + '/html/home.html',
             to: paths.appBuild + '/index.html'
-            /*transform: function (content, absoluteFrom) {
-                var result = content + '';
-                if (nconf.get('app:ssl')) {
-                    result = result.replace(/http:\/\/(uuchat.io)/g, "https://$1");
-                }
-                var result = result.replace(/uuchat.io/g,
-                    nconf.get('app:address') + ':' + nconf.get('app:port'));
-                return result;
-            }*/
         },
         {
             from: paths.appContent + '/html/static/css',
@@ -121,27 +112,25 @@ var defaultConfig = {
         },
         {
             from: paths.appWebview,
-            to: paths.appBuild + '/webview.html'
+            to: paths.appBuild + '/app'
         },
         {
-            from: paths.appWebviewCss,
-            to: paths.appBuild + '/static/css',
+            from: paths.appWebviewJS,
+            to: paths.appBuild + '/app/webview.js',
+            force: true,
             transform: function (content, absoluteFrom) {
-                return cleanCSS(content);
-            }
-        },
-        {
-            from: paths.appWebviewJs,
-            to: paths.appBuild + '/webview.js',
-            transform: function (content, absoluteFrom) {
-                var code = (content + '');
+                var code = (content + ''),
+                    domain = nconf.get('app:domain');
+
+                if (!domain || domain.indexOf('uuchat.io') > -1) {
+                    code = code.replace(/https:\/\/uuchat.io/g, 'http://'+nconf.get('app:address')+':'+nconf.get('app:port'));
+                } else {
+                    code = code.replace(/https:\/\/uuchat.io/g, domain);
+                }
+
                 return minify(code);
             }
         },
-        {
-            from: paths.appWebviewSocket,
-            to: paths.appBuild + '/socket.io-2.0.3.min.js'
-        }
     ],
     node: {
         fs: 'empty',
