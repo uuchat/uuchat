@@ -115,6 +115,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         csid: '',
         csName: '',
         csPhoto: 'images/contact.png',
+        userId: '',
         domain: 'https://uuchat.io',
         maxTimes: 2700000,
         startTime: 0,
@@ -123,14 +124,19 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         isCustomerSuccessOnline: false,
         lastEditRange: null,
         init: function () {
-            //this.getUserType();
+            this.getUserType();
             this.control();
             this.emojiCreate();
             this.socketInit();
         },
         getUserType: function () {
             var url = window.location.href;
-            url = url.split('?');
+            url = url.indexOf('?') > -1 ? url.split('?') : [];
+
+            if (url.length > 0) {
+                url = url[1].split('=');
+                this.userId = url[1];
+            }
         },
         control: function () {
             this.enter();
@@ -255,9 +261,11 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 this.chatStatus(false);
             } else if(type.action === 'praise') {
                 msg = '👍 ';
+            } else if(type.action === 'system') {
+                msg = type.text;
             }
 
-            UCM.addNewMessage({
+            (type.action !== 'system') && UCM.addNewMessage({
                 type: 'send',
                 text: msg,
                 msgTime: msgTime
@@ -363,7 +371,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             var str = '<div class="rate">';
             str += '<div class="rate-title">Please rate the dialogue</div>';
             str += '<div class="rate-body">';
-            str += '<span>1</span><span>2</span> <span>3</span> <span>4</span><span>5</span>';
+            str += '<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>';
             str += '</div>';
             str += '<div class="rate-footer">';
             str += '<div class="rate-submit">Submit</div>';
@@ -448,7 +456,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
             for (var i = 0, l = msgArr.length; i < l; i++) {
 
-                if (msgArr[i].type === 3) {
+                if (msgArr[i].type === 3 || msgArr[i].msg.indexOf('@User ID@') > -1) {
                     continue;
                 }
 
@@ -538,10 +546,27 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 text: 'There was an error connecting the customer service!<span class="reconnect-btn">Reconnect</span>'
             });
         },
+        socketSendUserId: function () {
+            if (this.userId !='') {
+                var userIdCreateTimes = window.localStorage.getItem('userIdCreateTimes') || null,
+                    currentTimes = (new Date()).getTime();
+
+                if (userIdCreateTimes && (currentTimes - userIdCreateTimes < 259200000 )) {
+                    return false;
+                }
+
+                this.sendMessage({
+                    action: 'system',
+                    text: '@User ID@: '+this.userId
+                });
+                window.localStorage.setItem('userIdCreateTimes', currentTimes);
+            }
+        },
         socketCsSelect: function (type, data) {
             if (type === 1) { //online
                 UCM.isCustomerSuccessOnline = true;
                 UCM.initData(data);
+                UCM.socketSendUserId();
             } else if(type === 2) { //queue
                 UCM.addNewMessage({
                     type: 'system',

@@ -747,6 +747,10 @@
 .message-lists .message-content.done {
     background-color: #edf9ff;
 }
+.message-lists .message-content.user-id {
+    background-color: #3498db;
+    color: #fff;
+}
 
 .chat-message .message-times{
     line-height: 30px;

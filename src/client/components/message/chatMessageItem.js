@@ -61,6 +61,12 @@ class ChatMessageItem extends Component{
             shortCutSet = shortSetting ? <ChatMessageShortcut content={isImg ? '' : ownerText} /> : '';
         }
 
+        console.log();
+
+        if (ownerText.indexOf('@User ID@') > -1) {
+            flClass += ' user-id';
+        }
+
         return (
             <div className="message-item">
                 <p className={'msg-time-'+ownerType}>{this.timeFomat(time)}</p>
