@@ -36,15 +36,11 @@ offlineController.create = function (req, res, next) {
 function validateOffline(offline) {
     if (!offline.name) {
         return {code: 8000, msg: 'name_is_null'};
-    }
-
-    if (!validator.isEmail(offline.email || '')) {
+    } else if (!validator.isEmail(offline.email || '')) {
         return {code: 8001, msg: 'email_validate_error'};
-    }
-
-    if (!offline.content || offline.content.length > 256) {
+    } else if (!offline.content || offline.content.length > 256) {
         return {code: 8002, msg: 'content_validate_error'};
+    } else {
+        return {code: 200, msg: 'success_submit'};
     }
-
-    return {code: 200, msg: 'success_submit'};
 }

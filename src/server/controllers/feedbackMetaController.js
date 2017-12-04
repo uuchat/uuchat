@@ -87,6 +87,21 @@ feedbackMetaController.list = function (req, res, next) {
         return res.json({code: 200, msg: result});
     });
 };
+
+feedbackMetaController.getClassList = function (req, res, next) {
+
+    // search feedback meta options.
+    var attributes = ['desc'];
+
+    var condition = {class: ''};
+
+    FeedbackMeta.listAll(attributes, condition, function (err, data) {
+        if (err) return next(err);
+
+        return res.json({code: 200, msg: data});
+    });
+};
+
 feedbackMetaController.createProperty = function (req, res, next) {
     var feedbackMeta = {
         class: req.params.classid,

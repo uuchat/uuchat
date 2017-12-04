@@ -113,9 +113,11 @@ function shortcutRoutes(app, middleware, controllers) {
 
 function feedbackRoutes(app, middleware, controllers) {
     app.post('/feedbacks/class/:classid', cors(middleware.corsOptionsDelegate), controllers.feedbackController.create);
+    app.get('/feedbacks', controllers.feedbackController.list);
     app.get('/feedbackmetas', controllers.feedbackMetaController.list);
-    app.post('/feedbackmetas/class/:classid/page', controllers.feedbackMetaController.createPage);
-    app.post('/feedbackmetas/class/:classid/properties', controllers.feedbackMetaController.createProperty);
+    app.get('/feedbackmetas/classes', controllers.feedbackMetaController.getClassList);
+    app.post('/feedbackmetas/classes/:classid/page', controllers.feedbackMetaController.createPage);
+    app.post('/feedbackmetas/classes/:classid/properties', controllers.feedbackMetaController.createProperty);
 }
 
 module.exports = function (app, middleware, callback) {
