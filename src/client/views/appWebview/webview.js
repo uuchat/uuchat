@@ -116,7 +116,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         csName: '',
         csPhoto: 'images/contact.png',
         userId: '',
-        domain: 'https://uuchat.io',
+        domain: '',
         maxTimes: 2700000,
         startTime: 0,
         clockTimer: null,
