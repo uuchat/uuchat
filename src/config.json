@@ -3,9 +3,10 @@
     "name": "uuChat",
     "address": "0.0.0.0",
     "port": 9688,
+    "domain": "https://uuchat.io",
     "maxChatNum": 5,
     "lineupRefreshTime": 3000,
-    "onlineInfoRefreshTime": 300000,
+    "onlineInfoRefreshTime": 30000,
     "cookieDomain": "",
     "whitelist": ["uuchat.io", "*.github.io"],
     "relative_path": "/"
