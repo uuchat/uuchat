@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Breadcrumb, message, Checkbox, Button, Row, Col, Input, Radio } from 'antd';
 import { fetchAsync } from '../common/utils';
 
@@ -81,7 +82,7 @@ export default class FeedbackSettings extends Component {
                 return checkedList.indexOf(item.desc) > -1;
             });
 
-            let createPageUrl = '/feedbackmetas/class/' + classid + '/page';
+            let createPageUrl = '/feedbackmetas/classes/' + classid + '/page';
             let body = 'checkedProperties=' + JSON.stringify(checkedProperties);
 
             let data = await fetchAsync(createPageUrl, {
@@ -106,7 +107,7 @@ export default class FeedbackSettings extends Component {
         try {
             let { itemValue, radioValue, checkBoxOptions } = this.state;
 
-            let createItemUrl = '/feedbackmetas/class/' + this.state.classid + '/properties';
+            let createItemUrl = '/feedbackmetas/classes/' + this.state.classid + '/properties';
             let body = 'desc=' + itemValue;
             body += '&type=' + radioValue;
 
@@ -215,13 +216,23 @@ export default class FeedbackSettings extends Component {
                 </Breadcrumb>
 
                 <div className="content-body">
+                    <div className="table-deals">
+                        <div className="table-search">
+                        </div>
+                        <div className="table-operations">
+                            <Button>
+                                <Link to={{pathname: '/feedbacks'}}>Back</Link>
+                            </Button>
+                        </div>
+                    </div>
                     <div>
                         <div>
-                            <div style={{ borderBottom: '1px solid #E9E9E9' }}>
+                            <div style={{ borderBottom: '1px solid #E9E9E9', paddingBottom: '4px' }}>
                                 <Checkbox
                                     indeterminate={this.state.indeterminate}
                                     onChange={this.onCheckAllChange}
                                     checked={this.state.checkAll}
+                                    style={{ fontWeight: 'bold' }}
                                     >
                                     {this.state.classid}
                                 </Checkbox>

@@ -6,14 +6,15 @@ import RateList from './ratelist/rateList';
 import AsyncComponent from '../common/asyncComponent.js';
 import { fetchAsync } from './common/utils';
 
-const Dashboard = AsyncComponent(() => import('./dashboard/dashboard').then(module => module.default));
-const Operators = AsyncComponent(() => import('./operators/operators').then(module => module.default));
-const Customers = AsyncComponent(() =>import('./customers/customers').then(module => module.default));
-const Transcripts = AsyncComponent(() =>import('./transcripts/transcripts').then(module => module.default));
-const Rates = AsyncComponent(() =>import('./ratereport/rates').then(module => module.default));
-const RateDetails = AsyncComponent(() =>import('./ratereport/rateDetails').then(module => module.default));
-const Shortcuts = AsyncComponent(() =>import('./shortcuts/shortcuts').then(module => module.default));
-const FeedbackSetting = AsyncComponent(() =>import('./feedbacks/feedbackSetting').then(module => module.default));
+const Dashboard = AsyncComponent(() => import ('./dashboard/dashboard').then(module => module.default));
+const Operators = AsyncComponent(() => import ('./operators/operators').then(module => module.default));
+const Customers = AsyncComponent(() => import ('./customers/customers').then(module => module.default));
+const Transcripts = AsyncComponent(() => import ('./transcripts/transcripts').then(module => module.default));
+const Rates = AsyncComponent(() => import ('./ratereport/rates').then(module => module.default));
+const RateDetails = AsyncComponent(() => import ('./ratereport/rateDetails').then(module => module.default));
+const Shortcuts = AsyncComponent(() => import ('./shortcuts/shortcuts').then(module => module.default));
+const Feedbacks = AsyncComponent(() => import ('./feedbacks/feedbacks').then(module => module.default));
+const FeedbackSetting = AsyncComponent(() => import ('./feedbacks/feedbackSetting').then(module => module.default));
 
 const { Header, Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
@@ -30,10 +31,9 @@ export default class Console extends Component {
         avatar: localStorage['uuchat.avatar'] || ''
     };
 
-    onCollapse = (collapsed) => {
+    toggle = () => {
         this.setState({
-            collapsed,
-            mode: collapsed ? 'vertical' : 'inline'
+            collapsed: !this.state.collapsed
         });
     };
 
@@ -92,8 +92,8 @@ export default class Console extends Component {
             {key: 'transcripts', type: 'database', text: 'Transcripts'},
             {key: 'rates', type: 'star-o', text: 'Rate Report'},
             {key: 'rateList', type: 'star-o', text: 'Rate List'},
-            {key: 'shortcuts', type: 'tags-o', text: 'Shortcuts'}
-            ,{key: 'feedbackSettings', type: 'setting', text: 'Feedback Settings'}
+            {key: 'shortcuts', type: 'tags-o', text: 'Shortcuts'},
+            {key: 'feedbacks', type: 'setting', text: 'Feedbacks'}
         ];
 
         return (
@@ -103,8 +103,8 @@ export default class Console extends Component {
                     <Sider
                         breakpoint="lg"
                         collapsible
-                        collapsed={ collapsed }
-                        onCollapse={ this.onCollapse }
+                        collapsed={collapsed}
+                        trigger={null}
                         >
                         <div className="logo"/>
                         <Menu
@@ -128,6 +128,11 @@ export default class Console extends Component {
                     </Sider>
                     <Layout>
                         <Header style={{ background: '#fff', padding: 0, height: '47px', lineHeight: '47px' }}>
+                            <Icon
+                                className="sideTrigger"
+                                type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
+                                onClick={this.toggle}
+                                />
                             <div style={{ float: 'right' }}>
                                 <div style={{ display: 'inline-block' }}>
                                     <Button type="primary" onClick={(e)=> window.location.href='/chat'}>
@@ -165,7 +170,8 @@ export default class Console extends Component {
                                         <Route exact path="/rateList" component={ RateList }/>
                                         <Route exact path="/shortcuts" component={ Shortcuts }/>
                                         <Route exact path="/rates/:csid" component={ RateDetails }/>
-                                        <Route exact path="/feedbackSettings" component={ FeedbackSetting }/>
+                                        <Route exact path="/feedbacks" component={ Feedbacks }/>
+                                        <Route exact path="/feedbackSetting" component={ FeedbackSetting }/>
                                     </Switch>
                                 </div>
                             </Router>

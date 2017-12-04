@@ -50,7 +50,7 @@ class Header extends Component{
                         if (d.code === 200){
                             socket.emit('cs.logout',function(type){});
                             socket.close();
-                            window.location.href = '/login';
+                            window.location.href = '/';
                         }
                     })
                     .catch(function(e){});

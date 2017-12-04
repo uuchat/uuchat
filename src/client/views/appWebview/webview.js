@@ -114,8 +114,8 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         cid: '',
         csid: '',
         csName: '',
-        csPhoto: '/static/images/contact.png',
-        domain: '',
+        csPhoto: 'images/contact.png',
+        domain: 'https://uuchat.io',
         maxTimes: 2700000,
         startTime: 0,
         clockTimer: null,
@@ -123,9 +123,14 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         isCustomerSuccessOnline: false,
         lastEditRange: null,
         init: function () {
+            //this.getUserType();
             this.control();
             this.emojiCreate();
             this.socketInit();
+        },
+        getUserType: function () {
+            var url = window.location.href;
+            url = url.split('?');
         },
         control: function () {
             this.enter();
@@ -138,6 +143,10 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
             LIB.addEvent(edit, 'focus', function (e) {
                 LIB.removeClass(this, 'activation');
+                var target = this;
+                setTimeout(function(){
+                    target.scrollIntoViewIfNeeded();
+                },400);
             });
             LIB.addEvent(edit, 'click', function (e) {
                 if (window.getSelection) {
@@ -373,27 +382,27 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             var data = new FormData();
             data.append('image', dataURLtoBlob(img), name);
 
-            var xhr = new XMLHttpRequest();
-            xhr.onreadystatechange = function() {
-                if (xhr.status == 200 && xhr.readyState == 4) {
 
-                    var d = JSON.parse(xhr.responseText);
-
-                    if (d.code === 200) {
-                        LIB.$('.uploading').innerHTML = 'upload done';
-                        LIB.$('.uploading').className = 'upload-done';
-                        UCM.sendMessage({
-                            action: 'message',
-                            text: d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h
-                        });
-                    } else {
-                        LIB.$('.uploading').innerHTML = 'upload failed';
-                        LIB.$('.uploading').className = 'upload-failed';
-                    }
+            fetch(UCM.domain+'/messages/customer/'+UCM.cid+'/cs/'+UCM.csid+'/image', {
+                mode: 'cors',
+                method: 'POST',
+                body: data
+            }).then(function(res) { return res.json();}).then(function (d) {
+                if (d.code === 200) {
+                    LIB.$('.uploading').innerHTML = 'upload done';
+                    LIB.$('.uploading').className = 'upload-done';
+                    UCM.sendMessage({
+                        action: 'message',
+                        text: d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h
+                    });
+                } else {
+                    LIB.$('.uploading').innerHTML = 'upload failed';
+                    LIB.$('.uploading').className = 'upload-failed';
                 }
-            };
-            xhr.open("POST", UCM.domain+'/messages/customer/'+UCM.cid+'/cs/'+UCM.csid+'/image', true);
-            xhr.send(data);
+            }).catch(function (error) {
+                LIB.$('.uploading') && (LIB.$('.uploading').innerHTML = 'upload failed');
+                LIB.$('.uploading') && (LIB.$('.uploading').className = 'upload-failed');
+            });
         },
         emojiCreate: function () {
             var emojis = '';
@@ -415,10 +424,9 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         resizeBodyHeight: function () {
             var body = LIB.$('.body'),
                 windowHeight = window.screen.height,
-                headerHeight = LIB.$('.header').offsetHeight,
                 footerHeight = LIB.$('.footer').offsetHeight;
 
-            body.style.height = windowHeight - headerHeight - footerHeight + 'px';
+            body.style.height = windowHeight  - footerHeight + 'px';
             body.scrollTop = body.scrollHeight;
         },
         initData: function (data) {
@@ -426,9 +434,8 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             this.csid = data.csid;
             this.csName = data.name;
 
-            data.photo && (this.csPhoto = UCM.domain + data.photo);
+            data.photo && (this.csPhoto = UCM.domain + '/'+ data.photo);
 
-            LIB.$('#title').innerHTML = data.name;
 
             if (data.msg.length > 0) {
                 this.initHistoryChat(data.msg);
@@ -480,7 +487,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 return false;
             }
 
-            this.socket = io('/c', {
+            this.socket = io(UCM.domain+'/c', {
                 forceNew: true,
                 reconnectionAttempts: 5,
                 reconnectionDelay: 2000,
@@ -555,11 +562,9 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         },
         socketCsStatus: function (status) {
             if (status === 1) {
-                LIB.$('#title').innerHTML = 'Entering';
-                !LIB.hasClass(LIB.$('#title'), 'entering') && LIB.addClass(LIB.$('#title'), 'entering');
+
             } else if(status === 2) {
-                LIB.$('#title').innerHTML = UCM.csName;
-                LIB.removeClass(LIB.$('#title'), 'entering');
+
             }
         },
         socketCsDisconnect: function () {
@@ -583,8 +588,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         socketDispatch: function (csid, name, avatar) {
             UCM.csid = csid;
             UCM.csName = name;
-            avatar && (UCM.csPhoto = UCM.domain + avatar);
-            LIB.$('#title').innerHTML = name;
+            avatar && (UCM.csPhoto = UCM.domain +'/'+ avatar);
         },
         socketActionRate: function () {
             UCM.addNewMessage({

@@ -67,12 +67,21 @@ export default class Dashboard extends Component {
             }
         ];
 
+        const topColResponsiveProps = {
+            xs: 24,
+            sm: 12,
+            md: 12,
+            lg: 6,
+            xl: 6,
+            style: {marginBottom: 24}
+        };
+
         numbersList.forEach(function (number) {
             number.number = numbersData[number.key] || 0;
         });
 
         let numberCards = numbersList.map((item, key) =>
-                (<Col key={key} lg={6} md={12}>
+                (<Col key={key} {...topColResponsiveProps}>
                     <NumberCard {...item} />
                 </Col>)
         );
@@ -83,14 +92,16 @@ export default class Dashboard extends Component {
                     <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <Row gutter={24}>
-                    { numberCards }
-                    <Col lg={24} md={24}>
-                        <Card title="Monthly Report" bordered={false}>
-                            <MonthlyReport { ...monthlyData }/>
-                        </Card>
-                    </Col>
-                </Row>
+                <div style={{ padding: "24px" }}>
+                    <Row gutter={24}>
+                        { numberCards }
+                        <Col xs={24} lg={24} md={24}>
+                            <Card title="Monthly Report" bordered={false}>
+                                <MonthlyReport { ...monthlyData }/>
+                            </Card>
+                        </Col>
+                    </Row>
+                </div>
             </div>
         );
     }

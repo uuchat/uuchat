@@ -7,7 +7,7 @@ export default class NumberCard extends PureComponent {
         let { color, icon, title, number } = this.props;
 
         return (
-        <Card className="numberCard">
+        <Card className="numberCard" bordered={false} bodyStyle={{ padding: 0 }}>
             <Icon className="iconWarp" style={{ color }} type={ icon } />
             <div className="content">
                 <p className="title">{title || 'No Title'}</p>
