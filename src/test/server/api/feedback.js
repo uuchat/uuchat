@@ -55,15 +55,15 @@ describe('api', function () {
         });
     });
     describe('#feedbackmeta', function () {
-        describe('POST /feedbackmetas/class/:classid/page', function () {
+        describe('POST /feedbackmetas/classes/:classid/page', function () {
             var classid = 'network';
 
             describe('request is normal', function () {
                 it('should response with success', function (done) {
                     request.post({
-                        url: baseUrl + '/feedbackmetas/class/' + classid + '/page',
+                        url: baseUrl + '/feedbackmetas/classes/' + classid + '/page',
                         form: {
-                            email: 'jian@163.com',
+                            email: 'admin@gmail.com',
                             feedback: [
                                 {key: 'notConnect'},
                                 {key: 'others', content: 'App abort.'}
