@@ -41,7 +41,7 @@ messageController.list = function (req, res, next) {
     var order = [['createdAt', 'DESC']];
 
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
-    var pageSize = 20;
+    var pageSize = utils.parsePositiveInteger(req.query.pageSize) || 20;
 
     return Message.list(condition, order, pageSize, pageNum, function (err, messages) {
         if (err) return next(err);

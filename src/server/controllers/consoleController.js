@@ -19,7 +19,7 @@ consoleController.getNumbers = function (req, res, next) {
 
     async.parallel([
         function (callback) {
-            ChatHistory.count({where: {createdAt: {$gte: today}}}, function (err, data) {
+            ChatHistory.count({where: {updatedAt: {$gte: today}}}, function (err, data) {
                 return callback(err, {dailyChats: data});
             });
         },
@@ -67,8 +67,8 @@ consoleController.getMonthlyData = function (req, res, next) {
     };
     var condition = {
         createdAt: {
-            $gte: monthInterval.start,
-            $lt: monthInterval.end
+            $gte: monthInterval.start
+            //,$lt: monthInterval.end
         }
     };
 

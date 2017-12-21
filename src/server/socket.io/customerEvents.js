@@ -83,7 +83,7 @@ SocketCustomerEvents.select = function(socket, cid, name, fn) {
 
 function selectAfter(cid, customerSuccess, csid, fn) {
     //chat history and return message
-    message.listLastFive(cid, csid, function (data) {
+    message.listLastTen(cid, csid, function (data) {
         // avatar info from csid;
         var photo = customerSuccess.photo || '';
         if (data) {
@@ -96,7 +96,7 @@ function selectAfter(cid, customerSuccess, csid, fn) {
 
 SocketCustomerEvents.message = function(cid, msg, fn) {
     //null check
-    if (_.isUndefined(msg) || msg.length === 0) {
+    if (_.isUndefined(msg) || _.isNull(msg) || msg.length === 0) {
         winston.info("message is empty!");
         fn(false);
         return;

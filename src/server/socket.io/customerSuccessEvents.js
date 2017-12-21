@@ -90,7 +90,7 @@ SocketCustomerSuccessEvents.refreshOnlineInfo = function() {
 
 SocketCustomerSuccessEvents.message = function(cid, msg, fn) {
     // null check ;
-    if (_.isUndefined(msg) || msg.length === 0) {
+    if (_.isUndefined(msg) || _.isNull(msg) || msg.length === 0) {
         winston.info("message is empty!");
         fn(false);
         return;

@@ -1,7 +1,10 @@
 "use strict";
 
+var async = require('async');
 var validator = require('validator');
 var Offline = require('../database/offline');
+var CustomerSuccess = require('../database/customerSuccess');
+var email = require('../email');
 
 var offlineController = module.exports;
 
@@ -30,6 +33,57 @@ offlineController.create = function (req, res, next) {
         if (err) return next(err);
 
         return res.send(resMsg);
+    });
+};
+
+offlineController.replyEmail = function (req, res, next) {
+    var uuid = req.params.uuid;
+
+    // setup email data with unicode symbols
+    var mailOptions = {
+        text: req.body.content
+    };
+
+    //from: '"jian" avnvxing@gmail.com', // sender address
+    //to: 'avnvshen@gmail.com', // list of receivers
+    //subject: 'Hello ✔', // Subject line
+    //text: 'Hello world?', // plain text body
+    //html: '<b>Hello world?</b>' // html body
+
+    async.waterfall([function (next) {
+        Offline.findById(uuid, next);
+    }, function (data, next) {
+
+        if (data.name) {
+            mailOptions.subject = 'Re ' + data.name;
+            mailOptions.to = '"' + data.name + '" ' + data.email;
+        } else {
+            mailOptions.subject = 'Re ' + data.email;
+            mailOptions.to = data.email;
+        }
+
+        if (!data.cid) return next();
+
+        // Ignore error when querying customer success email.
+        CustomerSuccess.CustomerSuccess.findOne({cid: data.cid}, function (err, data) {
+            if (err) return next();
+
+            mailOptions.from = data.email;
+
+            next();
+        });
+
+    }], function (err, results) {
+        if (err) return next(err);
+
+        //console.log('mailOptions:', mailOptions);
+
+        email.send(mailOptions, function (err, info) {
+            if (err) logger.error(err);
+
+        });
+
+        return res.json({code: 200, msg: 'success_reply_email'});
     });
 };
 

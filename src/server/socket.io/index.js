@@ -48,12 +48,11 @@ Sockets.init = function (server) {
 function listening() {
     //socket.io for customer success (cs)
     io.of('/cs').on('connection', function (socket) {
-
-        customerSuccessEvents.setup(socket);
-
         socket.on('cs.watchdog', function(fn) {
             fn(1);
         });
+
+        customerSuccessEvents.setup(socket);
 
         socket.on('cs.message', function(cid, msg, fn) {
             customerSuccessEvents.message(cid, msg, fn);
@@ -157,7 +156,7 @@ function authorize(socket, callback) {
                 || '';
             if (_.isEmpty(sessionId)) {
                 winston.error("session id is null");
-                return next('[[error: session id is null]]');
+                return callback('[[error: session id is null]]');
             }
             sessionStore.get(sessionId, function (err, sessionData){
                 if (err) {
@@ -170,7 +169,7 @@ function authorize(socket, callback) {
                     //winston.info(request.cookie);
                 } else {
                     winston.error("session is null");
-                    return next('[[error: session is null]]');
+                    return callback('[[error: session is null]]');
                 }
                 next();
             });

@@ -1,7 +1,7 @@
 'use strict';
 
 var os = require('os');
-
+var fs = require('fs');
 var crypto = require('crypto');
 var nconf = require('nconf');
 var _ = require('lodash');
@@ -131,6 +131,10 @@ utils.getCountry = function (ip, callback) {
 
         return callback(null, orgLookup.get(ip));
     });
+};
+
+utils.mkdir = function (dir) {
+    if (!fs.existsSync(dir)) fs.mkdir(dir);
 };
 
 module.exports = utils;

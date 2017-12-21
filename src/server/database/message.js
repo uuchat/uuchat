@@ -62,7 +62,7 @@ Message.delete = function (condition, callback) {
         return callback(err);
     });
 };
-Message.listLastFive = function (cid, csid, fn) {
+Message.listLastTen = function (cid, csid, fn) {
     models.Message.findAll({
         attributes: ['msg', 'type', 'createdAt'],
         where: {
@@ -70,7 +70,7 @@ Message.listLastFive = function (cid, csid, fn) {
             csid: csid
         },
         order: [['createdAt', 'DESC']],
-        limit: 5
+        limit: 10
     }).then(function (data) {
         jsonToObj(data);
         fn(_.reverse(data));

@@ -81,6 +81,8 @@ function offlineRoutes(app, middleware, controllers) {
     app.post('/offlines', controllers.offlineController.create);
     app.get('/offlines', controllers.offlineController.create);
 
+    app.post('/offlines/:uuid/reply', controllers.offlineController.replyEmail);
+
 }
 
 function chatHistoryRoutes(app, middleware, controllers) {

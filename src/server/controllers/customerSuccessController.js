@@ -83,7 +83,7 @@ customerSuccessController.login = function (req, res, next) {
 
             bcrypt.compare(customerSuccess.passwd, user.passwd).then(function (result) {
 
-                if (!result) return res.status(403).json({code: 1004, msg: 'passwd_error'});
+                if (!result) return res.status(403).json({code: 1004, msg: 'password_wrong'});
 
                 callback(null, user);
 
