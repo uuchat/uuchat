@@ -465,33 +465,32 @@ class CustomerSuccess extends Component{
      *
      */
     getMessageHistory = (cid) => {
-        let _self = this;
+        let _self = this,
+            {messageLists, csid, csAvatar} = this.state;
 
-        if (_self.state.messageLists[cid] && _self.state.messageLists[cid].length > 0) {
+        if (messageLists[cid] && messageLists[cid].length > 0) {
             return false;
         }
 
-        fetch('/messages/customer/'+cid+'/cs/'+this.state.csid)
+        fetch('/messages/customer/'+cid+'/cs/'+csid)
             .then((data) => data.json())
             .then(d =>{
-                let historyMessage = _self.state.messageLists,
-                    avatar = _self.state.csAvatar;
 
-                if (!historyMessage[cid] ) {
-                    historyMessage[cid]=[];
+                if (!messageLists[cid] ) {
+                    messageLists[cid]=[];
                 }
 
-                d.msg.map((dd) =>
-                     historyMessage[cid].push({
-                        msgAvatar: (dd.type === 1) ? avatar : '',
-                        msgText: dd.msg,
-                        msgType: dd.type,
-                        msgTime: dd.createdAt
+                d.msg.map((chat) =>
+                    messageLists[cid].push({
+                        msgAvatar: (chat.type === 1) ? csAvatar : '',
+                        msgText: chat.msg,
+                        msgType: chat.type,
+                        msgTime: chat.createdAt
                     })
                 );
 
                 _self.setState({
-                    messageLists: historyMessage
+                    messageLists: messageLists
                 });
 
             })
@@ -527,7 +526,7 @@ class CustomerSuccess extends Component{
         if (bgThemeImg) {
             bgThemeImg = bgThemeImg.split('::');
             if (bgThemeImg[0] === 'photo') {
-                bgStyle = {backgroundImage: (!isOnline || isConnectErr) ? '' : 'url('+bgThemeImg[1]+')'};
+                bgStyle = {backgroundImage: (!isOnline || isConnectErr) ? '' : 'url('+bgThemeImg[1].replace(/@/g, '&')+')'};
             } else if (bgThemeImg[0] === 'color') {
                 bgStyle = {background: bgThemeImg[1]};
             }
@@ -554,6 +553,7 @@ class CustomerSuccess extends Component{
                                     chatRoleName={customerSelect.name}
                                     transferHandle={this.socketTransfer}
                                     marked={customerSelect.marked }
+                                    customerSuccess={this}
                                     />
                             }
                             {

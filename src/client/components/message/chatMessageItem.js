@@ -30,7 +30,7 @@ class ChatMessageItem extends Component{
     };
     render() {
         let {ownerAvatar, ownerType, time, ownerText, shortSetting} = this.props,
-            imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg)/g,
+            imgReg = /[a-zA-Z0-9.%=/]{1,}[|]?[.](jpg|png|jpeg|gif)/g,
             imgSrc = ownerText,
             isImg = false,
             isOld = false,
@@ -61,9 +61,7 @@ class ChatMessageItem extends Component{
             shortCutSet = shortSetting ? <ChatMessageShortcut content={isImg ? '' : ownerText} /> : '';
         }
 
-        console.log();
-
-        if (ownerText.indexOf('@User ID@') > -1) {
+        if (typeof ownerText !== 'object' && ownerText.indexOf('@User ID@') > -1) {
             flClass += ' user-id';
         }
 

@@ -3,7 +3,8 @@ import { Modal } from 'antd';
 import ChatMessageItem from './chatMessageItem';
 import String2int from '../common/utils';
 
-var onlineListModal = null;
+var onlineListModal = null,
+    record = {};
 
 class ChatMessage extends Component{
 
@@ -14,28 +15,38 @@ class ChatMessage extends Component{
             visible: false,
             OnlineCustomerList: {},
             onlineShow: null,
-            markedList: {}
+            markedList: {},
+            historyChatMessage: []
         };
     }
     componentDidMount(){
 
-        let markedList = this.state.markedList;
+        let {markedList} = this.state,
+            {cid, marked, socket} = this.props;
 
-        if (!markedList[this.props.cid]) {
-            markedList[this.props.cid] = this.props.marked;
+        if (!markedList[cid]) {
+            markedList[cid] = marked;
         }
 
         this.setState({
             markedList: markedList
         });
-        this.props.socket && this.props.socket.on('cs.online.info', this.csOnlineInfo);
+
+        socket && socket.on('cs.online.info', this.csOnlineInfo);
     }
     componentWillUnmount(){
         this.props.socket && this.props.socket.off('cs.online.info');
     }
     componentDidUpdate(){
         let msgList = this.refs.list;
+
+        if (record[this.props.cid].isLoading) {
+            record[this.props.cid].isLoading = false;
+            return false;
+        }
+
         msgList.scrollTop = msgList.scrollHeight;
+
     }
 
     marked = () => {
@@ -142,6 +153,59 @@ class ChatMessage extends Component{
 
     };
 
+    scrollHandle = (e) => {
+
+        let msgList = this.refs.list,
+            {csid, cid, customerSuccess} = this.props,
+            {messageLists, csAvatar} = customerSuccess.state;
+
+        if ((e.deltaY < 0) && (msgList.scrollTop <= 0) && record[cid].hasMoreChat && !record[cid].isLoading) {
+            record[cid].isLoading = true;
+            msgList.className += ' loading';
+            requestAnimationFrame(function () {
+                getChatHistory();
+            });
+        }
+
+        function getChatHistory(){
+
+            fetch('/messages/customer/' + cid + '/cs/' + csid+'?pageNum='+record[cid].pageNum+'&pageSize=10')
+                .then((data) => data.json())
+                .then(d =>{
+                    if (d.code === 200) {
+                        if (d.msg.length === 0 || d.msg.length < 10) {
+                            record[cid].hasMoreChat = false;
+                        }
+                        record[cid].pageNum++;
+
+                        if (d.msg.length > 0) {
+                            d.msg.map(chat => messageLists[cid].unshift({
+                                msgAvatar: (chat.type === 1) ? csAvatar : '',
+                                msgText: chat.msg,
+                                msgType: chat.type,
+                                msgTime: chat.createdAt
+                            }));
+                            customerSuccess.setState({
+                                messageLists: messageLists
+                            });
+                        }
+
+                    }
+
+                    setTimeout(function () {
+                        record[cid].isLoading = false;
+                        msgList.className = 'message-lists';
+                    }, 2000);
+
+                })
+                .catch(e => {
+                    record[cid].isLoading = false;
+                    msgList.className = 'message-lists';
+                });
+        }
+
+    };
+
     render(){
         let {markedList, visible, isMarkShow} = this.state,
             {cid, marked, chatRoleName, messageLists, csAvatar} = this.props,
@@ -150,8 +214,19 @@ class ChatMessage extends Component{
             avatar = '',
             hasMarked = markedList[cid] || marked;
 
+        !record[cid] && (record[cid] = {
+            pageNum: 2,
+            isLoading: false,
+            hasMoreChat: true
+        });
+
         hasMarked = (hasMarked < 1 ? 7 : hasMarked);
         avatar = <div className={"avatar-color avatar-icon-"+cIndex} >{chatRoleName.substr(0,1).toUpperCase()}</div>;
+
+
+        if (messageLists && (messageLists.length === 0 || messageLists.length < 20)) {
+            record[cid].hasMoreChat = false;
+        }
 
         return (
             <div className="chat-message">
@@ -160,8 +235,8 @@ class ChatMessage extends Component{
                          <ul className="more-options" style={{display: !isMarkShow ? 'none' : 'block'}} onClick={this.optionSelect}>
                             <span className="caret"></span>
                             <h3>List Actions <span className="fr options-close" onClick={this.markHide}>╳</span></h3>
-                            <li data-type="m">Mark</li>
-                            <li data-type="t">Transfer</li>
+                            <li data-type="m"><i className="action-icon mark"></i>Mark</li>
+                            <li data-type="t"><i className="action-icon transfer"></i>Transfer</li>
                         </ul>
                         <Modal
                             title="Mark customer for favorite color"
@@ -179,7 +254,7 @@ class ChatMessage extends Component{
                         </Modal>
                     </div>
                 </div>
-                <div className="message-lists" ref="list">
+                <div className="message-lists" ref="list" onWheel={this.scrollHandle}>
                     {messageLists && messageLists.map((msg, index) =>
                             <ChatMessageItem
                                     key={msg.msgTime}

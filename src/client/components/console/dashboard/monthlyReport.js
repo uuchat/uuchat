@@ -14,7 +14,7 @@ export default class MonthlyReport extends PureComponent {
 
     render() {
         let { chats, offlineMessages, messages, rates, favorablePercent, criticalPercent } = this.props;
-        let offlinePercent = chats ? Math.round(offlineMessages * 100 / chats) : 0;
+        let offlinePercent = chats ? Math.round(offlineMessages * 100 / messages) : 0;
 
         const percentFormat = (percent) => percent + '%';
         return (

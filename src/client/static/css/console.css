@@ -1,8 +1,26 @@
 #console-body .logo {
-    height: 32px;
+    height: 64px;
+    position: relative;
+    line-height: 64px;
+    padding-left: 12px;
+    transition: all .3s;
     background: #333;
-    border-radius: 6px;
-    margin: 16px;
+    overflow: hidden;
+}
+
+#console-body .logo img {
+    display: inline-block;
+    vertical-align: middle;
+    height: 64px;
+}
+#console-body .logo h1 {
+    color: #fff;
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 20px;
+    margin: 0 0 0 12px;
+    font-family: 'Myriad Pro', 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    font-weight: 600;
 }
 
 #console-body .ant-layout-sider-collapsed .anticon {
@@ -36,7 +54,7 @@
 
 #console-body .sideTrigger {
     font-size: 18px;
-    line-height: 64px;
+    *line-height: 64px;
     padding: 0 16px;
     cursor: pointer;
     transition: color .3s;
@@ -72,7 +90,7 @@
 
 .numberCard {
     padding: 32px;
-    margin-bottom: 24px;
+    *margin-bottom: 24px;
     cursor: pointer;
 }
 

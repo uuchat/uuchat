@@ -43,9 +43,11 @@ class Login extends Component{
                         }
                         window.location.href = redirect;
                     } else if (d.code === 1002) {
-                        message.error('Email is not found', 4);
+                        message.error('Email or password is empty', 4);
                     } else if (d.code === 1003) {
-                        message.error('User unauthorized ', 4);
+                        message.error('Email not found', 4);
+                    } else if (d.code === 1004) {
+                        message.error('Password wrong ', 4);
                     } else {
                         message.error(d.msg, 4);
                     }
@@ -63,7 +65,7 @@ class Login extends Component{
         let { getFieldDecorator } = this.props.form;
         return (
             <div className="login-body">
-                <div className="login-header"> <span></span> </div>
+                <div className="login-header"><a href="/"><span></span></a></div>
                 <Form onSubmit={this.handleSubmit} className="login-form">
                     <FormItem>
                          {

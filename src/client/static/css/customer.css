@@ -119,6 +119,21 @@
     height: 400px\0;
     overflow-y: auto;
 }
+.chat-console .chat-msg.loading:before{
+    content: '';
+    display: block;
+    margin: 2px auto;
+    width: 20px;
+    height: 20px;
+    border-left:2px solid rgba(0, 133, 253, 1);
+    border-bottom:2px solid rgba(0, 0, 0, 0.2);
+    border-right:2px solid rgba(0, 0, 0, 0.2);
+    border-top:2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 100%;
+    -webkit-animation: loading 1s linear infinite;
+    animation: loading 1s linear infinite;
+    pointer-events: none;
+}
 .chat-console .upload-tips{
     position: absolute;
     top: 50px;
@@ -286,20 +301,23 @@
     background-color: #e9eaeb;
     border-radius: 0 0 10px 10px;
 }
-.chat-console  .chat-send pre{
-    padding: 10px 0 20px 0;
+.chat-console  .chat-send .send-pre{
+    padding: 16px 0px;
+    font-size: 13px;
+    line-height: 16px;
+    display: block;
+    width: 100%;
+    height: 100%;
+    line-height: 16px;
     visibility:hidden;
     white-space: pre-wrap;
     word-wrap: break-word;
 }
-
-
 .chat-console  .chat-send-text{
     position: absolute;
     left: 0;
     right:0;
     bottom:0;
-    padding: 10px 0;
     width: 400px;
     min-height: 50px;
     min-height: 30px\0;
@@ -309,25 +327,25 @@
 }
 .chat-console  .chat-send-area{
     position:absolute;
-    top: 0;
     bottom:0;
     left:0;
-    right:0;
-    padding:16px 90px 16px 10px;
+    padding:16px 70px 16px 10px;
     width: 100%;
     height:100%;
-    font: 400 13px/16px helvetica, arial, sans-serif;
+    font-weight: 400;
+    font-family: "Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
+    font-size: 13px;
+    line-height: 16px;
     resize:none;
     border:none;
-    word-break:break-all;
+    word-wrap: break-word;
+    white-space: pre-wrap;
     overflow:hidden;
     background-color: #e9eaeb;
     border-top: 1px solid transparent;
     border-radius: 0 0 5px 5px;
-    word-spacing: 2px;
     -webkit-transition: background-color .2s ease,box-shadow .2s ease;
     transition: background-color .2s ease,box-shadow .2s ease;
-    font-family: "Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
 }
 
 .chat-console  .chat-send-area:hover,
@@ -691,5 +709,16 @@
     }
     100%{
         transform: translateY(0);
+    }
+}
+
+@-webkit-keyframes loading {
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes loading {
+    to{
+        transform: rotate(360deg);
     }
 }

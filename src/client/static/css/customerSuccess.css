@@ -11,7 +11,7 @@
 }
 .uuchat-customerSuccess .customerSuccess-main{
     margin: 30px;
-    height: calc(88%);
+    height: calc(88vh);
     border:1px solid #fdfdfd;
     border-radius: 4px;
     background-color:#fff;
@@ -23,9 +23,9 @@
     padding: 10px 30px;
     min-height: 50px;
     line-height: 30px;
-    background-color: #f3f2f1;
+    background: #fff url(../images/uuchat_logo.svg) no-repeat center center;
+    background-size: auto 80%;
     box-shadow: 0 1px 2px #ccc;
-    background: #fff url(../images/uuchat_logo_48.png) no-repeat center center;
 }
 .uuchat-customerSuccess.off .customerSuccess-header{
     background-color:#353359;
@@ -37,7 +37,7 @@
 .customerSuccess-header .status-bar, .logout{
     display: inline-block;
     padding: 0 15px;
-    background-color: #fff;
+    background-color: #f3f2f1;
     border-radius: 30px;
     text-align: center;
     cursor: pointer;
@@ -256,7 +256,7 @@
     height: calc(75vh);
 }
 .customerSuccess-left .customer-lists{
-    height: 100%;
+    height: calc(75vh - 80px);
     overflow-y: auto;
 }
 .customerSuccess-left .customer-lists::-webkit-scrollbar{
@@ -336,15 +336,32 @@
     background-color: #fdfdfd;
 }
 .customerSuccess-content .chat-message{
-    height: calc(63vh);
+    height: calc(71vh);
     padding:0 10px;
     border-bottom: 1px solid #d8dddf;
     overflow: hidden;
 }
 .customerSuccess-content .message-lists{
     padding: 0 10px;
-    height:calc(64vh - 50px);
+    height:calc(71vh - 50px);
     overflow-y: auto;
+}
+.customerSuccess-content .loading{
+    pointer-events: none;
+}
+.customerSuccess-content .loading:before{
+    content: '';
+    display: block;
+    margin: 5px auto;
+    width: 20px;
+    height: 20px;
+    border-top: 2px solid rgba(0, 0, 0, 0.2);
+    border-right: 2px solid rgba(0, 0, 0, 0.2);
+    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+    border-left: 2px solid #3498db;
+    border-radius: 100%;
+    -webkit-animation: loading 1.2s linear infinite;
+    animation: loading 1.2s linear infinite;
 }
 .chat-lists-history{
     max-height: 400px;
@@ -368,7 +385,8 @@
     cursor: pointer;
 }
 .customerSuccess-content .chat-tags:hover{
-    background-color: #ccc;
+    background-color: rgba(0, 0, 0, 0.3);
+    color: #fff;
 }
 .customerSuccess-content .chat-tags .more-options{
     position: absolute;
@@ -402,7 +420,8 @@
 .chat-tags .more-options h3{
     margin: 0 10px 10px 10px;
     line-height: 30px;
-    font-weight: normal;
+    color: #838c91;
+    text-align: center;
     border-bottom: 1px solid #ccc;
 }
 .chat-tags .more-options li{
@@ -411,10 +430,34 @@
     width: 220px;
     line-height: 30px;
     font-weight: bold;
+    color: rgba(0, 0, 0, 0.6);
 }
 .chat-tags .more-options li:hover{
     background-color:#258fd5;
     color: #fff;
+}
+.chat-tags .more-options li:hover .action-icon.mark{
+    background: url(../../static/images/mark_selected.svg) no-repeat center center;
+    background-size: cover;
+}
+.chat-tags .more-options li:hover .action-icon.transfer{
+    background: url(../../static/images/transfer_selected.svg) no-repeat center center;
+    background-size: cover;
+}
+.chat-tags .more-options .action-icon{
+    display: inline-block;
+    margin-right: 5px;
+    width: 15px;
+    height: 15px;
+    vertical-align: middle;
+}
+.chat-tags .more-options .action-icon.mark{
+    background: url(../../static/images/mark.svg) no-repeat center center;
+    background-size: cover;
+}
+.chat-tags .more-options .action-icon.transfer{
+    background: url(../../static/images/transfer.svg) no-repeat center center;
+    background-size: cover;
 }
 .chat-tags .more-options .options-close{
     font-size: 12px;
@@ -516,6 +559,7 @@
     position: relative;
 }
 .avatar-box img{
+    display: inline-block;
     padding: 5px;
     border:1px solid #ccc;
     border-radius: 3px;
@@ -758,7 +802,7 @@
 }
 
 .chat-send{
-    height: calc(37vh);
+    height: calc(17vh);
 }
 .send-tools{
     padding: 8px;
@@ -862,13 +906,16 @@
     padding: 0 5px;
 }
 .chat-text .chat-textarea{
-    height:100px;
+    height:calc(10vh);
     resize: none;
     border-radius: 2px;
     font-size: 14px;
+    line-height: 16px;
     word-spacing: 2px;
 }
-
+.chat-text .chat-textarea:focus{
+    box-shadow: none;
+}
 /* emoji */
 .emoji-item {
     display: inline-block;
@@ -1015,7 +1062,6 @@
     color: #000;
 }
 .theme .customerSuccess-header{
-    opacity: 0.8;
     box-shadow: none;
 }
 .theme .customerSuccess-left,
@@ -1030,7 +1076,7 @@
     background: rgba(0, 0, 0, 0.5);
 }
 .theme .message-lists .message-item p{
-    color: #000;
+    color: rgba(0, 0, 0, 0.7);
 }
 .theme .customerSuccess-left li .chat-close{
     background: rgba(0, 0, 0, 0.5);
@@ -1045,7 +1091,7 @@
     }
 }
 
-@media screen and (max-width: 767px){
+@media screen and (min-width: 641px) and (max-width: 767px){
     .uuchat-customerSuccess .customerSuccess-main{
         margin: 10px;
     }
@@ -1069,14 +1115,16 @@
         height: 100%;
     }
     .customerSuccess-header{
+       padding: 10px;
        height: 30px;
-       background-position: 10% center;
+       background-position: 20% center;
     }
     .customerSuccess-header .status-bar{
        display:none;
     }
     .customerSuccess-header .m-menu{
         display: inline-block;
+        margin-left: 0;
     }
     .uuchat-customerSuccess .customerSuccess-main{
         margin: 10px 2%;
@@ -1085,6 +1133,7 @@
     }
     .customerSuccess-content{
         border: none;
+        height: calc(100vh - 100px);
     }
     .customerSuccess-left{
         position: fixed;
@@ -1112,11 +1161,12 @@
     .customerSuccess-left .customer-lists li .chat-close{
         display: none;
     }
+
     .customerSuccess-content .chat-message{
-        height: calc(100vh - 170px);
+        height: calc(80vh - 70px);
     }
-    .customerSuccess-content .message-lists{
-        height: calc(100vh - 200px);
+    .customerSuccess-content .chat-message .message-lists{
+        height: calc(80vh - 120px);
     }
     .chat-send{
         position: relative;
@@ -1145,4 +1195,13 @@
         left: 0px;
     }
 }
-
+@-webkit-keyframes loading {
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes loading {
+    to{
+        transform: rotate(360deg);
+    }
+}

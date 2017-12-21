@@ -28,10 +28,7 @@ ul,li{
 
 body {
     line-height:1;
-}
-
-:focus {
-    outline: 1;
+    min-width: 320px;
 }
 
 article,aside,canvas,details,figcaption,figure,

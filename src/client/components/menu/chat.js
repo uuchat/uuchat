@@ -12,7 +12,7 @@ class Chat extends Component{
     }
 
     msgFilter(msg){
-        let imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
+        let imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g,
             m = msg.replace && msg.replace(/#/gi, "<br />");
 
         if (msg.replace && imgReg.test(m)) {

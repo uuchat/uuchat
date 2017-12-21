@@ -145,7 +145,7 @@ class Register extends Component{
 
         return (
             <div className="uuchat-register">
-                <div className="register-header"><span></span></div>
+                <div className="register-header"><a href="/"><span></span></a></div>
                 <RegistrationForm />
             </div>
         );

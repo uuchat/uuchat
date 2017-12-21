@@ -92,7 +92,7 @@ export default class Dashboard extends Component {
                     <Breadcrumb.Item>Dashboard</Breadcrumb.Item>
                 </Breadcrumb>
 
-                <div style={{ padding: "24px" }}>
+                <div style={{ padding: "0 12px" }}>
                     <Row gutter={24}>
                         { numberCards }
                         <Col xs={24} lg={24} md={24}>

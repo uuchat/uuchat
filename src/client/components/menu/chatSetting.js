@@ -100,7 +100,7 @@ class ChatSetting extends Component{
     };
     themeClose = () => {
         let csid = localStorage.getItem('uuchat.csid'),
-            bgThemeImg = localStorage.getItem('bgThemeImg'),
+            bgThemeImg = localStorage.getItem('bgThemeImg').replace(/&/g, '@'),
             bgThemeOpacity = localStorage.getItem('bgThemeOpacity');
 
         fetch('/customersuccesses/'+csid+'/theme', {
@@ -118,7 +118,7 @@ class ChatSetting extends Component{
     backgroundSelect = (e) => {
         if (e.target.tagName.toLocaleLowerCase() === 'span') {
             let { customerSuccess } = this.props,
-                theme = e.target.getAttribute('data-value');
+                theme = e.target.getAttribute('data-value').replace(/w=1080/g, 'w=1280');
 
             customerSuccess.setState({bgThemeImg: theme});
             localStorage.setItem('bgThemeImg', theme);
@@ -151,6 +151,17 @@ class ChatSetting extends Component{
             isSetVisible: false
         });
     };
+    beforeUpload = (file) => {
+        let isLt2M = file.size / 1024 / 1024 < 2;
+        if (!isLt2M) {
+            message.error('Image must smaller than 2MB!', 4);
+        }
+        if (!/(.jpg|.png|.gif|.jpeg)/g.test(file.name)) {
+            message.error('Image type must be jpg、jpeg、png、gif!', 4);
+            isLt2M = false;
+        }
+        return isLt2M;
+    };
     render(){
         let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet, opacity } = this.state,
             {csid, avatarHandle, name} = this.props,
@@ -163,6 +174,7 @@ class ChatSetting extends Component{
                 headers: {
                     authorization: 'authorization-text'
                 },
+                beforeUpload: _self.beforeUpload,
                 onChange(info) {
                     let file = info.file;
                     if (file.status === 'uploading') {
@@ -175,7 +187,7 @@ class ChatSetting extends Component{
                     } else if (file.status === 'done') {
                         if (file.response.code === 200) {
                             let photo = file.response.msg.photo;
-                            localStorage.setItem('uuchat.avatar', photo);
+                            localStorage.setItem('uuchat.avatar', photo+'?t='+(new Date()).getTime());
                             avatarHandle(photo);
                             setTimeout(function(){
                                 _self.setState({
@@ -215,7 +227,7 @@ class ChatSetting extends Component{
                                 <Input defaultValue={name} ref="name" />
                             </div>
                             <div className="account-item">
-                                <p>Operator photo(100x100)</p>
+                                <p>Avatar size(100x100)</p>
                                 <div className="avatar-box">
                                     <img width="112" height="112" src={(localStorage['uuchat.avatar'] !=='' ? localStorage['uuchat.avatar'] : avatar)} alt="" />
                                     <div className="avatar-process" style={{display: isUploading ? 'block' : 'none'}}>{percent}%</div>

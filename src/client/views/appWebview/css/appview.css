@@ -134,6 +134,50 @@ html, body{
     padding:4% 2%;
     max-height: calc(100vh - 50px);
     overflow-y: auto;
+    -webkit-transition: all 0.5s linear;
+    transition: all 0.5s linear;
+}
+.body.loading:before{
+    content: '';
+    display: block;
+    margin: 2px auto;
+    width: 20px;
+    height: 20px;
+    border-left:2px solid rgba(0, 133, 253, 1);
+    border-bottom:2px solid rgba(0, 0, 0, 0.2);
+    border-right:2px solid rgba(0, 0, 0, 0.2);
+    border-top:2px solid rgba(0, 0, 0, 0.2);
+    border-radius: 100%;
+    -webkit-transition: all 0.5s linear;
+    transition: all 0.5s linear;
+    -webkit-animation: loading 1s linear infinite;
+    animation: loading 1s linear infinite;
+}
+.body .reconnect-mask{
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 9999;
+    align-items: center;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+}
+.body .reconnect-mask i{
+    display: block;
+    margin: 0 auto;
+    width: 100px;
+    height: 100px;
+    border-left:8px solid rgba(0, 133, 253, 1);
+    border-bottom:8px solid rgba(255, 255, 255, 0.9);
+    border-right:8px solid rgba(255, 2555, 255, 0.9);
+    border-top:8px solid rgba(255, 255, 255, 0.9);
+    border-radius: 100%;
+    -webkit-transition: all 0.5s linear;
+    transition: all 0.5s linear;
+    -webkit-animation: loading 1s linear infinite;
+    animation: loading 1s linear infinite;
 }
 .body .message{
     padding: 5px 0;
@@ -422,4 +466,32 @@ html, body{
     flex-grow: 1;
     flex-shrink: 1;
     flex-basis: auto;
+}
+
+@-webkit-keyframes loading {
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes loading {
+    to{
+        transform: rotate(360deg);
+    }
+}
+
+@-webkit-keyframes reload {
+    from {
+        -webkit-transform: translateX(100%);
+    }
+    to{
+        -webkit-transform: translateX(0);
+    }
+}
+@keyframes reload {
+    from {
+        transform: translateX(100%);
+    }
+    to{
+        transform: translateX(0);
+    }
 }

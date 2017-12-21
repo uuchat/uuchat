@@ -209,6 +209,9 @@
         timeStart: U.dateISOFomat(new Date()).getTime(),
         timeOutSeconds: 2700000,
         timeOutTimer: null,
+        msgPageNum: 1,
+        isLoadingMsg: false,
+        hasMoreMsg: true,
         chat: {
             cid: '',
             csid: '',
@@ -300,7 +303,7 @@
         tempSend: function(){
             var str = '<div class="chat-send">';
             str += '<div class="chat-send-text">';
-            str += '<pre class="send-pre"></pre>';
+            str += '<pre class="send-pre"> </pre>';
             str += '<textarea placeholder="Input text and Press Enter" class="chat-send-area" maxlength="256" type="text"></textarea>';
             str += '<div class="chat-send-btns">';
             str += this.tempEmoji();
@@ -346,7 +349,7 @@
 
             if (0 === role) {
                 cls += 'chat-to';
-                if (/(png|jpg|gif|jpeg)\|/g.test(msg)) {
+                if (/[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g.test(msg)) {
                     cls += isOld ? ' done-img' : '';
                 } else {
                     cls += isOld ? ' done' : '';
@@ -364,8 +367,89 @@
 
             return str;
         },
+        msgScroll: function () {
+            if (document.mozFullScreen !== undefined) {
+                U.addEvent(U.$('.chat-msg'), 'DOMMouseScroll', scrollHandler);
+            } else {
+                U.addEvent(U.$('.chat-msg'), 'mousewheel', scrollHandler);
+            }
+
+            function scrollHandler(e) {
+
+                 if (!CHAT.hasMoreMsg || CHAT.isLoadingMsg) {
+                     return false;
+                 }
+
+                 e = e || window.event;
+
+                 e.delta = e.wheelDelta ? e.wheelDelta / 120 : -(e.detail || 0) / 3;
+
+                 if (e.stopPropagation) {
+                    e.stopPropagation();
+                 } else {
+                    e.cancelBubble = true;
+                 }
+
+                 if (e.delta > 0 && e.target.scrollTop <= 0) {
+                      CHAT.isLoadingMsg = true;
+                      U.addClass(U.$('.chat-msg'), 'loading');
+                      historyMsgRequest();
+                 }
+            }
+
+
+            function historyMsgRequest() {
+
+                U.ajax({
+                    url: CHAT.domain + '/messages/customer/' + CHAT.chat.cid + '/cs/' + CHAT.chat.csid,
+                    type: 'GET',
+                    fileType: true,
+                    data: 'pageNum='+CHAT.msgPageNum+'&pageSize=10',
+                    success: function (d) {
+
+                        var d = JSON.parse(d);
+
+                        if (d.code === 200) {
+                            CHAT.msgPageNum++;
+
+                            if (d.msg.length < 10 || d.msg.length === 0) {
+                                CHAT.hasMoreMsg = false;
+                            }
+                            renderMsgItems(d.msg);
+                        }
+
+                        CHAT.isLoadingMsg = false;
+
+                    },
+                    error: function (error) {
+                        CHAT.isLoadingMsg = false;
+                    }
+                });
+            }
+
+            function renderMsgItems(data) {
+
+                if (data.length > 0) {
+
+                    var chatMsg = U.$('.chat-msg'),
+                        msgList = '';
+
+                    for (var i = 0, l = data.length; i < l; i++) {
+                        var msg = data[i];
+                        if (msg.type !== 3 && msg.type !== 4) {
+                            msgList += CHAT.tempMsgItem(msg.type, msg.msg, msg.createdAt);
+                        }
+                    }
+
+                    chatMsg.innerHTML = msgList+chatMsg.innerHTML;
+                    U.removeClass(U.$('.chat-msg'), 'loading');
+                }
+
+            }
+
+        },
         msgFilter: function(msg){
-            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
+            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g,
                 imgSrc = msg,
                 str = '';
 
@@ -391,6 +475,12 @@
                 chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
             } else {
                 chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, msgObj.time));
+            }
+
+            if(!U.hasClass(U.$('.chat-btn'), 'chat-btn-close')){
+                var chatNums = U.$('.chat-nums');
+                chatNums.innerHTML = +chatNums.innerHTML + 1;
+                chatNums.style.display = 'block';
             }
 
             chatMsg && (chatMsg.scrollTop = chatMsg.scrollHeight);
@@ -489,6 +579,10 @@
 
             U.$('.chat-main').innerHTML = this.tempMsg();
             U.$('.chat-main').innerHTML += this.tempSend();
+
+            if (data.msg.length < 10 || data.msg.length === 0) {
+                CHAT.hasMoreMsg = false;
+            }
 
             if (data.msg.length > 0) {
                 for (var i = 0, l = data.msg.length; i < l; i++) {
@@ -633,6 +727,8 @@
 
             });
 
+            this.msgScroll();
+
             U.addEvent(U.$('.chat-send-area'), 'keydown', function(e){
                 var e = e || w.event,
                     val = '',
@@ -641,13 +737,13 @@
 
                 setTimeout(function () {
                     val = _self.value;
-                    val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;").replace(/ /gi, '&nbsp;');
+                    val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;");
 
                     if (val.length > 0 && !/^(&nbsp;)*$/g.test(val)) {
-                        U.$('.send-pre').innerHTML = val
+                        U.$('.send-pre').innerHTML = val;
                     } else {
                         _self.value = '';
-                        U.$('.send-pre').innerHTML = '';
+                        U.$('.send-pre').innerHTML = ' ';
                     }
 
                     if (13 === keyCode) {
@@ -657,7 +753,7 @@
                         }
                         _self.value = '';
                         _self.focus();
-                        U.$('.send-pre').innerText = '';
+                        U.$('.send-pre').innerHTML = ' ';
                         e.returnValue && (e.returnValue = false);
                         e.preventDefault && e.preventDefault();
                     }
@@ -665,7 +761,7 @@
 
             });
             U.addEvent(U.$('.chat-send-area'), 'blur', function(e){
-                U.$('.send-pre').innerHTML = this.value.replace(/^\s$/g, '');
+                U.$('.send-pre').innerHTML = this.value.replace(/^\s$/g, ' ');
             });
 
             function showUploadImageTips(text) {
@@ -808,7 +904,7 @@
 
             CHAT.socket && CHAT.socket.emit('c.message', CHAT.chat.cid, msg, watchDog(function(err, success){
                 if (success) {
-                    if (/(png|jpg|jpeg|gif)\|/g.test(msg)) {
+                    if (/[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g.test(msg)) {
                         U.addClass(U.$('.t-'+d), 'done-img');
                     } else {
                         U.addClass(U.$('.t-'+d), 'done');
@@ -835,12 +931,6 @@
                 msg: msg,
                 time: new Date()
             });
-
-            if(!U.hasClass(U.$('.chat-btn'), 'chat-btn-close')){
-                var chatNums = U.$('.chat-nums');
-                chatNums.innerHTML = +chatNums.innerHTML + 1;
-                chatNums.style.display = 'block';
-            }
         },
         socketCloseDialog: function(){
             CHAT.msgTranslate({

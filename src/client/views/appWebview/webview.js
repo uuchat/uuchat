@@ -105,6 +105,56 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 UCM.lastEditRange = range;
             }
 
+        },
+        ajax: function (options) {
+
+            var defaultOptions = {
+                type: 'GET',
+                url: '',
+                data: '',
+                success: function (d) {},
+                error: function (e) {},
+                progress: function (f) {},
+                error: function (err) {}
+            }, xhr;
+
+            for (var key in options) {
+                defaultOptions[key] = options[key];
+            }
+
+            xhr = new XMLHttpRequest();
+
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState == 4 && xhr.status == 200) {
+
+                    var response = '',
+                        type = xhr.getResponseHeader('Content-type');
+
+                    if (type.indexOf('xml') !== -1 && xhr.responseXML) {
+                        response = xhr.responseXML;
+                    } else if(type === 'application/json') {
+                        response = JSON.parse(xhr.responseText);
+                    } else {
+                        response = xhr.responseText;
+                    }
+
+                    defaultOptions.success(response);
+
+                } else if(xhr.readyState == 4 && xhr.status !== 200){
+                    defaultOptions.error(xhr.status);
+                }
+            };
+            xhr.upload.onprogress = defaultOptions.progress;
+            xhr.onerror = defaultOptions.error;
+
+            if (defaultOptions.type == 'GET') {
+                xhr.open(defaultOptions.type, defaultOptions.url + '?' + defaultOptions.data, true);
+                xhr.send(null);
+            } else {
+                xhr.open(defaultOptions.type, defaultOptions.url, true);
+                xhr.send(defaultOptions.data);
+            }
+
         }
     };
 
@@ -116,13 +166,14 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         csName: '',
         csPhoto: 'images/contact.png',
         userId: '',
-        domain: '',
-        maxTimes: 2700000,
+        domain: 'https://uuchat.io',
+        maxTimes: 2700*1000,
         startTime: 0,
         clockTimer: null,
         isConnectErr: false,
         isCustomerSuccessOnline: false,
         lastEditRange: null,
+        hasChatHistory: true,
         init: function () {
             this.getUserType();
             this.control();
@@ -204,25 +255,31 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 }
             });
             LIB.addEvent(LIB.$('#photo'), 'change', function (e) {
-                if (UCM.isCustomerSuccessOnline) {
-                    UCM.addNewMessage({
-                        type: 'system',
-                        text: '<span class="uploading">uploading....</span>'
-                    });
-                    LIB.imageCompress(e.target.files[0], UCM.photoUpload);
-                }
+                var file = e.target.files[0];
                 this.value = '';
+                UCM.imagesUploadFilter(file);
             });
             LIB.addEvent(LIB.$('#camera'), 'change', function (e) {
-                if (UCM.isCustomerSuccessOnline) {
-                    UCM.addNewMessage({
-                        type: 'system',
-                        text: '<span class="uploading">uploading....</span>'
-                    });
-                    LIB.imageCompress(e.target.files[0], UCM.photoUpload);
-                }
+                var file = e.target.files[0];
                 this.value = '';
+                UCM.imagesUploadFilter(file);
             });
+        },
+        imagesUploadFilter: function (file) {
+            if (UCM.isCustomerSuccessOnline) {
+                UCM.addNewMessage({
+                    type: 'system',
+                    text: '<span class="uploading">uploading....</span>'
+                });
+                if (!/(.jpg|.gif|.png)$/g.test(file.name)) {
+                    LIB.$('.uploading').innerHTML = 'Image format must be jpg 、png、gif';
+                    LIB.$('.uploading').className = 'upload-failed';
+                    return false;
+                }
+
+                LIB.imageCompress(file, UCM.photoUpload);
+            }
+            this.value = '';
         },
         chatClock: function () {
             clearInterval(this.clockTimer);
@@ -235,8 +292,9 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                     UCM.socket.close();
                     UCM.socket = null;
                     UCM.addNewMessage({
-                        type: 'system',
-                        text: 'Dialogue is disconnected due to prolonged operation'
+                        type: 'socket',
+                        btn: true,
+                        text: 'Disconnected due to idle.'
                     });
                 }
 
@@ -247,7 +305,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             if (!UCM.isCustomerSuccessOnline) {
                 UCM.addNewMessage({
                     type: 'socket',
-                    text: 'The customer success not online.'
+                    text: 'CustomerSuccess was not online.'
                 });
                 return false;
             }
@@ -287,7 +345,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         },
         filterMessage: function (text) {
 
-            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg)/g,
+            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g,
                 linkReg = /((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#\/%?=~_|!:,.;]*)/g,
                 newText = '';
 
@@ -319,11 +377,17 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                     str = this.systemMessageItem(msg.text);
                     break;
                 case 'socket':
+                    clearInterval(UCM.clockTimer);
+
+                    if (msg.btn) {
+                        msg.text += '<span class="reconnect-btn">Reconnect</span>';
+                    }
+
                     if (LIB.$('.system-socket')) {
                         LIB.$('.system-socket').innerHTML = msg.text;
-                        return false;
+                    } else {
+                        str = this.socketMessageItem(msg.text);
                     }
-                    str = this.socketMessageItem(msg.text);
                     break;
                 default:
                     break;
@@ -340,6 +404,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         messageEvents: function () {
             if (LIB.$('.reconnect-btn')) {
                 LIB.addEvent(LIB.$('.reconnect-btn'), 'click', function () {
+                    LIB.$('.body').innerHTML = '<div class="reconnect-mask"><i></i></div>';
                     UCM.socketInit();
                 });
             }
@@ -385,32 +450,37 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 LIB.removeClass(praise, 'send');
             }
         },
-        photoUpload: function (img, name) {
+        photoUpload: function (imgFile, name) {
 
             var data = new FormData();
-            data.append('image', dataURLtoBlob(img), name);
+            data.append('image', dataURLtoBlob(imgFile), name);
 
+            LIB.ajax({
+                type: 'POST',
+                url: UCM.domain+'/messages/customer/'+UCM.cid+'/cs/'+UCM.csid+'/image',
+                data: data,
+                success: function (d) {
 
-            fetch(UCM.domain+'/messages/customer/'+UCM.cid+'/cs/'+UCM.csid+'/image', {
-                mode: 'cors',
-                method: 'POST',
-                body: data
-            }).then(function(res) { return res.json();}).then(function (d) {
-                if (d.code === 200) {
-                    LIB.$('.uploading').innerHTML = 'upload done';
-                    LIB.$('.uploading').className = 'upload-done';
-                    UCM.sendMessage({
-                        action: 'message',
-                        text: d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h
-                    });
-                } else {
-                    LIB.$('.uploading').innerHTML = 'upload failed';
-                    LIB.$('.uploading').className = 'upload-failed';
+                    d = JSON.parse(d);
+
+                    if (d.code === 200) {
+                        LIB.$('.uploading').innerHTML = 'upload done';
+                        LIB.$('.uploading').className = 'upload-done';
+                        UCM.sendMessage({
+                            action: 'message',
+                            text: d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h
+                        });
+                    } else {
+                        LIB.$('.uploading').innerHTML = 'upload failed';
+                        LIB.$('.uploading').className = 'upload-failed';
+                    }
+                },
+                error: function (err) {
+                    LIB.$('.uploading') && (LIB.$('.uploading').innerHTML = 'upload failed');
+                    LIB.$('.uploading') && (LIB.$('.uploading').className = 'upload-failed');
                 }
-            }).catch(function (error) {
-                LIB.$('.uploading') && (LIB.$('.uploading').innerHTML = 'upload failed');
-                LIB.$('.uploading') && (LIB.$('.uploading').className = 'upload-failed');
             });
+
         },
         emojiCreate: function () {
             var emojis = '';
@@ -444,10 +514,14 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
             data.photo && (this.csPhoto = UCM.domain + '/'+ data.photo);
 
-
             if (data.msg.length > 0) {
                 this.initHistoryChat(data.msg);
             }
+
+            if (data.msg.length === 0 || data.msg.length < 10) {
+                this.hasChatHistory = false;
+            }
+            LIB.$('.body').scrollTop = LIB.$('.body').scrollHeight;
         },
         initHistoryChat: function (msgArr) {
             var str = '',
@@ -456,7 +530,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
             for (var i = 0, l = msgArr.length; i < l; i++) {
 
-                if (msgArr[i].type === 3 || msgArr[i].msg.indexOf('@User ID@') > -1) {
+                if (msgArr[i].type === 3 || (msgArr[i].msg && msgArr[i].msg.indexOf('@User ID@') > -1)) {
                     continue;
                 }
 
@@ -487,14 +561,80 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 str += '</div>';
             }
 
-            LIB.$('.body').innerHTML = str;
-        },
-        socketInit: function () {
-
-            if (this.socket) {
-                return false;
+            if (arguments[1]) {
+                str = str + LIB.$('.body').innerHTML;
+                LIB.$('.body').innerHTML =  str;
+            } else {
+                LIB.$('.body').innerHTML = str;
             }
 
+            if (LIB.hasClass(LIB.$('.body'), 'loading')) {
+                LIB.removeClass(LIB.$('.body'), 'loading');
+            }
+
+        },
+        loadChatHistory: function () {
+
+            var touchPos = {
+                sx: 0,
+                sy: 0,
+                ex: 0,
+                ey: 0
+            }, isLoadingChatHistory = false, pageNum = 1;
+
+
+            LIB.addEvent(LIB.$('.body'), 'touchstart', function (e) {
+               if (e.touches[0]) {
+                   touchPos.sx = e.touches[0].clientX;
+                   touchPos.sy = e.touches[0].clientY;
+               }
+
+            });
+
+            LIB.addEvent(LIB.$('.body'), 'touchmove', function (e) {
+                if (e.touches[0]) {
+                    touchPos.ex = e.touches[0].clientX;
+                    touchPos.ey = e.touches[0].clientY;
+                }
+
+                if (touchPos.ey - touchPos.sy > 30 && !isLoadingChatHistory && UCM.hasChatHistory) {
+                    isLoadingChatHistory = true;
+                    LIB.addClass(LIB.$('.body'), 'loading');
+                    loadChatHistory();
+                }
+            });
+
+
+            function loadChatHistory() {
+
+               LIB.ajax({
+                    type: 'GET',
+                    url: UCM.domain+'/messages/customer/'+UCM.cid+'/cs/'+UCM.csid,
+                    data: 'pageNum='+pageNum+'&pageSize=10',
+                    success: function (d) {
+
+                        var d = JSON.parse(d);
+
+                        if (d.code === 200) {
+                            pageNum++;
+                            if (d.msg.length === 0 || d.msg.length < 10) {
+                                UCM.hasChatHistory = false;
+                            }
+
+                            UCM.initHistoryChat(d.msg, 'loadMore');
+                        }
+                        isLoadingChatHistory = false;
+
+                    },
+                    error: function (error) {
+                        isLoadingChatHistory = false;
+                        LIB.removeClass(LIB.$('.body'), 'loading');
+                    }
+                });
+
+            }
+        },
+        socketInit: function () {
             this.socket = io(UCM.domain+'/c', {
                 forceNew: true,
                 reconnectionAttempts: 5,
@@ -507,16 +647,12 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             this.socket.on('reconnect', this.socketReconnect);
             this.socket.on('error', this.socketError);
             this.socket.on('cs.message', this.socketCsMessage);
-            this.socket.on('cs.status', this.socketCsStatus);
             this.socket.on('cs.disconnect', this.socketCsDisconnect);
             this.socket.on('c.queue.update', this.socketQueueUpdate);
             this.socket.on('c.queue.shift', this.socketQueueShift);
             this.socket.on('cs.close.dialog', this.socketCloseDialog);
             this.socket.on('c.dispatch', this.socketDispatch);
             this.socket.on('cs.action.rate', this.socketActionRate);
-
-            this.startTime = (new Date()).getTime();
-            this.chatClock();
         },
         socketConnect: function () {
             this.emit('c.select', UCM.socketCsSelect);
@@ -524,26 +660,29 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         socketConnectError: function () {
             UCM.addNewMessage({
                 type: 'socket',
-                text: 'There was an connection error to customer service!<span class="reconnect-btn">Reconnect</span>'
+                btn: true,
+                text: 'Connection to customerSuccess error!'
             });
         },
-        socketDisconnect: function () {
+        socketDisconnect: function (reason) {
             UCM.isCustomerSuccessOnline = false;
             UCM.addNewMessage({
                 type: 'socket',
-                text: 'The customer service was disconnect!<span class="reconnect-btn">Reconnect</span>'
+                btn: true,
+                text: 'CustomerSuccess was disconnect!'
             });
         },
         socketReconnect: function () {
             UCM.addNewMessage({
                 type: 'socket',
-                text: 'The customerSuccess reline!'
+                text: 'CustomerSuccess reline!'
             });
         },
         socketError: function () {
             UCM.addNewMessage({
                 type: 'socket',
-                text: 'There was an error connecting the customer service!<span class="reconnect-btn">Reconnect</span>'
+                btn: true,
+                text: 'Connection error!'
             });
         },
         socketSendUserId: function () {
@@ -567,16 +706,25 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 UCM.isCustomerSuccessOnline = true;
                 UCM.initData(data);
                 UCM.socketSendUserId();
+                UCM.startTime = (new Date()).getTime();
+                UCM.chatClock();
+                UCM.loadChatHistory();
             } else if(type === 2) { //queue
                 UCM.addNewMessage({
                     type: 'system',
                     text: 'The current number of queues is <i id="queue-num">'+data.num+'</i>'
                 });
+                if (LIB.$('.reconnect-mask')) {
+                    LIB.$('.reconnect-mask').parentNode.removeChild(LIB.$('.reconnect-mask'));
+                }
             } else if(type === 3) { //offline
                 UCM.addNewMessage({
-                    type: 'system',
-                    text: 'The customerSuccess was not online!'
+                    type: 'socket',
+                    text: 'CustomerSuccess was not online!'
                 });
+                if (LIB.$('.reconnect-mask')) {
+                    LIB.$('.reconnect-mask').parentNode.removeChild(LIB.$('.reconnect-mask'));
+                }
             }
         },
         socketCsMessage: function (cid, msg) {
@@ -585,17 +733,11 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 text: msg
             });
         },
-        socketCsStatus: function (status) {
-            if (status === 1) {
-
-            } else if(status === 2) {
-
-            }
-        },
         socketCsDisconnect: function () {
             UCM.addNewMessage({
-                type: 'system',
-                text: 'The customerSuccess has offline. '
+                type: 'socket',
+                btn: true,
+                text: 'CustomerSuccess has offline.'
             });
         },
         socketQueueUpdate: function (pos) {
@@ -606,8 +748,9 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         },
         socketCloseDialog: function () {
             UCM.addNewMessage({
-                type: 'system',
-                text: 'The customerSuccess has offline.'
+                type: 'socket',
+                btn: true,
+                text: 'CustomerSuccess has offline.'
             });
         },
         socketDispatch: function (csid, name, avatar) {
@@ -650,7 +793,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                         UCM.socket.emit('c.rate', UCM.cid, rateStars, function (success) {
                            if (success) {
                                UCM.addNewMessage({
-                                   type: 'system',
+                                   type: 'socket',
                                    text: 'Thank you for your rate!! Goodbye!'
                                });
                                this.close();

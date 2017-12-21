@@ -87,7 +87,7 @@ export default class Console extends Component {
 
         const menuList = [
             {key: 'dashboard', type: 'laptop', text: 'Dashboard'},
-            {key: 'operators', type: 'user', text: 'Operators'},
+            {key: 'operators', type: 'team', text: 'Operators'},
             {key: 'customers', type: 'user', text: 'customers'},
             {key: 'transcripts', type: 'database', text: 'Transcripts'},
             {key: 'rates', type: 'star-o', text: 'Rate Report'},
@@ -106,7 +106,12 @@ export default class Console extends Component {
                         collapsed={collapsed}
                         trigger={null}
                         >
-                        <div className="logo"/>
+                        <div className="logo">
+                            <a href="#/">
+                                <img src="/static/img/uuchat_logo_64.png" alt="logo"></img>
+                            </a>
+                            <h1>UUChat</h1>
+                        </div>
                         <Menu
                             theme="dark"
                             onClick={this.handleClick}

@@ -23,7 +23,7 @@
     display: inline-block;
     width: 64px;
     height: 64px;
-    background: url(../images/uuchat_logo_128.png) no-repeat center center;
+    background: url(../images/uuchat_logo.svg) no-repeat center center;
     background-size: 100%;
 }
 .login-body label{

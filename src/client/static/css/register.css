@@ -26,7 +26,7 @@
     height: 64px;
     border-radius: 100%;
     color: #fff;
-    background: url(../images/uuchat_logo_64.png) no-repeat center center;
+    background: url(../images/uuchat_logo.svg) no-repeat center center;
 }
 .uuchat-register label{
     font-size: 14px;
@@ -38,6 +38,7 @@
 
 @media screen and (max-width: 640px){
     .uuchat-register{
+        margin-top: 5%;
         padding: 0 10px;
         width: 94%;
     }
