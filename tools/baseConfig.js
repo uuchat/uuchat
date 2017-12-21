@@ -107,10 +107,6 @@ var defaultConfig = {
             to: paths.appBuild + '/static/img'
         },
         {
-            from: paths.appContent + '/html/static/js',
-            to: paths.appBuild + '/static/js'
-        },
-        {
             from: paths.appWebview,
             to: paths.appBuild + '/app'
         },
@@ -122,7 +118,7 @@ var defaultConfig = {
                 var code = (content + ''),
                     domain = nconf.get('app:domain');
 
-                if (!domain || domain.indexOf('uuchat.io') > -1) {
+                if (!domain) {
                     code = code.replace(/https:\/\/uuchat.io/g, 'http://'+nconf.get('app:address')+':'+nconf.get('app:port'));
                 } else {
                     code = code.replace(/https:\/\/uuchat.io/g, domain);
