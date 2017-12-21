@@ -25,13 +25,14 @@ describe('api', function () {
     });
 
     describe('#offline', function () {
+
         describe('POST /offlines', function () {
 
             describe('request is normal', function () {
                 it('should response with success', function (done) {
                     request.post({
                         url: baseUrl + '/offlines',
-                        form: {cid: cid, name: 'jian', email: 'test@gmail.com', content: 'test'}
+                        form: {cid: cid, name: 'jian', email: 'test@gmail.com', content: 'offline body'}
                     }, function (err, res) {
                         assert.ifError(err);
                         var data = JSON.parse(res.body);
@@ -98,6 +99,25 @@ describe('api', function () {
                 });
             });
 
+        });
+
+        describe('POST /offlines/:uuid/reply', function () {
+            // how to get ?
+            var uuid='';
+
+            describe('request is normal', function () {
+                it('should response with success', function (done) {
+                    request.post({
+                        url: baseUrl + '/offlines/' + uuid + '/reply',
+                        form: {content: 'reply'}
+                    }, function (err, res) {
+                        assert.ifError(err);
+                        var data = JSON.parse(res.body);
+                        assert.equal(data.code, 200);
+                        done();
+                    });
+                });
+            });
         });
     });
 });
