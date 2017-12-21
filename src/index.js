@@ -219,7 +219,7 @@ function setupExpress(app, callback) {
     //app.set('json spaces', process.env.NODE_ENV === 'development' ? 4 : 0);
 
     app.use(require("morgan")(
-            global.env === 'development' ? 'tiny' : 'combined',
+            global.env === 'development' ? 'tiny' : 'short',
             { stream: {
                     write: message => logger.info(message.trim())
                 }
