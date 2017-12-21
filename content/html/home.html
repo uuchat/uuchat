@@ -6,239 +6,7 @@
     <title>UUChat</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="https://fonts.googleapis.com/css?family=Ubuntu:300" rel="stylesheet">
-    <style>
-        html {
-            overflow-y: scroll;
-        }
-        :root {
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-        :root body {
-            position: absolute;
-        }
-        body{
-            font-family: 'Ubuntu', sans-serif;
-            -webkit-overflow-scrolling:touch;
-            overflow-scrolling:touch;
-            width: 100vw;
-            overflow: hidden;
-        }
-        ul, li{
-            list-style: none;
-            padding-left: 0;
-        }
-        .uu-body{
-            min-width: 320px;
-            background: rgba(0, 0, 0, 0.01);
-        }
-        .uu-header{
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            box-shadow: 0 10px 2px -15px rgba(0, 0, 0, 0.5);
-        }
-        .uu-nav{
-            height: 60px;
-            line-height: 60px;
-        }
-        .uu-nav a{
-            margin: 0 5px;
-            padding: 5px;
-            color: rgba(0, 0, 0, 0.6);
-            font-size: 1.2em;
-        }
-        .uu-nav a:not(.uu-logo):hover{
-            color: #0d95e8;
-            background: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            text-decoration: none;
-            border-radius: 3px;
-        }
-        .uu-logo i{
-            display: inline-block;
-            margin-right: 5px;
-            width: 32px;
-            height: 32px;
-            background: url("static/img/uuchat_logo_64.png") no-repeat left center;
-            background-size: cover;
-            vertical-align: middle;
-        }
-        .uu-mobile-nav{
-            display: none;
-            padding: 10px;
-            height: 60px;
-            line-height: 40px;
-        }
-        .uu-mobile-nav .row{
-            position: relative;
-            top: -10px;
-            z-index: 9000;
-            height: 60px;
-            line-height: 60px;
-            background: #fff;
-        }
-        .uu-mobile-nav label{
-            font-size: 1.2em;
-        }
-        .uu-mobile-nav label i{
-            position: relative;
-            display: block;
-            height: 2px;
-            width: 20px;
-            background: #738a94;
-        }
-        .uu-mobile-nav label i:before{
-            content: '';
-            position: absolute;
-            right: 0;
-            top: -6px;
-            height: 2px;
-            width: 20px;
-            background: #738a94;
-        }
-        .uu-mobile-nav label i:after{
-            content: '';
-            position: absolute;
-            right: 0;
-            top: 6px;
-            height: 2px;
-            width: 20px;
-            background: #738a94;
-        }
-        .uu-mobile-nav label.active i{
-            top: 4px;
-            background: none;
-        }
-        .uu-mobile-nav label.active i:before{
-            content: '';
-            -webkit-transform: rotate(45deg);
-        }
-        .uu-mobile-nav label.active i:after{
-            content: '';
-            top: -6px;
-            -webkit-transform: rotate(-45deg);
-        }
-        .mobie-menu-list{
-            position: absolute;
-            left: 0;
-            top: -300%;
-            z-index: 600;
-            width: 100%;
-            background: #fff;
-            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
-            box-shadow: 0 15px 10px -8px rgba(0, 0, 0, 0.5);
-            -webkit-transition: all 0.8s linear;
-            transition: all 0.8s linear;
-        }
-        .mobie-menu-list.active{
-            top: 60px;
-        }
-        .mobie-menu-list a{
-            display: block;
-            padding: 0 10px;
-            line-height: 40px;
-            color: rgba(0, 0, 0, 0.8);
-            font-size: 16px;
-            border-top: 1px solid rgba(0, 0, 0, 0.05);
-            text-align: center;
-        }
-        .main{
-            padding-top: 60px;
-            height: 70vh;
-            background: rgba(13, 149, 232, 0.4) url(static/img/theme2.jpg) no-repeat center center;
-            background-size: cover;text-align: center;color: #fff;
-        }
-        .mask{
-            display: flex;
-            align-items: center;
-            padding: 20px 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.24);
-        }
-        .mask h1{
-            font-size: 38px;
-        }
-        .main .sub-title{
-            margin: 30px auto;
-            font-size: 18px;
-        }
-        .uu-footer{
-            padding: 2vw 0  4vw 0;
-        }
-        .uu-footer h4{
-            font-weight: 400;}
-        .uu-footer a{
-            color: rgba(40, 96, 144, 0.5);
-        }
-        .uu-footer a:hover{
-            color: rgba(40, 96, 144, 0.9);
-        }
-        .uu-footer .github{
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            background: url(static/img/github.svg) no-repeat center center;
-        }
-        .uu-footer .github:hover{
-            background: url(static/img/github_selected.svg) no-repeat center center;
-        }
-        .uu-footer .twitter{
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            background: url(static/img/twitter.svg) no-repeat center center;
-        }
-        .uu-footer .twitter:hover{
-            width: 16px;
-            height: 16px;
-            background: url(static/img/twitter_selected.svg) no-repeat center center;
-        }
-        .uu-footer .uu-statement{
-            margin-top: 20px;
-        }
-        .uu-footer .uu-statement a{
-            margin-right: 20px;
-            color: #222;
-        }
-        .uu-footer .uu-statement a:hover{
-            color: rgba(40, 96, 144, 1);
-        }
-        @media screen and (max-width: 640px) {
-            .uu-header{
-                background: none;
-            }
-            .uu-nav{
-                display: none;
-            }
-            .uu-mobile-nav{
-                display: block;
-                background: #fff;
-            }
-            .main{
-                background: #39afef;
-            }
-            .mask{
-                background: rgba(255, 255, 255, 0);
-            }
-            .mask h1{
-                font-size: 24px;
-            }
-            .main .sub-title{
-                margin: 30px auto;
-                font-size: 16px;
-            }
-            .uu-footer .col-md-4{
-                text-align: center;
-            }
-            .uu-footer .col-md-2{
-                display: none;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="static/css/home.css">
 </head>
 <body>
 <div class="uu-body">
@@ -246,9 +14,10 @@
         <div class="nav uu-nav container">
             <div class="row">
                 <div class="col-md-8 col-sm-8 col-xs-8">
-                    <a href="/" class="uu-logo"><i></i>UUChat</a>
-                    <a href="" target="_self">Features</a>
-                    <a href="" target="_self">5 Minutes Install</a>
+                    <a href="/" class="uu-logo"><i></i></a>
+                    <a href="">Features</a>
+                    <a href="https://uuchat.io/blog/5-minutes-install-uuchat/">5 Minutes Install</a>
+                    <a href="https://uuchat.io/blog">blog</a>
                 </div>
                 <div class="col-md-4 col-sm-4 col-xs-4 menu text-right">
                     <a href="https://github.com/uuchat/uuchat/releases">Download</a>
@@ -257,14 +26,15 @@
         </div>
         <div class="uu-mobile-nav">
             <div class="row">
-                <div class="col-md-4 col-xs-6"> <a href="/" class="uu-logo"><i></i>UUChat</a></div>
+                <div class="col-md-4 col-xs-6"><a href="/" class="uu-logo"><i></i>UUChat</a></div>
                 <div class="col-md-4 col-xs-6 text-right">
                     <label id="uu-mobie-label" class="uu-mobie-menu"><i></i></label>
                 </div>
             </div>
             <div class="mobie-menu-list">
-                <a href="" target="_self">Features</a>
-                <a href="" target="_self">5 Minutes Install</a>
+                <a href="">Features</a>
+                <a href="https://uuchat.io/blog/5-minutes-install-uuchat/">5 Minutes Install</a>
+                <a href="https://uuchat.io/blog">blog</a>
                 <a href="https://github.com/uuchat/uuchat/releases">Download</a>
             </div>
         </div>
@@ -279,8 +49,8 @@
                         UUChat hope to provide a compact and convenient and efficient customer service system.
                     </div>
                     <div>
-                        <a href="/login" class="btn btn-primary">customer success</a>
-                        <a href="/console" class="btn btn-primary">console</a>
+                        <a href="/login" class="btn uu-btn">Customer Success</a>
+                        <a href="/console" class="btn uu-btn">Console</a>
                     </div>
                 </div>
             </div>
@@ -292,7 +62,7 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-4 col-sm-6">
-                    <h4><a href="/" class="uu-logo"><i></i></a>UUChat</h4>
+                    <h4><a href="/" class="uu-footer-logo"></a></h4>
                     <p>A committed to doing the best open source customer service system team.</p>
                     <p>UUChat&copy;2017</p>
                 </div>
@@ -300,17 +70,17 @@
                     <h4>Product</h4>
                     <ul>
                         <li><a href="">Features</a></li>
-                        <li><a href="">5 Minutes Install</a></li>
+                        <li><a href="https://uuchat.io/blog/5-minutes-install-uuchat/">5 Minutes Install</a></li>
+                        <li><a href="">iOS/Android SDK</a></li>
                         <li><a href="">Status</a></li>
-                        <li><a href="">Marketplace</a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 col-sm-2">
                     <h4>Company</h4>
                     <ul>
                         <li><a href="">About</a></li>
-                        <li><a href="">Customers</a></li>
-                        <li><a href="">Logos</a></li>
+                        <li><a href="https://uuchat.io/blog">Blog</a></li>
+                        <li><a href="" class="hot">Jobs<span>We're Hiring!</span></a></li>
                     </ul>
                 </div>
                 <div class="col-md-2 col-sm-2">
@@ -324,7 +94,7 @@
             </div>
             <div class="uu-statement">
                 <a href="">Terms</a>
-                <a href="">Privacy</a><a href="">help@uuchat.io</a>
+                <a href="">Privacy</a>
                 <a href="https://github.com/uuchat/uuchat" class="github"></a>
                 <a href="https://twitter.com/uuchats" class="twitter"></a>
             </div>
@@ -335,7 +105,6 @@
 <script>
     window.onload = function() {
         document.querySelector('#uu-mobie-label').addEventListener('click', function () {
-            console.log(this.classList);
             this.classList.toggle('active');
             document.querySelector('.mobie-menu-list').classList.toggle('active');
         }, false);
