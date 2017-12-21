@@ -10,7 +10,7 @@ const classid = 'network';
 
 var properties = [];
 
-export default class FeedbackSettings extends Component {
+export default class FeedbackSetting extends Component {
 
     state = {
         classid: '',
@@ -111,7 +111,9 @@ export default class FeedbackSettings extends Component {
             let body = 'desc=' + itemValue;
             body += '&type=' + radioValue;
 
-            if (checkBoxOptions.indexOf(itemValue) !== -1) {
+            if (!itemValue) {
+                return message.error('Input should not null', 4);
+            } else if (checkBoxOptions.indexOf(itemValue) !== -1) {
                 return message.error('Input already exists', 4);
             }
 

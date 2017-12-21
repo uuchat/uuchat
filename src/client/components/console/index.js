@@ -108,7 +108,7 @@ export default class Console extends Component {
                         >
                         <div className="logo">
                             <a href="#/">
-                                <img src="/static/img/uuchat_logo_64.png" alt="logo"></img>
+                                <img src="/static/img/uuchat_logo.svg" alt="logo"></img>
                             </a>
                             <h1>UUChat</h1>
                         </div>
