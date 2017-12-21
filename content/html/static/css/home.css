@@ -1,0 +1,284 @@
+html {
+    overflow-y: scroll;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+:root {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+:root body {
+    position: absolute;
+}
+body{
+    font-family: 'Ubuntu', sans-serif;
+    -webkit-overflow-scrolling:touch;
+    overflow-scrolling:touch;
+    width: 100vw;
+    overflow: hidden;
+}
+ul, li{
+    list-style: none;
+    padding-left: 0;
+}
+.uu-body{
+    min-width: 320px;
+    background: rgba(0, 0, 0, 0.01);
+}
+.uu-header{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 10px 2px -15px rgba(0, 0, 0, 0.5);
+}
+.uu-nav{
+    height: 60px;
+    line-height: 60px;
+}
+.uu-nav a{
+    margin: 0 5px;
+    padding: 5px;
+    color: rgba(0, 0, 0, 0.6);
+    font-size: 1.2em;
+}
+.uu-nav a:not(.uu-logo):hover{
+    background: #408af8;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 3px;
+    font-weight: bold;
+}
+.uu-logo i{
+    display: inline-block;
+    margin-right: 5px;
+    width: 56px;
+    height: 56px;
+    background: url("../img/uuchat_logo.svg") no-repeat left center;
+    background-size: cover;
+    vertical-align: middle;
+}
+.uu-mobile-nav{
+    display: none;
+    padding: 10px;
+    height: 60px;
+    line-height: 40px;
+}
+.uu-mobile-nav .row{
+    position: relative;
+    top: -10px;
+    z-index: 9000;
+    height: 60px;
+    line-height: 60px;
+    background: #fff;
+}
+.uu-mobile-nav label{
+    font-size: 1.2em;
+}
+.uu-mobile-nav label i{
+    position: relative;
+    display: block;
+    height: 2px;
+    width: 20px;
+    background: #738a94;
+}
+.uu-mobile-nav label i:before{
+    content: '';
+    position: absolute;
+    right: 0;
+    top: -6px;
+    height: 2px;
+    width: 20px;
+    background: #738a94;
+}
+.uu-mobile-nav label i:after{
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 6px;
+    height: 2px;
+    width: 20px;
+    background: #738a94;
+}
+.uu-mobile-nav label.active i{
+    top: 4px;
+    background: none;
+}
+.uu-mobile-nav label.active i:before{
+    content: '';
+    -webkit-transform: rotate(45deg);
+}
+.uu-mobile-nav label.active i:after{
+    content: '';
+    top: -6px;
+    -webkit-transform: rotate(-45deg);
+}
+.mobie-menu-list{
+    position: absolute;
+    left: 0;
+    top: -300%;
+    z-index: 600;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 15px 10px -8px rgba(0, 0, 0, 0.5);
+    -webkit-transition: all 0.8s linear;
+    transition: all 0.8s linear;
+}
+.mobie-menu-list.active{
+    top: 60px;
+}
+.mobie-menu-list a{
+    display: block;
+    padding: 0 10px;
+    line-height: 40px;
+    color: rgba(0, 0, 0, 0.8);
+    font-size: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+.main{
+    margin-top: 60px;
+    height: 65vh;
+    background: rgba(13, 149, 232, 0.01) url(../img/theme2.jpg) no-repeat center top;
+    background-size: cover;text-align: center;color: #fff;
+}
+.main .uu-btn{
+    margin: 0 5px;
+    padding: 10px 20px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    background: #408AF8;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+    cursor: pointer;
+}
+.main .uu-btn:last-child{
+    color: #408AF8;
+    background: rgba(255, 255, 255, 0.9);
+}
+.main .uu-btn:hover{
+    opacity: 0.95;
+    color: #fff;
+    transform: translateY(-1px);
+    box-shadow: 0 7px 14px rgba(50,50,93,.1), 0 3px 6px rgba(0,0,0,.08);
+}
+.main .uu-btn:last-child:hover{
+    color: #408AF8;
+}
+.mask{
+    display: flex;
+    align-items: center;
+    padding: 20px 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.24);
+}
+.mask h1{
+    font-size: 44px;
+}
+.main .sub-title{
+    margin: 30px auto;
+    font-size: 18px;
+}
+.uu-footer{
+    padding: 2vw 0;
+}
+.uu-footer h4{
+    font-size: 14px;
+    font-weight: bold;
+    color: #242628;
+}
+.uu-footer .col-md-4 h4{
+    font-size: 18px;
+}
+.uu-footer a{
+    font-size: 13px;
+    color: #738a94;
+}
+.uu-footer a:hover{
+    color: #343f44;
+}
+.uu-footer a.hot{
+    display: inline-block;
+}
+.uu-footer a.hot span {
+    display: inline-block;
+    margin-left: 5px;
+    padding: 0 5px;
+    background: linear-gradient(#ec9f5e 0%, #e67e22 100%);
+    border-radius: 2px;
+    color: #ffffff;
+}
+.uu-footer .uu-footer-logo{
+    display: inline-block;
+    width: 100px;
+    height: 50px;
+    background: url(../img/uuchat_bubble.svg) no-repeat left center;
+    background-size: 100% 100%;
+}
+.uu-footer li{
+    padding-bottom: 7px;
+}
+.uu-footer .github,
+.uu-footer .twitter {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    vertical-align: text-bottom;
+}
+.uu-footer .github {
+    background: url(../img/github.svg) no-repeat center center;
+}
+.uu-footer .github:hover{
+    background: url(../img/github_selected.svg) no-repeat center center;
+}
+.uu-footer .twitter{
+    background: url(../img/twitter.svg) no-repeat center center;
+}
+.uu-footer .twitter:hover{
+    background: url(../img/twitter_selected.svg) no-repeat center center;
+}
+.uu-footer .uu-statement{
+    margin-top: 20px;
+}
+.uu-footer .uu-statement a{
+    margin-right: 20px;
+    color: #222;
+}
+.uu-footer .uu-statement a:hover{
+    color: rgba(40, 96, 144, 1);
+}
+@media screen and (max-width: 640px) {
+    .uu-header{
+        background: none;
+    }
+    .uu-nav{
+        display: none;
+    }
+    .uu-mobile-nav{
+        display: block;
+        background: #fff;
+    }
+    .main{
+        background: #39afef;
+    }
+    .mask{
+        background: rgba(255, 255, 255, 0);
+    }
+    .mask h1{
+        font-size: 24px;
+    }
+    .main .sub-title{
+        margin: 30px auto;
+        font-size: 16px;
+    }
+    .uu-footer .col-md-4{
+        text-align: center;
+    }
+    .uu-footer .col-md-2{
+        display: none;
+    }
+}

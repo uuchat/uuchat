@@ -1,0 +1,280 @@
+<svg version="1.2"
+     x="0px" y="0px"
+     viewBox="0 0 64 64"
+     xmlns="http://www.w3.org/2000/svg"
+     xmlns:xlink="http://www.w3.org/1999/xlink"
+     style="enable-background:new 0 0 64 64;" xml:space="preserve">
+    <defs>
+    <linearGradient id="myLinearGradient1"
+                    x1="0%" y1="100%"
+                    x2="100%" y2="100%"
+                    spreadMethod="pad">
+        <stop offset="0%"   stop-color="#fab116" stop-opacity="1"/>
+        <stop offset="38%"   stop-color="#fa9716" stop-opacity="1"/>
+        <stop offset="42%"   stop-color="#0e80e0" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#076dc3" stop-opacity="1"/>
+     </linearGradient>
+    </defs>
+    <defs>
+        <radialGradient id="radius" r="200%"
+                        spreadMethod="pad">
+            <stop offset="0%"   stop-color="#fff" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="#0e80e0" stop-opacity="1"/>
+         </radialGradient>
+    </defs>
+    <defs>
+        <radialGradient id="radius2" r="200%"
+                        spreadMethod="pad">
+            <stop offset="0%"   stop-color="#fff" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#fa9716" stop-opacity="1"/>
+         </radialGradient>
+    </defs>
+    <text x="-24" y="48" style="fill: url(#myLinearGradient1); stroke: none; font-size: 30px;">UUChat</text>
+    <path opacity="0.3"
+          fill="#ff00ff"
+          d="M39.018,51.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+             c-1.974,0-3.574-1.601-3.574-3.573l0,0c0-1.975,1.601-3.575,3.574-3.575l0,0C37.418,47.646,39.018,49.246,39.018,51.221 L39.018,51.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="-60 50;-50 -60;"
+                          dur="3s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3"
+          fill="#ff0000"
+          d="M39.018,51.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+             c-1.974,0-3.574-1.601-3.574-3.573l0,0c0-1.975,1.601-3.575,3.574-3.575l0,0C37.418,47.646,39.018,49.246,39.018,51.221 L39.018,51.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="-30 50;-30 -50;"
+                          dur="4s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3" fill="#fa9716" enable-background="new"
+          d="M65.018,81.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+	         c-1.973,0-3.573-1.601-3.573-3.573l0,0c0-1.975,1.601-3.574,3.573-3.574l0,0C63.418,77.646,65.018,79.246,65.018,81.221
+	         L65.018,81.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="2 50;2 -50;"
+                          dur="2.2s"
+                          repeatCount="indefinite"/>
+    </path>
+    <path opacity="0.3" fill="#fa9716" d="M65.018,81.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+	c-1.973,0-3.573-1.601-3.573-3.573l0,0c0-1.975,1.601-3.574,3.573-3.574l0,0C63.418,77.646,65.018,79.246,65.018,81.221
+	L65.018,81.221z">
+
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="2 50;2 -50;"
+                          dur="2.2s"
+                          repeatCount="indefinite"/>
+
+    </path>
+
+    <path opacity="0.3" fill="#fdc70b" d="M58.018,59.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+	c-1.973,0-3.573-1.601-3.573-3.573l0,0c0-1.975,1.601-3.574,3.573-3.574l0,0C56.418,55.646,58.018,57.246,58.018,59.221
+	L58.018,59.221z">
+
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="2.5s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3" fill="#0e80e0" d="M23.165,61.221c0,0.949-0.771,1.719-1.721,1.719l0,0
+	c-0.949,0-1.72-0.77-1.72-1.719l0,0c0-0.951,0.771-1.721,1.72-1.721l0,0C22.394,59.5,23.165,60.27,23.165,61.221L23.165,61.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="3s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="1" fill="url(#radius2)" d="M45.165,71.221c0,2.055-1.667,3.719-3.721,3.719l0,0
+	c-2.053,0-3.719-1.664-3.719-3.719l0,0c0-2.056,1.667-3.72,3.719-3.72l0,0C43.498,67.501,45.165,69.165,45.165,71.221L45.165,71.221
+	z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="4s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3" fill="#076dc3" d="M43.877,86.221c0,1.344-1.09,2.432-2.434,2.432l0,0
+	c-1.343,0-2.433-1.088-2.433-2.432l0,0c0-1.345,1.09-2.434,2.433-2.434l0,0C42.788,83.787,43.877,84.876,43.877,86.221
+	L43.877,86.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="3s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path fill="url(#radius)" d="M63.999,42.22c0,1.411-1.146,2.554-2.556,2.554l0,0
+	c-1.408,0-2.553-1.143-2.553-2.554l0,0c0-1.411,1.145-2.554,2.553-2.554l0,0C62.854,39.666,63.999,40.809,63.999,42.22L63.999,42.22
+	z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="3s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.5" fill="#1185e7" d="M23.109,46.601c0,0.709-0.575,1.283-1.285,1.283l0,0
+	c-0.708,0-1.283-0.573-1.283-1.283l0,0c0-0.709,0.575-1.284,1.283-1.284l0,0C22.534,45.317,23.109,45.891,23.109,46.601
+	L23.109,46.601z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="2s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.5" fill="#001e73" d="M53.075,49.444c0,0.709-0.574,1.283-1.284,1.283l0,0
+	c-0.708,0-1.283-0.573-1.283-1.283l0,0c0-0.709,0.575-1.283,1.283-1.283l0,0C52.5,48.161,53.075,48.734,53.075,49.444L53.075,49.444
+	z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="2.5s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3" fill="#076dc3" d="M53.497,74.723c0,0.711-0.575,1.283-1.284,1.283l0,0
+	c-0.708,0-1.283-0.572-1.283-1.283l0,0c0-0.709,0.575-1.281,1.283-1.281l0,0C52.921,73.439,53.497,74.014,53.497,74.723
+	L53.497,74.723z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;0 -50;"
+                          dur="2.2s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path fill="url(#radius)"  d="M26.061,70.771c0,0.709-0.575,1.283-1.284,1.283l0,0
+	c-0.708,0-1.283-0.574-1.283-1.283l0,0c0-0.709,0.575-1.283,1.283-1.283l0,0C25.486,69.486,26.061,70.062,26.061,70.771
+	L26.061,70.771z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;30 -50;"
+                          dur="2s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.2"
+          fill="#ffb700"
+          d="M39.018,51.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+             c-1.974,0-3.574-1.601-3.574-3.573l0,0c0-1.975,1.601-3.575,3.574-3.575l0,0C37.418,47.646,39.018,49.246,39.018,51.221 L39.018,51.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;-30 -50;"
+                          dur="10s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="1"
+          fill="url(#radius2)"
+          d="M39.018,51.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+             c-1.974,0-3.574-1.601-3.574-3.573l0,0c0-1.975,1.601-3.575,3.574-3.575l0,0C37.418,47.646,39.018,49.246,39.018,51.221 L39.018,51.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;50 -60;"
+                          dur="9s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.4"
+          fill="#0d71c6"
+          d="M39.018,51.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+             c-1.974,0-3.574-1.601-3.574-3.573l0,0c0-1.975,1.601-3.575,3.574-3.575l0,0C37.418,47.646,39.018,49.246,39.018,51.221 L39.018,51.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;10 -10;20 -20;30 -30;"
+                          dur="6s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.9"
+          fill="#076dc3"
+          d="M39.018,51.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+             c-1.974,0-3.574-1.601-3.574-3.573l0,0c0-1.975,1.601-3.575,3.574-3.575l0,0C37.418,47.646,39.018,49.246,39.018,51.221 L39.018,51.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50;-10 -10;-20 -20;-30 -30; -50 -60"
+                          dur="6s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.5"
+          fill="#fa9816"
+          d="M39.018,51.221c0,1.975-1.6,3.573-3.574,3.573l0,0
+             c-1.974,0-3.574-1.601-3.574-3.573l0,0c0-1.975,1.601-3.575,3.574-3.575l0,0C37.418,47.646,39.018,49.246,39.018,51.221 L39.018,51.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="-30 50;30 -50;"
+                          dur="8s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3"
+          fill="url(#radius)"
+          enable-background="new"
+          d="M65.877,68.221c0,1.344-1.09,2.432-2.434,2.432l0,0
+	        c-1.344,0-2.434-1.088-2.434-2.432l0,0c0-1.345,1.09-2.434,2.434-2.434l0,0C64.788,65.787,65.877,66.876,65.877,68.221
+	        L65.877,68.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="-10 50;-10 -50;"
+                          dur="5s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3"
+          fill="#00ff00"
+          d="M65.877,68.221c0,1.344-1.09,2.432-2.434,2.432l0,0
+	        c-1.344,0-2.434-1.088-2.434-2.432l0,0c0-1.345,1.09-2.434,2.434-2.434l0,0C64.788,65.787,65.877,66.876,65.877,68.221
+	        L65.877,68.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="-10 50;15 -60;"
+                          dur="5s"
+                          repeatCount="indefinite"/>
+
+    </path>
+    <path opacity="0.3"
+          fill="#00ff00"
+          d="M65.877,68.221c0,1.344-1.09,2.432-2.434,2.432l0,0
+	        c-1.344,0-2.434-1.088-2.434-2.432l0,0c0-1.345,1.09-2.434,2.434-2.434l0,0C64.788,65.787,65.877,66.876,65.877,68.221
+	        L65.877,68.221z">
+        <animateTransform attributeName="transform"
+                          attributeType="XML"
+                          type="translate"
+                          values="0 50; -10 40; -20 -20; -60 -50;"
+                          dur="5s"
+                          repeatCount="indefinite"/>
+
+    </path>
+</svg>
