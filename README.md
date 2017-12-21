@@ -1,6 +1,6 @@
-## <img alt="uuchat" src="./src/client/static/images/uuchat_logo_128.png" />
+## <img alt="uuchat" width="100" src="./src/client/static/images/uuchat_logo.svg" />
 
-A powerful customer success platform ! demo: [http://uuchat.io](http://uuchat.io)
+A powerful customer success platform ! demo: [https://uuchat.io](http://uuchat.io)
 
 ## Requirements
 
