@@ -273,7 +273,7 @@ class ChatSetting extends Component{
                         visible={isThemeSet}
                         cancelText="Cancel"
                         okText="Save"
-                        width="710"
+                        width="710px"
                         footer={null}
                         onCancel={this.themeClose}
                     >
