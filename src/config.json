@@ -50,22 +50,33 @@
   "CDN": {
     "DEFAULT": "CN",
     "CN": {
-      "reactMinJS": "https://cdn.bootcss.com/react/15.6.1/react.min.js",
-      "reactDomMinJS": "https://cdn.bootcss.com/react/15.6.1/react-dom.min.js",
+      "reactMinJS": "https://cdn.bootcss.com/react/16.2.0/umd/react.production.min.js",
+      "reactDomMinJS": "https://cdn.bootcss.com/react-dom/16.2.0/umd/react-dom.production.min.js",
       "socketIO": "https://cdn.bootcss.com/socket.io/2.0.3/socket.io.js",
       "momentMinJS": "https://cdn.bootcss.com/moment.js/2.18.1/moment.min.js"
     },
     "US": {
-      "reactMinJS": "https://unpkg.com/react@15.6.1/dist/react.min.js",
-      "reactDomMinJS": "https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js",
+      "reactMinJS": "https://unpkg.com/react@16/umd/react.production.min.js",
+      "reactDomMinJS": "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js",
       "socketIO": "https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js",
       "momentMinJS": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"
     },
     "JP": {
-      "reactMinJS": "https://unpkg.com/react@15.6.1/dist/react.min.js",
-      "reactDomMinJS": "https://unpkg.com/react-dom@15.6.1/dist/react-dom.min.js",
+      "reactMinJS": "https://unpkg.com/react@16/umd/react.production.min.js",
+      "reactDomMinJS": "https://unpkg.com/react-dom@16/umd/react-dom.production.min.js",
       "socketIO": "https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js",
       "momentMinJS": "https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"
     }
+  },
+  "mail":{
+    "host": "smtp.gmail.com",
+    "port": 465,
+    "secure": true,
+    "auth": {
+      "user": "xxx@gmail.com",
+      "pass": "xxx"
+    },
+    "connectionTimeout": 6000,
+    "greetingTimeout": 6000
   }
 }
