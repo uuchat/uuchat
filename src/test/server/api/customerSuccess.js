@@ -17,7 +17,7 @@ describe('api', function () {
             it('should response with json', function (done) {
                 request.post({
                     url: baseUrl + '/register',
-                    form: {email: 'cs@gmail.com', passwd: 'pass123'}
+                    form: {email: 'xxx@gmail.com', passwd: 'pass123'}
                 }, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
@@ -32,7 +32,7 @@ describe('api', function () {
             it('should response with json', function (done) {
                 request.post({
                     url: baseUrl + '/login',
-                    form: {email: 'cs@gmail.com', passwd: 'pass123'}
+                    form: {email: 'xxx@gmail.com', passwd: 'pass123'}
                 }, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);
@@ -46,7 +46,21 @@ describe('api', function () {
             it('should response with json', function (done) {
                 request.post({
                     url: baseUrl + '/logout',
-                    form: {email: 'cs@gmail.com', passwd: 'pass123'}
+                    form: {email: 'xxx@gmail.com', passwd: 'pass123'}
+                }, function (err, res) {
+                    assert.ifError(err);
+                    var data = JSON.parse(res.body);
+                    assert.equal(data.code, 200);
+                    done();
+                });
+            });
+        });
+
+        describe('POST /passwdreset', function () {
+            it('should response with json', function (done) {
+                request.post({
+                    url: baseUrl + '/passwdreset',
+                    form: {email: 'j60017268@gmail.com'}
                 }, function (err, res) {
                     assert.ifError(err);
                     var data = JSON.parse(res.body);

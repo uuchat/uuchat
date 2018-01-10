@@ -37,11 +37,11 @@ describe('api', function () {
 
     describe('#message', function () {
 
-        describe('POST /messages/customer/:cid/cs/customer:csid', function () {
+        describe('POST /messages/customer/:cid/cs/:csid', function () {
             it('should response with success', function (done) {
                 request.post({
                     url: baseUrl + '/messages/customer/' + cid + '/cs/' + csid,
-                    form: {message: 'hello'}
+                    form: {msg: 'hello'}
                 }, function (err, res) {
                     assert.ifError(err);
                     var message = JSON.parse(res.body);
@@ -52,13 +52,45 @@ describe('api', function () {
             });
         });
 
-        describe('GET /messages/customer/:cid/cs/customer:csid', function () {
+        describe('POST /messages/customer/:cid/cs/:csid', function () {
+            it('should response with success', function (done) {
+                request.post({
+                    url: baseUrl + '/messages/customer/' + cid + '/cs/' + csid,
+                    form: {type:1, msg: 'uuchat'}
+                }, function (err, res) {
+                    assert.ifError(err);
+                    var message = JSON.parse(res.body);
+                    assert.equal(message.code, 200);
+                    mid = message.msg.uuid;
+                    done();
+                });
+            });
+        });
+
+        describe('GET /messages/customer/:cid/cs/cs/:csid', function () {
             it('should response with object list', function (done) {
                 request.get(baseUrl + '/messages/customer/' + cid + '/cs/' + csid, function (err, res) {
                     assert.ifError(err);
                     var message = JSON.parse(res.body);
                     assert.equal(message.code, 200);
                     done();
+                });
+            });
+        });
+
+        describe('POST /messages/customer/:cid/cs/:csid/reply', function () {
+
+            describe('should response with message data', function () {
+                it('should response with success', function (done) {
+                    request.post({
+                        url: baseUrl + '/messages/customer/'+cid+'/cs/' + csid + '/reply',
+                        form: {to:'test@gmail.com', subject:'subject', message: 'Email-reply'}
+                    }, function (err, res) {
+                        assert.ifError(err);
+                        var data = JSON.parse(res.body);
+                        assert.equal(data.code, 200);
+                        done();
+                    });
                 });
             });
         });

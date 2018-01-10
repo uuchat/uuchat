@@ -6,7 +6,7 @@ var baseUrl = require('../../common').baseUrl;
 exports.create = function (callback) {
     request.post({
         url: baseUrl + '/customers',
-        form: {url: 'uuchat.com'}
+        form: {url: 'uuchat.com', email:'test@gmail.com'}
     }, function (err, res) {
         callback(res);
     });
