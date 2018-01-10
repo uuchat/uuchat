@@ -4,16 +4,15 @@ function String2int(str){
     } else {
         return str;
     }
-
 }
 
 export function cutStr(str, len){
-    var str_length = 0,
-        str_cut = '',
-        str_len = str.length,
-        a = '';
+    let str_length = 0;
+    let str_cut = '';
+    let str_len = str.length;
+    let a = '';
 
-    for (var i = 0; i < str_len; i++) {
+    for (let i = 0; i < str_len; i++) {
         a = str.charAt(i);
         str_length++;
         if (escape(a).length > 4) {
@@ -28,5 +27,16 @@ export function cutStr(str, len){
         return str;
     }
 }
+
+export function Base64DecodeUnicode(str) {
+    try {
+        return decodeURIComponent(atob(str).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+    } catch (e) {
+        return '';
+    }
+}
+
 
 export default String2int;

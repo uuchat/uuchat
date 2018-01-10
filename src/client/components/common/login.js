@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, Checkbox, message } from 'antd';
+import { Form, Icon, Input, Button, message } from 'antd';
 import '../../static/css/login.css';
 
 const FormItem = Form.Item;
@@ -61,39 +61,63 @@ class Login extends Component{
 
     };
 
+    resetPassword = (e) => {
+        let email = document.querySelector('#userName').value || '';
+        let emailReg = /[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}/g;
+
+        if (!email || !emailReg.test(email)) {
+            message.error('Please enter your vaild email', 4);
+            return false;
+        }
+        fetch('/passwdreset', {
+            credentials: 'include',
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'email='+email
+        }).then((res)=>res.json())
+            .then(d => {
+                if (d.code === 200) {
+                    message.success('Please check your email ' + email + 'in time to reset your password', 8);
+                }
+
+            })
+            .catch(e => {
+                message.error(e, 4);
+            });
+
+    };
+
     render(){
         let { getFieldDecorator } = this.props.form;
         return (
-            <div className="login-body">
-                <div className="login-header"><a href="/"><span></span></a></div>
-                <Form onSubmit={this.handleSubmit} className="login-form">
-                    <FormItem>
-                         {
-                            getFieldDecorator('userName', {
-                                rules: [{type: 'email', message: 'The input is not valid E-mail!'},{ required: true, message: 'Please input your email!' }]
-                            })(
-                                <Input prefix={<Icon type="user" style={{ fontSize: 16 }} />} placeholder="Username Or Email" />
-                            )
-                          }
-                        </FormItem>
+            <div className="login-section">
+                <div className="login-header"><a href="/"></a></div>
+                <div className="login-body">
+                    <Form onSubmit={this.handleSubmit} className="login-form">
                         <FormItem>
-                        {getFieldDecorator('password', {
-                            rules: [{ required: true, message: 'Password must be no less than 6 characters', min: 6 }]
-                        })(
-                        <Input prefix={<Icon type="lock" style={{ fontSize: 16 }} />} type="password" placeholder="Password" />
-                    )}
-                    </FormItem>
-                   <FormItem>
-                        {getFieldDecorator('remember', {
-                                valuePropName: 'checked',
-                                initialValue: true
+                             {
+                                getFieldDecorator('userName', {
+                                    rules: [{type: 'email', message: 'The input is not valid Email!'},{ required: true, message: 'Please input your email!' }]
+                                })(
+                                    <Input size="large" prefix={<Icon type="mail" style={{ fontSize: 18 }} />} placeholder="Email Address" />
+                                )
+                              }
+                            </FormItem>
+                            <FormItem>
+                            {getFieldDecorator('password', {
+                                rules: [{ required: true, message: 'Password must be no less than 6 characters', min: 6 }]
                             })(
-                                <Checkbox>Remember me</Checkbox>
+                            <Input size="large" prefix={<Icon type="lock" style={{ fontSize: 18 }} />} type="password" placeholder="Password" />
                         )}
-                        <a className="login-form-forgot" href="">Forgot password</a>
-                        <Button type="primary" htmlType="submit" className="login-form-button">Log in </Button> Or <a href="/register">Sign up!</a>
-                    </FormItem>
-                </Form>
+                        </FormItem>
+                       <FormItem>
+                            <Button type="primary" size="large" htmlType="submit" className="login-form-button">Sign in </Button>
+                           <a className="login-form-forgot" href="javascript:;" onClick={this.resetPassword}>Forgot password？</a>
+                        </FormItem>
+                    </Form>
+                </div>
             </div>
         );
     }

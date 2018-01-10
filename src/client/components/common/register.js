@@ -1,27 +1,49 @@
 import React, { Component } from 'react';
-import { Form, Input, Checkbox, Row, Col, Button, message } from 'antd';
+import { Form, Input, Checkbox, Icon, Button, message } from 'antd';
+import {Base64DecodeUnicode} from './utils';
 import '../../static/css/register.css';
 
 const FormItem = Form.Item;
 
 class RegisterForm extends Component {
-    constructor(){
+    constructor() {
         super();
         this.state = {
-            confirmDirty: false
+            token: '',
+            email: '',
+            inputReadOnly: true
         };
+    }
+    componentDidMount() {
+        let href = window.location.href;
+        href = href.split('/register/');
+
+
+        if (href[1]) {
+            let email = '';
+            email = href[1].replace(/\/$/g, '');
+            email = Base64DecodeUnicode(email) || '';
+            email = email.split('|');
+
+            this.setState({
+                token: href[1],
+                email: email[1]
+            });
+        }
+
     }
     handleSubmit = (e) =>{
         e.preventDefault();
+        let {token} = this.state;
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                fetch('/register', {
+               fetch('/register/'+token, {
                     credentials: 'include',
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded'
                     },
-                    body: 'email='+values.email+'&passwd='+values.password
+                    body: 'email='+values.email+'&passwd='+values.password+'&name='+values.fullName
                 })
                 .then((res)=>res.json())
                 .then(function(d){
@@ -43,95 +65,79 @@ class RegisterForm extends Component {
             }
         });
     };
-    handleConfirmBlur = (e) => {
-        let value = e.target.value;
-        this.setState({ confirmDirty: this.state.confirmDirty || !!value });
-    };
-    checkPassword = (rule, value, callback) => {
-        let form = this.props.form;
-        if (value && value !== form.getFieldValue('password')) {
-            callback('Two passwords that you enter is inconsistent!');
-        } else {
-            callback();
-        }
-    };
-    checkConfirm = (rule, value, callback) => {
-        let form = this.props.form;
-        if (value && this.state.confirmDirty) {
-            form.validateFields(['confirm'], { force: true });
-        }
-        callback();
-    };
     hasErrors = (fieldsError) => {
         return Object.keys(fieldsError).some(field => fieldsError[field]);
-    }
+    };
+    fullNameFocus = () => {
+        this.setState({
+            inputReadOnly: false
+        });
+    };
     render() {
 
         let { getFieldDecorator, getFieldsError } = this.props.form;
+        let {email, inputReadOnly} = this.state;
+        let emailInput = {};
+        let readOnly = {};
+
+        email && (emailInput.readonly='true');
+        inputReadOnly && (readOnly.readonly='true');
 
         return (
-            <Row>
-                <Col xs={{span: 24, offset: 0}} sm={{span: 20, offset: 2}} md={{span: 20, offset: 2}} lg={{span: 24, offset: 0}} xl={{span: 24, offset: 0}}>
-                    <Form onSubmit={this.handleSubmit} layout="vertical">
-                        <FormItem
-                            label="E-mail"
-                            hasFeedback
-                            >
-                            {getFieldDecorator('email', {
-                                rules: [{
-                                    type: 'email', message: 'The input is not valid E-mail!'
-                                }, {
-                                    required: true, message: 'Please input your E-mail!'
-                                }]
-                            })(
-                                <Input />
-                            )}
-                        </FormItem>
-                        <FormItem
-                            label="Password"
-                            hasFeedback
-                            >
-                            {getFieldDecorator('password', {
-                                rules: [{
-                                    required: true, message: 'Password must be no less than 6 characters!', min: 6
-                                }, {
-                                    validator: this.checkConfirm
-                                }]
-                            })(
-                                <Input type="password" />
-                            )}
-                        </FormItem>
-                        <FormItem
-                             label="Confirm Password"
-                             hasFeedback
-                            >
-                            {getFieldDecorator('confirm', {
-                                rules: [{
-                                    required: true, message: 'Password must be no less than 6 characters!', min: 6
-                                }, {
-                                    validator: this.checkPassword
-                                }]
-                            })(
-                                <Input type="password" onBlur={this.handleConfirmBlur} />
-                            )}
-                       </FormItem>
-                        <FormItem  style={{ marginBottom: 8 }}>
-                            {getFieldDecorator('agreement', {
-                                valuePropName: 'checked',
-                                rules: [{
-                                    required: true, message: 'Please agreement!'
-                                }]
-                            })(
-                                <Checkbox>I have read the <a href="">agreement</a></Checkbox>
-                            )}
-                            <a className="Sign-in" href="/login">Logn in</a>
-                        </FormItem>
-                        <FormItem>
-                            <Button type="primary" htmlType="submit" size="large" disabled={this.hasErrors(getFieldsError())}>Sign up</Button>
-                        </FormItem>
-                    </Form>
-                </Col>
-            </Row>
+            <Form onSubmit={this.handleSubmit} layout="vertical" autocomplete="off">
+                <FormItem
+                    label="Email address"
+                    hasFeedback
+                    >
+                    {getFieldDecorator('email', {
+                        initialValue: email,
+                        rules: [{
+                            type: 'email', message: 'Please enter your vaild email!'
+                        }, {
+                            required: true, message: 'Please enter your vaild email!'
+                        }]
+                    })(
+                        <Input prefix={<Icon type="mail" style={{ fontSize: 16 }} />} size="large" placeholder="Eg. uuchat@example.com" {...emailInput} />
+                    )}
+                </FormItem>
+                <FormItem
+                    label="Full name"
+                    hasFeedback
+                    >
+                    {getFieldDecorator('fullName', {
+                        rules: [{
+                            required: true, message: 'Please enter your full name!'
+                        }]
+                    })(
+                        <Input prefix={<Icon type="user" style={{ fontSize: 16 }} />} size="large" placeholder="Eg. Taylor Swift" {...readOnly} onFocus={this.fullNameFocus} />
+                    )}
+                </FormItem>
+                <FormItem
+                     label="Password"
+                     hasFeedback
+                    >
+                    {getFieldDecorator('password', {
+                        rules: [{
+                            required: true, message: 'Password at least 6 characters!', min: 6
+                        }]
+                    })(
+                        <Input prefix={<Icon type="lock" style={{ fontSize: 16 }} />} type="password" size="large" placeholder="At least 6 characters" />
+                    )}
+               </FormItem>
+               <FormItem  style={{ marginBottom: 8 }}>
+                    {getFieldDecorator('agreement', {
+                        valuePropName: 'checked',
+                        rules: [{
+                            required: true, message: 'Please agree to the agreement!'
+                        }]
+                    })(
+                        <Checkbox>I have read the <a href="https://uuchat.io/privacy">agreement</a></Checkbox>
+                    )}
+                </FormItem>
+                <FormItem>
+                    <Button type="primary" htmlType="submit" className="sign-up-btn" size="large" disabled={this.hasErrors(getFieldsError())}>Sign up</Button>
+                </FormItem>
+            </Form>
         );
     }
 }
@@ -145,8 +151,10 @@ class Register extends Component{
 
         return (
             <div className="uuchat-register">
-                <div className="register-header"><a href="/"><span></span></a></div>
-                <RegistrationForm />
+                <div className="register-header"><a href="/"></a></div>
+                <div className="register-body">
+                    <RegistrationForm />
+                </div>
             </div>
         );
     }
