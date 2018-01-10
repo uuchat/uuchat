@@ -4,7 +4,7 @@ A powerful customer success platform ! demo: [https://uuchat.io](http://uuchat.i
 
 ## Requirements
 
-* Node version 4.3.1 or greater
+* Node version 6.0.0 or greater
 * [Optional]MySQL version 5.0 or greater
 * [Optional]Redis, version 2.8.9 or greater
 
