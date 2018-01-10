@@ -1,6 +1,5 @@
 'use strict';
 
-var path = require('path');
 var webpack = require('webpack');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
@@ -39,6 +38,11 @@ module.exports = {
             paths.searchJS,
             hotMiddlewareScript
         ],
+        'register': [
+            require.resolve('./polyfills'),
+            paths.registerJS,
+            hotMiddlewareScript
+        ],
     },
     output: {
         path: paths.appBuild,
@@ -54,13 +58,8 @@ module.exports = {
         rules: [
 
             {
-                exclude: [
-                    /\.html$/,
-                    /\.(js|jsx)$/,
-                    /\.css$/,
-                    /\.json$/,
-                    /\.svg$/
-                ],
+                test: /\.(png|jpg|gif|jpeg)$/,
+                exclude: /node_modules/,
                 use: [
                     {
                         loader: 'url-loader',
@@ -74,12 +73,14 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 include: paths.appSrc,
+                exclude: /node_modules/,
                 enforce: 'pre',
                 loader: 'eslint-loader'
             },
             {
                 test: /\.(js|jsx)$/,
                 include: paths.appSrc,
+                exclude: /node_modules/,
                 use: [
                     {
                         loader: 'babel-loader',
@@ -102,6 +103,7 @@ module.exports = {
             },
             {
                 test: /\.svg$/,
+                exclude: /node_modules/,
                 use: [
                     {
                         loader: 'file-loader',
@@ -133,6 +135,12 @@ module.exports = {
             filename: 'search.ejs',
             template: paths.searchHtml,
             chunks: ['search']
+        }),
+        new HtmlWebpackPlugin({
+            inject: true,
+            filename: 'register.ejs',
+            template: paths.registerHtml,
+            chunks: ['register']
         }),
         new CopyWebpackPlugin(base.copyWebpackPlugin),
         new webpack.DefinePlugin(env.stringFiled),

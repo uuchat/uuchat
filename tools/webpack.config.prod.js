@@ -13,7 +13,7 @@ var getClientEnvironment = require('./env');
 var base = require('./baseConfig');
 
 var HappyPack = require('happypack');
-var FastUglifyJsPlugin = require('fast-uglifyjs-plugin');
+var ParallelUglifyPlugin = require('webpack-parallel-uglify-plugin');
 
 process.env.NODE_ENV = 'production';
 var publicPath = paths.servedPath;
@@ -64,7 +64,10 @@ module.exports = {
         ],
         'search': [
             paths.searchJS
-        ]
+        ],
+        'register': [
+            paths.registerJS
+        ],
     },
     output: {
         path: paths.appBuild,
@@ -78,13 +81,8 @@ module.exports = {
         noParse: [ /socket.io-client/ ],
         rules: [
             {
-                exclude: [
-                    /\.html$/,
-                    /\.(js|jsx)$/,
-                    /\.css$/,
-                    /\.json$/,
-                    /\.svg$/
-                ],
+                test: /\.(png|jpg|gif|jpeg)$/,
+                exclude: /node_modules/,
                 use: [
                     {
                         loader: 'url-loader',
@@ -98,6 +96,7 @@ module.exports = {
             {
                 test: /\.(js|jsx)$/,
                 include: paths.appSrc,
+                exclude: /node_modules/,
                 enforce: 'pre',
                 use: ['happypack/loader?id=hpjsx']
             },
@@ -110,6 +109,7 @@ module.exports = {
             },
             {
                 test: /\.svg$/,
+                exclude: /node_modules/,
                 use: [{
                     loader: 'file-loader',
                     options: {
@@ -121,6 +121,7 @@ module.exports = {
     },
 
     plugins: [
+        new webpack.optimize.ModuleConcatenationPlugin(),
         new InterpolateHtmlPlugin(env.raw),
         new webpack.LoaderOptionsPlugin({
             minimize: true,
@@ -150,17 +151,18 @@ module.exports = {
             chunks:['antd-main', 'console']
         }),
         new webpack.optimize.CommonsChunkPlugin('vendor'),
-
-
-        new FastUglifyJsPlugin({
-            compress: {
-                warnings: false
-            },
-            comments: false,
-            debug: false,
-            cacheFolder: path.resolve(__dirname, '.cache/')
+        new ParallelUglifyPlugin({
+            exclude: /node_modules/,
+            cacheDir: path.resolve(__dirname, '.cache/'),
+            uglifyJS: {
+                output: {
+                    comments: false
+                },
+                compress: {
+                    warnings: false
+                }
+            }
         }),
-
         new HtmlWebpackPlugin({
             inject: true,
             filename: "app.ejs",
@@ -198,6 +200,13 @@ module.exports = {
                 var order2 = order.indexOf(chunk2.names[0]);
                 return order1 - order2;
             },
+            minify: minify
+        }),
+        new HtmlWebpackPlugin({
+            inject: true,
+            filename: 'register.ejs',
+            template: paths.registerHtml,
+            chunks: ['vendor', 'register'],
             minify: minify
         }),
         new CopyWebpackPlugin(base.copyWebpackPlugin),

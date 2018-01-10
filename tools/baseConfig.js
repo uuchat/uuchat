@@ -3,21 +3,9 @@
 var nconf = require('nconf');
 var path = require('path');
 var paths = require('./paths');
-
-var UglifyJS;
-var CleanCSS;
-
-try {
-    UglifyJS = require("uglify-js");
-} catch (e) {
-    UglifyJS = require("webpack/node_modules/uglify-js");
-}
-
-try {
-    CleanCSS = require('clean-css');
-} catch (e) {
-    CleanCSS = require('html-webpack-plugin/node_modules/html-minifier/node_modules/clean-css');
-}
+var UglifyJS = require("uglify-js");
+var CleanCSS = require('clean-css');
+var _ = require('lodash');
 
 nconf.argv().env().file({
     file: path.join(__dirname, '../src/config.json')
@@ -111,28 +99,38 @@ var defaultConfig = {
             to: paths.appBuild + '/app'
         },
         {
-            from: paths.appWebviewJS,
+            from: paths.appWebview + '/webview.js',
             to: paths.appBuild + '/app/webview.js',
             force: true,
             transform: function (content, absoluteFrom) {
                 var code = (content + ''),
                     domain = nconf.get('app:domain');
 
-                if (!domain) {
-                    code = code.replace(/https:\/\/uuchat.io/g, 'http://'+nconf.get('app:address')+':'+nconf.get('app:port'));
+                if (_.isEmpty(domain)) {
+                    code = code.replace(/https:\/\/(uuchat.io)/g, 'http://'+nconf.get('app:address')+':'+nconf.get('app:port'));
                 } else {
-                    code = code.replace(/https:\/\/uuchat.io/g, domain);
+                    code = code.replace(/https:\/\/(uuchat.io)/g, domain);
                 }
 
                 return minify(code);
             }
         },
+        {
+            from: paths.appWebview+'/index.html',
+            to: paths.appBuild + '/app/index.html',
+            force: true,
+            transform: function (content, absoluteFrom) {
+                var code = (content + '');
+
+                if (process.env.NODE_ENV === 'production') {
+                    code = code.replace(/app\//g, '');
+                }
+
+                return code;
+            }
+        }
     ],
-    node: {
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty'
-    }
+    node: false
 };
 
 function cleanCSS(content) {
@@ -150,7 +148,7 @@ function minify(code) {
     } else {
         var result = UglifyJS.minify(code, {fromString: true});
         if (result.error) {
-            result = UglifyJS.minify(code); //UglifyJS3
+            result = UglifyJS.minify(code);
         }
         return result.code;
     }
