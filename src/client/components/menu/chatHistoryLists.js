@@ -3,43 +3,41 @@ import { Modal } from 'antd';
 import ChatMessageItem from '../message/chatMessageItem';
 import String2int from '../common/utils';
 
-const chatHistory = {};
+const historyChatData = {};
 
 class ChatHistoryLists extends Component{
 
     constructor(){
         super();
         this.state = {
-            hasList: false,
-            chatLists: [],
+            historyChatLists: [],
             filterMark: 8,
-            hisCid: 0,
-            hisTitle: '',
-            isHisVis: false
+            cid: 0,
+            title: '',
+            historyChatVisible: false
         };
     }
 
     componentDidMount(){
-        this.getList();
+        this.getHistoryChatLists();
     }
-    getList = () => {
+    getHistoryChatLists = () => {
         let _self = this;
         fetch('/chathistories/cs/'+this.props.csid+'/latestmonth').then(function(d){
             return d.json();
         }).then(function(d){
             if (d.code === 200) {
                 _self.setState({
-                    hasList: true,
-                    chatLists: d.msg
+                    historyChatLists: d.msg
                 });
             }
         }).catch(function(e){});
     };
-    showHistory = (e) => {
-        let t = e.target,
-            cid = '',
-            _li,
-            ulList;
+    showHistoryChat = (e) => {
+        let t = e.target;
+        let cid = '';
+        let _li;
+        let ulList;
 
         if (t.tagName.toLowerCase() === 'li') {
             _li = t;
@@ -50,11 +48,11 @@ class ChatHistoryLists extends Component{
         }
         cid = _li.getAttribute('data-cid');
 
-        if (chatHistory[cid]) {
-            this.renderHistroy(cid);
+        if (historyChatData[cid]) {
+            this.renderHistory(cid);
         } else {
-            chatHistory[cid] = [];
-            this.fetchHistory(cid, this.props.csid);
+            historyChatData[cid] = [];
+            this.fetchHistoryChat(cid, this.props.csid);
         }
 
         ulList = _li.parentNode;
@@ -66,33 +64,33 @@ class ChatHistoryLists extends Component{
         _li.className='active';
     };
 
-    renderHistroy = (cid) => {
+    renderHistory = (cid) => {
         this.setState({
-            hisCid: cid,
-            isHisVis: true,
-            hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
+            cid: cid,
+            historyChatVisible: true,
+            title: 'U-'+(cid.substr(0, 6).toUpperCase())+' chat history'
         });
     };
 
-    fetchHistory = (cid, csid) => {
-        let _self = this,
-            csAvatar = _self.props.csAvatar || require('../../static/images/contact.png') ;
+    fetchHistoryChat = (cid, csid) => {
+        let _self = this;
+        let avatar = _self.props.avatar || require('../../static/images/contact.png') ;
 
         fetch('/messages/customer/'+cid+'/cs/'+csid)
             .then((data) => data.json())
             .then(d =>{
-                let historyMessage = [];
+                let historyChat = [];
                 d.msg.map((dd) =>
-                     historyMessage.push({
-                        msgAvatar: (dd.type === 1) ? csAvatar : '',
+                    historyChat.push({
+                        msgAvatar: (dd.type === 1 || dd.type === 2) ? avatar : '',
                         msgText: dd.msg,
                         msgType: dd.type,
                         msgTime: new Date(dd.createdAt)
                     })
                 );
 
-                chatHistory[cid] = historyMessage;
-                _self.renderHistroy(cid);
+                historyChatData[cid] = historyChat;
+                _self.renderHistory(cid);
 
             })
             .catch(function(e){});
@@ -100,41 +98,42 @@ class ChatHistoryLists extends Component{
 
     filterMarked = (e) => {
         if (e.target.tagName.toLowerCase() === 'span') {
-            let marked = parseInt(e.target.getAttribute('data-marked'), 10) === 7 ? 0 : parseInt(e.target.getAttribute('data-marked'), 10);
+            let marked = parseInt(e.target.getAttribute('data-marked'), 10);
             this.setState({
                 filterMark: marked
             });
         }
     };
 
-    historyClose = () => {
+    closeHistoryChat = () => {
         this.setState({
-            isHisVis: false
+            historyChatVisible: false
         });
     };
 
     render(){
 
-        let {hisCid, chatLists, filterMark, hisTitle, isHisVis} = this.state,
-            chatArr = [],
-            markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
-            chatHistoryData = chatHistory[hisCid],
-            historyColorIndex = String2int(hisCid);
+        let {cid, historyChatLists, filterMark, title, historyChatVisible} = this.state;
+        let chatArr = [];
+        let markArr = ['grey', 'red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+        let titleColorIndex = String2int(cid);
 
-        for (let i = 0, l = chatLists.length; i < l; i++) {
+        for (let i = 0, l = historyChatLists.length; i < l; i++) {
 
-            if ((filterMark !== 8) && filterMark !== chatLists[i].marked) {
+            let chat = historyChatLists[i];
+
+            if ((filterMark !== 8) && filterMark !== chat.marked) {
                 continue;
             }
 
             chatArr.push(
-                <li key={i} data-cid={chatLists[i].cid}>
+                <li key={i} data-cid={historyChatLists[i].cid}>
                     <div className="chat-avatar fl">
-                        <span className={"avatar-icon avatar-icon-"+String2int(chatLists[i].cid)} >{chatLists[i].cid.substr(0,1).toUpperCase()}</span>
+                        <span className={"avatar-icon avatar-icon-"+String2int(chat.cid)} >{chat.cid.substr(0,1).toUpperCase()}</span>
                     </div>
                     <div className="chat-list-name fr">
-                        <h2 className="text-overflow">U-{chatLists[i].cid.substr(0, 6).toUpperCase()}</h2>
-                        <span className={"marked-tag marked-"+(chatLists[i].marked ? chatLists[i].marked  : '7')}></span>
+                        <h2 className="text-overflow">U-{chat.cid.substr(0, 6).toUpperCase()}</h2>
+                        <span className={"marked-tag marked-"+chat.marked}></span>
                     </div>
                 </li>
             );
@@ -144,33 +143,31 @@ class ChatHistoryLists extends Component{
             <div className="contact-list">
                 <div className="mark-filter mark-color-list" onClick={this.filterMarked}>Filter :&nbsp;&nbsp;<span data-marked="8" className="mark-tag mark-tag-all">All</span>
                     {markArr.map((m ,i)=>
-                        <span key={i} data-marked={i+1} className={"mark-tag tag-"+m+(filterMark === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
+                        <span key={i} data-marked={i} className={"mark-tag tag-"+m+(filterMark === i ? "  selected" : "")} title={"mark "+m}>{i}</span>
                     )}
                 </div>
                 <Modal
-                    title={hisTitle}
-                    visible={isHisVis}
+                    title={title}
+                    visible={historyChatVisible}
                     footer={null}
-                    onCancel={this.historyClose}
-                    className={"history-header history-header-"+historyColorIndex}
+                    onCancel={this.closeHistoryChat}
+                    className={"history-header history-header-"+titleColorIndex}
                     wrapClassName="historyMessage"
                 >
                     <div className="message-lists chat-lists-history">
-                        {chatHistoryData && chatHistoryData.map((msg ,index)=>
+                        {historyChatData[cid] && historyChatData[cid].map((chat)=>
                             <ChatMessageItem
-                                key={msg.msgTime}
-                                ownerType={msg.msgType}
-                                ownerAvatar={ msg.msgAvatar ?
-                                    msg.msgAvatar :
-                                    <div className={"avatar-color avatar-icon-"+historyColorIndex} >{hisCid.substr(0, 1).toUpperCase()}</div>
-                                }
-                                ownerText={msg.msgText}
-                                time={msg.msgTime}
+                                key={chat.msgTime}
+                                ownerType={chat.msgType}
+                                ownerAvatar={chat.msgAvatar}
+                                ownerText={chat.msgText}
+                                time={chat.msgTime}
+                                cid={cid}
                             />
                         )}
                     </div>
                 </Modal>
-                <ul className="customer-lists" onClick={this.showHistory}>
+                <ul className="customer-lists" onClick={this.showHistoryChat}>
                     {chatArr}
                 </ul>
             </div>

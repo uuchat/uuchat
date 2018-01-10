@@ -25,9 +25,10 @@ class ChatSetting extends Component{
         });
     };
     accountSave = () => {
-        let name = this.refs.name.refs.input.value,
-            displayName = this.refs.displayName.refs.input.value,
-            _self = this;
+
+        let name = this.refs.name.input.value;
+        let displayName = this.refs.displayName.input.value;
+        let _self = this;
 
         if (name !=='') {
             fetch('/customersuccesses/'+this.props.csid, {
@@ -61,9 +62,9 @@ class ChatSetting extends Component{
         });
     };
     passwordSave = (e) => {
-        let _self = this,
-            passwd = this.refs.passwd.refs.input.value.replace(/^\s$/g, ''),
-            cpasswd = this.refs.cpasswd.refs.input.value.replace(/^\s$/g, '');
+        let _self = this;
+        let passwd = this.refs.passwd.input.value.replace(/^\s$/g, '');
+        let cpasswd = this.refs.cpasswd.input.value.replace(/^\s$/g, '');
 
         if (passwd === '' || (passwd !== cpasswd)) {
             message.error('password must be same as confirm password and can not be empty');
@@ -99,9 +100,9 @@ class ChatSetting extends Component{
         });
     };
     themeClose = () => {
-        let csid = localStorage.getItem('uuchat.csid'),
-            bgThemeImg = localStorage.getItem('bgThemeImg').replace(/&/g, '@'),
-            bgThemeOpacity = localStorage.getItem('bgThemeOpacity');
+        let csid = localStorage.getItem('uuchat.csid');
+        let bgThemeImg = localStorage.getItem('bgThemeImg');
+        let bgThemeOpacity = localStorage.getItem('bgThemeOpacity');
 
         fetch('/customersuccesses/'+csid+'/theme', {
             credentials: 'include',
@@ -117,16 +118,17 @@ class ChatSetting extends Component{
     };
     backgroundSelect = (e) => {
         if (e.target.tagName.toLocaleLowerCase() === 'span') {
-            let { customerSuccess } = this.props,
-                theme = e.target.getAttribute('data-value').replace(/w=1080/g, 'w=1280');
+            let { customerSuccess } = this.props;
+            let theme = e.target.getAttribute('data-value').split('?')[0];
 
             customerSuccess.setState({bgThemeImg: theme});
             localStorage.setItem('bgThemeImg', theme);
         }
     };
     themeOpacityChange = (e) => {
-        let { customerSuccess } = this.props,
-            op = e.target.value;
+        let { customerSuccess } = this.props;
+        let op = e.target.value;
+
         this.setState({opacity: op});
         customerSuccess.setState({bgThemeOpacity: op});
         localStorage.setItem('bgThemeOpacity', op);
@@ -163,10 +165,10 @@ class ChatSetting extends Component{
         return isLt2M;
     };
     render(){
-        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet, opacity } = this.state,
-            {csid, avatarHandle, name} = this.props,
-            _self = this,
-            props = {
+        let {setContent, isAccountShow, isPasswordShow, avatar, percent, isUploading, isSetVisible, isThemeSet, opacity } = this.state;
+        let {csid, avatarHandle, name} = this.props;
+        let _self = this;
+        let props = {
                 name: 'avatars',
                 action: '/customersuccesses/'+csid+'/avatar',
                 accept: 'image/*',
@@ -271,7 +273,7 @@ class ChatSetting extends Component{
                         visible={isThemeSet}
                         cancelText="Cancel"
                         okText="Save"
-                        width="700"
+                        width="710"
                         footer={null}
                         onCancel={this.themeClose}
                     >

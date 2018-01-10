@@ -5,9 +5,9 @@ import String2int from '../common/utils';
 import '../../static/css/common.css';
 import '../../static/css/customerSuccess.css';
 
-let chatHistory = {},
-    searchContent = '',
-    pageNum = 0;
+let chatHistory = {};
+let searchContent = '';
+let pageNum = 0;
 
 class ChatSearchItem extends Component{
 
@@ -26,13 +26,6 @@ class ChatSearchItem extends Component{
     };
     showHistory = (e) => {
         this.props.showHistory(this.props.cid);
-    };
-    renderHistroy = (cid) => {
-        this.setState({
-            hisCid: cid,
-            isHisVis: true,
-            hisTitle: 'U-'+(cid.substr(0, 6).toUpperCase())+' chats history'
-        });
     };
     render() {
         return (
@@ -57,8 +50,8 @@ class ChatSearch extends Component{
         };
     }
     componentWillMount() {
-        let search = window.location.href,
-            content = '';
+        let search = window.location.href;
+        let content = '';
 
         if (search.indexOf('?search=') > -1) {
             search = search.split('?')[1].split('&');
@@ -101,7 +94,7 @@ class ChatSearch extends Component{
     };
     fetchHistory = (cid) => {
         let that = this,
-            csAvatar = localStorage.getItem('uuchat.avatar') ? localStorage.getItem('uuchat.avatar') : require('../../static/images/contact.png');
+            avatar = localStorage.getItem('uuchat.avatar') ? localStorage.getItem('uuchat.avatar') : require('../../static/images/contact.png');
 
         fetch('/messages/customer/'+cid+'/cs/'+that.state.csid)
             .then((data) => data.json())
@@ -109,7 +102,7 @@ class ChatSearch extends Component{
                 let historyMessage = [];
                 d.msg.map((dd) =>{
                     return historyMessage.push({
-                        msgAvatar: (dd.type === 1) ? csAvatar : '',
+                        msgAvatar: (dd.type === 1) ? avatar : '',
                         msgText: dd.msg,
                         msgType: dd.type,
                         msgTime: new Date(dd.createdAt)
@@ -117,12 +110,12 @@ class ChatSearch extends Component{
                 });
 
                 chatHistory[cid] = historyMessage;
-                that.renderHistroy(cid);
+                that.renderHistory(cid);
 
             })
             .catch(function(e){});
     };
-    renderHistroy = (cid) => {
+    renderHistory = (cid) => {
         this.setState({
             hisCid: cid,
             isHisVis: true,
@@ -166,11 +159,11 @@ class ChatSearch extends Component{
     };
 
     render() {
-        let state = this.state,
-            sArr = [],
-            searchL = state.searchList,
-            chatHistoryData = chatHistory[state.hisCid],
-            historyColorIndex = String2int(state.hisCid);
+        let state = this.state;
+        let sArr = [];
+        let searchL = state.searchList;
+        let chatHistoryData = chatHistory[state.hisCid];
+        let historyColorIndex = String2int(state.hisCid);
 
         for (let i = 0, l = searchL.length; i < l; i++) {
             sArr.push(<ChatSearchItem key={i} cid={searchL[i].cid} msg={searchL[i].msg}  showHistory={this.fetchHistory} />);

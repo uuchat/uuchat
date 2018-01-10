@@ -43,50 +43,29 @@ class ChatMenu extends Component{
 
     avatarHandle = (avatar) => {
         this.props.customerSuccess.setState({
-            csAvatar: avatar
+            avatar: avatar
         });
     };
 
     render() {
 
-        let {menuIcons} = this.state,
-            {customerLists, customerSelect, chatNotify, messageLists, csAvatar, csName, csid} = this.props.customerSuccess.state,
-            {closeDialog, onChatListClick} = this.props.customerSuccess,
-            chatLists = [];
+        let {menuIcons} = this.state;
+        let {avatar, name, csid, chatLists, chatActive} = this.props.customerSuccess.state;
+        let {closeChat, toggleChat} = this.props.customerSuccess;
+        let chatListArr = [];
 
-        if (customerLists.length > 0) {
-            customerLists.forEach((chat, index)=>{
-                if (chat.cid !== '') {
-
-                    let {msg, cid, name, type, marked} = chat,
-                        num = chatNotify[cid] || 0 ,
-                        isActive = (customerSelect.cid === cid),
-                        options = {};
-
-                    if (type && type === 'offline') {
-                        options = {
-                            cid: cid,
-                            name: name,
-                            email: msg,
-                            type: type,
-                            closeDialog: closeDialog
-                        };
-                    } else {
-                        options = {
-                            cid: cid,
-                            name: name,
-                            newMsg: messageLists[cid],
-                            isActive: isActive,
-                            num: num,
-                            marked: marked,
-                            closeDialog: closeDialog,
-                            onChatListClick: onChatListClick
-                        };
-                    }
-                    chatLists.push(<Chat key={cid} options={options} />);
-                }
-            });
-        }
+       for (let key in chatLists) {
+           let options = {
+               cid: chatLists[key].cid,
+               name: chatLists[key].name,
+               newMsg: chatLists[key].messageLists,
+               isActive: chatLists[key].cid === chatActive.cid,
+               num: chatLists[key].notifies,
+               closeChat: closeChat,
+               toggleChat: toggleChat
+           };
+           chatListArr.push(<Chat key={chatLists[key].cid} options={options} />);
+       }
 
         return (
             <div className="customerSuccess-left" onClick={this.chatListHide}>
@@ -102,14 +81,14 @@ class ChatMenu extends Component{
                 <Tabs defaultActiveKey="1" onTabClick={this.menuIconClick}>
                     <TabPane tab={<ChatIcon name={menuIcons.chat} />} key="1">
                         <ul className="customer-lists">
-                            {chatLists}
+                            {chatListArr.reverse()}
                         </ul>
                     </TabPane>
                     <TabPane tab={<ChatIcon name={menuIcons.contact} />} key="2">
-                        <ChatHistoryLists csid={csid} csAvatar={csAvatar} />
+                        <ChatHistoryLists csid={csid} avatar={avatar} />
                     </TabPane>
                     <TabPane tab={<ChatIcon name={menuIcons.setting} />} key="3">
-                        <ChatSetting name={csName} csid={csid} avatarHandle={this.avatarHandle} customerSuccess={this.props.customerSuccess} />
+                        <ChatSetting name={name} csid={csid} avatarHandle={this.avatarHandle} customerSuccess={this.props.customerSuccess} />
                     </TabPane>
                 </Tabs>
             </div>

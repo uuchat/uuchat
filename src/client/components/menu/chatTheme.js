@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
-let pageNum = 1,
-    isLoading = false;
+let pageNum = 1;
+let isLoading = false;
 
 class Theme extends Component {
     constructor(props) {
@@ -37,8 +37,8 @@ class Theme extends Component {
             });
     };
     backgroundTypeSelect = (e) => {
-        let {photoLists} = this.state,
-            type = e.target.getAttribute('data-type');
+        let {photoLists} = this.state;
+        let type = e.target.getAttribute('data-type');
 
         if (type === 'photo' && photoLists.length === 0) {
            this.loadImage(1);
@@ -49,11 +49,11 @@ class Theme extends Component {
     };
 
     backgroundScroll = (e) => {
-        let tg = e.target,
-            sHeight = tg.scrollHeight,
-            top = tg.scrollTop,
-            height = tg.offsetHeight,
-            {type} = this.state;
+        let tg = e.target;
+        let sHeight = tg.scrollHeight;
+        let top = tg.scrollTop;
+        let height = tg.offsetHeight;
+        let {type} = this.state;
 
         if (sHeight<=(top + height) && type === 'photo' && !isLoading) {
             isLoading = true;
@@ -64,9 +64,9 @@ class Theme extends Component {
     };
 
     render() {
-        let {type, colorLists, photoLists, systemsLists} = this.state,
-            {backgroundSelect, themeOpacityChange, opacity} = this.props,
-            lists = [];
+        let {type, colorLists, photoLists, systemsLists} = this.state;
+        let {backgroundSelect, themeOpacityChange, opacity} = this.props;
+        let lists = [];
 
         if (type === 'color') {
             colorLists.map((i) => {
