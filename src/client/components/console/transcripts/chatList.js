@@ -17,7 +17,7 @@ export default class ChatList extends Component {
             this.setState({
                 dataSource: data.msg.map((item) => {
                     return {
-                        msgAvatar: (item.type === 1) ? '/static/images/contact.png' : '',
+                        msgAvatar: (item.type === 1 || item.type === 2) ? '/static/images/contact.png' : '',
                         msgText: item.msg,
                         msgType: item.type,
                         msgTime: new Date(item.createdAt)
@@ -35,15 +35,17 @@ export default class ChatList extends Component {
     }
 
     render() {
-        let { cid, cIndex } = this.props;
+        let { cid } = this.props;
         let { dataSource } = this.state;
 
         return (
             <div className="message-lists chat-lists-history">
                 {dataSource.map((msg, index)=>
-                        <ChatMessageItem key={index} ownerType={msg.msgType}
-                                         ownerAvatar={ msg.msgAvatar ? msg.msgAvatar : <div className={"avatar-color avatar-icon-"+cIndex} >{cid.substr(0, 1).toUpperCase()}</div> }
-                                         ownerText={msg.msgText} time={msg.msgTime}
+                        <ChatMessageItem
+                             key={index} ownerType={msg.msgType}
+                             ownerAvatar={msg.msgAvatar}
+                             ownerText={msg.msgText} time={msg.msgTime}
+                             cid={cid}
                             />
                 )}
             </div>

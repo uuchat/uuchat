@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Breadcrumb, Button, message, DatePicker } from 'antd';
+import { Breadcrumb, Button, message, DatePicker, Row, Col, Radio } from 'antd';
 import AsyncComponent from '../../common/asyncComponent.js';
 import { fetchAsync } from '../common/utils';
 
@@ -69,6 +69,10 @@ export default class Rates extends Component {
         }, this.getDataSource);
     };
 
+    handleRadioButtonChange = (e) => {
+        window.location.href = "#/" + e.target.value;
+    };
+
     render() {
         let { dataSource,sortedInfo, month } = this.state;
         sortedInfo = sortedInfo || {};
@@ -77,9 +81,26 @@ export default class Rates extends Component {
 
         return (
             <div>
-                <Breadcrumb separator=">">
-                    <Breadcrumb.Item>Rate Report</Breadcrumb.Item>
-                </Breadcrumb>
+                <Row type="flex" justify="space-between">
+                    <Col span={4}>
+                        <Breadcrumb separator=">">
+                            <Breadcrumb.Item>Rate Report</Breadcrumb.Item>
+                        </Breadcrumb>
+                    </Col>
+                    <Col span={6}>
+                        <div className="ant-breadcrumb">
+                            <Radio.Group size="large" value="rates" onChange={this.handleRadioButtonChange}>
+                                <Radio.Button value="rates" style={{padding: '0 20px'}}>
+                                    Rate Report
+                                </Radio.Button>
+                                <Radio.Button value="rateList" style={{padding: '0 20px'}}>
+                                        Rate List
+                                </Radio.Button>
+                            </Radio.Group>
+                        </div>
+                    </Col>
+                    <Col span={4}></Col>
+                </Row>
 
                 <div className="content-body">
                     <div className="table-deals">
@@ -90,7 +111,6 @@ export default class Rates extends Component {
                                     placeholder="Select month"/>
                         </div>
                         <div className="table-operations">
-
                             <Button onClick={this.clearSorters}>Clear sorters</Button>
                         </div>
                     </div>

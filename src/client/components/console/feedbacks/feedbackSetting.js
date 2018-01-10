@@ -223,7 +223,7 @@ export default class FeedbackSetting extends Component {
                         </div>
                         <div className="table-operations">
                             <Button>
-                                <Link to={{pathname: '/feedbacks'}}>Back</Link>
+                                <Link to={{pathname: '/feedbacks'}}>Feedbacks</Link>
                             </Button>
                         </div>
                     </div>

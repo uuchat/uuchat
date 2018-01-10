@@ -19,8 +19,6 @@ export default class Transcripts extends Component {
     handleChatList = (e, record) => {
         e.preventDefault();
 
-        if (record.cid) record.cIndex = parseInt(record.cid, 16) % 14;
-
         Modal.info({
             title: 'U-' + (record.cid.substr(0, 6).toUpperCase()) + ' chats',
             width: '600px',

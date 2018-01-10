@@ -113,7 +113,7 @@ export default class Feedbacks extends Component {
                         </div>
                         <div className="table-operations">
                             <Button>
-                                <Link to={{pathname: '/feedbackSetting'}}>Setting</Link>
+                                <Link to={{pathname: '/feedbackSetting'}}>Feedback Settings</Link>
                             </Button>
                         </div>
                     </div>

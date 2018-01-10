@@ -10,7 +10,6 @@ class RateSearchForm extends Component {
 
     state = {
         csSource: [],
-        rangePickerOpen: false,
         calendarFooterValue: '7days'
     };
 
@@ -93,7 +92,8 @@ class RateSearchForm extends Component {
 
     render() {
         const { filter, form: { getFieldDecorator } } = this.props;
-        const { csSource, rangePickerOpen,calendarFooterValue } = this.state;
+        const { csSource, calendarFooterValue } = this.state;
+
 
         const initialCreatedAt = filter.createdAt;
 
@@ -115,11 +115,11 @@ class RateSearchForm extends Component {
                 {key: '1month', text: 'Last Month'},
                 {key: '3months', text: 'Last 3 Months'},
                 {key: '6months', text: 'Last 6 Months'},
-                {key: '1year', text: 'Last year'}
+                {key: '1years', text: 'Last year'}
             ];
 
             return (
-                <Radio.Group style={{padding: '8px 0'}} size='large'
+                <Radio.Group style={{padding: '8px 0'}}
                              defaultValue={ calendarFooterValue }
                              onChange={this.handleCalendarFooterChange}>
                     {intervalList.map((item)=>
@@ -165,15 +165,14 @@ class RateSearchForm extends Component {
                     {getFieldDecorator('createdAt', {initialValue: initialCreatedAt})(
                         <RangePicker style={{ width: '100%' }} size="large"
                                      renderExtraFooter={renderCalendarFooter}
-                                     open={ rangePickerOpen }
                                      onChange={this.handleChange.bind(null, 'createdAt')}/>
                     )}
                 </Col>
                 <Col {...TwoColProps} xl={{ span: 10 }} md={{ span: 24 }} sm={{ span: 24 }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
                         <div>
-                            <Button style={{ marginLeft: 8 }} type="primary" className="margin-right"
-                                    onClick={ this.handleSubmit }>Search</Button>
+                            <Button style={{ marginLeft: 8 }} className="margin-right"
+                                    onClick={ this.handleSubmit } type="primary">Search</Button>
                             <Button style={{ marginLeft: 8 }} onClick={ this.handleReset }>Reset</Button>
                         </div>
                     </div>

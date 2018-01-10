@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Breadcrumb, message } from 'antd';
+import { Breadcrumb, message, Radio, Row, Col } from 'antd';
 import RateListTable from './rateListTable';
 import AsyncComponent from '../../common/asyncComponent';
 import { emptyTableLocale } from '../common/constants';
@@ -78,6 +78,10 @@ export default class RateList extends Component {
         this.setState({pagination, filter: value}, this.getDataSource);
     };
 
+    handleRadioButtonChange = (e) => {
+        window.location.href = "#/" + e.target.value;
+    };
+
     render() {
         let { csSource, dataSource, pagination, sorter } = this.state;
 
@@ -89,9 +93,26 @@ export default class RateList extends Component {
 
         return (
             <div>
-                <Breadcrumb separator=">">
-                    <Breadcrumb.Item>Rate List</Breadcrumb.Item>
-                </Breadcrumb>
+                <Row type="flex" justify="space-between">
+                    <Col span={4}>
+                        <Breadcrumb separator=">">
+                            <Breadcrumb.Item>Rate List</Breadcrumb.Item>
+                        </Breadcrumb>
+                    </Col>
+                    <Col span={6}>
+                        <div className="ant-breadcrumb">
+                            <Radio.Group size="large" value="rateList"  onChange={this.handleRadioButtonChange}>
+                                <Radio.Button value="rates" style={{padding: '0 20px'}}>
+                                        Rate Report
+                                </Radio.Button>
+                                <Radio.Button value="rateList" style={{padding: '0 20px'}}>
+                                    Rate List
+                                </Radio.Button>
+                            </Radio.Group>
+                        </div>
+                    </Col>
+                    <Col span={4}></Col>
+                </Row>
 
                 <div className="content-body">
                     <RateSearchForm  { ...searchProps } />

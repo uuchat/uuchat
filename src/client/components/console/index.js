@@ -91,9 +91,23 @@ export default class Console extends Component {
             {key: 'customers', type: 'user', text: 'customers'},
             {key: 'transcripts', type: 'database', text: 'Transcripts'},
             {key: 'rates', type: 'star-o', text: 'Rate Report'},
-            {key: 'rateList', type: 'star-o', text: 'Rate List'},
+            //{key: 'rateList', type: 'star-o', text: 'Rate List'},
             {key: 'shortcuts', type: 'tags-o', text: 'Shortcuts'},
             {key: 'feedbacks', type: 'setting', text: 'Feedbacks'}
+        ];
+
+        const routeList = [
+            {path: "/", component: Dashboard},
+            {path: "/dashboard", component: Dashboard},
+            {path: "/operators", component: Operators},
+            {path: "/customers", component: Customers},
+            {path: "/transcripts", component: Transcripts},
+            {path: "/rates", component: Rates},
+            {path: "/rateList", component: RateList},
+            {path: "/shortcuts", component: Shortcuts},
+            {path: "/rates/:csid", component: RateDetails},
+            {path: "/feedbacks", component: Feedbacks},
+            {path: "/feedbackSetting", component: FeedbackSetting}
         ];
 
         return (
@@ -166,17 +180,9 @@ export default class Console extends Component {
                             <Router>
                                 <div style={{ height: '100%'}}>
                                     <Switch>
-                                        <Route exact path="/" component={ Dashboard }/>
-                                        <Route exact path="/dashboard" component={ Dashboard }/>
-                                        <Route exact path="/operators" component={ Operators }/>
-                                        <Route exact path="/customers" component={ Customers }/>
-                                        <Route exact path="/transcripts" component={ Transcripts }/>
-                                        <Route exact path="/rates" component={ Rates }/>
-                                        <Route exact path="/rateList" component={ RateList }/>
-                                        <Route exact path="/shortcuts" component={ Shortcuts }/>
-                                        <Route exact path="/rates/:csid" component={ RateDetails }/>
-                                        <Route exact path="/feedbacks" component={ Feedbacks }/>
-                                        <Route exact path="/feedbackSetting" component={ FeedbackSetting }/>
+                                        {
+                                            routeList.map((item, index)=> <Route exact path={ item.path } component={ item.component }/>)
+                                        }
                                     </Switch>
                                 </div>
                             </Router>
