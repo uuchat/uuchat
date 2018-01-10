@@ -62,13 +62,17 @@ Message.delete = function (condition, callback) {
         return callback(err);
     });
 };
+
 Message.listLastTen = function (cid, csid, fn) {
+    var params = {cid: cid, csid: csid};
+    if(_.isEmpty(csid)) {
+        //csid = {$eq: null};
+        params = {cid: cid};
+    }
+
     models.Message.findAll({
         attributes: ['msg', 'type', 'createdAt'],
-        where: {
-            cid: cid,
-            csid: csid
-        },
+        where: params,
         order: [['createdAt', 'DESC']],
         limit: 10
     }).then(function (data) {
@@ -79,6 +83,7 @@ Message.listLastTen = function (cid, csid, fn) {
         fn();
     });
 };
+
 
 Message.list = function (condition, order, pageSize, pageNum, callback) {
     order = order || [['createdAt', 'DESC']];
@@ -92,12 +97,47 @@ Message.list = function (condition, order, pageSize, pageNum, callback) {
         limit: pageSize
     }).then(function (data) {
         jsonToObj(data);
-        return callback(null, data);
+        return callback(null, models.getPlainArray(data));
 
     }, function (err) {
         logger.error(err);
 
         return callback(err);
+    });
+};
+
+Message.offlineMessageCidList = function (size, callback) {
+    models.Message.findAll({
+        attributes: ['cid'],
+        where: {
+            csid: {$eq: null}
+        },
+        group: ['cid'],
+        limit: size || 5
+    }).then(function (data) {
+        //logger.info("offlineMessageCidList data is: " + data);
+        callback(null, data);
+    }, function (err) {
+        logger.error(err);
+        callback(err);
+    });
+};
+
+Message.listOfflineMessageByCid = function (cid, callback) {
+    models.Message.findAll({
+        attributes: ['msg', 'type', 'createdAt'],
+        where: {
+            cid: cid,
+            csid: {$eq: null}
+        },
+        order: [['createdAt', 'DESC']],
+        limit: 20
+    }).then(function (data) {
+        jsonToObj(data);
+        callback(null, _.reverse(data));
+    }, function (err) {
+        logger.error(err);
+        callback(err);
     });
 };
 
@@ -162,6 +202,26 @@ Message.search = function (condition, order, pageSize, pageNum, callback) {
     });
 };
 
+Message.getLatestMessage = function (condition, attributes, callback) {
+
+    attributes.push(models.Sequelize.fn('MAX', models.Sequelize.col('createdAt')));
+
+    var options = {
+        attributes: attributes,
+        where: condition
+    };
+
+    return models.Message.findAll(options).then(function (data) {
+        if (!data || !data.length) return callback(null, {});
+
+        return callback(null, models.getPlainObject(data[0]));
+
+    }, function (err) {
+        logger.error(err);
+
+        return callback(err);
+    });
+};
 
 function jsonToObj(data) {
     _.forEach(data, function (value) {

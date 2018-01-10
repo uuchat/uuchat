@@ -6,7 +6,6 @@ var moment = require('moment');
 var CustomerSuccess = require('../database/customerSuccess');
 var Message = require('../database/message');
 var ChatHistory = require('../database/chatHistory');
-var Offline = require('../database/offline');
 var Rate = require('../database/rate');
 var utils = require('../utils');
 
@@ -24,9 +23,7 @@ consoleController.getNumbers = function (req, res, next) {
             });
         },
         function (callback) {
-            Offline.count({where: {createdAt: {$gte: today}}}, function (err, data) {
-                return callback(err, {offlineCustomers: data});
-            });
+            return callback(null, {offlineCustomers: []});
         },
         function (callback) {
             Rate.count({where: {createdAt: {$gte: today}}}, function (err, data) {
@@ -90,9 +87,7 @@ consoleController.getMonthlyData = function (req, res, next) {
             });
         },
         function (callback) {
-            Offline.count({where: condition}, function (err, data) {
-                return callback(err, {offlineMessages: data});
-            });
+                return callback(null, {offlineMessages: []});
         },
         function (callback) {
             Rate.aggregate(['rate'], condition, callback);

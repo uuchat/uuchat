@@ -7,9 +7,9 @@ var Sequelize = require("sequelize");
 var nconf = require('nconf');
 var shortcutCache = require('../cache/shortcut');
 
-var model = module.exports;
+var models = module.exports;
 
-model.init = function (callback) {
+models.init = function (callback) {
     var databaseConfig = process.env.NODE_ENV === 'test' ? nconf.get('test_database') : nconf.get('database');
     var sequelize;
 
@@ -22,8 +22,10 @@ model.init = function (callback) {
     var db = {};
 
     fs.readdirSync(__dirname).filter(function (file) {
+
         return (file.indexOf(".") !== 0) && (file !== "index.js");
     }).forEach(function (file) {
+
         var model = sequelize.import(path.join(__dirname, file));
         db[model.name] = model;
     });
@@ -34,17 +36,27 @@ model.init = function (callback) {
         }
     });
 
+    Object.assign(models, db);
 
-    Object.assign(model, db);
-
-    model.sequelize = sequelize;
+    models.sequelize = sequelize;
 
     //sync table
-    model.sequelize.sync().then(function(){
+    models.sequelize.sync().then(function () {
         shortcutCache.init(callback);
     });
 };
 
-model.Sequelize = Sequelize;
+models.Sequelize = Sequelize;
 
-module.exports = model;
+models.getPlainObject = function (data) {
+    return data ? data.get({plain: true}) : data;
+};
+
+
+models.getPlainArray = function (data) {
+    return _.map(data, function (item) {
+        return models.getPlainObject(item);
+    });
+};
+
+module.exports = models;

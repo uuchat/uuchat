@@ -5,11 +5,65 @@ var nconf = require('nconf');
 var async = require('async');
 var _ = require('lodash');
 var validator = require('validator');
+var path = require('path');
+var ejs = require('ejs');
 var logger = require('../logger');
 var utils = require('../utils');
+var Email = require('../email');
+var authentication = require('../services/authentication');
 var CustomerSuccess = require('../database/customerSuccess');
 
 var customerSuccessController = module.exports;
+
+customerSuccessController.invite = function (req, res, next) {
+    var customerSuccess = {
+        email: req.body.email
+    };
+
+    if (!validateEmail(customerSuccess.email)) return res.status(400).json({
+        code: 1000, msg: 'email_validate_error'
+    });
+
+    customerSuccess.displayname = authentication.generateInvitation(customerSuccess.email);
+
+    CustomerSuccess.create(customerSuccess, function (err, user) {
+        if (err) {
+            if (err.name === 'SequelizeUniqueConstraintError') {
+                return res.status(403).json({
+                    code: 1005, msg: 'email_already_exists'
+                });
+            }
+            return next(err);
+        }
+
+        Email.invited(customerSuccess.email, function (err) {
+            if (err) return res.json({code: 1007, msg: 'failed_send_invitation_email'});
+
+            res.json({code: 200, msg: 'success_invite'});
+        });
+    });
+};
+
+customerSuccessController.reInvite = function (req, res, next) {
+    if (!validateEmail(req.body.email)) return res.status(400).json({
+        code: 1000, msg: 'email_validate_error'
+    });
+
+    var customerSuccess = {};
+    customerSuccess.displayname = authentication.generateInvitation(customerSuccess.email);
+
+    var condition = {csid: req.body.csid};
+
+    Email.invited(req.body.email, function (err) {
+        if (err) return res.json({code: 1007, msg: 'failed_send_invitation_email'});
+
+        CustomerSuccess.update(customerSuccess, condition, function (err, data) {
+            if (err) return next(err);
+
+            res.json({code: 200, msg: 'success_invite'});
+        });
+    });
+};
 
 customerSuccessController.register = function (req, res, next) {
     var customerSuccess = {
@@ -20,6 +74,10 @@ customerSuccessController.register = function (req, res, next) {
         photo: req.body.photo || '',
         timezone: req.body.timezone
     };
+
+    var invitedCode = req.params.invited_code;
+
+    console.log('--------------------- invitedCode is' + invitedCode);
 
     if (!validateEmail(customerSuccess.email)) return res.status(400).json({
         code: 1000, msg: 'email_validate_error'
@@ -154,14 +212,7 @@ customerSuccessController.loginConsole = function (req, res, next) {
 
         return res.json({
             code: 200,
-            msg: {
-                csid: user.csid,
-                name: user.name,
-                displayName: user.displayName,
-                email: user.email,
-                photo: user.photo,
-                timezone: user.timezone
-            }
+            msg: _.pick(user, ['csid', 'name', 'displayName', 'email', 'photo', 'timezone'])
         });
     });
 };
@@ -232,7 +283,7 @@ customerSuccessController.updatePasswd = function (req, res, next) {
         'passwd': req.body.passwd
     };
 
-    if (!validatePasswordLength(customerSuccess.passwd)) return res.status(400).json({
+    if (!validatePasswordLength(customerSuccess.passwd)) return res.status(401).json({
         code: 1000, msg: 'passwd_validate_error'
     });
 
@@ -282,6 +333,75 @@ customerSuccessController.list = function (req, res, next) {
 
 customerSuccessController.getCountryCode = function (req, res, next) {
     return res.json({code: 200, msg: utils.getCountryCode(utils.getClientIP(req)) || ''});
+};
+
+customerSuccessController.generateResetToken = function (req, res, next) {
+    var condition = {email: req.body.email};
+
+    if (!validateEmail(condition.email)) return res.status(400).json({
+        code: 1000, msg: 'email_validate_error'
+    });
+
+    CustomerSuccess.findOne(condition, function (err, user) {
+
+        if (!user) return res.status(404).json({code: 1003, msg: 'email_not_found'});
+
+        // generate token
+        hashPasswdWithSalt(condition.email, function (err, hash) {
+            if (err) return next(err);
+
+            var templateFile = path.resolve('src/server/template', 'reset_passwd.html');
+
+            var relativeUrl = '';
+
+            if (nconf.get('app:ssl')) {
+                relativeUrl += 'https';
+            } else {
+                relativeUrl += 'http';
+            }
+
+            relativeUrl += "://" + nconf.get('app:address') + ':' + nconf.get('app:port') + nconf.get('app:relative_path');
+            var resetUrl = relativeUrl + "changed?token=" + hash;
+
+            ejs.renderFile(templateFile, {
+                siteUrl: relativeUrl,
+                resetUrl: resetUrl
+            }, {cache: true}, function (err, html) {
+                if (err) return next(err);
+
+                // setup email data with unicode symbols
+                var mailOptions = {};
+
+                mailOptions.subject = 'UUChat Password Reset';
+                mailOptions.from = '120920625@qq.com';
+                mailOptions.to = condition.email;
+                mailOptions.html = html;
+
+                Email.send(mailOptions, function (err, info) {
+                    if (err) logger.error(err);
+                });
+
+                return res.json({code: 200, msg: 'send_reset_email'});
+            });
+        });
+    });
+};
+
+customerSuccessController.resetPassword = function (req, res, next) {
+    var token = req.body.token;
+    var passwd = req.body.passwd;
+    var repasswd = req.body.repasswd;
+
+    // validate passwd and repasswd
+    if (passwd != repasswd) return res.json('Input_passwords_not_match');
+
+
+    // validate token
+    if (!token) return res.status(401).json('token_validate_error');
+
+    //update passwd
+    //customerSuccessController.updatePasswd();
+
 };
 
 function validatePasswordLength(passwd) {

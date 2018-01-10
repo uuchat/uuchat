@@ -8,9 +8,9 @@ var logger = require('../logger');
 var customerSuccessList = require('./customerSuccess');
 var customerList = require('./customer');
 var socketAdapter = require('./socketAdapter');
+var messageAdapter = require('./messageAdapter');
 var message = require('../database/message');
 var chatHistory = require('../database/chatHistory');
-var offline = require('../database/offline');
 
 
 var SocketCustomerSuccessEvents = {};
@@ -34,7 +34,7 @@ SocketCustomerSuccessEvents.setup = function(socket) {
         // if synchronous create and customerSuccess.socket, there is no lock for customerSuccess
         // so customerSuccess.socket not success;
         customerSuccessList.create({csid: csid, socket: socket, name: session.csName, photo: session.photo});
-        dealCustomerOfflineMsg(csid);
+        messageAdapter.listOfflineMessage(csid);
         return ;
     }
 
@@ -57,7 +57,7 @@ SocketCustomerSuccessEvents.setup = function(socket) {
 function setupAfter(customerSuccess, socket, csid) {
     customerSuccess.socket = socket;
     socketAdapter.emitCustomerList(csid);
-    dealCustomerOfflineMsg(csid);
+    messageAdapter.listOfflineMessage(csid);
 }
 
 SocketCustomerSuccessEvents.refreshOnlineInfo = function() {
@@ -259,35 +259,6 @@ SocketCustomerSuccessEvents.disconnect = function(csid) {
     this.refreshOnlineInfo();
     logger.info("customer success disconnected!");
 };
-
-function dealCustomerOfflineMsg(csid) {
-    //1. list offline customer message;
-    offline.listPending(function(data){
-        _.forEach(data, function(value) {
-            var obj = {cid: value.cid, name: value.name, email: value.email, content: value.content};
-            //2. emit json to customer success;
-            socketAdapter.emitCustomerOfflineMessage(csid, obj);
-            var msg = {};
-            msg.cid = value.cid;
-            msg.csid = csid;
-            msg.msg = JSON.stringify(obj);
-            msg.type = 4;
-            //3. insert message and update csid of offline
-            message.create(msg, function(success){
-                if (!success) {
-                    logger.error('Customer offline message insert to DB error ');
-                    logger.error(msg);
-                } else {
-                    offline.updateStatusByUUID(2, csid, value.uuid, function(success){
-                        if (!success) {
-                            logger.error('update offline message status by UUID error uuid = %s', value.uuid);
-                        }
-                    });
-                }
-            });
-        });
-    });
-}
 
 function disconnect(csid) {
     var customerSuccess = customerSuccessList.get(csid);

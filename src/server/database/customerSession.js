@@ -22,7 +22,7 @@ CustomerSession.findOne = function (condition, callback) {
 
     models.CustomerSession.findOne({where: condition}).then(function (data) {
 
-        return callback(null, data);
+        return callback(null, models.getPlainObject(data));
 
     }, function (err) {
         logger.error(err);

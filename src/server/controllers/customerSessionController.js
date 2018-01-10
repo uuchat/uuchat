@@ -1,6 +1,11 @@
 "use strict";
 
-var CustomerSession = require('../database/customerSession');
+var _ = require("lodash");
+var moment = require("moment");
+var async = require("async");
+var utils = require("../utils");
+var CustomerSession = require("../database/customerSession");
+var Message = require("../database/message");
 
 var customerSessionController = module.exports;
 
@@ -17,11 +22,39 @@ customerSessionController.get = function (req, res, next) {
 customerSessionController.query = function (req, res, next) {
     var condition = {cid: req.params.cid};
 
+    // fist seen
     CustomerSession.findOne(condition, function (err, customerSession) {
 
         if (err) return next(err);
 
-        return res.json({code: 200, msg: customerSession});
+        async.parallel([
+            function (next) { // address
+                if (utils.isPrivateIPV4(customerSession.ip)) return next(null, 'local');
+
+                utils.getCountry(customerSession.ip, function (err, countryInfo) {
+
+                    if (err) return next(err);
+
+                    if (countryInfo && countryInfo.country) {
+                        return next(null, countryInfo.country.names.en);
+                    }
+
+                    return next(null, 'Unknown');
+                });
+            }, function (next) { // last seen
+                condition.type = 0;
+                Message.getLatestMessage(condition, ['createdAt'], next);
+            }
+        ], function (err, results) {
+            if (err) return next(err);
+
+            var customer = _.pick(customerSession, ['cid', 'email']);
+            customer.address = results[0];
+            customer.firstSeen = moment(customerSession.createdAt).startOf('hour').fromNow();
+            customer.lastContacted = customer.lastSeen = moment(results[1].createdAt).startOf('hour').fromNow();
+
+            return res.json({code: 200, msg: customer});
+        });
     });
 };
 

@@ -32,7 +32,6 @@ CustomerSuccess.findOne = function (condition, callback) {
     });
 };
 
-
 CustomerSuccess.findAll = function (attributes, condition, order, callback) {
 
     var options = {
@@ -46,8 +45,10 @@ CustomerSuccess.findAll = function (attributes, condition, order, callback) {
 
         var pureData = _.map(data, function (item) {
 
-            var tmp = item.get({plain: true});
-            if (tmp.passwd) delete tmp.passwd;
+            var tmp = models.getPlainObject(item);
+            // replace passwd
+            if (tmp.passwd) tmp.passwd = 'p';
+
             return tmp;
         });
 
@@ -110,6 +111,22 @@ CustomerSuccess.list = function (condition, order, pageSize, pageNum, callback) 
         offset: pageSize * pageNum,
         limit: pageSize
     }).then(function (data) {
+
+        return callback(null, data);
+
+    }, function (err) {
+        logger.error(err);
+
+        return callback(err);
+    });
+};
+
+
+CustomerSuccess.count = function (options, callback) {
+
+    options = options || {};
+
+    models.CustomerSuccess.count(options).then(function (data) {
 
         return callback(null, data);
 

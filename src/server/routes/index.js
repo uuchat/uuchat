@@ -10,9 +10,13 @@ var cors = require('cors');
 function customerSuccessRoutes(app, middleware, controllers) {
     //var middlewares = [middleware.checkGlobalPrivacySettings];
 
-    app.post('/register', controllers.customerSuccessController.register);
+    app.post('/invite', controllers.customerSuccessController.invite);
+    app.post('/invite/resend', controllers.customerSuccessController.reInvite);
+    app.post('/register/:invited_code', controllers.customerSuccessController.register);
     app.post('/login', controllers.customerSuccessController.login);
     app.post('/logout', controllers.customerSuccessController.logout);
+    app.post('/passwdreset', controllers.customerSuccessController.generateResetToken);
+    app.put('/passwdreset', controllers.customerSuccessController.resetPassword);
 
     app.get('/country', controllers.customerSuccessController.getCountryCode);
 
@@ -56,10 +60,13 @@ function messageRoutes(app, middleware, controllers) {
     app.get('/messages/customer/:cid', controllers.messageController.list);
     app.get('/messages/customer/:cid/cs/:csid', controllers.messageController.list);
     app.post('/messages/customer/:cid/cs/:csid', controllers.messageController.create);
+    app.post('/messages/customer/:cid/cs/:csid/reply', controllers.messageController.replyEmail);
 
     app.get('/messages/cs/:csid/search', controllers.messageController.search);
     app.get('/messages/cs/:csid/search/latestmonth', controllers.messageController.searchLatestMonth);
+
     app.options('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate));
+    app.post('/messages/customer/:cid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage);
     app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage);
 }
 
@@ -73,16 +80,6 @@ function rateRoutes(app, middleware, controllers) {
     app.delete('/rates/:uuid', controllers.rateController.delete);
     app.get('/rates/customer/:cid', controllers.rateController.list);
     app.get('/rates/customersuccess/:csid', controllers.rateController.list);
-}
-
-function offlineRoutes(app, middleware, controllers) {
-    //var middlewares = [middleware.checkGlobalPrivacySettings];
-
-    app.post('/offlines', controllers.offlineController.create);
-    app.get('/offlines', controllers.offlineController.create);
-
-    app.post('/offlines/:uuid/reply', controllers.offlineController.replyEmail);
-
 }
 
 function chatHistoryRoutes(app, middleware, controllers) {
@@ -130,7 +127,6 @@ module.exports = function (app, middleware, callback) {
     customerStorageRoutes(router, middleware, controllers);
     messageRoutes(router, middleware, controllers);
     rateRoutes(router, middleware, controllers);
-    offlineRoutes(router, middleware, controllers);
     chatHistoryRoutes(router, middleware, controllers);
     consoleRoutes(router, middleware, controllers);
     shortcutRoutes(router, middleware, controllers);

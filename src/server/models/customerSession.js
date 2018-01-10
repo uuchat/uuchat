@@ -34,6 +34,7 @@ module.exports = function (sequelize, DataTypes) {
             },
             marked: {
                 type: DataTypes.INTEGER,
+                defaultValue: -1,
                 comment: 'color marked'
             },
             platform: DataTypes.STRING(64),

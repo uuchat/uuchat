@@ -31,7 +31,14 @@ SocketCustomerEvents.select = function(socket, cid, name, fn) {
 
     if (_.isEmpty(customerSuccessList.select())) {
         console.log("all cs not online");
-        fn(3, {"code": 1002, "msg": "all cs not online!"});
+        //offline message need select a customer success to user.
+        message.listLastTen(cid, "", function (data) {
+            if (data) {
+                fn(3, {"cid": cid, "csid": "", "name": nconf.get('app:name'), "photo": "", "msg": data})
+            } else {
+                fn(3, {"cid": cid, "csid": "", "name": nconf.get('app:name'), "photo": "", "msg": []})
+            }
+        });
         return;
     }
 
@@ -94,8 +101,15 @@ function selectAfter(cid, customerSuccess, csid, fn) {
     });
 }
 
+SocketCustomerEvents.offlineMessage = function(cid, msg, fn) {
+    sendMessage(true, cid, msg, fn);
+};
+
 SocketCustomerEvents.message = function(cid, msg, fn) {
-    //null check
+    sendMessage(false, cid, msg, fn);
+};
+
+function sendMessage(isOfflineMessage, cid, msg, fn){
     if (_.isUndefined(msg) || _.isNull(msg) || msg.length === 0) {
         winston.info("message is empty!");
         fn(false);
@@ -107,15 +121,19 @@ SocketCustomerEvents.message = function(cid, msg, fn) {
         fn(false);
         return;
     }
+
     var csid = customerList.get(cid).csid;
-    if (_.isEmpty(csid)) {
-        fn(false);
-        return;
-    }
-    var customerSuccess = customerSuccessList.get(csid);
-    if(_.isEmpty(customerSuccess) || _.indexOf(customerSuccess.users, cid) < 0) {
-        fn(false);
-        return;
+    // if (_.isEmpty(csid)) {
+    //     fn(false);
+    //     return;
+    // }
+
+    if (!isOfflineMessage) {
+        var customerSuccess = customerSuccessList.get(csid);
+        if (_.isEmpty(customerSuccess) || _.indexOf(customerSuccess.users, cid) < 0) {
+            fn(false);
+            return;
+        }
     }
     var data = {};
     data.cid = cid;
@@ -127,16 +145,17 @@ SocketCustomerEvents.message = function(cid, msg, fn) {
             logger.error(data);
         }
     });
-
-    try {
-        customerSuccess.socket.emit("c.message", cid, msg);
-    } catch(e) {
-        logger.error(e.message);
-        fn(false);
+    if (!isOfflineMessage) {
+        try {
+            customerSuccess.socket.emit("c.message", cid, msg);
+        } catch (e) {
+            logger.error(e.message);
+            fn(false);
+        }
     }
 
     fn(true);
-};
+}
 
 SocketCustomerEvents.rate = function(cid, value, ip, fn) {
     //null check
@@ -189,7 +208,7 @@ SocketCustomerEvents.lineUpNotify = function() {
             customerSuccessList.userPush(csid, cid);
             socketAdapter.emitCustomer(csid, cid);
             //chat history and return message
-            message.listLastFive(cid, csid, function(data){
+            message.listLastTen(cid, csid, function(data){
                 if (!data) {
                     data = [];
                 }

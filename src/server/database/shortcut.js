@@ -22,9 +22,8 @@ Shortcut.findById = function (uuid, callback) {
 Shortcut.create = function (shortcut, callback) {
 
     models.Shortcut.create(shortcut).then(function (data) {
-        var pureData = data.get({plain: true});
 
-        return callback(null, pureData);
+        return callback(null, models.getPlainObject(data));
 
     }, function (err) {
         logger.error(err);
@@ -88,11 +87,7 @@ Shortcut.listAll = function (attributes, condition, callback) {
         where: condition
     }).then(function (data) {
 
-        var pureData = _.map(data, function (item) {
-            return item.get({plain: true});
-        });
-
-        return callback(null, pureData);
+        return callback(null, models.getPlainArray(data));
 
     }, function (err) {
         logger.error(err);
@@ -111,11 +106,7 @@ Shortcut.findAll = function (condition, order, callback) {
 
     models.Shortcut.findAll(filter).then(function (data) {
 
-        var pureData = _.map(data, function (item) {
-            return item.get({plain: true});
-        });
-
-        return callback(null, pureData);
+        return callback(null, models.getPlainArray(data));
 
     }, function (err) {
         logger.error(err);

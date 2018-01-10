@@ -125,6 +125,10 @@ function listening() {
             customerEvents.message(cid, msg, fn);
         });
 
+        socket.on('c.offlineMsg', function(cid, msg, fn) {
+            customerEvents.offlineMessage(cid, msg, fn);
+        });
+
         socket.on('c.rate', function(cid, value, fn) {
             var headers = socket.request ? socket.request.headers : {};
             var ip = headers['x-forwarded-for'] || socket.request.connection.remoteAddress;

@@ -2,8 +2,15 @@
 
 var _ = require('lodash');
 var moment = require('moment');
+var path = require('path');
+var ejs = require('ejs');
+var nconf = require('nconf');
+var validator = require('validator');
 var Message = require('../database/message');
 var utils = require('../utils');
+var logger = require('../logger');
+var CustomerSession = require('../database/customerSession');
+var Email = require('../email');
 
 var messageController = module.exports;
 
@@ -93,8 +100,8 @@ messageController.searchLatestMonth = function (req, res, next) {
             '$like': '%' + req.query.msg + '%',
             '$notLike': 'content/upload/%'
         },
-        createdAt:{
-            '$gte':moment().subtract(1, 'month')
+        createdAt: {
+            '$gte': moment().subtract(1, 'month')
         }
     };
 
@@ -107,5 +114,67 @@ messageController.searchLatestMonth = function (req, res, next) {
         if (err) return next(err);
 
         return res.json({code: 200, msg: messages});
+    });
+};
+
+messageController.replyEmail = function (req, res, next) {
+    var cid = req.params.cid;
+    var csid = req.params.csid;
+    var toEmail = req.body.to;
+    var subject = req.body.subject;
+    var msg = req.body.message;
+
+    if (!validator.isEmail(toEmail || '')) return res.json({code: 4001, msg: 'email_validate_error'});
+
+    var condition = {cid: cid, csid: csid};
+    var order = [['createdAt', 'DESC']];
+    var pageNum = 0;
+    var pageSize = 10;
+
+    Message.list(condition, order, pageSize, pageNum, function (err, messages) {
+        if (err) return next(err);
+
+        messages = _.reverse(messages);
+
+        messages.push({cid: cid, csid: csid, type:1, msg: msg, createdAt:new Date()});
+
+        messages.forEach(function(item){
+            item.createdAt = moment(item.createdAt).format('DD MMM hh:mm a');
+        });
+
+        // setup email data with unicode symbols
+        var mailOptions = {};
+
+        //from: '"xxx" xxx@gmail.com', // sender address
+        //to: 'xxx@gmail.com', // list of receivers
+        //subject: 'Hello ✔', // Subject line
+        //text: 'Hello world?', // plain text body
+        //html: '<b>Hello world?</b>' // html body
+
+        mailOptions.subject = subject;
+        mailOptions.to = toEmail;
+
+        var templateFile = path.resolve('src/client/views/console', 'email_template.html');
+
+        var relativeUrl = '';
+
+        if (nconf.get('app:ssl')) {
+            relativeUrl+= 'https';
+        }else{
+            relativeUrl+= 'http';
+        }
+        relativeUrl += "://" + nconf.get('app:address') + ':' + nconf.get('app:port') + nconf.get('app:relative_path');
+
+        ejs.renderFile(templateFile, {messages: messages, relativeUrl:relativeUrl}, {cache: true}, function (err, html) {
+            if (err) return next(err);
+
+            mailOptions.html = html;
+
+            Email.send(mailOptions, function (err, info) {
+                if (err) logger.error(err);
+            });
+
+            return res.json({code: 200, msg: 'success_reply_email'});
+        });
     });
 };

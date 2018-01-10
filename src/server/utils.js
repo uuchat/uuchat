@@ -137,4 +137,14 @@ utils.mkdir = function (dir) {
     if (!fs.existsSync(dir)) fs.mkdir(dir);
 };
 
+/**
+ * check private ipv4
+ * @param ip
+ * @returns {boolean}
+ */
+utils.isPrivateIPV4 = function (ip) {
+    var regex = /^(127\.0\.0\.1|192\.168|10\.|172\.1[6789]\.|172\.2[0-9]\.|172\.3[01]\.)/;
+    return regex.test(ip);
+};
+
 module.exports = utils;

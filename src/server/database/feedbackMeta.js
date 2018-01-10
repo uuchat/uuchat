@@ -22,9 +22,8 @@ FeedbackMeta.findById = function (uuid, callback) {
 FeedbackMeta.create = function (feedbackMeta, callback) {
 
     models.FeedbackMeta.create(feedbackMeta).then(function (data) {
-        var pureData = data.get({plain: true});
 
-        return callback(null, pureData);
+        return callback(null, models.getPlainObject(data));
 
     }, function (err) {
         logger.error(err);
@@ -86,11 +85,7 @@ FeedbackMeta.listAll = function (attributes, condition, callback) {
         where: condition
     }).then(function (data) {
 
-        var pureData = _.map(data, function (item) {
-            return item.get({plain: true});
-        });
-
-        return callback(null, pureData);
+        return callback(null, models.getPlainArray(data));
 
     }, function (err) {
         logger.error(err);
@@ -109,11 +104,7 @@ FeedbackMeta.findAll = function (condition, order, callback) {
 
     models.FeedbackMeta.findAll(filter).then(function (data) {
 
-        var pureData = _.map(data, function (item) {
-            return item.get({plain: true});
-        });
-
-        return callback(null, pureData);
+        return callback(null, models.getPlainArray(data));
 
     }, function (err) {
         logger.error(err);
