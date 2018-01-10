@@ -114,20 +114,6 @@ var defaultConfig = {
 
                 return minify(code);
             }
-        },
-        {
-            from: paths.appWebview+'/index.html',
-            to: paths.appBuild + '/app/index.html',
-            force: true,
-            transform: function (content, absoluteFrom) {
-                var code = (content + '');
-
-                if (process.env.NODE_ENV === 'production') {
-                    code = code.replace(/app\//g, '');
-                }
-
-                return code;
-            }
         }
     ],
     node: false
