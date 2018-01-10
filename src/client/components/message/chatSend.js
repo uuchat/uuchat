@@ -47,8 +47,8 @@ class ChatSend extends Component{
 
     sendMessage = (e) => {
         e.preventDefault();
-        let msgVal = e.target.value,
-            msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
+        let msgVal = e.target.value;
+        let msg = msgVal.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/ /gi, '&nbsp;').replace(/\n/gi, '#');
 
         if (msgVal.length > 0 && !this.state.isShortShow) {
             this.props.sendMessage(cutStr(msg, 256));
@@ -67,12 +67,12 @@ class ChatSend extends Component{
     };
 
     onKeyup = (e) => {
-        let tg = e.target,
-            val = tg.value,
-            keyCode = e.keyCode,
-            sIndex = tg.selectionStart,
-            matchVal = val.slice(0, sIndex),
-            matchArr;
+        let tg = e.target;
+        let val = tg.value;
+        let keyCode = e.keyCode;
+        let sIndex = tg.selectionStart;
+        let matchVal = val.slice(0, sIndex);
+        let matchArr;
 
         if (keyCode === 38 && this.state.isShortShow) {
             shortListIndex--;
@@ -103,10 +103,10 @@ class ChatSend extends Component{
     };
 
     shortcutFilter = (matchArr) => {
-       let shortcutLists = localStorage.getItem("shortcutList") || [],
-           mtext = matchArr[matchArr.length - 1].replace(' ', ''),
-           isShortShow = false,
-           matchReg = new RegExp(mtext.slice(1), 'ig');
+       let shortcutLists = localStorage.getItem("shortcutList") || [];
+       let mtext = matchArr[matchArr.length - 1].replace(' ', '');
+       let isShortShow = false;
+       let matchReg = new RegExp(mtext.slice(1), 'ig');
 
         shortcutWord = mtext;
 
@@ -133,15 +133,15 @@ class ChatSend extends Component{
     };
 
     shortcutSelectClick = (val) => {
-        this.insertToCursorPosition(this.state.textereaValue.replace(new RegExp(shortcutWord, 'g'), ' '), ' '+val);
+        this.insertToCursorPosition(this.state.textereaValue.replace(new RegExp(shortcutWord, 'g'), ''), val);
     };
 
     shortcutSelect = (direction) => {
         if (document.querySelector('.shortListUl li')) {
-            let h = document.querySelector('.shortListUl li').offsetHeight,
-                list = document.querySelectorAll('.shortListUl li'),
-                len = list.length,
-                shortList = document.querySelector('.short-list');
+            let h = document.querySelector('.shortListUl li').offsetHeight;
+            let list = document.querySelectorAll('.shortListUl li');
+            let len = list.length;
+            let shortList = document.querySelector('.short-list');
 
             if (direction === 1) {
                 if (shortListIndex*h >= shortList.offsetHeight) {
@@ -206,7 +206,8 @@ class ChatSend extends Component{
         }
     };
     rateHandle = () => {
-        let {socket, cid} = this.props;
+        let {socket, cid, rateFeedBack} = this.props;
+
         Modal.confirm({
             title: 'Invite user rate',
             okText: 'Yes',
@@ -215,8 +216,12 @@ class ChatSend extends Component{
                 <p>Are you sure invite the user rate?</p>
             ),
             onOk(){
-                message.success('Invitation has been sent!', 4);
-                socket && socket.emit('cs.rate', cid, function(success){});
+                socket && socket.emit('cs.rate', cid, function(success){
+                    if (success) {
+                        rateFeedBack();
+                    }
+
+                });
             }
         });
     };
@@ -234,10 +239,10 @@ class ChatSend extends Component{
     };
 
     render(){
-        let {sendMessage, cid, csid} = this.props,
-            {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue, isShortShow, matchText} = this.state,
-            _self = this,
-            props = {
+        let {sendMessage, cid, csid} = this.props;
+        let {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue, isShortShow, matchText} = this.state;
+        let _self = this;
+        let props = {
                 name: 'image',
                 action: '/messages/customer/'+cid+'/cs/'+csid+'/image',
                 accept: 'image/*',
@@ -299,8 +304,7 @@ class ChatSend extends Component{
                 </div>
                 <div className="chat-text">
                 {isShortShow && <ChatShortcut shortcutSelectClick={this.shortcutSelectClick} csid={csid} matchText={matchText} shortcutMouseover={this.shortcutMouseover} />}
-                <Input
-                    type="textarea"
+                <Input.TextArea
                     className="chat-textarea"
                     onPressEnter={this.sendMessage}
                     placeholder={isSendReady ? "" : "Enter message.Type ;to bring up shortcuts."}

@@ -64,8 +64,8 @@ class ShortList extends Component{
     };
     mouseoverHandle = (e) => {
 
-        let shortcutList = document.querySelectorAll('.shortListUl li'),
-            tg = e.target;
+        let shortcutList = document.querySelectorAll('.shortListUl li');
+        let tg = e.target;
 
         for (let i = 0, l = shortcutList.length; i < l; i++) {
             shortcutList[i].className = 's-'+i;
@@ -111,8 +111,8 @@ class ChatShortcut extends Component{
     }
 
     getShortCutsList = () => {
-        let _self = this,
-            shortcutData = [];
+        let _self = this;
+        let shortcutData = [];
 
         Shortcut.init();
         shortcutData = Shortcut.get();
@@ -138,9 +138,9 @@ class ChatShortcut extends Component{
     };
 
     render(){
-        let {fetchList} = this.state,
-            {matchText, shortcutSelectClick, shortcutMouseover} = this.props,
-            shortListArr = [];
+        let {fetchList} = this.state;
+        let {matchText, shortcutSelectClick, shortcutMouseover} = this.props;
+        let shortListArr = [];
 
         for (let i = 0, l = fetchList.length; i < l; i++) {
             let matchReg= new RegExp(matchText.slice(1), 'ig'),

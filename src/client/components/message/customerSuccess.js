@@ -17,22 +17,15 @@ class CustomerSuccess extends Component{
         this.state = {
             socket: {},
             csid: localStorage['uuchat.csid'] || '',
-            csName: localStorage['uuchat.name'] || '',
-            csDisplayName: localStorage['uuchat.displayName'] || '',
-            csEmail: localStorage['uuchat.email'] || '',
-            csAvatar: localStorage['uuchat.avatar'] || '../../static/images/contact.png',
+            name: localStorage['uuchat.name'] || '',
+            displayName: localStorage['uuchat.displayName'] || '',
+            email: localStorage['uuchat.email'] || '',
+            avatar: localStorage['uuchat.avatar'] || '../../static/images/contact.png',
             bgThemeImg: localStorage['bgThemeImg'] || '',
             bgThemeOpacity: localStorage['bgThemeOpacity'] || 0.7,
-            customerSelect: {
-                cid: '',
-                name: '',
-                marked: 0
-            },
-            messageLists: {},
-            customerLists: [],
-            chatNotify: {},
-            isOnline: true,
-            isConnectErr: false
+            status: 1,             // 1:online，2:offline, 3:connect error
+            chatLists: {},
+            chatActive: {}
         };
 
     }
@@ -52,7 +45,7 @@ class CustomerSuccess extends Component{
         });
 
         sio.on('connect', this.customerSuccessConnect);
-        sio.on('connect_error', this.customerSuccessConectErr);
+        sio.on('connect_error', this.customerSuccessConnectErr);
         sio.on('reconnect', this.socketReconnect);
         sio.on('cs.customer.one', this.csCustomerOne);
         sio.on('cs.customer.list', this.csCustomerList);
@@ -68,165 +61,121 @@ class CustomerSuccess extends Component{
         });
     };
 
-    /***
-     * cs.customer.list
-     */
     csCustomerList = (data) => {
-        let customer = {};
+       let {chatLists, chatActive} = this.state;
 
-        data.map((d)=>customer[d.cid] = []);
-
-        this.setState({
-            customerLists: data,
-            messageLists: customer,
-            customerSelect: {
-                cid: data[0].cid,
-                name: data[0].name,
-                marked: data[0].marked
-            }
-        });
-
-        for (let i = 0; i < data.length; i++) {
-            this.getMessageHistory(data[i].cid);
-        }
+       this.setState({
+           chatLists: chatLists,
+           chatActive: chatActive
+       });
     };
 
-    /***
-     * cs.customer.one
-     */
     csCustomerOne = (data) => {
 
-        let customerLists = this.state.customerLists;
+        let {chatLists, chatActive} = this.state;
 
-        customerLists.unshift(data);
-        this.getMessageHistory(data.cid);
+        chatLists[data.cid] = {
+            cid: data.cid,
+            marked: data.marked,
+            info: data.info,
+            name: data.name,
+            notifies: 0,
+            status: 1,
+            active: chatActive === null,
+            messageLists: [],
+            pageNum: 1,
+            isLoading: false,
+            hasMoreHistoryChat: true
+        };
 
-        if (customerLists.length === 1) {
-            this.setState({
-                customerLists: customerLists,
-                customerSelect: {
-                    cid: data.cid,
-                    name: data.name,
-                    marked: data.marked
-                }
-            });
-        } else {
-            this.setState({
-                customerLists: customerLists
-            });
+        if (!chatActive.cid) {
+            chatActive.cid = data.cid;
         }
+
+        this.getChatHistory(data.cid);
+
+        this.setState({
+            chatLists: chatLists,
+            chatActive: chatActive
+        });
     };
 
-    /***
-     * cs.dispatch
-     */
     csDispatch = (cid, name, info) => {
-        let customerLists = this.state.customerLists;
-        customerLists.unshift({
+        this.csCustomerOne({
             cid: cid,
             name: name,
-            info: info
+            info: info,
+            marked: -1
         });
-
-        if (customerLists.length > 1){
-            this.setState({
-                customerLists: customerLists
-            });
-        } else {
-            this.getMessageHistory(cid);
-            this.setState({
-                customerLists: customerLists,
-                customerSelect: {
-                    cid: cid,
-                    name: name
-                }
-            });
-        }
     };
 
-    /***
-     * cs.need.login
-     */
     csNeedLogin = (fn) => {
         fn(true);
         this.state.socket.disconnect();
         window.location.href="/";
     };
 
-    /***
-     * c.message
-     */
     cMessage = (cid, msg) => {
 
-        let msgArr = this.state.messageLists[cid],
-            messageLists = this.state.messageLists,
-            chatNotify = this.state.chatNotify;
+        let {chatLists, chatActive} = this.state;
 
-        if (this.state.customerSelect.cid !== cid){
-            if (!chatNotify[cid]) {
-                chatNotify[cid] = 1;
-            } else {
-                chatNotify[cid]++;
-            }
+        if (cid !== chatActive.cid) {
+            chatLists[cid].notifies++;
         }
 
-        msgArr && msgArr.push({
+        chatLists[cid].messageLists.push({
             msgAvatar: '',
             msgText: msg,
             msgType: 0,
             msgTime: new Date()
         });
-        messageLists[cid] = msgArr;
 
         this.setState({
-            messageLists: messageLists,
-            chatNotify: chatNotify
+            chatLists: chatLists
         });
+
     };
 
-    /***
-     * c.disconnect
-     */
     cDisconnect = (cid) => {
-        let customerLists = this.state.customerLists,
-            cSelectCid = this.state.customerSelect.cid,
-            cSelectName = this.state.customerSelect.name;
-
-        customerLists.map((c, i)=> c.cid === cid && customerLists.splice(i, 1));
-        if (customerLists.length > 0) {
-            cSelectCid = customerLists[0].cid;
-            cSelectName = customerLists[0].name;
-        } else {
-            cSelectCid = '';
-            cSelectName = '';
-        }
-        this.setState({
-            customerSelect: {
-                cid: cSelectCid,
-                name: cSelectName
-            },
-            customerLists: customerLists
-        });
+        this.deleteChat(cid);
     };
 
-    /***
-     * cs.customer.offline
-     */
     csCustomerOffline = (data) => {
-        let customerLists = this.state.customerLists;
-        customerLists.unshift({
-            cid: data.cid,
-            name: data.name,
-            type: 'offline',
-            msg: {
-                name: data.name,
-                email: data.email,
-                content: data.content
+        let {chatLists, chatActive} = this.state;
+        let cid = data.cid;
+
+        !chatActive.cid && (chatActive.cid = cid);
+
+        data.msg.map((chat) =>
+            chatLists[cid] = {
+                cid: cid,
+                marked: 0,
+                info: data.info,
+                name: cid.split('-')[0],
+                notifies: 0,
+                status: 2,
+                active: chatActive === null,
+                messageLists: [{
+                    msgAvatar: '',
+                    msgText: {
+                        email: data.email,
+                        msg: data.msg,
+                        type: chat.type,
+                        name: cid.substr(0, 6)
+                    },
+                    msgType: chat.type,
+                    msgTime: data.updatedAt
+                }],
+                pageNum: 0,
+                isLoading: false,
+                hasMoreHistoryChat: true
             }
-        });
+        );
         this.setState({
-            customerLists: customerLists
+            chatActive: chatActive,
+            chatLists: chatLists
         });
+
     };
 
     /***
@@ -245,13 +194,13 @@ class CustomerSuccess extends Component{
      *
      */
     customerSuccessConnect = () => {
-        let isConnectErr = this.state.isConnectErr;
+        let status = this.state.status;
 
-        if (isConnectErr) {
+        if (status === 3) {
             notification.close("errNotifyKey");
             notifyKey = "";
             this.setState({
-                isConnectErr: false
+                status: 1
             });
         }
     };
@@ -262,7 +211,7 @@ class CustomerSuccess extends Component{
      *
      */
 
-    customerSuccessConectErr = () => {
+    customerSuccessConnectErr = () => {
         if (notifyKey === "") {
             notification.open({
                 message: 'Server error',
@@ -275,214 +224,103 @@ class CustomerSuccess extends Component{
         }
 
        this.setState({
-            isConnectErr: true,
-            customerSelect: {
-                cid: '',
-                name: '',
-                marked: 0
+            status: 3,
+            chatActive: {
+                cid: ''
             },
-            messageLists: {},
-            customerLists: []
+            chatLists: {}
         });
     };
 
-    /***
-     *
-     * onSearchHandler
-     */
-    onSearchHandler = (e) => {
-        if (e.target.value === '') {
-            e.preventDefault();
-            return false;
-        }
+    toggleChat = (name, cid) => {
+
+       let {chatActive, chatLists} = this.state;
+
+       if (cid === chatActive.cid) {
+           return false;
+       }
+
+       chatLists[chatActive.cid].active = false;
+       chatLists[chatActive.cid].notifies = 0;
+       chatActive.cid = cid;
+
+       this.setState({
+           chatLists: chatLists,
+           chatActive: chatActive
+       });
+
     };
 
-    /***
-     *
-     * @param activeIndex
-     * @param name
-     */
-    onChatListClick = (name, cid, marked) => {
-
-        let chatNotify = this.state.chatNotify;
-        if (cid === this.state.customerSelect.cid) {
-            return false;
-        }
-
-        if (chatNotify[cid]) {
-            chatNotify[cid] = 0;
-        }
-
-        this.setState({
-            customerSelect: {
-                cid: cid,
-                name: name,
-                marked: marked
-            },
-            chatNotify: chatNotify
-        });
-
-        this.getMessageHistory(cid);
-    };
-
-    /***
-     *
-     * customerSuccess send message to customer
-     *
-     * @param msg
-     */
-    customerSuccessMessage = (msg) => {
-        let {customerSelect, messageLists, csAvatar, socket} = this.state,
-             cid = customerSelect.cid;
+    sendMessageToCustomer = (msg) => {
+        let {chatActive, chatLists, avatar, socket} = this.state;
+        let cid = chatActive.cid;
 
         if (msg !== '') {
-            let msgArr = messageLists[cid],
-                d = new Date();
 
-            msgArr.push({
-                msgAvatar: csAvatar,
+            let d = new Date(),
+                messageEvent = 'cs.message';
+
+            chatLists[cid].messageLists.push({
+                msgAvatar: avatar,
                 msgText: msg,
                 msgType: 1,
                 msgTime: d
             });
-            messageLists[cid] = msgArr;
 
             this.setState({
-                messageLists: messageLists
+                chatLists: chatLists
             });
-            socket.emit('cs.message', cid, msg, function(success){
-                if (success){
-                    document.querySelector('.t-'+d.getTime()).className += ' done';
+
+            if (chatLists[chatActive.cid].status === 2) {
+               messageEvent = 'cs.offlineMessage';
+            }
+
+            socket.emit(messageEvent, cid, msg, function (success) {
+                if (success) {
+                    document.querySelector('.t-' + d.getTime()).className += ' done';
                 }
             });
 
         }
 
     };
-    /***
-     *
-     * Close the customer dialog
-     *
-     */
-    closeDialog = (e, cid, type) => {
-        e.stopPropagation();
-        let {customerLists, messageLists, customerSelect, socket} = this.state,
-            scid = customerSelect.cid,
-            name = customerSelect.name,
-            _self = this,
-            title = 'Do you Want to close this customer?',
-            content = 'If yes , the customer window will be remove';
 
-        if (type === 'offline') {
-            title = 'Do you Want to close this offline message?';
-            content = 'If yes , the offline message will be remove';
-        }
+    closeChat = (cid) => {
+
+        let _self = this;
 
         Modal.confirm({
-            title: title,
-            content: content,
+            title: 'Do you Want to close this customer?',
+            content: 'If yes , the customer  will be remove',
             okText: 'Yes',
             cancelText: 'No',
             onOk() {
-                delete messageLists[cid];
-                customerLists && customerLists.map((c, i) => c.cid === cid &&  customerLists.splice(i, 1));
-
-                if (type === 'offline') {
-                    _self.setState({
-                        customerLists: customerLists
-                    });
-                    return false;
-                }
-
-                if (customerLists.length > 0) {
-                    if (scid === cid){
-                        scid = customerLists[0].cid;
-                        name = customerLists[0].name;
-                    }
-                } else {
-                    scid = '';
-                    name = '';
-                }
-
-                socket.emit('cs.closeDialog', cid, function(flag){
-                    if (flag){
-                        _self.setState({
-                            customerLists: customerLists,
-                            messageLists: messageLists,
-                            customerSelect: {
-                                cid: scid,
-                                name: name
-                            }
-                        });
-                    }
+                _self.state.socket.emit('cs.closeDialog', cid, function(flag){
+                    _self.deleteChat(cid);
                 });
+
             }
         });
     };
 
-    /***
-     * socketTransfer
-     */
-    socketTransfer = (cid) => {
-
-        let {customerLists, messageLists, customerSelect} = this.state,
-            scid = customerSelect.cid,
-            name = customerSelect.name;
-
-        delete messageLists[cid];
-
-        customerLists && customerLists.map((c, i) => c.cid === cid &&  customerLists.splice(i, 1));
-
-        if (customerLists.length > 0) {
-            if (scid === cid) {
-                scid = customerLists[0].cid;
-                name = customerLists[0].name;
-            }
-        } else {
-            scid = '';
-            name = '';
-        }
-        this.setState({
-            customerLists: customerLists,
-            messageLists: messageLists,
-            customerSelect: {
-                cid: scid,
-                name: name
-            }
-        });
+    transferChat = (cid) => {
+        this.deleteChat(cid);
     };
 
-    /***
-     *
-     *   status handle
-     */
     statusHandle = (type) => {
-        this.state.socket.emit('cs.status', this.state.customerSelect.cid, type, function(state){});
+        this.state.socket.emit('cs.status', this.state.chatActive.cid, type, function(state){});
     };
 
-    /***
-     * get customerSuccess and customer chat history
-     *
-     */
-    getMessageHistory = (cid) => {
-        let _self = this,
-            {messageLists, csid, csAvatar} = this.state;
-
-        if (messageLists[cid] && messageLists[cid].length > 0) {
-            return false;
-        }
+    getChatHistory = (cid) => {
+        let _self = this;
+        let {csid, avatar, chatLists} = this.state;
 
         fetch('/messages/customer/'+cid+'/cs/'+csid)
             .then((data) => data.json())
             .then(d =>{
-
-                if (!messageLists[cid] ) {
-                    messageLists[cid]=[];
-                }
-
                 d.msg.map((chat) =>
-                    messageLists[cid].push({
-                        msgAvatar: (chat.type === 1) ? csAvatar : '',
+                    chatLists[cid].messageLists.push({
+                        msgAvatar: (chat.type === 1 || chat.type === 2) ? avatar : '',
                         msgText: chat.msg,
                         msgType: chat.type,
                         msgTime: chat.createdAt
@@ -490,50 +328,70 @@ class CustomerSuccess extends Component{
                 );
 
                 _self.setState({
-                    messageLists: messageLists
+                    chatLists: chatLists
                 });
 
             })
             .catch(function(e){});
     };
 
-    /***
-     *
-     * filterCustomerInfo
-     *
-     */
-    filterCustomerInfo = (customer, cid) => {
-        if (customer.length > 0) {
-            for (let i = 0, l = customer.length; i < l; i++) {
-                if (customer[i].cid === cid) {
-                    return customer[i];
-                }
-            }
-        }
-        return null;
-    };
-
     csShortcuts = (action, shortcut) => {
         shortcut.action = action;
         localStorage.setItem('newShortcut', JSON.stringify(shortcut));
     };
+
+    rateFeedBack = () => {
+        let {chatLists, chatActive, avatar} = this.state;
+
+        chatLists[chatActive.cid].messageLists.push({
+            msgAvatar: avatar,
+            msgText: 'Invitation evaluation has been sent',
+            msgType: 1,
+            msgTime: new Date()
+        });
+
+        this.setState({
+            chatLists: chatLists
+        });
+
+    };
+
+    deleteChat = (cid) => {
+        let {chatLists, chatActive} = this.state;
+
+        delete chatLists[cid];
+
+        if (Object.keys(chatLists).length === 0) {
+            chatActive.cid = '';
+        } else if (cid === chatActive.cid) {
+            for (let k in chatLists) {
+                chatActive.cid = k;
+                break;
+            }
+        }
+
+        this.setState({
+            chatLists: chatLists,
+            chatActive: chatActive
+        });
+    };
+
     render(){
 
-        let {customerLists, customerSelect, messageLists, isOnline, isConnectErr, csAvatar, csid, socket, bgThemeImg, bgThemeOpacity} = this.state,
-            Info = this.filterCustomerInfo(customerLists, customerSelect.cid),
-            bgStyle = {};
+        let {status, avatar, csid, socket, bgThemeImg, bgThemeOpacity, chatLists, chatActive} = this.state;
+        let bgStyle = {};
 
-        if (bgThemeImg) {
+        if (bgThemeImg && status === 1) {
             bgThemeImg = bgThemeImg.split('::');
             if (bgThemeImg[0] === 'photo') {
-                bgStyle = {backgroundImage: (!isOnline || isConnectErr) ? '' : 'url('+bgThemeImg[1].replace(/@/g, '&')+')'};
+                bgStyle.backgroundImage = 'url('+bgThemeImg[1]+'?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1280&fit=max)';
             } else if (bgThemeImg[0] === 'color') {
-                bgStyle = {background: bgThemeImg[1]};
+                bgStyle.background = bgThemeImg[1];
             }
         }
 
         return (
-            <div className={"uuchat-customerSuccess " + ((!isOnline || isConnectErr) ? " off" : "") +" "+(bgThemeImg[1] ? "theme" : "")}
+            <div className={"uuchat-customerSuccess " + ((status !== 1) ? " off" : "") +(bgThemeImg ? " theme" : "")}
                  style={bgStyle}>
                     <Header customerSuccess={this} />
                     <Row className="customerSuccess-main" style={{background: 'rgba(255, 255, 255, '+bgThemeOpacity+')'}}>
@@ -543,37 +401,33 @@ class CustomerSuccess extends Component{
                         <Col xs={24} sm={11} md={11} lg={12} xl={12}>
                             <div className="customerSuccess-content">
                             {
-                                customerSelect.cid &&
-                                <ChatMessage
-                                    socket={socket && socket}
-                                    cid={customerSelect.cid}
-                                    csid={csid}
-                                    csAvatar={csAvatar}
-                                    messageLists={messageLists[customerSelect.cid]}
-                                    chatRoleName={customerSelect.name}
-                                    transferHandle={this.socketTransfer}
-                                    marked={customerSelect.marked }
-                                    customerSuccess={this}
-                                    />
-                            }
-                            {
-                                customerSelect.cid &&
-                                <ChatSend
-                                    sendMessage={this.customerSuccessMessage}
-                                    statusHandle={this.statusHandle}
-                                    cid={customerSelect.cid}
-                                    csid={csid}
-                                    socket={socket}
-                                    />
-                            }
-                            {
-                                !customerSelect.cid  && <ChatEmpty />
+                                chatActive.cid ?
+                                    <div>
+                                        <ChatMessage
+                                            socket={socket && socket}
+                                            csid={csid}
+                                            avatar={avatar}
+                                            transferChat={this.transferChat}
+                                            customerSuccess={this}
+                                            chat={chatLists[chatActive.cid]}
+                                            />
+                                        <ChatSend
+                                            sendMessage={this.sendMessageToCustomer}
+                                            statusHandle={this.statusHandle}
+                                            cid={chatActive.cid}
+                                            csid={csid}
+                                            socket={socket}
+                                            rateFeedBack={this.rateFeedBack}
+                                        />
+                                    </div>
+                                    :
+                                    <ChatEmpty />
                             }
                             </div>
                         </Col>
                         <Col xs={24} sm={6} md={6} lg={6} xl={6}>
                             <div className="customerSuccess-right">
-                                { customerSelect.cid && <ChatUser info={Info} />}
+                                { chatActive.cid && <ChatUser info={chatLists[chatActive.cid].info} />}
                             </div>
                         </Col>
                     </Row>

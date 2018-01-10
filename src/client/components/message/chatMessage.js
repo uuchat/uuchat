@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import { Modal } from 'antd';
 import ChatMessageItem from './chatMessageItem';
-import String2int from '../common/utils';
 
-var onlineListModal = null,
-    record = {};
+let onlineListModal = null;
 
 class ChatMessage extends Component{
 
@@ -15,23 +13,22 @@ class ChatMessage extends Component{
             visible: false,
             OnlineCustomerList: {},
             onlineShow: null,
-            markedList: {},
+            markedLists: {},
             historyChatMessage: []
         };
     }
     componentDidMount(){
 
-        let {markedList} = this.state,
-            {cid, marked, socket} = this.props;
+        let {socket, chat} = this.props;
+        let {markedLists}  = this.state;
 
-        if (!markedList[cid]) {
-            markedList[cid] = marked;
+        if (!markedLists[chat.cid]) {
+            markedLists[chat.cid] = chat.marked;
         }
 
         this.setState({
-            markedList: markedList
+            markedLists: markedLists
         });
-
         socket && socket.on('cs.online.info', this.csOnlineInfo);
     }
     componentWillUnmount(){
@@ -39,14 +36,7 @@ class ChatMessage extends Component{
     }
     componentDidUpdate(){
         let msgList = this.refs.list;
-
-        if (record[this.props.cid].isLoading) {
-            record[this.props.cid].isLoading = false;
-            return false;
-        }
-
         msgList.scrollTop = msgList.scrollHeight;
-
     }
 
     marked = () => {
@@ -68,9 +58,9 @@ class ChatMessage extends Component{
         }
     };
     customerTransfer = () => {
-        let _self = this,
-            onlineLists = [],
-            onlines = _self.state.OnlineCustomerList;
+        let _self = this;
+        let onlineLists = [];
+        let onlines = _self.state.OnlineCustomerList;
 
         for (let i in onlines) {
             if (i !== _self.props.csid){
@@ -111,17 +101,18 @@ class ChatMessage extends Component{
     };
 
     markColorSelect = (e) => {
-        let {cid, csid, socket} = this.props,
-            t = e.target,
-            _self = this,
-            markedList = this.state.markedList;
+        let {chat, csid, socket} = this.props;
+        let {markedLists} = this.state;
+        let t = e.target;
+        let _self = this;
 
         if (t.tagName.toLowerCase() === 'span') {
-            socket.emit('cs.marked', cid, csid, parseInt(t.innerHTML, 10), function (type) {
+            socket.emit('cs.marked', chat.cid, csid, parseInt(t.innerHTML, 10), function (type) {
+
                 if (type) {
-                    markedList[cid]=parseInt(t.innerHTML, 10);
+                    markedLists[chat.cid]=parseInt(t.innerHTML, 10);
                     _self.setState({
-                        markedList: markedList
+                        markedLists: markedLists
                     });
                 }
             });
@@ -136,31 +127,31 @@ class ChatMessage extends Component{
         }
     };
     transfer = (e) => {
-        let {socket, cid, transferHandle} = this.props,
-            _self = this,
-            t = e.target,
-            csid = t.getAttribute('data-csid');
+       let {socket, chat, transferChat} = this.props;
+       let _self = this;
+       let t = e.target;
+       let csid = t.getAttribute('data-csid');
 
-       socket.emit('cs.dispatch', csid, cid, function(success){
+       socket.emit('cs.dispatch', csid, chat.cid, function(success){
             if (success) {
-                transferHandle(cid);
+                transferChat(chat.cid);
                 _self.setState({
                     isMarkShow: false
                 });
-                onlineListModal.destroy();
             }
+            onlineListModal.destroy();
         });
 
     };
 
     scrollHandle = (e) => {
 
-        let msgList = this.refs.list,
-            {csid, cid, customerSuccess} = this.props,
-            {messageLists, csAvatar} = customerSuccess.state;
+        let msgList = this.refs.list;
+        let {csid, chat, customerSuccess} = this.props;
+        let {chatLists, avatar} = customerSuccess.state;
 
-        if ((e.deltaY < 0) && (msgList.scrollTop <= 0) && record[cid].hasMoreChat && !record[cid].isLoading) {
-            record[cid].isLoading = true;
+        if ((e.deltaY < 0) && (msgList.scrollTop <= 0) && chatLists[chat.cid].hasMoreHistoryChat && !chatLists[chat.cid].isLoading) {
+            chatLists[chat.cid].isLoading = true;
             msgList.className += ' loading';
             requestAnimationFrame(function () {
                 getChatHistory();
@@ -168,69 +159,53 @@ class ChatMessage extends Component{
         }
 
         function getChatHistory(){
-
-            fetch('/messages/customer/' + cid + '/cs/' + csid+'?pageNum='+record[cid].pageNum+'&pageSize=10')
+            fetch('/messages/customer/' + chat.cid + '/cs/' + csid+'?pageNum='+chatLists[chat.cid].pageNum+'&pageSize=10')
                 .then((data) => data.json())
                 .then(d =>{
                     if (d.code === 200) {
                         if (d.msg.length === 0 || d.msg.length < 10) {
-                            record[cid].hasMoreChat = false;
+                            chatLists[chat.cid].hasMoreHistoryChat = false;
                         }
-                        record[cid].pageNum++;
+                        chatLists[chat.cid].pageNum++;
+                        chatLists[chat.cid].isLoading = false;
 
                         if (d.msg.length > 0) {
-                            d.msg.map(chat => messageLists[cid].unshift({
-                                msgAvatar: (chat.type === 1) ? csAvatar : '',
+                            d.msg.reverse().map(chat => chatLists[chat.cid].messageLists.unshift({
+                                msgAvatar: (chat.type === 1 || chat.type === 2) ? avatar : '',
                                 msgText: chat.msg,
                                 msgType: chat.type,
                                 msgTime: chat.createdAt
                             }));
-                            customerSuccess.setState({
-                                messageLists: messageLists
-                            });
                         }
 
+                        customerSuccess.setState({
+                            chatLists: chatLists
+                        });
+
                     }
-
-                    setTimeout(function () {
-                        record[cid].isLoading = false;
-                        msgList.className = 'message-lists';
-                    }, 2000);
-
+                    msgList.className = 'message-lists';
                 })
                 .catch(e => {
-                    record[cid].isLoading = false;
+                    chatLists[chat.cid].isLoading = false;
                     msgList.className = 'message-lists';
+                    customerSuccess.setState({
+                        chatLists: chatLists
+                    });
                 });
         }
 
     };
 
     render(){
-        let {markedList, visible, isMarkShow} = this.state,
-            {cid, marked, chatRoleName, messageLists, csAvatar} = this.props,
-            markArr = ['red', 'orange', 'yellow', 'green', 'blue', 'purple', 'grey'],
-            cIndex = String2int(cid),
-            avatar = '',
-            hasMarked = markedList[cid] || marked;
+        let {visible, isMarkShow, markedLists} = this.state;
+        let {chat} = this.props;
+        let markArr = ['grey', 'red', 'orange', 'yellow', 'green', 'blue', 'purple'];
 
-        !record[cid] && (record[cid] = {
-            pageNum: 2,
-            isLoading: false,
-            hasMoreChat: true
-        });
-
-        hasMarked = (hasMarked < 1 ? 7 : hasMarked);
-        avatar = <div className={"avatar-color avatar-icon-"+cIndex} >{chatRoleName.substr(0,1).toUpperCase()}</div>;
-
-
-        if (messageLists && (messageLists.length === 0 || messageLists.length < 20)) {
-            record[cid].hasMoreChat = false;
-        }
+        !markedLists[chat.cid] && (markedLists[chat.cid] = chat.marked);
 
         return (
             <div className="chat-message">
-                <div className="message-title">U-{chatRoleName.toUpperCase()}
+                <div className="message-title">U-{chat.name.toUpperCase()}
                     <div className="chat-tags fr" onClick={this.marked}>...
                          <ul className="more-options" style={{display: !isMarkShow ? 'none' : 'block'}} onClick={this.optionSelect}>
                             <span className="caret"></span>
@@ -248,21 +223,22 @@ class ChatMessage extends Component{
                         >
                             <div className="mark-color-list" onClick={this.markColorSelect}>
                                 {markArr.map((m ,i)=>
-                                        <span key={i} className={"mark-tag tag-"+m+(hasMarked === (i+1) ? "  selected" : "")} title={"mark "+m}>{i+1}</span>
+                                        <span key={m} className={"mark-tag tag-"+m+(markedLists[chat.cid] === i ? "  selected" : "")} title={"mark "+m}>{i}</span>
                                 )}
                             </div>
                         </Modal>
                     </div>
                 </div>
                 <div className="message-lists" ref="list" onWheel={this.scrollHandle}>
-                    {messageLists && messageLists.map((msg, index) =>
+                    {chat.messageLists.map((msg) =>
                             <ChatMessageItem
                                     key={msg.msgTime}
                                     ownerType={msg.msgType}
-                                    ownerAvatar={ (msg.msgType === 1 ) ? csAvatar : avatar }
+                                    ownerAvatar={msg.msgAvatar}
                                     ownerText={msg.msgText}
                                     time={msg.msgTime}
                                     shortSetting={true}
+                                    cid={chat.cid}
                                     />
                     )}
                 </div>

@@ -65,7 +65,7 @@ class ChatMessageShortcut extends Component{
                             <p className="set-item-label">Shortcut</p>
                             <Input defaultValue="" addonBefore=";" ref="shortKey" />
                             <p className="set-item-label">Expanded Message</p>
-                            <Input type="textarea" defaultValue={content} ref="shortValue" />
+                            <Input.TextArea defaultValue={content} ref="shortValue" />
                          </div>
                      </div>
                   </Modal>
