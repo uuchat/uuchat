@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Modal, Form, Input, Tooltip, Icon } from 'antd';
+import { Modal, Form, Input, Button } from 'antd';
 
 const FormItem = Form.Item;
 
@@ -34,28 +34,22 @@ class CustomerSuccessForm extends Component {
     render() {
         const { getFieldDecorator } = this.props.form;
 
-        const formItemLayout = {
-            labelCol: {
-                xs: {span: 24},
-                sm: {span: 7}
-            },
-            wrapperCol: {
-                xs: {span: 24},
-                sm: {span: 15}
-            }
-        };
+        const formItemLayout = null;
 
         const { visible, onCancel, onOk, confirmLoading } = this.props;
 
         return (
-            <Modal title="Create customer session"
+            <Modal title="Invite a New User"
                    visible={visible}
                    onOk={onOk.bind(this, this.props.form)}
                    confirmLoading={confirmLoading}
                    onCancel={onCancel}
+                   footer={[
+                    <Button style={{width: '100%'}} type="primary" key="invite" onClick={onOk.bind(this, this.props.form)}>Send invitation now</Button>
+                  ]}
                 >
-                <Form>
-                    <FormItem {...formItemLayout} label="E-mail" hasFeedback>
+                <Form layout="vertical">
+                    <FormItem {...formItemLayout} label="Email Address" hasFeedback>
                         {getFieldDecorator('email', {
                             rules: [
                                 {
@@ -65,58 +59,6 @@ class CustomerSuccessForm extends Component {
                                     required: true, message: 'Please input your E-mail!'
                                 }]
                         })(
-                            <Input />
-                        )}
-                    </FormItem>
-                    <FormItem
-                        {...formItemLayout}
-                        label="Password"
-                        hasFeedback
-                        >
-                        {getFieldDecorator('password', {
-                            rules: [
-                                {
-                                    required: true, message: 'min 6 words', min: 6
-                                },
-                                {
-                                    validator: this.checkConfirm
-                                }
-                            ]
-                        })(
-                            <Input type="password"/>
-                        )}
-                    </FormItem>
-                    <FormItem
-                        {...formItemLayout}
-                        label="Confirm Password"
-                        hasFeedback
-                        >
-                        {getFieldDecorator('confirm', {
-                            rules: [
-                                {
-                                    required: true, message: 'min 6 words', min: 6
-                                },
-                                {
-                                    validator: this.checkPassword
-                                }
-                            ]
-                        })(
-                            <Input type="password" onBlur={this.handleConfirmBlur}/>
-                        )}
-                    </FormItem>
-                    <FormItem
-                        {...formItemLayout}
-                        label={(
-                        <span>
-                          name&nbsp;
-                          <Tooltip title="What do you want other to call you?">
-                            <Icon type="question-circle-o" />
-                          </Tooltip>
-                        </span>
-                      )}
-                        hasFeedback
-                        >
-                        {getFieldDecorator('name', {})(
                             <Input />
                         )}
                     </FormItem>

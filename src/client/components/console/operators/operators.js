@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Breadcrumb, message, Button, Modal, Input } from 'antd';
+import { Breadcrumb, message, Button, Modal, Input, List, Avatar } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
 import CustomerSuccessTable from './customerSuccessTable';
 import { fetchAsync } from '../common/utils';
+import { fromNow } from '../common/momentUtils';
 
 const Search = Input.Search;
 const Confirm = Modal.confirm;
@@ -11,7 +12,8 @@ export default class Operators extends Component {
 
     state = {
         dataSource: [],
-        StoreDataSource: [],
+        storeDataSource: [],
+        inviteDataSource: [],
         visible: false,
         searchText: '',
         sorter: {},
@@ -27,10 +29,9 @@ export default class Operators extends Component {
             if (err) return;
 
             try {
-                let body = 'email=' + values.email + '&passwd=' + values.password;
-                if (values.name) body += '&name=' + values.name;
+                let body = 'email=' + values.email;
 
-                let data = await fetchAsync('/register', {
+                let data = await fetchAsync('/invite', {
                     credentials: 'include',
                     method: 'POST',
                     headers: {
@@ -39,16 +40,17 @@ export default class Operators extends Component {
                     body: body
                 });
 
-                if (data.code !== 200) return message.error(data.msg, 4);
+                if (data.code !== 200) {
+                    message.error(data.msg, 4);
+                } else {
+                    message.info(data.msg, 4);
+                }
                 form.resetFields();
                 this.getDataSource();
-
             } catch (e) {
                 message.error(e.message, 4);
             } finally {
-                this.setState({
-                    visible: false
-                });
+                this.setState({visible: false});
             }
         });
     };
@@ -58,11 +60,11 @@ export default class Operators extends Component {
     handleSearchChange = (e) => {
         e.preventDefault();
 
-        let { pagination, dataSource, StoreDataSource } = this.state;
+        let { pagination, dataSource, storeDataSource } = this.state;
 
         const reg = new RegExp(e.target.value, 'gi');
 
-        dataSource = StoreDataSource.filter((record) => record.email.match(reg));
+        dataSource = storeDataSource.filter((record) => record.email.match(reg));
 
         pagination.total = dataSource.length;
 
@@ -75,28 +77,39 @@ export default class Operators extends Component {
 
     getDataSource = async () => {
         try {
-            let { pagination } = this.state;
+            let { pagination} = this.state;
 
             let data = await fetchAsync('/customersuccesses');
             if (data.code !== 200) return message.error(data.msg, 4);
 
-            let sourceList = data.msg.map(function (item) {
-                return {
-                    key: item.csid,
-                    csid: item.csid,
-                    avatar: item.photo,
-                    name: item.name,
-                    email: item.email,
-                    createAt: item.createdAt
-                };
+            let dataSource = [], inviteDataSource = [];
+
+            data.msg.forEach(function (item) {
+                if (item.passwd) {
+                    dataSource.push({
+                        key: item.csid,
+                        csid: item.csid,
+                        avatar: item.photo,
+                        name: item.name,
+                        email: item.email,
+                        createdAt: item.createdAt
+                    });
+                } else {
+                    inviteDataSource.push({
+                        csid: item.csid,
+                        email: item.email,
+                        updatedAt: item.updatedAt
+                    });
+                }
             });
 
-            pagination.total = sourceList.length;
+            pagination.total = dataSource.length;
 
             let st = {
                 pagination,
-                dataSource: sourceList,
-                StoreDataSource: sourceList
+                dataSource,
+                inviteDataSource,
+                storeDataSource: dataSource
             };
 
             if (data.msg[0]) st.superUser = data.msg[0].csid;
@@ -141,11 +154,11 @@ export default class Operators extends Component {
     };
 
     handleReset = (value) => {
-        let { pagination, dataSource, StoreDataSource } = this.state;
-        dataSource = StoreDataSource;
+        let { pagination, dataSource, storeDataSource } = this.state;
+        dataSource = storeDataSource;
 
         pagination.current = 1;
-        pagination.total = StoreDataSource.length;
+        pagination.total = storeDataSource.length;
 
         // Init current page when searching.
         this.setState({
@@ -156,12 +169,55 @@ export default class Operators extends Component {
         });
     };
 
+    handleResend = async (csid, email) => {
+        try {
+            let body = 'csid=' + csid + '&email=' + email;
+
+            let data = await fetchAsync('/invite/resend', {
+                credentials: 'include',
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: body
+            });
+
+            if (data.code !== 200) return message.error(data.msg, 4);
+            message.info(data.msg, 4);
+            this.getDataSource();
+        } catch (e) {
+            message.error(e.message, 4);
+        }
+    };
+
     componentDidMount() {
         this.getDataSource();
     }
 
+    getInvitation(inviteList) {
+        if (inviteList.length) {
+            return <List
+                bordered
+                dataSource={inviteList}
+                renderItem={item => (
+                          <List.Item actions={[<a onClick={this.onDeleteItem.bind(null, item.csid)}>REVOKE</a>,
+                           <a onClick={this.handleResend.bind(null, item.csid, item.email)}>RESEND</a>]}>
+                            <List.Item.Meta
+                              avatar={<Avatar src={require('../../../static/images/contact.png')} />}
+                              title={item.email}
+                              description={'Invitation sent: ' + fromNow(item.updatedAt)}
+                            />
+                            <div></div>
+                          </List.Item>
+                        )}
+                />;
+        } else {
+            return null;
+        }
+    }
+
     render() {
-        let { dataSource, visible, confirmLoading, sorter, searchText, pagination, superUser } = this.state;
+        let { dataSource, inviteDataSource, visible, confirmLoading, sorter, searchText, pagination, superUser } = this.state;
 
         const customerSuccessFormProps = {
             visible: visible,
@@ -195,10 +251,13 @@ export default class Operators extends Component {
                         </div>
                         <div className="table-operations">
                             <Button type="ghost" onClick={ this.handleReset }>Reset</Button>
-                            <Button type="ghost" onClick={this.showModal}>Create</Button>
+                            <Button type="ghost" onClick={ this.showModal }>Invite</Button>
                             <CustomerSuccessForm { ...customerSuccessFormProps } />
                         </div>
                     </div>
+
+                    {this.getInvitation(inviteDataSource)}
+                    {inviteDataSource.length ? <br/> : null}
 
                     <CustomerSuccessTable { ...customerSuccessTableProps } />
                 </div>
