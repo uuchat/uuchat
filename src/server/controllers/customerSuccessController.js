@@ -89,29 +89,56 @@ customerSuccessController.register = function (req, res, next) {
 
     customerSuccess.name = customerSuccess.name || customerSuccess.email.split('@')[0];
 
-    async.waterfall([
-        function (callback) {
-            hashPasswdWithSalt(customerSuccess.passwd, callback);
-        },
-        function (hash, callback) {
-            customerSuccess.passwd = hash;
-            CustomerSuccess.create(customerSuccess, callback);
-        }
-    ], function (err, user) {
-        if (err) {
-            if (err.name === 'SequelizeUniqueConstraintError') {
-                return res.status(403).json({
-                    code: 1005, msg: 'email_already_exists'
-                });
+    CustomerSuccess.findOne({email: customerSuccess.email}, function (err, user) {
+        if (err) return next(err);
+
+        async.waterfall([
+            function (callback) {
+                hashPasswdWithSalt(customerSuccess.passwd, callback);
+            },
+            function (hash, callback) {
+                customerSuccess.passwd = hash;
+
+                if (!user) {
+                    return CustomerSuccess.create(customerSuccess, function (err, data) {
+                        if (err) return callback(err);
+
+                        user = data;
+
+                        return callback();
+                    });
+                } else if (user.passwd) {
+                    var sucError = new Error();
+                    sucError.name = 'SequelizeUniqueConstraintError';
+
+                    return callback(sucError);
+                }
+
+                user.name = customerSuccess.name;
+                user.displayName = customerSuccess.displayName;
+                user.passwd = customerSuccess.passwd;
+
+                return CustomerSuccess.update(
+                    _.pick(customerSuccess, ['name', 'displayName', 'passwd']),
+                    {csid: user.csid},
+                    callback);
             }
-            return next(err);
-        }
+        ], function (err, result) {
+            if (err) {
+                if (err.name === 'SequelizeUniqueConstraintError') {
+                    return res.status(403).json({
+                        code: 1005, msg: 'email_already_exists'
+                    });
+                }
+                return next(err);
+            }
 
-        createCSSocket(req, user);
+            createCSSocket(req, user);
 
-        return res.json({
-            code: 200,
-            msg: _.pick(user, ['csid', 'name', 'displayName', 'email', 'photo', 'timezone', 'background', 'opacity'])
+            return res.json({
+                code: 200,
+                msg: _.pick(user, ['csid', 'name', 'displayName', 'email', 'photo', 'timezone', 'background', 'opacity'])
+            });
         });
     });
 };

@@ -23,7 +23,7 @@ CustomerSuccess.findOne = function (condition, callback) {
 
     models.CustomerSuccess.findOne({where: condition}).then(function (data) {
 
-        return callback(null, data);
+        return callback(null, models.getPlainObject(data));
 
     }, function (err) {
         logger.error(err);

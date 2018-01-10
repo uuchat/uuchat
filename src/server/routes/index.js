@@ -12,6 +12,7 @@ function customerSuccessRoutes(app, middleware, controllers) {
 
     app.post('/invite', controllers.customerSuccessController.invite);
     app.post('/invite/resend', controllers.customerSuccessController.reInvite);
+    app.post('/register', controllers.customerSuccessController.register);
     app.post('/register/:invited_code', controllers.customerSuccessController.register);
     app.post('/login', controllers.customerSuccessController.login);
     app.post('/logout', controllers.customerSuccessController.logout);
