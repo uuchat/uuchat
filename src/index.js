@@ -28,6 +28,9 @@ var model = require('./server/models');
 var utils = require('./server/utils');
 var logger = require('./server/logger');
 var userAgent = require('./server/socket.io/userAgent');
+var authentication = require('./server/services/authentication');
+var customerSuccess = require('./server/database/customerSuccess');
+
 
 if (nconf.get('app:ssl')) {
     server = require('https').createServer({
@@ -115,7 +118,6 @@ module.exports.listen = function () {
 
 function baseHtmlRoute(app, middlewareDev) {
     app.use(express.static(path.join(__dirname, '../dist')));
-    app.use(express.static(path.join(__dirname, '../dist/app')));
     //need filter css, js, images files
     app.use(fileFilters);
     app.use(session({
@@ -137,10 +139,19 @@ function baseHtmlRoute(app, middlewareDev) {
         htmlRender(middlewareDev, res, html);
     });
     app.get('/login', middleware.jsCDN, function response(req, res) {
-        var html = path.join(__dirname, '../dist/app.ejs');
-        var cdnFile = getCNDFile(req, null);
-        cdnFile['socketIO'] = '';
-        ejsRender(middlewareDev, cdnFile, res, html);
+        customerSuccess.count(null, function (err, data) {
+            if(err) { return; }
+            if(data === 0){
+                var html = path.join(__dirname, '../dist/register.ejs');
+                var cdnFile = getCNDFile(req, null);
+                ejsRender(middlewareDev, cdnFile, res, html);
+            } else {
+                var html = path.join(__dirname, '../dist/app.ejs');
+                var cdnFile = getCNDFile(req, null);
+                cdnFile['socketIO'] = '';
+                ejsRender(middlewareDev, cdnFile, res, html);
+            }
+        });
     });
     app.get('/demo', function response(req, res) {
         var html = path.join(__dirname, '../dist/customer.html');
@@ -175,11 +186,18 @@ function baseHtmlRoute(app, middlewareDev) {
         var html = path.join(__dirname, '../dist/app.ejs');
         ejsRender(middlewareDev, getCNDFile(req, ['socketIO']), res, html);
     });
-    app.get('/register', middleware.jsCDN, function response(req, res) {
-        var html = path.join(__dirname, '../dist/app.ejs');
-        var cdnFile = getCNDFile(req, null);
-        cdnFile['socketIO'] = '';
-        ejsRender(middlewareDev, cdnFile, res, html);
+    app.get('/register/:invited_code', middleware.jsCDN, function response(req, res) {
+        var invitedCode = req.params.invited_code;
+        var decode = authentication.validateInvitation(invitedCode);
+        console.log('--------------------- invitedCode is:  ' + decode.email);
+        if(_.isEmpty(decode.email)){
+            res.redirect('/login');
+        } else {
+            var html = path.join(__dirname, '../dist/register.ejs');
+            var cdnFile = getCNDFile(req, null);
+            cdnFile['invitedCode'] = invitedCode;
+            ejsRender(middlewareDev, cdnFile, res, html);
+        }
     });
 
     //opts.credentials = true;
@@ -282,11 +300,11 @@ function setupExpress(app, callback) {
 
     // catch 404 and forward to error handler
     app.use(function (req, res, next) {
-        logger.error("~~~~~~ has 404 error, please see browser console log!");
+        logger.error("~~~~~~ has 404 error, please see browser console log!", req.url);
         res.status(404).send('can not find page!');
     });
     app.use(function (err, req, res, next) {
-        logger.error("~~~~~~ has 503 error!");
+        logger.error("~~~~~~ has 503 error!", req.url);
         logger.error(err.stack);
         res.status(503).send('system has problem.');
     });
