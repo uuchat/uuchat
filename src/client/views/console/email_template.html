@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <style type="text/css">
+        .fl{
+            display: inline-block;
+            float:left;
+        }
+        .fr{
+            display: inline-block;
+            float:right;
+        }
+        .message-lists .message-item{
+            margin: 10px 0;
+            overflow: hidden;
+        }
+        .message-lists::-webkit-scrollbar{
+            display: none;
+        }
+        .message-lists .message-item:hover .short-item-setting{
+            display: block;
+        }
+        .message-lists .message-item p{
+            margin: 0;
+            padding: 0;
+            font-size: 12px;
+        }
+        .message-lists .message-item .msg-time-0,
+        .message-lists .message-item .msg-time-1,
+        .message-lists .message-item .msg-time-2,
+        .message-lists .message-item .msg-time-3,
+        .message-lists .message-item .msg-time-4{
+            line-height: 15px;
+            color: #ccc;
+        }
+        .message-lists .message-item .msg-time-0,
+        .message-lists .message-item .msg-time-4{
+            padding-left: 40px;
+        }
+        .message-lists .message-item .msg-time-1,
+        .message-lists .message-item .msg-time-2,
+        .message-lists .message-item .msg-time-3 {
+            padding-right: 40px;
+            text-align: right;
+        }
+        .message-lists .message-item img{
+            max-width: 100%;
+            border-radius: 3px;
+            vertical-align: middle;
+        }
+        .message-lists .message-avatar{
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+        }
+        .message-lists .avatar-color{
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            color: #fff;
+            font-size: 18px;
+            text-align: center;
+            border-radius: 100%;
+        }
+
+        .message-lists .message-avatar.fl{
+            margin-right: 10px;
+        }
+        .message-lists .message-avatar.fr{
+            margin-left: 10px;
+            box-shadow: 0px 0px 1px 1px #ccc;
+            border-radius: 100%;
+        }
+
+        .message-lists .message-avatar img{
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+        }
+
+        .message-lists .message-content{
+            padding: 8px 10px;
+            max-width: 460px;
+            background-color: #f3f3f3;
+            border-radius: 3px;
+            font-size: 14px;
+            line-height: 18px;
+            word-break: break-all;
+            -webkit-transition: background-color 0.8s linear;
+            transition: background-color 0.8s linear;
+        }
+
+        .message-lists .message-content.done {
+            background-color: #edf9ff;
+        }
+        .message-lists .message-content.user-id {
+            background-color: #3498db;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+<div style="max-width: 600px;width: 100%;height:auto;margin:0 auto;">
+    <div class="message-lists">
+        <%
+            var imgReg = /^content\/upload\//g, str='';
+            messages.forEach(function(item){
+        %>
+        <div class="message-item">
+            <p class='msg-time-<%=item.type %>'><%=item.createdAt %></p>
+            <div class="message-avatar <%=(item.type===0||item.type===4)?'fl':'fr' %>">
+                <img src="https://uuchat.io/static/images/contact.png" alt="avatar" title="avatar" />
+            </div>
+            <div class="message-content <%=(item.type===0||item.type===4)?'fl':'fr' %>">
+                <%
+                    if (imgReg.test(item.msg)) {
+                        var msg = item.msg.split('|');
+                        str = '<a href="'+relativeUrl+msg[1]+'" target="_blank"><img width="'+msg[2]+'" height="'+msg[3]+'" src="'+relativeUrl+msg[0]+'" alt="" /></a>';
+                    } else {
+                        str = item.msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
+                            return '<a href="' + match + '" target="_blank">' + match + '</a>';
+                        });
+                    }
+                %>
+                <div><%-str %></div>
+            </div>
+        </div>
+        <%
+            })
+        %>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+
+</script>
+</html>

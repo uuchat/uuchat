@@ -6,6 +6,9 @@
     background-repeat: no-repeat;
     overflow-y: auto;
 }
+.uuchat-customerSuccess p{
+    margin-bottom: 0;
+}
 .uuchat-customerSuccess.off{
     background-color:#353359;
 }
@@ -173,9 +176,9 @@
 }
 .customerSuccess-left .avatar-icon{
     display: inline-block;
-    width: 40px;
-    height: 40px;
-    line-height: 40px;
+    width: 50px;
+    height: 50px;
+    line-height: 50px;
     text-align: center;
     border-radius: 100%;
     font-size: 20px;
@@ -309,14 +312,6 @@
 .historyMessage .ant-modal-close{
     color: #fff;
 }
-/* offline content */
-.chat-offline-msg{
-    margin-bottom: 20px;
-    font-size: 16px;
-}
-.chat-offline-t{
-    color: #ccc;
-}
 /* chat menu */
 .customerSuccess-left .chat-menu{
     border-bottom:1px solid #d8dddf;
@@ -392,6 +387,7 @@
     position: absolute;
     top: 40px;
     right: 0;
+    z-index: 800;
     padding: 5px 0;
     border: 1px solid #ccc;
     background-color: #fff;
@@ -506,11 +502,11 @@
 .mark-filter{
     padding: 5px 0;
     margin-bottom: 10px;
-    text-align: center;
 }
 .mark-filter .mark-tag{
     width: 15px;
     height: 15px;
+    line-height: 15px;
 }
 .marked-tag{
     display:inline-block;
@@ -539,7 +535,7 @@
 .marked-tag.marked-6{
     background-color: #d487df;
 }
-.marked-tag.marked-7{
+.marked-tag.marked-0{
     background-color: #a5a5a7;
 }
 /* setting */
@@ -589,13 +585,20 @@
     line-height: 20px;
     font-weight: bold;
 }
+/* theme settings */
 .theme-setting h4{
+    margin-bottom: 0;
+    padding-top: 10px;
     line-height: 30px;
     color: #000;
     font-size: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
 }
 .theme-setting h4 i{
     color: #FF0000;
+}
+.theme-setting input{
+    width: 100%;
 }
 .theme-setting .background-menu{
     padding-bottom: 5px;
@@ -605,12 +608,13 @@
 .theme-setting .background-menu h3{
     text-align: center;
     font-size: 16px;
+    line-height: 40px;
+    margin-bottom: 0;
 }
 .theme-setting .menu-item{
     display: inline-block;
     margin: 0 1%;
     width: 30%;
-    height: 7pc;
     cursor: pointer;
 }
 .theme-setting .menu-item img{
@@ -620,21 +624,18 @@
     box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 .theme-background{
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    padding: 5px 6px;
-    height: 270px;
+    margin: 15px 0;
+    padding: 5px;
+    height: 300px;
     overflow: auto;
     box-shadow: 0 5px 10px 5px rgba(0, 0, 0, 0.1) inset;
     border-radius: 5px;
 }
-
 .theme-background span{
     position: relative;
     display: inline-block;
-    margin: 3px;
-    width: 154px;
+    margin: 0 3px;
+    width: 153px;
     height: 118px;
     border-radius: 4px;
     background: #039be5;
@@ -673,6 +674,7 @@
     font-style: normal;
     font-size: 16px;
     color: #000;
+    text-align: center;
 }
     /* online customer lists */
 .online-item{
@@ -719,6 +721,7 @@
 }
 .message-lists .message-item .msg-time-0,
 .message-lists .message-item .msg-time-1,
+.message-lists .message-item .msg-time-2,
 .message-lists .message-item .msg-time-3,
 .message-lists .message-item .msg-time-4{
     line-height: 15px;
@@ -729,8 +732,8 @@
     padding-left: 40px;
 }
 .message-lists .message-item .msg-time-1,
-.message-lists .message-item .msg-time-3
-{
+.message-lists .message-item .msg-time-2,
+.message-lists .message-item .msg-time-3 {
     padding-right: 40px;
     text-align: right;
 }
@@ -738,13 +741,6 @@
     max-width: 100%;
     border-radius: 3px;
     vertical-align: middle;
-}
-.offline-content{
-    margin: 10px 0;
-    background-color: #fff;
-}
-.offline-email{
-    color: #999;
 }
 .message-lists .message-avatar{
     display: inline-block;
@@ -800,7 +796,138 @@
     line-height: 30px;
     text-align: center;
 }
+.message-notify,
+.chat-message .message-notify{
+    margin: 30px 0;
+    color: rgba(0, 0, 0, 0.7);
+    overflow-x: hidden;
+}
+.offline-mark,
+.chat-message .offline-mark{
+    margin: 10px 0;
+    text-align: center;
+    position: relative;
+    z-index: 10;
+}
+.message-notify .offline-mark p,
+.chat-message .message-notify .offline-mark p{
+    display: inline-block;
+    position: relative;
+    top: -10px;
+    padding: 0 10px;
+}
+.message-notify .offline-mark p:before,
+.chat-message .message-notify .offline-mark p:before{
+     content: '';
+     display: inline-block;
+     width: 100%;
+     height: 1px;
+     position: absolute;
+     top: 10px;
+     left: -100%;
+     background: rgba(0, 0, 0, 0.2);
+}
+.message-notify .offline-mark p:after,
+.chat-message .message-notify .offline-mark p:after{
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 1px;
+    background: rgba(0, 0, 0, 0.2);
+    position: absolute;
+    top: 10px;
+    right: -100%;
+ }
+.message-notify .offline-mark i,
+.chat-message .message-notify .offline-mark i{
+    display: inline-block;
+    margin: 0 5px;
+    width: 15px;
+    height: 15px;
+    line-height: 15px;
+    border-radius: 50%;
+    background: #19c18a;
+    vertical-align: middle;
+}
+.message-notify .offline-mark i:before,
+.chat-message .message-notify .offline-mark i:before{
+    content: '';
+    display: inline-block;
+    width: 5px;
+    height: 10px;
+    border-right: 2px solid #fff;
+    border-bottom: 2px solid #fff;
+    -webki-transform: rotate(45deg);
+    transform: rotate(45deg);
+}
+.message-notify .email-detail{
+    position: absolute;
+    z-index: 999;
+    width: 400px;
+    height: 150px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.3);
+    border-radius: 3px;
+}
+.detail-link{
+    padding: 15px;
+    height: 80px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.3);
+}
+.detail-link .avater{
+    display: inline-block;
+    float: left;
+    margin-right: 20px;
+    -webkit-transform: rotateY(-180deg);
+    transform: rotateY(-180deg);
+}
+.detail-link .name{
+    display: inline-block;
+    padding-top: 5px;
+    line-height: 20px;
+}
+.detail-link .name h4{
+    color: #607280;
+    font-weight: normal;
+    font-size: 14px;
+}
 
+.detail-link .name i{
+    display: inline-block;
+    margin-right: 5px;
+    width: 12px;
+    height: 12px;
+    background: url(../images/location.svg) no-repeat center center;
+}
+
+.detail-time{
+    padding: 10px;
+    overflow: hidden;
+}
+.detail-time .time-item{
+    display: inline-block;
+    margin: 0 3px;
+    width: 120px;
+    overflow-x: hidden;
+}
+.detail-time .time-item h4{
+    color: #92a8b9;
+}
+.detail-time .time-item i{
+    display: inline-block;
+    margin-right: 3px;
+    width: 12px;
+    height: 12px;
+    background: url(../images/calendar.svg) no-repeat center center;
+    background-size: 100% 100%;
+    vertical-align: middle;
+}
+.detail-time .time-item p{
+    line-height: 30px;
+    font-size: 12px;
+    font-weight: bold;
+}
+    /* chat send */
 .chat-send{
     height: calc(17vh);
 }

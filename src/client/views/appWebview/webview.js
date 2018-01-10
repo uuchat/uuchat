@@ -32,11 +32,11 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             el.classList.toggle(name);
         },
         imageCompress: function (imageObj, callback) {
-            var reader = new FileReader(),
-                img = new Image(),
-                canvas = doc.createElement('canvas'),
-                context = canvas.getContext('2d'),
-                file = imageObj;
+            var reader = new FileReader();
+            var img = new Image();
+            var canvas = doc.createElement('canvas');
+            var context = canvas.getContext('2d');
+            var file = imageObj;
 
             reader.onload = function (e) {
                 img.src = e.target.result;
@@ -72,11 +72,11 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             }
         },
         timeFormat: function (t) {
-            var d = t ? new Date(t) : new Date(),
-                d2 = d.getDate(),
-                m = d.getMonth() + 1,
-                h = d.getHours(),
-                f = d.getMinutes();
+            var d = t ? new Date(t) : new Date();
+            var d2 = d.getDate();
+            var m = d.getMonth() + 1;
+            var h = d.getHours();
+            var f = d.getMinutes();
 
             d2 = d2 > 9 ? d2 : '0'+d2;
             m = m > 9 ? m : '0'+m;
@@ -95,8 +95,8 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             }
 
             if (selection && selection.rangeCount === 1 && selection.isCollapsed) {
-                var range = selection.getRangeAt(0),
-                    txt = document.createTextNode(s);
+                var range = selection.getRangeAt(0);
+                var txt = document.createTextNode(s);
 
                 range.insertNode(txt);
                 range.collapse(false);
@@ -112,6 +112,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 type: 'GET',
                 url: '',
                 data: '',
+                beforeSend: null,
                 success: function (d) {},
                 error: function (e) {},
                 progress: function (f) {},
@@ -127,8 +128,8 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             xhr.onreadystatechange = function () {
                 if (xhr.readyState == 4 && xhr.status == 200) {
 
-                    var response = '',
-                        type = xhr.getResponseHeader('Content-type');
+                    var response = '';
+                    var type = xhr.getResponseHeader('Content-type');
 
                     if (type.indexOf('xml') !== -1 && xhr.responseXML) {
                         response = xhr.responseXML;
@@ -149,9 +150,11 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
             if (defaultOptions.type == 'GET') {
                 xhr.open(defaultOptions.type, defaultOptions.url + '?' + defaultOptions.data, true);
+                defaultOptions.beforeSend && defaultOptions.beforeSend(xhr);
                 xhr.send(null);
             } else {
                 xhr.open(defaultOptions.type, defaultOptions.url, true);
+                defaultOptions.beforeSend && defaultOptions.beforeSend(xhr);
                 xhr.send(defaultOptions.data);
             }
 
@@ -195,8 +198,8 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             this.emojiPicker();
         },
         enter: function () {
-            var edit = LIB.$('.input-text'),
-                emojiBtn = LIB.$('.emoji');
+            var edit = LIB.$('.input-text');
+            var emojiBtn = LIB.$('.emoji');
 
             LIB.addEvent(edit, 'focus', function (e) {
                 LIB.removeClass(this, 'activation');
@@ -244,6 +247,106 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 LIB.toggleClass(LIB.$('.emoji-picker'), 'show');
                 UCM.resizeBodyHeight();
             });
+
+            LIB.addEvent(LIB.$('.body'), 'click', function (e) {
+
+                var target = e.target;
+                var classes = target.className;
+
+                if (classes === 'email-submit') {
+                    emailSend();
+                    return false;
+                }
+
+                if (classes === 'email-input') {
+                    emailFocus(target);
+                    return false;
+                }
+
+                if (classes.indexOf('rate-item') > -1) {
+                    rateSelect(target);
+                    return false;
+                }
+
+                if (classes === 'rate-submit') {
+                    reateSumbit(target);
+                    return false;
+                }
+
+                if (classes === 'reconnect-btn') {
+                    LIB.$('.body').innerHTML = '<div class="reconnect-mask"><i></i></div>';
+                    UCM.socketInit();
+                }
+
+            });
+
+            function emailSend() {
+                var email = LIB.$('.email-input').value;
+                var reg = /[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}/g;
+
+                if (email === '' || !reg.test(email)) {
+                    LIB.addClass(LIB.$('.offline-email'), 'error');
+                    return false;
+                }
+
+                LIB.ajax({
+                    url: UCM.domain+'/customers/cid/'+UCM.cid,
+                    type:'PATCH',
+                    data: "email="+email,
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    },
+                    success: function (d) {
+                        d = JSON.parse(d);
+                        if (d.code === 200) {
+                            localStorage.setItem('offlineEmail', email);
+                            LIB.$('.offline-email').innerHTML = "<h4>You'll be notified here and by email</h4><h5>"+email+"</h5>";
+                        }
+                    }
+                });
+            }
+
+            function emailFocus(obj){
+                LIB.removeClass(LIB.$('.offline-email'), 'error');
+                setTimeout(function () {
+                    if (LIB.$('.body').scrollHeight < LIB.$('.body').offsetHeight + obj.offsetTop) {
+                        LIB.$('.body').scrollTop = LIB.$('.body').scrollHeight;
+                    }
+                }, 500);
+            }
+            function rateSelect(target) {
+                var hasRate = target.parentNode.parentNode.getAttribute('hasRate');
+                var rates = target.parentNode.querySelectorAll('.rate-item');
+                var rateNum = target.innerHTML;
+
+                if (hasRate) {
+                    return false;
+                }
+
+                for (var i = 0; i < 5; i++) {
+                    if (i < rateNum) {
+                        rates[i].className = 'rate-item on';
+                    } else {
+                        rates[i].className = 'rate-item';
+                    }
+                }
+            }
+
+            function reateSumbit(target) {
+                var rateStars = target.parentNode.parentNode.querySelectorAll('.on').length;
+                UCM.socket.emit('c.rate', UCM.cid, rateStars, function (success) {
+                    if (success) {
+                        target.parentNode.parentNode.setAttribute('hasRate', 1);
+                        UCM.addNewMessage({
+                            type: 'socket',
+                            text: 'Thank you for your rate!! Goodbye!'
+                        });
+                        this.close();
+                        //UCM.socket = null;
+                    }
+                });
+            }
+
         },
         chat: function () {
             LIB.addEvent(LIB.$('#praise'), 'click', function (e) {
@@ -266,19 +369,19 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             });
         },
         imagesUploadFilter: function (file) {
-            if (UCM.isCustomerSuccessOnline) {
-                UCM.addNewMessage({
-                    type: 'system',
-                    text: '<span class="uploading">uploading....</span>'
-                });
-                if (!/(.jpg|.gif|.png)$/g.test(file.name)) {
-                    LIB.$('.uploading').innerHTML = 'Image format must be jpg 、png、gif';
-                    LIB.$('.uploading').className = 'upload-failed';
-                    return false;
-                }
 
-                LIB.imageCompress(file, UCM.photoUpload);
+            UCM.addNewMessage({
+                type: 'system',
+                text: '<span class="uploading">uploading....</span>'
+            });
+            if (!/(.jpg|.gif|.png)$/g.test(file.name)) {
+                LIB.$('.uploading').innerHTML = 'Image format must be jpg 、png、gif';
+                LIB.$('.uploading').className = 'upload-failed';
+                return false;
             }
+
+            LIB.imageCompress(file, UCM.photoUpload);
+
             this.value = '';
         },
         chatClock: function () {
@@ -289,29 +392,15 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
                 if (nowTime - UCM.startTime > UCM.maxTimes) {
                     clearInterval(UCM.clockTimer);
-                    UCM.socket.close();
-                    UCM.socket = null;
-                    UCM.addNewMessage({
-                        type: 'socket',
-                        btn: true,
-                        text: 'Disconnected due to idle.'
-                    });
+                    UCM.isCustomerSuccessOnline = false;
                 }
 
             }, 7000);
         },
         sendMessage: function (type) {
 
-            if (!UCM.isCustomerSuccessOnline) {
-                UCM.addNewMessage({
-                    type: 'socket',
-                    text: 'CustomerSuccess was not online.'
-                });
-                return false;
-            }
-
-            var msg = '',
-                msgTime = (new Date()).getTime();
+            var msg = '';
+            var time = (new Date()).getTime();
 
             if (type.action === 'message') {
                 msg = type.text || LIB.$('.input-text').innerHTML;
@@ -326,28 +415,61 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             (type.action !== 'system') && UCM.addNewMessage({
                 type: 'send',
                 text: msg,
-                msgTime: msgTime
+                time: time
             });
 
-            this.socket.emit('c.message', this.cid, msg, function (success) {
-                if (success) {
-                   LIB.addClass(LIB.$('.msg-'+msgTime), 'success');
-                } else {
-                   LIB.addClass(LIB.$('.msg-'+msgTime), 'failed');
-                }
-            });
+            if (!UCM.isCustomerSuccessOnline) {
+                this.socket.emit('c.offlineMsg', this.cid, msg, function (success) {
+                     LIB.addClass(LIB.$('.msg-'+time), 'success');
+                     if (!LIB.$('.offline-email')) {
+                         emailTemp();
+                     }
+                });
+            } else {
+                this.socket.emit('c.message', this.cid, msg, function (success) {
+                    if (success) {
+                        LIB.addClass(LIB.$('.msg-'+time), 'success');
+                    } else {
+                        LIB.addClass(LIB.$('.msg-'+time), 'failed');
+                    }
+                });
+            }
 
             if (LIB.hasClass(LIB.$('.emoji-picker'), 'show')) {
                 LIB.removeClass(LIB.$('.emoji-picker'), 'show');
                 this.resizeBodyHeight();
             }
             LIB.removeClass(LIB.$('.input-text'), 'activation');
+
+            function emailTemp() {
+                var email = localStorage.getItem('offlineEmail');
+                var str = '';
+
+                if (email) {
+                    str = '<div class="offline-email"><h4>You\'ll be notified here and by email</h4><h5><a href="mailto:'+email+'">'+email+'</a></h5></div>';
+                } else {
+                    str = '<div class="offline-email"><h2>Get notify by email</h2><div class="email-wrap"><input class="email-input" placeholder="email@domain.com" /><span class="email-submit"></span></div><p>That email doesn\'t look quite right</p></div>';
+                }
+
+                UCM.addNewMessage({
+                    type: 'accept',
+                    text: 'save typically replies in a few hours'
+                });
+                UCM.addNewMessage({
+                    type: 'accept',
+                    text: 'Give them a way to reach you: '
+                });
+                UCM.addNewMessage({
+                    type: 'accept',
+                    text: str
+                });
+            }
         },
         filterMessage: function (text) {
 
-            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g,
-                linkReg = /((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#\/%?=~_|!:,.;]*)/g,
-                newText = '';
+            var imgReg = /^content\/upload\//g;
+            var linkReg = /((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#\/%?=~_|!:,.;]*)/g;
+            var newText = '';
 
             if (imgReg.test(text)) {
                 text = text.split('|');
@@ -361,14 +483,14 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             return newText;
         },
         addNewMessage: function (msg) {
-            var str = '',
-                body = LIB.$('.body');
+            var str = '';
+            var body = LIB.$('.body');
 
             msg.text = this.filterMessage(msg.text);
 
             switch (msg.type) {
                 case 'send':
-                    str = this.sendMessageItem(msg.msgTime, msg.text);
+                    str = this.sendMessageItem(msg.time, msg.text);
                     break;
                 case 'accept':
                     str = this.acceptMessageItem(msg.text);
@@ -397,20 +519,9 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
             body.innerHTML += str;
             body.scrollTop = body.scrollHeight;
-
-            this.messageEvents();
-            //this.socketEmitRate();
         },
-        messageEvents: function () {
-            if (LIB.$('.reconnect-btn')) {
-                LIB.addEvent(LIB.$('.reconnect-btn'), 'click', function () {
-                    LIB.$('.body').innerHTML = '<div class="reconnect-mask"><i></i></div>';
-                    UCM.socketInit();
-                });
-            }
-        },
-        sendMessageItem: function (msgTime, text) {
-            return '<div class="message client msg-'+msgTime+'"><div class="content">'+text+'</div><span class="msg-status"></span></div>';
+        sendMessageItem: function (time, text) {
+            return '<div class="message client msg-'+time+'"><div class="content">'+text+'</div><span class="msg-status"></span></div>';
         },
         acceptMessageItem: function (text) {
             var str = '<div class="message server"><div class="avatar">';
@@ -436,7 +547,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             var str = '<div class="rate">';
             str += '<div class="rate-title">Please rate the dialogue</div>';
             str += '<div class="rate-body">';
-            str += '<span>1</span><span>2</span><span>3</span><span>4</span><span>5</span>';
+            str += '<span class="rate-item">1</span><span class="rate-item">2</span><span class="rate-item">3</span><span class="rate-item">4</span><span class="rate-item">5</span>';
             str += '</div>';
             str += '<div class="rate-footer">';
             str += '<div class="rate-submit">Submit</div>';
@@ -453,33 +564,44 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         photoUpload: function (imgFile, name) {
 
             var data = new FormData();
+            var imgUploadUrl = UCM.domain+'/messages/customer/'+UCM.cid+'/cs/'+UCM.csid+'/image';
+
             data.append('image', dataURLtoBlob(imgFile), name);
+
+            if (!UCM.csid) {
+                imgUploadUrl = UCM.domain+'/messages/customer/'+UCM.cid+'/image';
+            }
 
             LIB.ajax({
                 type: 'POST',
-                url: UCM.domain+'/messages/customer/'+UCM.cid+'/cs/'+UCM.csid+'/image',
+                url: imgUploadUrl,
                 data: data,
                 success: function (d) {
 
                     d = JSON.parse(d);
 
                     if (d.code === 200) {
-                        LIB.$('.uploading').innerHTML = 'upload done';
-                        LIB.$('.uploading').className = 'upload-done';
+                        uploadStatus('done');
+
                         UCM.sendMessage({
                             action: 'message',
                             text: d.msg.resized+'|'+d.msg.original+'|'+d.msg.w+'|'+d.msg.h
                         });
                     } else {
-                        LIB.$('.uploading').innerHTML = 'upload failed';
-                        LIB.$('.uploading').className = 'upload-failed';
+                        uploadStatus('failed');
                     }
                 },
                 error: function (err) {
-                    LIB.$('.uploading') && (LIB.$('.uploading').innerHTML = 'upload failed');
-                    LIB.$('.uploading') && (LIB.$('.uploading').className = 'upload-failed');
+                    uploadStatus('failed');
                 }
             });
+
+            function uploadStatus(text) {
+                if (LIB.$('.uploading')) {
+                    LIB.$('.uploading').innerHTML = 'upload '+text;
+                    LIB.$('.uploading').className = 'upload-'+text;
+                }
+            }
 
         },
         emojiCreate: function () {
@@ -500,21 +622,21 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             });
         },
         resizeBodyHeight: function () {
-            var body = LIB.$('.body'),
-                windowHeight = window.screen.height,
-                footerHeight = LIB.$('.footer').offsetHeight;
+            var body = LIB.$('.body');
+            var windowHeight = window.screen.height;
+            var footerHeight = LIB.$('.footer').offsetHeight;
 
             body.style.height = windowHeight  - footerHeight + 'px';
             body.scrollTop = body.scrollHeight;
         },
         initData: function (data) {
             this.cid  = data.cid;
-            this.csid = data.csid;
+            this.csid = data.csid || '';
             this.csName = data.name;
 
             data.photo && (this.csPhoto = UCM.domain + '/'+ data.photo);
 
-            if (data.msg.length > 0) {
+            if (data.msg.length > 0 && data.csid) {
                 this.initHistoryChat(data.msg);
             }
 
@@ -524,13 +646,12 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             LIB.$('.body').scrollTop = LIB.$('.body').scrollHeight;
         },
         initHistoryChat: function (msgArr) {
-            var str = '',
-                c = '',
-                status = '';
+            var str = '';
+            var c = '';
+            var status = '';
 
             for (var i = 0, l = msgArr.length; i < l; i++) {
-
-                if (msgArr[i].type === 3 || (msgArr[i].msg && msgArr[i].msg.indexOf('@User ID@') > -1)) {
+                if (msgArr[i].type === 3 || msgArr[i].type === 2 || msgArr[i].type === 4 || (msgArr[i].msg && msgArr[i].msg.indexOf('@User ID@') > -1)) {
                     continue;
                 }
 
@@ -566,10 +687,6 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 LIB.$('.body').innerHTML =  str;
             } else {
                 LIB.$('.body').innerHTML = str;
-            }
-
-            if (LIB.hasClass(LIB.$('.body'), 'loading')) {
-                LIB.removeClass(LIB.$('.body'), 'loading');
             }
 
         },
@@ -620,11 +737,10 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                             if (d.msg.length === 0 || d.msg.length < 10) {
                                 UCM.hasChatHistory = false;
                             }
-
                             UCM.initHistoryChat(d.msg, 'loadMore');
                         }
                         isLoadingChatHistory = false;
-
+                        LIB.removeClass(LIB.$('.body'), 'loading');
                     },
                     error: function (error) {
                         isLoadingChatHistory = false;
@@ -645,6 +761,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             this.socket.on('connect_error', this.socketConnectError);
             this.socket.on('disconnect', this.socketDisconnect);
             this.socket.on('reconnect', this.socketReconnect);
+            this.socket.on('reconnect_error', this.socketReconnectError);
             this.socket.on('error', this.socketError);
             this.socket.on('cs.message', this.socketCsMessage);
             this.socket.on('cs.disconnect', this.socketCsDisconnect);
@@ -664,19 +781,16 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 text: 'Connection to customerSuccess error!'
             });
         },
+        socketReconnectError: function () {
+            if (LIB.$('.reconnect-mask')) {
+                LIB.$('.reconnect-mask').parentNode.removeChild(LIB.$('.reconnect-mask'));
+            }
+        },
         socketDisconnect: function (reason) {
             UCM.isCustomerSuccessOnline = false;
-            UCM.addNewMessage({
-                type: 'socket',
-                btn: true,
-                text: 'CustomerSuccess was disconnect!'
-            });
         },
         socketReconnect: function () {
-            UCM.addNewMessage({
-                type: 'socket',
-                text: 'CustomerSuccess reline!'
-            });
+            UCM.isCustomerSuccessOnline = true;
         },
         socketError: function () {
             UCM.addNewMessage({
@@ -702,29 +816,24 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             }
         },
         socketCsSelect: function (type, data) {
-            if (type === 1) { //online
+            if (type === 1) {
                 UCM.isCustomerSuccessOnline = true;
                 UCM.initData(data);
                 UCM.socketSendUserId();
                 UCM.startTime = (new Date()).getTime();
                 UCM.chatClock();
                 UCM.loadChatHistory();
-            } else if(type === 2) { //queue
+            } else if(type === 2) {
                 UCM.addNewMessage({
                     type: 'system',
                     text: 'The current number of queues is <i id="queue-num">'+data.num+'</i>'
                 });
-                if (LIB.$('.reconnect-mask')) {
-                    LIB.$('.reconnect-mask').parentNode.removeChild(LIB.$('.reconnect-mask'));
-                }
-            } else if(type === 3) { //offline
-                UCM.addNewMessage({
-                    type: 'socket',
-                    text: 'CustomerSuccess was not online!'
-                });
-                if (LIB.$('.reconnect-mask')) {
-                    LIB.$('.reconnect-mask').parentNode.removeChild(LIB.$('.reconnect-mask'));
-                }
+            } else if(type === 3) {
+                UCM.isCustomerSuccessOnline = false;
+                UCM.initData(data);
+            }
+            if (LIB.$('.reconnect-mask')) {
+                LIB.$('.reconnect-mask').parentNode.removeChild(LIB.$('.reconnect-mask'));
             }
         },
         socketCsMessage: function (cid, msg) {
@@ -734,11 +843,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             });
         },
         socketCsDisconnect: function () {
-            UCM.addNewMessage({
-                type: 'socket',
-                btn: true,
-                text: 'CustomerSuccess has offline.'
-            });
+            UCM.isCustomerSuccessOnline = false;
         },
         socketQueueUpdate: function (pos) {
             LIB.$('#queue-num').innerHTML = pos;
@@ -747,11 +852,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             (data.msg.length > 0) && UCM.initHistoryChat(data.msg);
         },
         socketCloseDialog: function () {
-            UCM.addNewMessage({
-                type: 'socket',
-                btn: true,
-                text: 'CustomerSuccess has offline.'
-            });
+            UCM.isCustomerSuccessOnline = false;
         },
         socketDispatch: function (csid, name, avatar) {
             UCM.csid = csid;
@@ -763,47 +864,6 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 type: 'accept',
                 text: UCM.createRate()
             });
-
-            UCM.socketEmitRate();
-        },
-        socketEmitRate: function () {
-
-            var RateBodys = LIB.$('.rate-body', true),
-                RateBtns =  LIB.$('.rate-submit', true);
-
-            for (var i = 0, l = RateBodys.length; i < l; i++) {
-                (function () {
-                    var rateHearts = RateBodys[i].querySelectorAll('span'),
-                        rateStars = 1;
-
-                    LIB.addEvent(RateBodys[i], 'click', function (e) {
-                        if (e.target.tagName.toUpperCase() === 'SPAN') {
-                            rateStars = e.target.innerHTML;
-                            for (var j = 0; j < 5; j++) {
-                                if (j < rateStars) {
-                                    rateHearts[j].className = 'on';
-                                } else {
-                                    rateHearts[j].className = '';
-                                }
-                            }
-                        }
-                    });
-
-                    LIB.addEvent(RateBtns[i], 'click', function (e) {
-                        UCM.socket.emit('c.rate', UCM.cid, rateStars, function (success) {
-                           if (success) {
-                               UCM.addNewMessage({
-                                   type: 'socket',
-                                   text: 'Thank you for your rate!! Goodbye!'
-                               });
-                               this.close();
-                               UCM.socket = null;
-                           }
-                       })
-                    });
-
-                })(i);
-            }
         }
     };
 

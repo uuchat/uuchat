@@ -4,11 +4,11 @@ class ChatUser extends Component{
 
     render(){
 
-        let I = this.props.info,
-            info = [];
+        let info  = this.props.info;
+        let infoArr = [];
 
-        for (let i in I.info) {
-            info.push(<tr key={i}><td className="user-td">{i}:</td><td>{I.info[i]}</td></tr>);
+        for (let key in info) {
+            infoArr.push(<tr key={key}><td className="user-td">{key}:</td><td>{info[key]}</td></tr>);
         }
 
         return (
@@ -17,7 +17,7 @@ class ChatUser extends Component{
                 <div className="user-body">
                     <table>
                         <tbody>
-                            {info}
+                            {infoArr}
                         </tbody>
                     </table>
                 </div>

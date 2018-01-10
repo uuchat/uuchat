@@ -1,4 +1,4 @@
-;(function(w, doc,undefined){
+;(function(win, doc,undefined){
 
     var U = {
         $: function (el) {
@@ -13,10 +13,19 @@
         addEvent: function (el, event, fn) {
             if (el.addEventListener) {
                 el.addEventListener(event, fn, false);
-            } else if(el.attchEvent) {
+            } else if(el.attachEvent) {
                 el.attachEvent('on'+event, fn);
             } else {
                 el['on'+event] = fn;
+            }
+        },
+        removeEvent: function (el, event, fn) {
+            if (el.removeEventListener) {
+                el.removeEventListener(event, fn, false);
+            } else if(el.detachEvent) {
+                el.detachEvent('on'+event, fn);
+            } else {
+                el['on'+event] = null;
             }
         },
         hasClass: function (obj, cls) {
@@ -53,16 +62,14 @@
                 params.type = (params.type || 'GET').toUpperCase();
                 !params.fileType && (params.data = formatParams(params.data));
 
-                var xhr = null;
-
-                xhr = new XMLHttpRequest() || new ActiveXObjcet('Microsoft.XMLHTTP');
+                var xhr = new XMLHttpRequest() || new ActiveXObjcet('Microsoft.XMLHTTP');
 
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState == 4) {
                         var status = xhr.status;
                         if (status >= 200 && status < 300) {
-                            var response = '',
-                                type = xhr.getResponseHeader('Content-type');
+                            var response = '';
+                            var type = xhr.getResponseHeader('Content-type');
 
                             if (type.indexOf('xml') !== -1 && xhr.responseXML) {
                                 response = xhr.responseXML;
@@ -84,18 +91,20 @@
 
                 if (params.type == 'GET') {
                     xhr.open(params.type, params.url + '?' + params.data, true);
+                    options.beforeSend && options.beforeSend(xhr);
                     xhr.send(null);
                 } else {
                     xhr.open(params.type, params.url, true);
+                    options.beforeSend && options.beforeSend(xhr);
                     xhr.send(params.data);
                 }
             }
 
             function jsonp(params) {
-                var callbackName = params.jsonp,
-                    head = document.getElementsByTagName('head')[0],
-                    data ,
-                    script = document.createElement('script');
+                var callbackName = params.jsonp;
+                var head = document.getElementsByTagName('head')[0];
+                var data;
+                var script = document.createElement('script');
 
                 params.data['callback'] = callbackName;
                 data = formatParams(params.data);
@@ -139,11 +148,14 @@
                 return new Date(t);
             }
         },
+        isMobile: function () {
+            return /Mobile/i.test(navigator.userAgent);
+        },
         cutStr: function(str, len){
-            var str_length = 0,
-                str_cut = new String(),
-                str_len = str.length,
-                a = '';
+            var str_length = 0;
+            var str_cut = new String();
+            var str_len = str.length;
+            var a = '';
 
             for(var i = 0; i < str_len; i++){
                 a = str.charAt(i);
@@ -188,11 +200,11 @@
                 var sel = document.selection.createRange();
                 sel.text = s2;
             } else if (typeof obj.selectionStart === 'number' && typeof obj.selectionEnd === 'number') {
-                var startPos = obj.selectionStart,
-                    endPos = obj.selectionEnd,
-                    cursorPos = startPos,
-                    tmpStr = s1,
-                    s3 = tmpStr.substring(0, startPos) + s2 + tmpStr.substring(endPos, tmpStr.length);
+                var startPos = obj.selectionStart;
+                var endPos = obj.selectionEnd;
+                var cursorPos = startPos;
+                var tmpStr = s1;
+                var s3 = tmpStr.substring(0, startPos) + s2 + tmpStr.substring(endPos, tmpStr.length);
 
                 obj.value = s3;
                 cursorPos += s2.length;
@@ -204,7 +216,7 @@
     };
 
     var CHAT = {
-        domain: (w.UUCHAT && w.UUCHAT.domain) || '',
+        domain: (win.UUCHAT && win.UUCHAT.domain) || '',
         socket: null,
         timeStart: U.dateISOFomat(new Date()).getTime(),
         timeOutSeconds: 2700000,
@@ -212,11 +224,10 @@
         msgPageNum: 1,
         isLoadingMsg: false,
         hasMoreMsg: true,
-        chat: {
-            cid: '',
-            csid: '',
-            csName: ''
-        },
+        chatState: 0,
+        cid: '',
+        csid: '',
+        csName: '',
         init: function(){
             U.loadStyle([CHAT.domain+'/static/css/customer.css']);
             var socketIO = localStorage.getItem ? localStorage.getItem('uuchat.skcdn', socketIO) : null;
@@ -224,8 +235,8 @@
             this.createCT();
         },
         createCT: function(){
-            var ct = this.template(),
-                ctNode = document.createElement('div');
+            var ct = this.template();
+            var ctNode = document.createElement('div');
 
             ctNode.setAttribute('class', 'chat-console chat-console-hidden');
             ctNode.innerHTML = ct;
@@ -234,8 +245,14 @@
         ctrol: function(){
 
             U.addEvent(U.$('.chat-btn'), 'click', function(e){
-                U.toggleClass(U.$('.chat-console'), 'chat-console-hidden');
+
+                if (U.isMobile()) {
+                    window.location.href = '/webview';
+                    return false;
+                }
+
                 U.toggleClass(this, 'chat-btn-close');
+                U.toggleClass(U.$('.chat-console'), 'chat-console-hidden');
 
                 U.$('.chat-nums').style.display = 'none';
                 U.$('.chat-nums').innerHTML = 0;
@@ -246,7 +263,7 @@
             });
         },
         createSocket: function(){
-            var io = window.io || io || {};
+            var io = win.io || io || {};
 
             CHAT.socket = io(CHAT.domain+'/c', {
                 forceNew: true,
@@ -284,19 +301,6 @@
             str +='<div class="chat-btn chat-btn-open"><div class="chat-nums" style="display: none;">0</div></div>';
             return str;
         },
-        tempOffline: function(){
-            var str ='<div class="chat-offline">';
-            str +='<p class="offline-title">Have a question about what uuChat can do for you ?</p>';
-            str +='<h6>Name:</h6>';
-            str +='<input type="text" placeholder="Click here and type your Name" class="offline-name"/>';
-            str +='<h6>Email:</h6>';
-            str +='<input type="email" placeholder="Click here and type your Email" class="offline-email" required="required" />';
-            str +='<h6>Describe:</h6>';
-            str +='<textarea placeholder="Let us know and someone will get back to you within 24 hours, if not sooner!(max 256 words)" class="offline-text"></textarea>';
-            str +='<button class="offline-send">Send</button></div>';
-
-            return str;
-        },
         tempMsg: function(){
             return '<div class="chat-msg"></div>';
         },
@@ -308,7 +312,7 @@
             str += '<div class="chat-send-btns">';
             str += this.tempEmoji();
             str += '<label class="chat-send-btn chat-emoji-btn"></label>';
-            if(window.FormData){
+            if(win.FormData){
                 str += '<label class="chat-send-btn chat-file-btn" for="upload-file">';
                 str += '<input id="upload-file" name="image" type="file" class="chat-upload" accept="image/png, image/jpeg, image/gif,image/jpg" /></label>';
             }
@@ -324,46 +328,70 @@
             str +='</div>';
             return str;
         },
-        tempMsgItem: function(role, msg, t){
-            var str = '',
-                cls = '',
-                name = '',
-                h = '',
-                m = '',
-                isOld = false;
+        tempEmail: function(){
+            var str = '<div class="chat-item chat-from"><div class="chat-text">';
+            var uuInfoData = localStorage.getItem('uuInfoData');
+            var emaiReg = /[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}/g;
+            var email = emaiReg.exec(uuInfoData);
 
-            if(typeof t === 'number'){
-                cls += 't-'+t+' ';
-                t = U.dateISOFomat(t);
+            str += '<div class="email-notify">';
+            if (email) {
+                str += '<h4>You\'ll be notified here and by email</h4>';
+                str += '<h5><a href="javascript:;"+email[0]+">'+email[0]+'</a></h5>';
+            } else {
+                str += '<h2>Get notified by email</h2>';
+                str += '<div class="text-field"><input class="email-input" placeholder="email@domain.com"/><span class="email-btn"></span></div>';
+                str += '<p class="email-error">That email doesn\'t look quite right</p>';
             }
+            str += '<div class="chat-caret"></div>';
+            str += '</div></div></div>';
 
-            if(typeof t === 'string'){
-                t = U.dateISOFomat(t);
+            return str;
+        },
+        tempRate: function () {
+            var str = '<div class="rate-box">';
+            str += '<p class="rate-title">Please rate the dialogue</p>';
+            str += '<div class="rate-heart">';
+            str += '<span class="rate-span">1</span><span class="rate-span">2</span><span class="rate-span">3</span><span class="rate-span">4</span><span class="rate-span">5</span>';
+            str += '</div><div class="rate-btn">Done</div></div>';
+
+            return str;
+        },
+        tempMsgItem: function(type, msg, t){
+            var str = '';
+            var cls = '';
+            var name = '';
+            var hour = '';
+            var minute = '';
+            var isOld = false;
+
+            if (typeof t === 'number') {
+                cls += 't-'+t+' ';
+            } else {
                 isOld = true;
             }
 
-            h = t.getHours();
-            m = t.getMinutes();
+            t = U.dateISOFomat(t);
 
-            m = m > 9 ? m : '0'+m;
+            hour = t.getHours();
+            minute = t.getMinutes();
 
-            if (0 === role) {
+            hour = hour > 9 ? hour : '0'+hour;
+            minute = minute > 9 ? minute : '0'+minute;
+
+            if (0 === type) {
                 cls += 'chat-to';
-                if (/[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g.test(msg)) {
-                    cls += isOld ? ' done-img' : '';
-                } else {
-                    cls += isOld ? ' done' : '';
-                }
+                cls += isOld ? ' done' : '';
             } else {
                 cls = 'chat-from';
-                name = CHAT.chat.csName;
+                name = CHAT.csName;
             }
 
             msg = this.msgFilter(msg);
             str += '<div class="chat-item '+cls+'">';
-            str += '<p class="chat-role"><i>'+name+'</i>'+h+':'+m+'</p>';
+            str += '<p class="chat-role"><i>'+name+'</i>'+hour+':'+minute+'</p>';
             str += '<div class="chat-text">'+msg+'</div>';
-            str += '<div class="chat-caret"></div></div>';
+            str += '</div>';
 
             return str;
         },
@@ -380,7 +408,7 @@
                      return false;
                  }
 
-                 e = e || window.event;
+                 e = e || win.event;
 
                  e.delta = e.wheelDelta ? e.wheelDelta / 120 : -(e.detail || 0) / 3;
 
@@ -390,25 +418,23 @@
                     e.cancelBubble = true;
                  }
 
-                 if (e.delta > 0 && e.target.scrollTop <= 0) {
+                 if (e.delta > 0 && e.target.scrollTop <= 0 && CHAT.csid) {
                       CHAT.isLoadingMsg = true;
                       U.addClass(U.$('.chat-msg'), 'loading');
                       historyMsgRequest();
                  }
             }
 
-
             function historyMsgRequest() {
 
                 U.ajax({
-                    url: CHAT.domain + '/messages/customer/' + CHAT.chat.cid + '/cs/' + CHAT.chat.csid,
+                    url: CHAT.domain + '/messages/customer/' + CHAT.cid + '/cs/' + CHAT.csid,
                     type: 'GET',
                     fileType: true,
                     data: 'pageNum='+CHAT.msgPageNum+'&pageSize=10',
                     success: function (d) {
 
                         var d = JSON.parse(d);
-
                         if (d.code === 200) {
                             CHAT.msgPageNum++;
 
@@ -419,10 +445,12 @@
                         }
 
                         CHAT.isLoadingMsg = false;
+                        U.removeClass(U.$('.chat-msg'), 'loading');
 
                     },
                     error: function (error) {
                         CHAT.isLoadingMsg = false;
+                        U.removeClass(U.$('.chat-msg'), 'loading');
                     }
                 });
             }
@@ -430,33 +458,51 @@
             function renderMsgItems(data) {
 
                 if (data.length > 0) {
+                    var chatMsg = U.$('.chat-msg');
+                    var msgList = '';
+                    var curTime = new Date();
+                    var diffTime = '';
 
-                    var chatMsg = U.$('.chat-msg'),
-                        msgList = '';
+                    curTime = curTime.getFullYear()+'-'+(curTime.getMonth() + 1) + '-' + curTime.getDate();
 
                     for (var i = 0, l = data.length; i < l; i++) {
                         var msg = data[i];
                         if (msg.type !== 3 && msg.type !== 4) {
+                            diffTime = msg.createdAt.split('T')[0];
+                            if (curTime != diffTime) {
+                                curTime = diffTime;
+                                msgList += CHAT.msgHistoryTime(msg.createdAt);
+                            }
                             msgList += CHAT.tempMsgItem(msg.type, msg.msg, msg.createdAt);
                         }
                     }
 
                     chatMsg.innerHTML = msgList+chatMsg.innerHTML;
-                    U.removeClass(U.$('.chat-msg'), 'loading');
                 }
 
             }
 
         },
-        msgFilter: function(msg){
-            var imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g,
-                imgSrc = msg,
-                str = '';
+        msgHistoryTime: function (time) {
 
-            if (imgReg.test(imgSrc)) {
-                imgSrc = msg.split('|');
-                str += '<a href="'+CHAT.domain+'/'+imgSrc[1] +'" target="_blank">';
-                str += '<img src="'+CHAT.domain+'/'+imgSrc[0] +'" width="'+imgSrc[2]+'" height="'+imgSrc[3]+'" alt="" /></a>';
+            var dateStr = '';
+
+            dateStr = time.split('T')[0];
+            U.$('.time-'+dateStr) && U.$('.time-'+dateStr).parentNode.removeChild(U.$('.time-'+dateStr));
+
+            return '<p class="chat-time time-'+dateStr+'"><i>'+dateStr.split('-').reverse().join('/')+'</i></p>';
+        },
+        msgFilter: function(msg){
+            var imgReg = /(^content\/upload\/)/g;
+            var str = '';
+
+            msg = msg.replace(/^&nbsp;/g, '');
+
+           if(imgReg.test(msg)){
+                msg = msg.split('|');
+                str += '<a href="' + CHAT.domain + '/' + msg[1] + '" target="_blank">';
+                str += '<img src="'+CHAT.domain+'/'+msg[0]+'" width="'+msg[2]+'" height="'+msg[3]+'" />';
+                str += '</a>';
             } else {
                 str = msg.replace(/&nbsp;/g, ' ').replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#\/%?=~_|!:,.;]*)/g, function(match){
                     return '<a href="'+match+'" target="_blank">'+match+'</a>';
@@ -464,17 +510,19 @@
             }
             return str;
         },
-        msgTranslate: function(msgObj){
+        msgTranslate: function(opt){
 
             var chatMsg =  U.$('.chat-msg');
 
-            if (msgObj.msg === 1) {
-                this.msgRate(chatMsg, msgObj);
-            } else if(msgObj.msg === 2) {
+            if (opt.type === 5) {
+                this.msgRate(chatMsg, opt);
+            } else if(opt.type === 2) {
                 var str = '<div class="new-conversation">Click to New Conversation</div>';
-                chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
+                chatMsg.innerHTML += this.tempMsgItem(opt.type, str, new Date());
+            } else if(opt.type === 8) {
+                chatMsg.innerHTML += this.tempEmail();
             } else {
-                chatMsg && (chatMsg.innerHTML += this.tempMsgItem(msgObj.role, msgObj.msg, msgObj.time));
+                chatMsg && (chatMsg.innerHTML += this.tempMsgItem(opt.type, opt.msg, opt.time));
             }
 
             if(!U.hasClass(U.$('.chat-btn'), 'chat-btn-close')){
@@ -487,78 +535,19 @@
             CHAT.updateLocalStorage({
                 action: 'updateChatTime'
             });
-
-            U.$('.new-conversation') && U.addEvent(U.$('.new-conversation'), 'click', function(){
-                CHAT.createSocket();
-            });
-
         },
         msgRate: function (chatMsg, msgObj) {
-
-            var str = '';
-
-            str += '<div class="rate-box">';
-            str += '<p class="rate-title">Please rate the dialogue</p>';
-            str += '<div class="rete-heart">';
-            str += '<span class="rate-span">1</span><span class="rate-span">2</span><span class="rate-span">3</span><span class="rate-span">4</span><span class="rate-span">5</span>';
-            str += '</div><div class="rete-btn">Done</div></div>';
-
-            chatMsg.innerHTML += this.tempMsgItem(msgObj.role, str, new Date());
-
-            var hearts = U.$('.rete-heart', true),
-                rateBtns = U.$('.rete-btn', true);
-
-            for (var i = 0, l = hearts.length; i < l; i++) {
-                (function(i){
-                    var rateLevel = 5,
-                        rate = hearts[i].children;
-                    U.addEvent(hearts[i], 'mouseover', function(e){
-                        var e = e || w.event,
-                            tg = e.target || e.srcElement;
-
-                        if (tg.tagName.toLowerCase() === 'span') {
-                            var rateNum = tg.innerHTML;
-                            rateLevel = rateNum;
-
-                            for (var j = 0; j < 5; j++) {
-                                if (j < rateNum) {
-                                    rate[j].className="rate-span active";
-                                } else {
-                                    rate[j].className="rate-span";
-                                }
-                            }
-                        }
-                    });
-                    U.addEvent(rateBtns[i], 'click', function() {
-
-                        chatMsg.innerHTML += CHAT.tempMsgItem(1, 'Thank you for your rate!! Goodbye!', new Date());
-                        chatMsg.scrollTop = chatMsg.scrollHeight;
-
-                        CHAT.socket.emit('c.rate', CHAT.chat.cid, rateLevel, function (success) {
-                            if (success) {
-                                setTimeout(function(){
-                                    CHAT.socket.close();
-                                    CHAT.socket = null;
-                                    U.$('.chat-main').innerHTML = '<div class="reconnect-btn"><img width="32" src="'+CHAT.domain+'/static/images/write.png">New Conversation</div>';
-                                    U.addEvent(U.$('.reconnect-btn'), 'click', function(){
-                                        CHAT.createSocket();
-                                    });
-                                }, 3000);
-                            }
-                        });
-                    });
-                })(i)
-            }
+            chatMsg.innerHTML += this.tempMsgItem(msgObj.type, CHAT.tempRate(), new Date());
         },
         updateLocalStorage: function(userInfo){
 
-            var uuchatIF = U.$('#uuchatIframe').contentWindow,
-                d = new Date(),
-                data = {};
+            var uuchatIF = U.$('#uuchatIframe').contentWindow;
+            var d = new Date();
+            var data = {};
 
             data.lastTime = d.getTime();
             data.chatTime = d.getTime();
-            data.cid = CHAT.chat.cid;
+            data.cid = CHAT.cid;
             data.action = userInfo.action;
 
             if(userInfo.action === 'updateUser'){
@@ -571,32 +560,155 @@
         },
         initCustomer: function(data){
             var msgList = '';
+            var msgMain = U.$('.chat-main');
 
-            this.chat.cid = data.cid;
+            this.cid = data.cid;
 
             this.updateLocalStorage({action: 'init'});
             this.initCustomerInfo(data.csid, data.name, data.photo);
 
-            U.$('.chat-main').innerHTML = this.tempMsg();
-            U.$('.chat-main').innerHTML += this.tempSend();
+            msgMain.innerHTML = this.tempMsg();
+            msgMain.innerHTML += this.tempSend();
 
             if (data.msg.length < 10 || data.msg.length === 0) {
                 CHAT.hasMoreMsg = false;
             }
 
-            if (data.msg.length > 0) {
+            if (typeof data.msg === 'object' && data.msg.length > 0) {
                 for (var i = 0, l = data.msg.length; i < l; i++) {
                     var msg = data.msg[i];
-                    if (msg.type !== 3 && msg.type !== 4) {
+                    if (msg.type < 3) {
                         msgList += this.tempMsgItem(msg.type, msg.msg, msg.createdAt);
+                    } else if (msg.type == 8) {
+                        msgList += this.tempEmail();
                     }
                 }
                 U.$('.chat-msg').innerHTML += msgList;
+                U.$('.chat-msg').scrollTop = U.$('.chat-msg').scrollHeight;
+            }
+
+            U.addEvent(msgMain, 'click', msgMainClickHandle);
+            U.addEvent(msgMain, 'mouseover', msgMainMouseOverHandle);
+
+            function msgMainClickHandle(event) {
+                var event = event || win.event;
+                var target = event.target || event.srcElement;
+                var classNames = target.className;
+
+                if (classNames.indexOf('email-btn') > -1) {
+                    CHAT.notifyEmail('send');
+                    return false;
+                }
+                if (classNames.indexOf('email-input') > -1) {
+                    CHAT.notifyEmail('focus');
+                    return false;
+                }
+
+                if (classNames.indexOf('resend-btn') > -1) {
+                    CHAT.messageResend(target);
+                    return false;
+                }
+
+                if (classNames.indexOf('reconnect-btn') > -1 || classNames.indexOf('new-conversation') > -1) {
+                    U.removeEvent(msgMain, 'click', msgMainClickHandle);
+                    U.removeEvent(msgMain, 'mouseover', msgMainMouseOverHandle);
+                    CHAT.createSocket();
+                    return false;
+                }
+
+                if (classNames.indexOf('rate-btn') > -1) {
+                    CHAT.rateSend(target);
+                    return false;
+                }
+            }
+
+            function msgMainMouseOverHandle(event) {
+                var event = event || window.event;
+                var target = event.target || event.srcElement;
+                var classes = target.className;
+
+                if (classes.indexOf('rate-span') > -1) {
+                    var rates = target.parentNode.getElementsByClassName('rate-span');
+                    var rateNum = target.innerHTML;
+
+                    target.parentNode.nextSibling.setAttribute('data-rate', rateNum);
+
+                    for (var i = 0; i < 5; i++) {
+                        if(i < rateNum) {
+                            rates[i].className = 'rate-span active';
+                        } else {
+                            rates[i].className = 'rate-span';
+                        }
+                    }
+                }
+            }
+
+        },
+        messageResend: function (obj) {
+            var resendMsg = obj.parentNode.innerHTML.replace('<span class="resend-btn" title="Click to resend">!</span>', '');
+            CHAT.socketEmitMessage(U.cutStr(resendMsg, 256));
+        },
+        notifyEmail: function (action) {
+
+            var notify = U.$('.email-notify');
+
+            if (action === 'send') {
+                send();
+            } else if(action === 'focus') {
+                focus();
+            }
+
+            function send() {
+                var email = U.$('.email-input').value.replace(/^\s$/g, '');
+                if (email == '' || !/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)) {
+                    U.addClass(U.$('.email-notify'), 'error');
+                    return false;
+                }
+
+                CHAT.updateLocalStorage({
+                    action: 'updateUser',
+                    name: CHAT.cid,
+                    email: email
+                });
+
+                U.ajax({
+                    url:CHAT.domain+'/customers/cid/'+CHAT.cid,
+                    type:'PATCH',
+                    data: {"email": email},
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    },
+                    success: function(d){
+                        var d = JSON.parse(d);
+                        if (d.code === 200) {
+                            notify.innerHTML = "<h4>You'll be notified here and by email</h4><h5>"+email+"</h5>";
+                        }
+                    }
+                });
+            }
+            function focus() {
+                U.removeClass(notify, 'error');
             }
         },
+        rateSend: function (rate) {
+            var chatMsg = U.$('.chat-msg');
+
+            chatMsg.innerHTML += CHAT.tempMsgItem(1, 'Thank you for your rate!! Goodbye!', new Date());
+            chatMsg.scrollTop = chatMsg.scrollHeight;
+
+            CHAT.socket.emit('c.rate', CHAT.cid, rate.getAttribute('data-rate'), function (success) {
+                if (success) {
+                    setTimeout(function(){
+                        CHAT.socket.close();
+                        CHAT.socket = null;
+                        U.$('.chat-main').innerHTML = '<div class="reconnect-btn"><img width="32" src="'+CHAT.domain+'/static/images/write.png">New Conversation</div>';
+                    }, 3000);
+                }
+            });
+        },
         initCustomerInfo: function (csid, name, avatar) {
-            CHAT.chat.csid = csid;
-            CHAT.chat.csName = name;
+            CHAT.csid = csid;
+            CHAT.csName = name;
             U.$('.chat-name').innerHTML = name;
             U.$('.avatar-img').setAttribute("src", this.domain + '/' + (avatar || 'static/images/ua.png'));
         },
@@ -604,6 +716,9 @@
             this.emit('c.select', CHAT.socketCsSelect);
         },
         socketConnectTimeOut: function(){
+            if (CHAT.chatState === 3 || CHAT.chatState === 0) {
+                return false;
+            }
             CHAT.timeStart = U.dateISOFomat(new Date()).getTime();
             clearInterval(CHAT.timeOutTimer);
             CHAT.timeOutTimer = setInterval(function(){
@@ -615,34 +730,11 @@
             }, 5000);
         },
         socketConnectError: function(){
-            U.$('.chat-main').innerHTML = '<div class="chat-offline"><div class="chat-error">There has error !You can try it later again</div></div>';
+            U.$('.chat-main').innerHTML = '<div class="chat-offline"><div class="chat-error">The system is busy! Please try again later</div></div>';
         },
         socketDisconnect: function(){
-
-            var timeNow = U.dateISOFomat(new Date()).getTime(),
-                tips = 'The customerSuccess has offline, you can try it by refesh the browser at latter';
-
-            if (timeNow - CHAT.timeStart > CHAT.timeOutSeconds) {
-                tips = 'Long time no chat, disconnect, you can try it by refesh the browser at latter';
-            }
-
-            if (!U.$('.chat-msg')) {
-                U.$('.chat-main').innerHTML = CHAT.tempMsg();
-            }
-
-            if (U.$('.new-conversation')) {
-                return false;
-            }
-
-            CHAT.msgTranslate({
-                role: 1,
-                msg: tips,
-                time: new Date()
-            });
-            CHAT.socketReconnectTips();
-            U.$('.chat-name').innerHTML = CHAT.chat.csName;
-            this.close();
-            CHAT.socket = null;
+            clearInterval(CHAT.timeOutTimer);
+            U.$('.chat-name').innerHTML = CHAT.csName;
         },
         socketSelectSuccess: function (data) {
             CHAT.socketConnectTimeOut();
@@ -651,8 +743,8 @@
                 U.toggleClass(U.$('.emoji-lists'), 'emoji-lists-hidden');
             });
             U.addEvent(U.$('.emoji-lists'), 'click', function(e){
-                var e = e || window.event,
-                    tg = e.target || e.srcElement;
+                var e = e || win.event;
+                var tg = e.target || e.srcElement;
 
                 if (tg.tagName.toLowerCase() === 'span') {
                     U.insertToCursorPosition(U.$('.chat-send-area'), U.$('.chat-send-area').value, tg.innerHTML);
@@ -665,12 +757,14 @@
 
             U.$('.chat-upload') && U.addEvent(U.$('.chat-upload'), 'change', function(e){
 
-                var _self = this,
-                    data = new FormData(),
-                    fileName = e.target.files[0],
-                    fileSize = 0;
+                var _self = this;
+                var data = new FormData();
+                var fileName = e.target.files[0];
+                var fileSize = 0;
+                var imgUploadUrl = CHAT.domain+'/messages/customer/'+CHAT.cid+'/cs/'+CHAT.csid+'/image?f=c';
 
                 if(!fileName){
+                    showUploadImageTips('Image can not be uploaded because customer service is not online');
                     return false;
                 }
 
@@ -688,8 +782,12 @@
                 data.append('image', fileName);
                 U.$('.chat-msg').innerHTML += '<div class="upload-tips">Start upload ...</div>';
 
+                if (!CHAT.csid) {
+                    imgUploadUrl = CHAT.domain+'/messages/customer/'+CHAT.cid+'/image';
+                }
+
                 U.ajax({
-                    url: CHAT.domain+'/messages/customer/'+CHAT.chat.cid+'/cs/'+CHAT.chat.csid+'/image?f=c',
+                    url: imgUploadUrl,
                     type:'POST',
                     fileType: true,
                     data: data,
@@ -730,14 +828,13 @@
             this.msgScroll();
 
             U.addEvent(U.$('.chat-send-area'), 'keydown', function(e){
-                var e = e || w.event,
-                    val = '',
-                    _self = this,
-                    keyCode = e.keyCode ? e.keyCode : e.which;
+                var e = e || w.event;
+                var val = '';
+                var _self = this;
+                var keyCode = e.keyCode ? e.keyCode : e.which;
 
                 setTimeout(function () {
-                    val = _self.value;
-                    val = val.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;");
+                    val = _self.value.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;");
 
                     if (val.length > 0 && !/^(&nbsp;)*$/g.test(val)) {
                         U.$('.send-pre').innerHTML = val;
@@ -773,87 +870,22 @@
             }
         },
         socketCsSelect: function(type, data){
+            CHAT.chatState = type;
             if (1 === type) {
                 CHAT.socketSelectSuccess(data);
             } else if(2 === type) {
-                var queue = '<div class="chat-offline"><div class="line-up">Current queue number <i class="line-num">';
-                queue += data.num;
-                queue += '</i></div></div>';
-                U.$('.chat-main').innerHTML = queue;
+                CHAT.socketQueue(data.num);
             } else if(3 === type) {
-                CHAT.customerSuccessOffline();
+                CHAT.socketSelectSuccess(data);
             }
         },
-        customerSuccessOffline: function(){
-
-            U.$('.chat-main').innerHTML = CHAT.tempOffline();
-            U.addEvent(U.$('.offline-name'), 'focus', function(){
-                U.removeClass(this, 'error');
-            });
-            U.addEvent(U.$('.offline-email'), 'focus', function(){
-                U.removeClass(this, 'error');
-            });
-            U.addEvent(U.$('.offline-text'), 'focus', function(){
-                U.removeClass(this, 'error');
-            });
-
-            U.addEvent(U.$('.offline-send'), 'click', function(){
-
-                var name = U.$('.offline-name').value,
-                    email = U.$('.offline-email').value,
-                    content = U.$('.offline-text').value,
-                    vertify = true;
-
-                if (name === '') {
-                    U.addClass(U.$('.offline-name'), 'error');
-                    vertify = false;
-                }
-
-                if (email === '' || !/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)) {
-                    U.addClass(U.$('.offline-email'), 'error');
-                    vertify = false;
-                }
-
-                if (content === '') {
-                    U.addClass(U.$('.offline-text'), 'error');
-                    vertify = false;
-                }
-                if (!vertify) {
-                    return false;
-                }
-
-                CHAT.updateLocalStorage({
-                    action: 'updateUser',
-                    name: name,
-                    email: email
-                });
-
-                U.ajax({
-                    url:CHAT.domain+'/offlines',
-                    type:'GET',
-                    jsonp: 'jsonpCallback',
-                    data: {
-                        "name": name,
-                        "email": email,
-                        "content": content
-                    },
-                    success: function(d){
-
-                        if (d.code === 200) {
-                            var str = '<div className="offline-text-success">';
-
-                            str += '<div class="offline-success">Thank you for your message!We\'ll get back to you as soon as possible！</div></div>';
-
-                            U.$('.chat-offline').innerHTML = str;
-                        }
-                    }
-                });
-            });
+        socketQueue: function (num){
+            U.$('.chat-main').innerHTML = '<div class="chat-offline"><div class="line-up">Current queue number <i class="line-num">'+num+'</i></div></div>';
         },
         socketReconnectTips: function(){
             CHAT.msgTranslate({
-                role: 1,
-                msg: 2,
+                type: 2,
+                msg: 'Reconnect button',
                 time: new Date()
             });
         },
@@ -862,8 +894,8 @@
         },
         socketActionRate: function(){
             CHAT.msgTranslate({
-                role: 1,
-                msg: 1,
+                type: 5,
+                msg: 'Rate',
                 time: new Date()
             });
         },
@@ -874,7 +906,7 @@
             var d = U.dateISOFomat(new Date()).getTime();
             CHAT.timeStart = d;
             CHAT.msgTranslate({
-                role: 0,
+                type: 0,
                 msg: msg,
                 time: d
             });
@@ -884,8 +916,8 @@
                     cb = tout;
                     tout = 5000;
                 }
-                var called = false,
-                    t = setTimeout(function () {
+                var called = false;
+                var t = setTimeout(function () {
                         if (!called) {
                             called = true;
                             cb(new Error('callback timeout'));
@@ -902,59 +934,70 @@
                 };
             }
 
-            CHAT.socket && CHAT.socket.emit('c.message', CHAT.chat.cid, msg, watchDog(function(err, success){
-                if (success) {
+            if (CHAT.chatState === 3) {
+                CHAT.socket.emit('c.offlineMsg', CHAT.cid, msg, function(success){
                     if (/[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g.test(msg)) {
+                        U.addClass(U.$('.t-'+d), 'done-img');
+                    } else {
+                        U.addClass(U.$('.t-'+d), 'done');
+                    }
+
+                    if (!U.$('.email-notify')) {
+                        CHAT.msgTranslate({
+                            type: 1,
+                            msg: "save typically replies in a few hours",
+                            time: U.dateISOFomat(new Date()).getTime()
+                        });
+                        CHAT.msgTranslate({
+                            type: 1,
+                            msg: "Give them a way to reach you: ",
+                            time: U.dateISOFomat(new Date()).getTime()
+                        });
+                        CHAT.msgTranslate({
+                            type: 8,
+                            msg: 'Offline email',
+                            time: U.dateISOFomat(new Date()).getTime()
+                        });
+                    }
+
+                });
+                return false;
+            }
+
+            CHAT.socket.emit('c.message', CHAT.cid, msg, watchDog(function(err, success){
+                if (success) {
+                    if (/[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)$/g.test(msg)) {
                         U.addClass(U.$('.t-'+d), 'done-img');
                     } else {
                         U.addClass(U.$('.t-'+d), 'done');
                     }
                 } else {
                     U.$('.t-'+d).querySelector('.chat-text').innerHTML += '<span class="resend-btn" title="Click to resend">!</span>';
-                    var resendBtns = U.$('.resend-btn', true);
-
-                    for (var i = 0, l = resendBtns.length; i < l; i++) {
-                        (function(el){
-                            U.addEvent(el, "click", function(){
-                                var resendMsg = this.parentNode.innerHTML.replace('<span class="resend-btn" title="Click to resend">!</span>', '');
-                                CHAT.socketEmitMessage(U.cutStr(resendMsg, 256));
-                            });
-                        })(resendBtns[i]);
-                    }
                 }
             }));
         },
         socketCsMessage: function(cid, msg){
             CHAT.timeStart = U.dateISOFomat(new Date()).getTime();
             CHAT.msgTranslate({
-                role: 1,
+                type: 1,
                 msg: msg,
                 time: new Date()
             });
         },
         socketCloseDialog: function(){
-            CHAT.msgTranslate({
-                role: 1,
-                msg: 'The customerSuccess is offline!',
-                time: new Date()
-            });
-            CHAT.socketReconnectTips();
+            clearInterval(CHAT.timeOutTimer);
+            CHAT.chatState = 3;
         },
         socketCsStatus: function(status){
             if (1 === status) {
                 U.$('.chat-name').innerHTML = '<span class="status-title">Entering</span>';
             } else if(2 === status) {
-                U.$('.chat-name').innerHTML = CHAT.chat.csName;
+                U.$('.chat-name').innerHTML = CHAT.csName;
             }
         },
         socketCsDisconnect: function(){
             clearInterval(CHAT.timeOutTimer);
-            CHAT.msgTranslate({
-                role: 1,
-                msg: 'The customerSuccess is offline!',
-                time: new Date()
-            });
-            CHAT.socketReconnectTips();
+            CHAT.chatState = 3;
         },
         socketQueueUpdate: function(pos){
             if (U.$('.line-num')) {
@@ -968,15 +1011,12 @@
             }
         },
         socketReconnect: function(){
-            CHAT.msgTranslate({
-                role: 1,
-                msg: 'Reconnect to server success!!!',
-                time: new Date()
-            });
+            CHAT.timeStart = U.dateISOFomat(new Date()).getTime();
+            CHAT.chatState = 1;
         },
         socketError: function(){
             CHAT.msgTranslate({
-                role: 1,
+                type: 1,
                 msg: 'Its error to connect to the server!!! ',
                 time: new Date()
             });
@@ -984,7 +1024,7 @@
     };
 
 
-    w.CHAT = CHAT;
+    win.CHAT = CHAT;
 
     CHAT.init();
 

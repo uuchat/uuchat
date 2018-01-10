@@ -8,8 +8,7 @@ import '../static/css/app.css';
 const CustomerSuccessView = AsyncComponent(() => import('./customerSuccess/index')
     .then(module => module.default), { name: 'chat'});
 
-const RegisterView = AsyncComponent(() => import('./register/index')
-    .then(module => module.default), { name: 'register' });
+
 
 ReactDOM.render(
     <BrowserRouter basename="/">
@@ -17,7 +16,6 @@ ReactDOM.render(
             <Switch>
                 <Route exact path="/login" component={LoginView}  />
                 <Route exact path="/chat" component={CustomerSuccessView}  />
-                <Route exact path="/register" component={RegisterView} />
             </Switch>
         </div>
     </BrowserRouter>

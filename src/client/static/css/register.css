@@ -2,25 +2,25 @@
     position: absolute;
     top: 50%;
     left: 50%;
-    transform: translate(-50%, -50%);
-    margin: 0 auto;
-    padding: 15px 20px 0 20px;
+    transform: translate(-50%, -60%);
     width: 400px;
-    border:1px solid #ccc;
-    box-shadow: 0 1px 2px #ccc;
+}
+.register-body{
+    margin: 0 auto;
+    padding: 15px 25px 0 25px;
+    border:1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 1px rgba(0,0,0,.09), 0 2px 5px rgba(0,0,0,.03);
     border-radius: 5px;
+    background-color: #fff;
 }
-
+.register-body input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 1000px white inset !important;
+}
 .register-header{
-    position: absolute;
-    top: -70px;
-    left: 0;
     width: 100%;
-    line-height: 40px;
     text-align: center;
-    font-size: 18px;
 }
-.register-header span{
+.register-header a{
     display: inline-block;
     width: 64px;
     height: 64px;
@@ -34,6 +34,9 @@
 .uuchat-register .Sign-in{
     display: inline-block;
     float: right;
+}
+.uuchat-register .sign-up-btn{
+    width: 100%;
 }
 
 @media screen and (max-width: 640px){

@@ -1,6 +1,9 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
 import Register from '../../components/common/register';
 
 
-const RegisterView = Register;
-
-export default RegisterView;
+ReactDOM.render(
+    <Register />,
+    document.getElementById('root')
+);

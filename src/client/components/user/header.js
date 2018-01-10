@@ -4,24 +4,22 @@ import { Row, Col, notification, Modal } from 'antd';
 class Header extends Component{
 
     statusToggle = () => {
-        let state = this.props.customerSuccess.state,
-            status = state.isOnline,
-            stat = 1;
+        let state = this.props.customerSuccess.state;
+        let status = state.status;
+        let stat = 1;
 
-        if (state.isConnectErr) {
+        if (status === 3) {
             this.props.customerSuccess.createSocket();
             notification.close("errNotifyKey");
         } else {
-            if (status) {
+
+            if (status === 1) {
                 stat = 2;
-                status = false;
-            } else {
-                stat = 1;
-                status = true;
             }
+
             state.socket.emit('cs.changeOnOff', stat, function(isToggle){});
             this.props.customerSuccess.setState({
-                isOnline: status
+                status: stat
             });
         }
     };
@@ -59,7 +57,7 @@ class Header extends Component{
     };
 
     render() {
-        let { isConnectErr, isOnline, customerSelect, csAvatar, csName, csEmail } = this.props.customerSuccess.state;
+        let { status, chatActive, avatar, name, csEmail } = this.props.customerSuccess.state;
 
         return (
             <div className="customerSuccess-header">
@@ -67,20 +65,20 @@ class Header extends Component{
                     <Col xs={0} sm={6} md={6} lg={6} xl={6}>
                         <div className="user-status">
                             <div className="status-bar" onClick={this.statusToggle}>
-                                {isConnectErr ?
+                                {(status === 3) ?
                                     <p><i className="off"></i> Disconnected, Click to reconnect</p>
                                     :
-                                    <p><i className={isOnline ? '' : 'off'}></i>{isOnline ? '' : 'Not '}Accepting New Chats</p>
+                                    <p><i className={status === 1 ? '' : 'off'}></i>{(status === 1) ? '' : 'Not '}Accepting New Chats</p>
                                 }
                             </div>
                         </div>
                     </Col>
                     <Col xs={24} sm={18} md={18} lg={18} xl={18} className="user-avatar">
                         <div className="user-avatar-box">
-                            {customerSelect.cid && <div className="m-menu" onClick={this.chatListShow}></div>}
-                            <img src={ csAvatar ? '/'+csAvatar : require('../../static/images/contact.png')} alt="avatar" title="avatar" />&nbsp;&nbsp;
+                            {chatActive.cid && <div className="m-menu" onClick={this.chatListShow}></div>}
+                            <img src={ avatar ? '/'+ avatar : require('../../static/images/contact.png')} alt="avatar" title="avatar" />&nbsp;&nbsp;
                             <a className="logout" onClick={this.loginOut}>
-                                LOGOUT &nbsp;{csName || csEmail}
+                                LOGOUT &nbsp;{name || csEmail}
                             </a>
                         </div>
                     </Col>
