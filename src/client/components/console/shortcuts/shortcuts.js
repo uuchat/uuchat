@@ -1,8 +1,9 @@
 import React,{ Component } from 'react';
-import { Breadcrumb, Modal, message, Button, Input } from 'antd';
+import { Breadcrumb, Modal, Button, Input } from 'antd';
 import ShortcutForm from './shortcutForm';
 import ShortcutTable from './shortcutTable';
 import { fetchAsync } from '../common/utils';
+import Tips from '../../common/tips';
 
 const Search = Input.Search;
 
@@ -29,7 +30,7 @@ export default class Shortcuts extends Component {
 
             let data = await fetchAsync(queryUrl);
 
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             pagination.total = data.msg.count;
             let dataSource = data.msg.rows.map(function (item) {
@@ -48,7 +49,7 @@ export default class Shortcuts extends Component {
                 StoreDataSource: dataSource
             });
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 
@@ -79,11 +80,11 @@ export default class Shortcuts extends Component {
     onDelete = async (key) => {
         try {
             let data = await fetchAsync('/shortcuts/' + key, {method: 'DELETE'});
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             this.getDataSource();
         } catch (e) {
-            message.error(e, 4);
+            Tips.error(e, 4);
         }
     };
 
@@ -111,11 +112,11 @@ export default class Shortcuts extends Component {
                     },
                     body: body
                 });
-                if (data.code !== 200) return message.error(data.msg, 4);
+                if (data.code !== 200) return Tips.error(data.msg, 4);
 
                 this.getDataSource();
             } catch (e) {
-                message.error(e, 4);
+                Tips.error(e, 4);
             } finally {
                 form.resetFields();
                 this.setState({visible: false});

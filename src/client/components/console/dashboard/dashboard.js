@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Breadcrumb, Col, Row, message, Card } from 'antd';
+import { Breadcrumb, Col, Row, Card } from 'antd';
 import NumberCard from './numberCard';
 import MonthlyReport from './monthlyReport';
 import { fetchAsync } from '../common/utils';
+import Tips from '../../common/tips';
 
 export default class Dashboard extends Component {
 
@@ -14,14 +15,14 @@ export default class Dashboard extends Component {
     getData = async (url, key) => {
         try {
             let data = await fetchAsync(url);
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             let st = {};
             st[key] = data.msg;
 
             this.setState(st);
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

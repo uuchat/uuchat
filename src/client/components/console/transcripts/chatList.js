@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { message } from 'antd';
+import Tips from '../../common/tips';
 import ChatMessageItem from '../../message/chatMessageItem';
 import { fetchAsync } from '../common/utils';
 
@@ -12,7 +12,7 @@ export default class ChatList extends Component {
     getDataSource = async (cid, csid) => {
         try {
             let data = await fetchAsync('/messages/customer/' + cid + '/cs/' + csid);
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             this.setState({
                 dataSource: data.msg.map((item) => {
@@ -25,7 +25,7 @@ export default class ChatList extends Component {
                 })
             });
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

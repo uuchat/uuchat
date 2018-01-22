@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Breadcrumb, message, Radio, Row, Col } from 'antd';
+import { Breadcrumb, Radio, Row, Col } from 'antd';
 import RateListTable from './rateListTable';
 import AsyncComponent from '../../common/asyncComponent';
 import { emptyTableLocale } from '../common/constants';
 import { fetchAsync } from '../common/utils';
+import Tips from '../../common/tips';
 
 const RateSearchForm = AsyncComponent(() => import ('./rateSearchForm').then(component => component.default));
 
@@ -37,10 +38,10 @@ export default class RateList extends Component {
             if (sorter.field) queryUrl += "&sortField=" + sorter.field + "&sortOrder=" + sorter.order;
 
             let cs = await fetchAsync('/customersuccesses');
-            if (cs.code !== 200) return message.error(data.msg, 4);
+            if (cs.code !== 200) return Tips.error(data.msg, 4);
 
             let data = await fetchAsync(queryUrl);
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             pagination.total = data.msg.count;
 
@@ -58,7 +59,7 @@ export default class RateList extends Component {
             });
 
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
-import { Breadcrumb, message, Button, Modal, Input, List, Avatar } from 'antd';
+import { Breadcrumb, Button, Modal, Input, List, Avatar } from 'antd';
 import CustomerSuccessForm from './customerSuccessForm';
 import CustomerSuccessTable from './customerSuccessTable';
 import { fetchAsync } from '../common/utils';
 import { fromNow } from '../common/momentUtils';
+import Tips from '../../common/tips';
 
 const Search = Input.Search;
 const Confirm = Modal.confirm;
@@ -41,14 +42,14 @@ export default class Operators extends Component {
                 });
 
                 if (data.code !== 200) {
-                    message.error(data.msg, 4);
+                    Tips.error(data.msg, 4);
                 } else {
-                    message.info(data.msg, 4);
+                    Tips.info(data.msg, 4);
                 }
                 form.resetFields();
                 this.getDataSource();
             } catch (e) {
-                message.error(e.message, 4);
+                Tips.error(e.message, 4);
             } finally {
                 this.setState({visible: false});
             }
@@ -80,7 +81,7 @@ export default class Operators extends Component {
             let { pagination} = this.state;
 
             let data = await fetchAsync('/customersuccesses');
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             let dataSource = [], inviteDataSource = [];
 
@@ -116,7 +117,7 @@ export default class Operators extends Component {
 
             this.setState(st);
         } catch (e) {
-            message.error(e, 4);
+            Tips.error(e, 4);
         }
     };
 
@@ -141,11 +142,11 @@ export default class Operators extends Component {
     onDeleteItem = async (key) => {
         try {
             let data = await fetchAsync('/customersuccesses/' + key, {method: 'DELETE'});
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             this.getDataSource();
         } catch (e) {
-            message.error(e, 4);
+            Tips.error(e, 4);
         }
     };
 
@@ -182,11 +183,11 @@ export default class Operators extends Component {
                 body: body
             });
 
-            if (data.code !== 200) return message.error(data.msg, 4);
-            message.info(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
+            Tips.info(data.msg, 4);
             this.getDataSource();
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Breadcrumb, message, Select, Modal } from 'antd';
+import { Breadcrumb, Select, Modal } from 'antd';
+import Tips from '../../common/tips';
 import ChatList from './chatList';
 import { getCustomerName, fetchAsync } from '../common/utils';
 import ScrollTable from './scrollTable';
@@ -33,13 +34,13 @@ export default class Transcripts extends Component {
     getCSSource = async () => {
         try {
             let data = await fetchAsync('/customersuccesses');
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             this.setState({
                 csSource: data.msg
             });
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 
@@ -52,7 +53,7 @@ export default class Transcripts extends Component {
             if (pageNum) queryUrl += '&pageNum=' + pageNum;
 
             let data = await fetchAsync(queryUrl);
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             data.msg.rows.forEach((item) => {
                 item.key = item.uuid;
@@ -68,7 +69,7 @@ export default class Transcripts extends Component {
                 initPage: false
             });
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

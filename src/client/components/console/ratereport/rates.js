@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import moment from 'moment';
-import { Breadcrumb, Button, message, DatePicker, Row, Col, Radio } from 'antd';
+import { Breadcrumb, Button, DatePicker, Row, Col, Radio } from 'antd';
+import Tips from '../../common/tips';
 import AsyncComponent from '../../common/asyncComponent.js';
 import { fetchAsync } from '../common/utils';
 
@@ -34,7 +35,7 @@ export default class Rates extends Component {
 
             let data = await fetchAsync(reportUrl);
 
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             data.msg.forEach(function (item) {
                 item.key = item.csid;
@@ -44,7 +45,7 @@ export default class Rates extends Component {
                 dataSource: data.msg
             });
         } catch (e) {
-            message.error(e.msg, 4);
+            Tips.error(e.msg, 4);
         }
     };
 

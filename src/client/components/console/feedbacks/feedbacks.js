@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Breadcrumb, message, Button, Select } from 'antd';
+import { Breadcrumb, Button, Select } from 'antd';
 import FeedbackTable from './feedbackTable';
 import { fetchAsync } from '../common/utils';
+import Tips from '../../common/tips';
 
 const Option = Select.Option;
 
@@ -19,7 +20,7 @@ export default class Feedbacks extends Component {
     getClassSource = async () => {
         try {
             let data = await fetchAsync('/feedbackmetas/classes');
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             data.msg.push({desc: 'contact_us'});
 
@@ -27,7 +28,7 @@ export default class Feedbacks extends Component {
                 classSource: data.msg
             });
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 
@@ -38,7 +39,7 @@ export default class Feedbacks extends Component {
             let queryUrl = '/feedbacks';
             if (filter.class) queryUrl += '?class=' + filter.class;
             let data = await fetchAsync(queryUrl);
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             let sourceList = data.msg.rows.map(function (item) {
                 item.key = item.uuid;
@@ -54,7 +55,7 @@ export default class Feedbacks extends Component {
 
             this.setState(st);
         } catch (e) {
-            message.error(e, 4);
+            Tips.error(e, 4);
         }
     };
 

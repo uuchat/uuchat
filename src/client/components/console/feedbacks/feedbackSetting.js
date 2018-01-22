@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { Breadcrumb, message, Checkbox, Button, Row, Col, Input, Radio } from 'antd';
+import { Breadcrumb, Checkbox, Button, Row, Col, Input, Radio } from 'antd';
 import { fetchAsync } from '../common/utils';
+import Tips from '../../common/tips';
 
 const CheckboxGroup = Checkbox.Group;
 const RadioGroup = Radio.Group;
@@ -30,7 +31,7 @@ export default class FeedbackSetting extends Component {
 
             let data = await fetchAsync(listUrl);
 
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             var st = {classid: data.msg.classid};
 
@@ -59,7 +60,7 @@ export default class FeedbackSetting extends Component {
             this.setState(st);
 
         } catch (e) {
-            message.error(e.msg, 4);
+            Tips.error(e.msg, 4);
         }
     };
 
@@ -75,7 +76,7 @@ export default class FeedbackSetting extends Component {
             let { checkedList } = this.state;
 
             if (!checkedList.length) {
-                return message.warning("Please select options");
+                return Tips.error("Please select options");
             }
 
             var checkedProperties = properties.filter(function (item) {
@@ -94,12 +95,12 @@ export default class FeedbackSetting extends Component {
                 body: body
             });
 
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             this.setState({pageUrl: data.msg.url});
 
         } catch (e) {
-            message.error(e.msg, 4);
+            Tips.error(e.msg, 4);
         }
     };
 
@@ -112,9 +113,9 @@ export default class FeedbackSetting extends Component {
             body += '&type=' + radioValue;
 
             if (!itemValue) {
-                return message.error('Input should not null', 4);
+                return Tips.error('Input should not null', 4);
             } else if (checkBoxOptions.indexOf(itemValue) !== -1) {
-                return message.error('Input already exists', 4);
+                return Tips.error('Input already exists', 4);
             }
 
             let data = await fetchAsync(createItemUrl, {
@@ -126,7 +127,7 @@ export default class FeedbackSetting extends Component {
                 body: body
             });
 
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             var len = properties.length;
 
@@ -146,7 +147,7 @@ export default class FeedbackSetting extends Component {
             });
 
         } catch (e) {
-            message.error(e.msg, 4);
+            Tips.error(e.msg, 4);
         }
     };
 

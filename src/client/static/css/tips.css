@@ -23,6 +23,9 @@
 .uu-tips-message.message-error{
     background-color: #ec515d;
 }
+.uu-tips-message.message-info{
+    background-color: #1890ff;
+}
 .uu-tips-message.message-success{
     background-color: #00c38d;
 }

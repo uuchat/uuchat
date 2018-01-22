@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
-import { Breadcrumb, Table, Button, message, Radio } from 'antd';
+import { Breadcrumb, Table, Button, Radio } from 'antd';
+import Tips from '../../common/tips';
 import { getCustomerName, formatDate, fetchAsync } from '../common/utils';
 import { rateList,emptyTableLocale } from '../common/constants';
 
@@ -30,10 +31,10 @@ export default class Rates extends Component {
             if (pagination.current) queryUrl += "&pageNum=" + (pagination.current - 1);
 
             let cs = await fetchAsync('/customersuccesses');
-            if (cs.code !== 200) return message.error(cs.message, 4);
+            if (cs.code !== 200) return Tips.error(cs.message, 4);
 
             let data = await fetchAsync(queryUrl);
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             pagination.total = data.msg.count;
 
@@ -51,7 +52,7 @@ export default class Rates extends Component {
             });
 
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

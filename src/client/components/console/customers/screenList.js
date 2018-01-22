@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
-import { Table, message } from 'antd';
+import { Table } from 'antd';
 import { emptyTableLocale } from '../common/constants';
 import { sortFilterByProps, formatDate, fetchAsync } from '../common/utils';
+import Tips from '../../common/tips';
 
 export default class ScreenList extends Component {
 
@@ -17,7 +18,7 @@ export default class ScreenList extends Component {
             if (!uuid) return false;
 
             let data = await fetchAsync('/customerstorages/' + uuid + '/screens/');
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             data.msg.forEach(function (item, index) {
                 item.key = index;
@@ -27,7 +28,7 @@ export default class ScreenList extends Component {
                 dataSource: data.msg
             });
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

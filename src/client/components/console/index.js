@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { Layout, Menu, Icon, message, Button } from 'antd';
+import { Layout, Menu, Icon, Button } from 'antd';
 import UpgradeNote from './upgradenote/upgradeNote';
 import RateList from './ratelist/rateList';
 import AsyncComponent from '../common/asyncComponent.js';
 import { fetchAsync } from './common/utils';
+import Tips from '../common/tips';
 
 const Dashboard = AsyncComponent(() => import ('./dashboard/dashboard').then(module => module.default));
 const Operators = AsyncComponent(() => import ('./operators/operators').then(module => module.default));
@@ -64,11 +65,11 @@ export default class Console extends Component {
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'}
             });
 
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             return window.location.href = '/console';
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 

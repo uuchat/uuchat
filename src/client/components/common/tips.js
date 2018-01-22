@@ -8,7 +8,8 @@ class Message extends Component{
         let {content, hide, type} = this.props;
         let icons = {
             error: 'anticon-close-circle',
-            success: 'anticon-check-circle'
+            success: 'anticon-check-circle',
+            info: 'anticon-info-circle'
         };
 
         return (
@@ -24,6 +25,9 @@ class Message extends Component{
 let Tips = {
     error: function (content, duration, onClose) {
         this.notice('error', content, duration, onClose);
+    },
+    info: function (content, duration, onClose) {
+        this.notice('info', content, duration, onClose);
     },
     success: function (content, duration, onClose) {
         this.notice('success', content, duration, onClose);

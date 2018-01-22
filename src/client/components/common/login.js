@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Form, Icon, Input, Button, message } from 'antd';
+import { Form, Icon, Input, Button } from 'antd';
 import Tips from './tips';
 import '../../static/css/login.css';
 
@@ -67,7 +67,7 @@ class Login extends Component{
         let emailReg = /[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}/g;
 
         if (!email || !emailReg.test(email)) {
-            message.error('Please enter your vaild email', 4);
+            Tips.error('Please enter your vaild email', 4);
             return false;
         }
         fetch('/passwdreset', {
@@ -80,12 +80,12 @@ class Login extends Component{
         }).then((res)=>res.json())
             .then(d => {
                 if (d.code === 200) {
-                    message.success('Please check your email ' + email + ' in time to reset your password', 8);
+                    Tips.success('Please check your email ' + email + ' in time to reset your password', 8);
                 }
 
             })
             .catch(e => {
-                message.error(e, 4);
+                Tips.error(e, 4);
             });
 
     };

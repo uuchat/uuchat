@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Breadcrumb, message } from 'antd';
+import { Breadcrumb } from 'antd';
 import AsyncComponent from '../../common/asyncComponent';
 import CustomerTable from './customerTable';
 import { fetchAsync } from '../common/utils';
+import Tips from '../../common/tips';
 
 const CustomerSearchForm = AsyncComponent(() => import('./customerSearchForm').then(component => component.default));
 
@@ -29,7 +30,7 @@ export default class Customers extends Component {
             if (sorter.field) queryUrl += "&sortField=" + sorter.field + "&sortOrder=" + sorter.order;
 
             let data = await fetchAsync(queryUrl);
-            if (data.code !== 200) return message.error(data.msg, 4);
+            if (data.code !== 200) return Tips.error(data.msg, 4);
 
             data.msg.rows.forEach(function (item) {
                 item.key = item.uuid;
@@ -42,7 +43,7 @@ export default class Customers extends Component {
                 dataSource: data.msg.rows
             });
         } catch (e) {
-            message.error(e.message, 4);
+            Tips.error(e.message, 4);
         }
     };
 
