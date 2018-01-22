@@ -1,0 +1,68 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="404 Not Found">
+    <title>UUChat 404 Not Found</title>
+    <!-- Bootstrap core CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css">
+    <style>
+        /* Error Page Inline Styles */
+        body {
+            padding-top: 15%;
+            display: flex;
+        }
+        .jumbotron {
+            font-size: 21px;
+            font-weight: 200;
+            line-height: 2.1428571435;
+            color: inherit;
+            padding: 10px 0px;
+        }
+        .jumbotron {
+            text-align: center;
+            background-color: transparent;
+        }
+        .jumbotron .btn {
+            font-size: 21px;
+            padding: 14px 24px;
+        }
+        .red {color:#d9534f;}
+    </style>
+</head>
+<body>
+<!-- Error Page Content -->
+<div class="container">
+    <!-- Jumbotron -->
+    <div class="jumbotron">
+        <h1><i class="fa fa-frown-o red"></i> Page Not Found</h1>
+        <p>The requested URL was not found on this server.</p>
+        <p class="lead">You can return to <a href="https://uuchat.io">homepage</a>.</p>
+    </div>
+</div>
+<!-- End Error Page Content -->
+<!--Scripts-->
+<!-- jQuery library -->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+<script>
+    ;(function(u, c, h){
+        u.UUCHAT = (function(){
+            return {
+                domain: '',
+                src: h
+            };
+        })();
+        var s = c.createElement('script'),
+            r=c.getElementsByTagName('script')[0];
+        s.async = 1;
+        s.src = u.UUCHAT.domain+h;
+        r.parentNode.insertBefore(s,r);
+
+    })(window, document, "/static/js/loader.js");
+</script>
+</body>
+</html>
