@@ -66,13 +66,19 @@ customerStorageController.create = function (req, res, next) {
     customerStorage.bv = req.useragent.version || '';
     customerStorage.os = req.useragent.os || '';
 
-    CustomerStorage.create(customerStorage, function (err, data) {
+    CustomerStorage.findOne(_.pick(customerStorage, ['cid']), function(err, storage){
+        if(err) return next(err);
 
-        if (err) return next(err);
+        // update storage
+        if(storage) return customerStorageController.update(req, res, next);
 
-        return res.json({
-            code: 200,
-            msg: _.pick(customerStorage, ['cid', 'city', 'country', 'browser', 'bv', 'os'])
+        CustomerStorage.create(customerStorage, function (err, data) {
+            if (err) return next(err);
+
+            return res.json({
+                code: 200,
+                msg: _.pick(customerStorage, ['cid', 'city', 'country', 'browser', 'bv', 'os'])
+            });
         });
     });
 };

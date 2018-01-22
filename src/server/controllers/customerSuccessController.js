@@ -10,6 +10,7 @@ var ejs = require('ejs');
 var logger = require('../logger');
 var utils = require('../utils');
 var Email = require('../email');
+var tokens = require('../services/tokens');
 var authentication = require('../services/authentication');
 var CustomerSuccess = require('../database/customerSuccess');
 
@@ -374,39 +375,33 @@ customerSuccessController.generateResetToken = function (req, res, next) {
         if (!user) return res.status(404).json({code: 1003, msg: 'email_not_found'});
 
         // generate token
-        hashPasswdWithSalt(condition.email, function (err, hash) {
+        var hash = tokens.resetToken.generateHash({
+            email: condition.email,
+            password: user.passwd,
+            expires: Date.now() + 86400000
+        });
+
+        var templateFile = path.resolve('src/server/template', 'reset_passwd_email.html');
+
+        var domain = utils.getDomain();
+        var resetUrl = domain + "/reset/" + hash;
+
+        ejs.renderFile(templateFile, {
+            siteUrl: domain,
+            resetUrl: resetUrl
+        }, {cache: true}, function (err, html) {
             if (err) return next(err);
 
-            var templateFile = path.resolve('src/server/template', 'reset_passwd.html');
+            // setup email data with unicode symbols
+            var mailOptions = {};
 
-            var relativeUrl = '';
+            mailOptions.subject = 'UUChat Password Reset';
+            mailOptions.from = nconf.get('mail:auth:user');
+            mailOptions.to = condition.email;
+            mailOptions.html = html;
 
-            if (nconf.get('app:ssl')) {
-                relativeUrl += 'https';
-            } else {
-                relativeUrl += 'http';
-            }
-
-            relativeUrl += "://" + nconf.get('app:address') + ':' + nconf.get('app:port') + nconf.get('app:relative_path');
-            var resetUrl = relativeUrl + "changed?token=" + hash;
-
-            ejs.renderFile(templateFile, {
-                siteUrl: relativeUrl,
-                resetUrl: resetUrl
-            }, {cache: true}, function (err, html) {
-                if (err) return next(err);
-
-                // setup email data with unicode symbols
-                var mailOptions = {};
-
-                mailOptions.subject = 'UUChat Password Reset';
-                mailOptions.from = '120920625@qq.com';
-                mailOptions.to = condition.email;
-                mailOptions.html = html;
-
-                Email.send(mailOptions, function (err, info) {
-                    if (err) logger.error(err);
-                });
+            Email.send(mailOptions, function (err, info) {
+                if (err) logger.error(err);
 
                 return res.json({code: 200, msg: 'send_reset_email'});
             });
@@ -414,21 +409,36 @@ customerSuccessController.generateResetToken = function (req, res, next) {
     });
 };
 
-customerSuccessController.resetPassword = function (req, res, next) {
+customerSuccessController.resetPasswd = function (req, res, next) {
     var token = req.body.token;
     var passwd = req.body.passwd;
     var repasswd = req.body.repasswd;
 
     // validate passwd and repasswd
-    if (passwd != repasswd) return res.json('Input_passwords_not_match');
+    if (passwd != repasswd) return res.json({code: 1009, msg: 'Input_passwords_not_match'});
+    if(!validatePasswordLength(passwd)) return res.json({code: 1011, msg: 'passwd_validate_error'});
 
+    validateResetToken(token, function(result, user){
 
-    // validate token
-    if (!token) return res.status(401).json('token_validate_error');
+        // validate token
+        if (!result) return res.status(401).json({code: 1013, msg: 'token_validate_error'});
 
-    //update passwd
-    //customerSuccessController.updatePasswd();
+        async.waterfall([
+            function (callback) {
+                return hashPasswdWithSalt(passwd, callback);
+            },
+            function (hash, callback) {
+                var customerSuccess = {passwd: hash};
+                var condition = {csid: user.csid};
 
+                return CustomerSuccess.update(customerSuccess, condition, callback);
+            }
+        ], function (err, result) {
+            if (err) return res.json({code: 1015, msg: 'password reset error'});
+
+            res.json({code: 200, msg: 'password reset success'});
+        });
+    });
 };
 
 function validatePasswordLength(passwd) {
@@ -453,5 +463,29 @@ function createCSSocket(req, user) {
     if (_.isEmpty(customerSuccess.get(user.csid))) {
         customerSuccess.create({csid: user.csid, name: userName, photo: user.photo});
     }
+}
+
+function validateResetToken(token, callback) {
+    // validate token
+    if (!token) return callback(false);
+
+    var extData = tokens.resetToken.extract({token: token});
+
+    if (!extData) return callback(false);
+
+    CustomerSuccess.findOne({email: extData.email}, function (err, user) {
+        if (err) return callback(false);
+
+        if(!user) return callback(false);
+
+        var tokenIsCorrect = tokens.resetToken.compare({
+            token: token,
+            password: user.passwd
+        });
+
+        if (!tokenIsCorrect) return callback(false);
+
+        return callback(true, user);
+    });
 }
 

@@ -17,7 +17,7 @@ function customerSuccessRoutes(app, middleware, controllers) {
     app.post('/login', controllers.customerSuccessController.login);
     app.post('/logout', controllers.customerSuccessController.logout);
     app.post('/passwdreset', controllers.customerSuccessController.generateResetToken);
-    app.put('/passwdreset', controllers.customerSuccessController.resetPassword);
+    app.put('/passwdreset', controllers.customerSuccessController.resetPasswd);
 
     app.get('/country', controllers.customerSuccessController.getCountryCode);
 
@@ -40,7 +40,8 @@ function customerSessionRoutes(app, middleware, controllers) {
     app.get('/customers/:uuid', controllers.customerSessionController.get);
     app.get('/customers/cid/:cid', controllers.customerSessionController.query);
     app.patch('/customers/:uuid', controllers.customerSessionController.update);
-    app.patch('/customers/cid/:cid', controllers.customerSessionController.update);
+    app.options('/customers/cid/:cid', cors(middleware.corsOptionsDelegate));
+    app.patch('/customers/cid/:cid', cors(middleware.corsOptionsDelegate), controllers.customerSessionController.update);
     app.delete('/customers/:uuid', controllers.customerSessionController.delete);
 }
 
@@ -59,13 +60,15 @@ function messageRoutes(app, middleware, controllers) {
     app.get('/messages/:uuid', controllers.messageController.get);
     app.delete('/messages/:uuid', controllers.messageController.delete);
     app.get('/messages/customer/:cid', controllers.messageController.list);
-    app.get('/messages/customer/:cid/cs/:csid', controllers.messageController.list);
+    app.options('/messages/customer/:cid/cs/:csid', cors(middleware.corsOptionsDelegate));
+    app.get('/messages/customer/:cid/cs/:csid', cors(middleware.corsOptionsDelegate), controllers.messageController.list);
     app.post('/messages/customer/:cid/cs/:csid', controllers.messageController.create);
-    app.post('/messages/customer/:cid/cs/:csid/reply', controllers.messageController.replyEmail);
+    app.post('/messages/customer/:cid/cs/:csid/email', controllers.messageController.replyEmail);
 
     app.get('/messages/cs/:csid/search', controllers.messageController.search);
     app.get('/messages/cs/:csid/search/latestmonth', controllers.messageController.searchLatestMonth);
 
+    app.options('/messages/customer/:cid/image', cors(middleware.corsOptionsDelegate));
     app.options('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate));
     app.post('/messages/customer/:cid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage);
     app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage);

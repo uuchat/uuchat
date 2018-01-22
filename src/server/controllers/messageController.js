@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var moment = require('moment');
 var path = require('path');
+var url = require('url');
 var ejs = require('ejs');
 var nconf = require('nconf');
 var validator = require('validator');
@@ -53,7 +54,21 @@ messageController.list = function (req, res, next) {
     return Message.list(condition, order, pageSize, pageNum, function (err, messages) {
         if (err) return next(err);
 
-        return res.json({code: 200, msg: _.reverse(messages)});
+        if(pageNum){
+            return res.json({code: 200, msg: _.reverse(messages)});
+        }
+
+        var condition = {cid: cid};
+
+        CustomerSession.findOne(condition, function (err, customerSession) {
+
+            if (err) return next(err);
+
+            var customer = _.pick(customerSession, ['cid', 'ip', 'url', 'platform', 'browser', 'version', 'os', 'email']);
+            customer.host = url.parse(customer.url).host || '';
+
+            return res.json({code: 200, msg: _.reverse(messages), customer: customer});
+        });
     });
 };
 
@@ -154,7 +169,7 @@ messageController.replyEmail = function (req, res, next) {
         mailOptions.subject = subject;
         mailOptions.to = toEmail;
 
-        var templateFile = path.resolve('src/client/views/console', 'email_template.html');
+        var templateFile = path.resolve('src/server/template', 'message_reply_email.html');
 
         var relativeUrl = '';
 

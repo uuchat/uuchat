@@ -147,4 +147,15 @@ utils.isPrivateIPV4 = function (ip) {
     return regex.test(ip);
 };
 
+utils.getDomain = function () {
+    var domain = nconf.get('app:domain');
+
+    if (_.isEmpty(domain)) {
+        domain = nconf.get('app:ssl') ? 'https://' : 'http://';
+        domain += nconf.get('app:address') + ':' + nconf.get('app:port');
+    }
+
+    return domain;
+};
+
 module.exports = utils;

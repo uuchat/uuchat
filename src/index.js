@@ -165,6 +165,10 @@ function baseHtmlRoute(app, middlewareDev) {
         var html = path.join(__dirname, '../dist/console.ejs');
         ejsRender(middlewareDev, getCNDFile(req, ['momentMinJS']), res, html);
     });
+    app.get('/reset/:invited_code', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../dist/resetPassword.ejs');
+        ejsRender(middlewareDev, getCNDFile(req, ['momentMinJS']), res, html);
+    });
     app.get('/console/index', middleware.jsCDN, function response(req, res) {
         if (!req.session.csid) {
             res.redirect('/console');
@@ -209,6 +213,15 @@ function baseHtmlRoute(app, middlewareDev) {
         var html = path.join(__dirname, '../dist/storage.html');
         //htmlRender(middlewareDev, res, html);
         ejsRender(middlewareDev, autoCNDFile(req, null, ['socketIO']), res, html);
+    });
+
+    app.get('/404', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../dist/404.html');
+        htmlRender(middlewareDev, res, html);
+    });
+    app.get('/503', middleware.jsCDN, function response(req, res) {
+        var html = path.join(__dirname, '../dist/503.html');
+        htmlRender(middlewareDev, res, html);
     });
 }
 
@@ -301,12 +314,14 @@ function setupExpress(app, callback) {
     // catch 404 and forward to error handler
     app.use(function (req, res, next) {
         logger.error("~~~~~~ has 404 error, please see browser console log!", req.url);
-        res.status(404).send('can not find page!');
+        res.status(404);
+        res.redirect('/404');
     });
     app.use(function (err, req, res, next) {
         logger.error("~~~~~~ has 503 error!", req.url);
         logger.error(err.stack);
-        res.status(503).send('system has problem.');
+        res.status(503);
+        res.redirect('/503');
     });
 
     winston.info('setup express success!');
