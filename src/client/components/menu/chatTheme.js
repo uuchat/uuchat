@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import Tips from '../common/tips';
 
 let pageNum = 1;
 let isLoading = false;
@@ -63,6 +64,28 @@ class Theme extends Component {
 
     };
 
+    saveTheme = () => {
+        let csid = localStorage.getItem('uuchat.csid');
+        let bgThemeImg = localStorage.getItem('bgThemeImg');
+        let bgThemeOpacity = localStorage.getItem('bgThemeOpacity');
+
+        fetch('/customersuccesses/'+csid+'/theme', {
+            credentials: 'include',
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: 'background='+bgThemeImg+'&opacity='+bgThemeOpacity
+        }).then(res => res.json()).then(d => {
+            if (d.code === 200) {
+                Tips.success('Theme has been save!');
+            }
+        });
+        this.setState({
+            themeSetVisible: false
+        });
+    };
+
     render() {
         let {type, colorLists, photoLists, systemsLists} = this.state;
         let {backgroundSelect, themeOpacityChange, opacity} = this.props;
@@ -104,8 +127,11 @@ class Theme extends Component {
                     {lists}
                     {lists.length === 0 && <i className="loading">Loading....</i>}
                 </div>
-                <h4>Background opacity:  <i>{(opacity*100).toFixed(2)}%</i></h4>
+                <h4>Background Opacity:  <i>{(opacity*100).toFixed(2)}%</i></h4>
                 <input type="range" name="points" min="0.1" max="1" defaultValue={opacity} step="0.01" onChange={themeOpacityChange} />
+                <div className="theme-footer">
+                    <a href="javascript:;" className="theme-save ant-btn ant-btn-primary" onClick={this.saveTheme}>Save</a>
+                </div>
             </div>
         );
     }

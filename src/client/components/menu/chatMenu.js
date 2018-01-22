@@ -28,6 +28,9 @@ class ChatMenu extends Component{
                 setting: (index === "3" ? 'setting_selected' : 'setting')
             }
         });
+        this.props.customerSuccess.setState({
+            menuType: parseInt(index)
+        });
     };
 
     onSearchHandler = (value) => {
@@ -85,7 +88,7 @@ class ChatMenu extends Component{
                         </ul>
                     </TabPane>
                     <TabPane tab={<ChatIcon name={menuIcons.contact} />} key="2">
-                        <ChatHistoryLists csid={csid} avatar={avatar} />
+                        <ChatHistoryLists csid={csid} avatar={avatar} customerSuccess={this.props.customerSuccess} />
                     </TabPane>
                     <TabPane tab={<ChatIcon name={menuIcons.setting} />} key="3">
                         <ChatSetting name={name} csid={csid} avatarHandle={this.avatarHandle} customerSuccess={this.props.customerSuccess} />

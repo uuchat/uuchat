@@ -4,7 +4,7 @@ import String2int from '../common/utils';
 class Chat extends Component{
 
     msgFilter(msg){
-        let imgReg = /[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g;
+        let imgReg = /^content\/upload\//g;
         let m = msg.replace && msg.replace(/#/gi, "<br />");
 
         if (!msg) {

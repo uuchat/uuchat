@@ -1,6 +1,4 @@
 import React, { Component } from 'react';
-import { Modal } from 'antd';
-import ChatMessageItem from '../message/chatMessageItem';
 import String2int from '../common/utils';
 
 const historyChatData = {};
@@ -12,9 +10,7 @@ class ChatHistoryLists extends Component{
         this.state = {
             historyChatLists: [],
             filterMark: 8,
-            cid: 0,
-            title: '',
-            historyChatVisible: false
+            activeIndex: -1
         };
     }
 
@@ -27,26 +23,27 @@ class ChatHistoryLists extends Component{
             return d.json();
         }).then(function(d){
             if (d.code === 200) {
+                if (d.msg[0]) {
+                    _self.fetchHistoryChat(d.msg[0].cid, _self.props.csid);
+                }
                 _self.setState({
+                    activeIndex: d.msg[0] && d.msg[0].cid,
                     historyChatLists: d.msg
                 });
             }
         }).catch(function(e){});
     };
-    showHistoryChat = (e) => {
-        let t = e.target;
+    toggleHistoryChat = (e) => {
+        let target = e.target;
         let cid = '';
-        let _li;
-        let ulList;
 
-        if (t.tagName.toLowerCase() === 'li') {
-            _li = t;
-        } else if (t.parentNode && t.parentNode.tagName.toLowerCase() === 'li' ) {
-            _li = t.parentNode;
-        } else if (t.parentNode.parentNode && t.parentNode.parentNode.tagName.toLowerCase() === 'li') {
-            _li = t.parentNode.parentNode;
+        if (target.tagName.toLowerCase() === 'li') {
+            cid = target.getAttribute('data-cid');
+        } else if (target.parentNode && target.parentNode.tagName.toLowerCase() === 'li' ) {
+            cid = target.parentNode.getAttribute('data-cid');
+        } else if (target.parentNode.parentNode && target.parentNode.parentNode.tagName.toLowerCase() === 'li') {
+            cid = target.parentNode.parentNode.getAttribute('data-cid');
         }
-        cid = _li.getAttribute('data-cid');
 
         if (historyChatData[cid]) {
             this.renderHistory(cid);
@@ -55,28 +52,26 @@ class ChatHistoryLists extends Component{
             this.fetchHistoryChat(cid, this.props.csid);
         }
 
-        ulList = _li.parentNode;
-        ulList = ulList.getElementsByTagName('li');
+        this.setState({
+            activeIndex: cid
+        });
 
-        for (let i = 0, l = ulList.length; i < l; i++) {
-            ulList[i].className = '';
-        }
-        _li.className='active';
     };
 
     renderHistory = (cid) => {
-        this.setState({
-            cid: cid,
-            historyChatVisible: true,
-            title: 'U-'+(cid.substr(0, 6).toUpperCase())+' chat history'
+        this.props.customerSuccess.setState({
+            historyChat: {
+                cid: cid,
+                chatsArr: historyChatData[cid]
+            }
         });
     };
 
     fetchHistoryChat = (cid, csid) => {
         let _self = this;
-        let avatar = _self.props.avatar || require('../../static/images/contact.png') ;
+        let avatar = _self.props.avatar || '../../static/images/contact.png';
 
-        fetch('/messages/customer/'+cid+'/cs/'+csid)
+        cid && fetch('/messages/customer/'+cid+'/cs/'+csid)
             .then((data) => data.json())
             .then(d =>{
                 let historyChat = [];
@@ -85,11 +80,12 @@ class ChatHistoryLists extends Component{
                         msgAvatar: (dd.type === 1 || dd.type === 2) ? avatar : '',
                         msgText: dd.msg,
                         msgType: dd.type,
-                        msgTime: new Date(dd.createdAt)
+                        msgTime: dd.createdAt
                     })
                 );
 
                 historyChatData[cid] = historyChat;
+                historyChatData[cid].info = d.customer;
                 _self.renderHistory(cid);
 
             })
@@ -105,18 +101,11 @@ class ChatHistoryLists extends Component{
         }
     };
 
-    closeHistoryChat = () => {
-        this.setState({
-            historyChatVisible: false
-        });
-    };
-
     render(){
 
-        let {cid, historyChatLists, filterMark, title, historyChatVisible} = this.state;
+        let {historyChatLists, filterMark, activeIndex} = this.state;
         let chatArr = [];
         let markArr = ['grey', 'red', 'orange', 'yellow', 'green', 'blue', 'purple'];
-        let titleColorIndex = String2int(cid);
 
         for (let i = 0, l = historyChatLists.length; i < l; i++) {
 
@@ -127,7 +116,7 @@ class ChatHistoryLists extends Component{
             }
 
             chatArr.push(
-                <li key={i} data-cid={historyChatLists[i].cid}>
+                <li key={'his-'+chat.cid} data-cid={chat.cid} className={activeIndex === chat.cid ? 'active' : ''} >
                     <div className="chat-avatar fl">
                         <span className={"avatar-icon avatar-icon-"+String2int(chat.cid)} >{chat.cid.substr(0,1).toUpperCase()}</span>
                     </div>
@@ -146,28 +135,7 @@ class ChatHistoryLists extends Component{
                         <span key={i} data-marked={i} className={"mark-tag tag-"+m+(filterMark === i ? "  selected" : "")} title={"mark "+m}>{i}</span>
                     )}
                 </div>
-                <Modal
-                    title={title}
-                    visible={historyChatVisible}
-                    footer={null}
-                    onCancel={this.closeHistoryChat}
-                    className={"history-header history-header-"+titleColorIndex}
-                    wrapClassName="historyMessage"
-                >
-                    <div className="message-lists chat-lists-history">
-                        {historyChatData[cid] && historyChatData[cid].map((chat)=>
-                            <ChatMessageItem
-                                key={chat.msgTime}
-                                ownerType={chat.msgType}
-                                ownerAvatar={chat.msgAvatar}
-                                ownerText={chat.msgText}
-                                time={chat.msgTime}
-                                cid={cid}
-                            />
-                        )}
-                    </div>
-                </Modal>
-                <ul className="customer-lists" onClick={this.showHistoryChat}>
+                <ul className="customer-lists" onClick={this.toggleHistoryChat}>
                     {chatArr}
                 </ul>
             </div>
