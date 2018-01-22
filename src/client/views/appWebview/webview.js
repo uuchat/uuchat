@@ -269,7 +269,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 }
 
                 if (classes === 'rate-submit') {
-                    reateSumbit(target);
+                    rateSumbit(target);
                     return false;
                 }
 
@@ -332,16 +332,17 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 }
             }
 
-            function reateSumbit(target) {
+            function rateSumbit(target) {
                 var rateStars = target.parentNode.parentNode.querySelectorAll('.on').length;
                 UCM.socket.emit('c.rate', UCM.cid, rateStars, function (success) {
+                    UCM.isCustomerSuccessOnline = false;
                     if (success) {
                         target.parentNode.parentNode.setAttribute('hasRate', 1);
                         UCM.addNewMessage({
                             type: 'socket',
                             text: 'Thank you for your rate!! Goodbye!'
                         });
-                        this.close();
+                        //this.close();
                         //UCM.socket = null;
                     }
                 });
