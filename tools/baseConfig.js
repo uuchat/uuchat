@@ -95,6 +95,14 @@ var defaultConfig = {
             to: paths.appBuild + '/static/img'
         },
         {
+            from: paths.appContent + '/html/404.html',
+            to: paths.appBuild + '/404.html'
+        },
+        {
+            from: paths.appContent + '/html/503.html',
+            to: paths.appBuild + '/503.html'
+        },
+        {
             from: paths.appWebview,
             to: paths.appBuild + '/app'
         },
