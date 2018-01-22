@@ -3,18 +3,18 @@ import { Modal } from 'antd';
 import ChatMessageItem from './chatMessageItem';
 
 let onlineListModal = null;
+let historyChatFetch = false;
 
 class ChatMessage extends Component{
 
     constructor(){
         super();
         this.state = {
-            isMarkShow: false,
+            markVisible: false,
             visible: false,
-            OnlineCustomerList: {},
+            onlineCustomerList: {},
             onlineShow: null,
-            markedLists: {},
-            historyChatMessage: []
+            markedLists: {}
         };
     }
     componentDidMount(){
@@ -35,14 +35,20 @@ class ChatMessage extends Component{
         this.props.socket && this.props.socket.off('cs.online.info');
     }
     componentDidUpdate(){
-        let msgList = this.refs.list;
-        msgList.scrollTop = msgList.scrollHeight;
+
+        if (historyChatFetch) {
+            historyChatFetch = false;
+        } else {
+            let msgList = this.refs.list;
+            msgList.scrollTop = msgList.scrollHeight;
+        }
+
     }
 
     marked = () => {
-        let isMarkShow = this.state.isMarkShow;
+        let markVisible = this.state.markVisible;
         this.setState({
-            isMarkShow: !isMarkShow
+            markVisible: !markVisible
         });
     };
     optionSelect = (e) => {
@@ -60,7 +66,7 @@ class ChatMessage extends Component{
     customerTransfer = () => {
         let _self = this;
         let onlineLists = [];
-        let onlines = _self.state.OnlineCustomerList;
+        let onlines = _self.state.onlineCustomerList;
 
         for (let i in onlines) {
             if (i !== _self.props.csid){
@@ -88,7 +94,7 @@ class ChatMessage extends Component{
             ),
             onOk(){
                 _self.setState({
-                    isMarkShow: false
+                    markVisible: false
                 });
             }
         });
@@ -96,7 +102,7 @@ class ChatMessage extends Component{
     markHide = () => {
         this.setState({
             visible: false,
-            isMarkShow: false
+            markVisible: false
         });
     };
 
@@ -120,9 +126,9 @@ class ChatMessage extends Component{
     };
 
     csOnlineInfo = (data) =>{
-        if (Object.keys(this.state.OnlineCustomerList).length !== Object.keys(data).length) {
+        if (Object.keys(this.state.onlineCustomerList).length !== Object.keys(data).length) {
               this.setState({
-                  OnlineCustomerList: data
+                  onlineCustomerList: data
               });
         }
     };
@@ -136,7 +142,7 @@ class ChatMessage extends Component{
             if (success) {
                 transferChat(chat.cid);
                 _self.setState({
-                    isMarkShow: false
+                    markVisible: false
                 });
             }
             onlineListModal.destroy();
@@ -159,6 +165,7 @@ class ChatMessage extends Component{
         }
 
         function getChatHistory(){
+            historyChatFetch = true;
             fetch('/messages/customer/' + chat.cid + '/cs/' + csid+'?pageNum='+chatLists[chat.cid].pageNum+'&pageSize=10')
                 .then((data) => data.json())
                 .then(d =>{
@@ -197,7 +204,7 @@ class ChatMessage extends Component{
     };
 
     render(){
-        let {visible, isMarkShow, markedLists} = this.state;
+        let {visible, markVisible, markedLists} = this.state;
         let {chat} = this.props;
         let markArr = ['grey', 'red', 'orange', 'yellow', 'green', 'blue', 'purple'];
 
@@ -207,27 +214,27 @@ class ChatMessage extends Component{
             <div className="chat-message">
                 <div className="message-title">U-{chat.name.toUpperCase()}
                     <div className="chat-tags fr" onClick={this.marked}>...
-                         <ul className="more-options" style={{display: !isMarkShow ? 'none' : 'block'}} onClick={this.optionSelect}>
+                         <ul className="more-options" style={{display: !markVisible ? 'none' : 'block'}} onClick={this.optionSelect}>
                             <span className="caret"></span>
                             <h3>List Actions <span className="fr options-close" onClick={this.markHide}>╳</span></h3>
                             <li data-type="m"><i className="action-icon mark"></i>Mark</li>
                             <li data-type="t"><i className="action-icon transfer"></i>Transfer</li>
                         </ul>
-                        <Modal
-                            title="Mark customer for favorite color"
-                            okText="Ok"
-                            cancelText="Cancel"
-                            visible={visible}
-                            onOk={this.markHide}
-                            onCancel={this.markHide}
-                        >
-                            <div className="mark-color-list" onClick={this.markColorSelect}>
-                                {markArr.map((m ,i)=>
-                                        <span key={m} className={"mark-tag tag-"+m+(markedLists[chat.cid] === i ? "  selected" : "")} title={"mark "+m}>{i}</span>
-                                )}
-                            </div>
-                        </Modal>
                     </div>
+                    <Modal
+                        title="Mark customer for favorite color"
+                        okText="Ok"
+                        cancelText="Cancel"
+                        visible={visible}
+                        onOk={this.markHide}
+                        onCancel={this.markHide}
+                    >
+                        <div className="mark-color-list" onClick={this.markColorSelect}>
+                            {markArr.map((m ,i)=>
+                                <span key={m} className={"mark-tag tag-"+m+(markedLists[chat.cid] === i ? "  selected" : "")} title={"mark "+m}>{i}</span>
+                            )}
+                        </div>
+                    </Modal>
                 </div>
                 <div className="message-lists" ref="list" onWheel={this.scrollHandle}>
                     {chat.messageLists.map((msg) =>

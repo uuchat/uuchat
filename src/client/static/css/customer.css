@@ -505,6 +505,7 @@
 .chat-offline{
     display: flex;
     align-items: center;
+    height: 450px;
 }
 .chat-offline .chat-error{
     border: 1px solid #ff0000;
@@ -547,6 +548,9 @@
     margin-top: 10px;
     font-weight: 400;
     color: rgba(0, 0, 0, 0.3);
+}
+.chat-main .email-notify a{
+    color: #1f8ceb;
 }
 .chat-main .email-notify .text-field{
     margin: 5px 0;

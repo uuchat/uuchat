@@ -228,11 +228,15 @@
         cid: '',
         csid: '',
         csName: '',
+        email: '',
         init: function(){
             U.loadStyle([CHAT.domain+'/static/css/customer.css']);
             var socketIO = localStorage.getItem ? localStorage.getItem('uuchat.skcdn', socketIO) : null;
             U.loadScript(socketIO || 'https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js', CHAT.ctrol);
             this.createCT();
+            win.addEventListener('message', function(e){
+                CHAT.email = e.data.email || '';
+            }, false);
         },
         createCT: function(){
             var ct = this.template();
@@ -329,15 +333,11 @@
             return str;
         },
         tempEmail: function(){
-            var str = '<div class="chat-item chat-from"><div class="chat-text">';
-            var uuInfoData = localStorage.getItem('uuInfoData');
-            var emaiReg = /[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}/g;
-            var email = emaiReg.exec(uuInfoData);
+            var str = '<div class="chat-item chat-from"><div class="chat-text"><div class="email-notify">';
 
-            str += '<div class="email-notify">';
-            if (email) {
+            if (CHAT.email) {
                 str += '<h4>You\'ll be notified here and by email</h4>';
-                str += '<h5><a href="javascript:;"+email[0]+">'+email[0]+'</a></h5>';
+                str += '<h5><a href="javascript:;">'+CHAT.email+'</a></h5>';
             } else {
                 str += '<h2>Get notified by email</h2>';
                 str += '<div class="text-field"><input class="email-input" placeholder="email@domain.com"/><span class="email-btn"></span></div>';
@@ -801,7 +801,7 @@
 
                         if (d.loaded === d.total) {
                             setTimeout(function(){
-                                U.$('.chat-msg').removeChild(U.$('.upload-tips'));
+                                U.$('.chat-msg') && U.$('.chat-msg').removeChild(U.$('.upload-tips'));
                             }, 2500);
                         }
                     },
@@ -828,7 +828,7 @@
             this.msgScroll();
 
             U.addEvent(U.$('.chat-send-area'), 'keydown', function(e){
-                var e = e || w.event;
+                var e = e || win.event;
                 var val = '';
                 var _self = this;
                 var keyCode = e.keyCode ? e.keyCode : e.which;
@@ -840,7 +840,7 @@
                         U.$('.send-pre').innerHTML = val;
                     } else {
                         _self.value = '';
-                        U.$('.send-pre').innerHTML = ' ';
+                        U.$('.send-pre').innerHTML = '';
                     }
 
                     if (13 === keyCode) {
@@ -849,16 +849,15 @@
                             U.addClass(U.$('.emoji-lists'), 'emoji-lists-hidden');
                         }
                         _self.value = '';
-                        _self.focus();
-                        U.$('.send-pre').innerHTML = ' ';
+                        U.$('.send-pre').innerHTML = '';
                         e.returnValue && (e.returnValue = false);
                         e.preventDefault && e.preventDefault();
                     }
-                }, 0);
+                }, 10);
 
             });
             U.addEvent(U.$('.chat-send-area'), 'blur', function(e){
-                U.$('.send-pre').innerHTML = this.value.replace(/^\s$/g, ' ');
+                U.$('.send-pre').innerHTML = this.value.replace(/^\s$/g, '');
             });
 
             function showUploadImageTips(text) {
@@ -936,7 +935,7 @@
 
             if (CHAT.chatState === 3) {
                 CHAT.socket.emit('c.offlineMsg', CHAT.cid, msg, function(success){
-                    if (/[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)/g.test(msg)) {
+                    if ( /^content\/upload\//g.test(msg)) {
                         U.addClass(U.$('.t-'+d), 'done-img');
                     } else {
                         U.addClass(U.$('.t-'+d), 'done');
@@ -966,7 +965,7 @@
 
             CHAT.socket.emit('c.message', CHAT.cid, msg, watchDog(function(err, success){
                 if (success) {
-                    if (/[a-zA-Z0-9.%=/]{1,}[.](jpg|png|jpeg|gif)$/g.test(msg)) {
+                    if ( /^content\/upload\//g.test(msg)) {
                         U.addClass(U.$('.t-'+d), 'done-img');
                     } else {
                         U.addClass(U.$('.t-'+d), 'done');

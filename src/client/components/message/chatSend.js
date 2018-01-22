@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Input, Icon, Upload, message, Modal, Progress } from 'antd';
+import { Input, Icon, Upload, Modal, Progress } from 'antd';
+import Tips from '../common/tips';
 import ChatShortcut from './chatSendShortcut';
 import EmojiPicker from './chatEmoji';
 import {cutStr} from '../common/utils';
@@ -229,10 +230,10 @@ class ChatSend extends Component{
     beforeUpload = (file) => {
         let isLt2M = file.size / 1024 / 1024 < 2;
         if (!isLt2M) {
-            message.error('Image must smaller than 2MB!');
+            Tips.error('Image must smaller than 2MB!');
         }
         if (!/(.jpg|.png|.gif|.jpeg)/g.test(file.name)) {
-            message.error('Image type must be jpg、jpeg、png、gif!');
+            Tips.error('Image type must be jpg、jpeg、png、gif!');
             isLt2M = false;
         }
         return isLt2M;
@@ -270,7 +271,7 @@ class ChatSend extends Component{
                             });
                         }, 2000);
                     } else if (status === 'error') {
-                        message.error(info.file.name+' file upload failed.', 2, function(){
+                        Tips.error(info.file.name+' file upload failed.', 6, function(){
                             _self.setState({
                                 isShowProcess: false
                             });

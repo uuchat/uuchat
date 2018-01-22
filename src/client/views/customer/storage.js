@@ -234,6 +234,7 @@
 
     w.addEventListener('message', function (e) {
         e.data && UStorage.set(e.data);
+        w.parent.postMessage(UStorage.get(), '*');
     });
 
 })(window, document);

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Icon, Input, Button, message } from 'antd';
+import Tips from './tips';
 import '../../static/css/login.css';
 
 const FormItem = Form.Item;
@@ -43,17 +44,17 @@ class Login extends Component{
                         }
                         window.location.href = redirect;
                     } else if (d.code === 1002) {
-                        message.error('Email or password is empty', 4);
+                        Tips.error('Email or password is empty');
                     } else if (d.code === 1003) {
-                        message.error('Email not found', 4);
+                        Tips.error('Email not found');
                     } else if (d.code === 1004) {
-                        message.error('Password wrong ', 4);
+                        Tips.error('Password wrong');
                     } else {
-                        message.error(d.msg, 4);
+                        Tips.error(d.msg);
                     }
                 })
                 .catch(function(e){
-                    message.error(e, 4);
+                    Tips.error(e);
                 });
 
             }
@@ -79,7 +80,7 @@ class Login extends Component{
         }).then((res)=>res.json())
             .then(d => {
                 if (d.code === 200) {
-                    message.success('Please check your email ' + email + 'in time to reset your password', 8);
+                    message.success('Please check your email ' + email + ' in time to reset your password', 8);
                 }
 
             })

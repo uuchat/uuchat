@@ -7,6 +7,8 @@ import ChatSend from './chatSend';
 import ChatMessage from './chatMessage';
 import ChatEmpty from './chatEmpty';
 import ChatUser from '../user/chatUser';
+import ChatHistory from './chatHistory';
+import MenuSetting from '../menu/chatMenuSetting';
 import '../../static/css/customerSuccess.css';
 
 let notifyKey = '';
@@ -24,6 +26,9 @@ class CustomerSuccess extends Component{
             bgThemeImg: localStorage['bgThemeImg'] || '',
             bgThemeOpacity: localStorage['bgThemeOpacity'] || 0.7,
             status: 1,             // 1:online，2:offline, 3:connect error
+            menuType: 1,           // 1:onlineChat, 2:historyChat, 3:settings
+            menuSetting: 'Account',
+            historyChat: {},
             chatLists: {},
             chatActive: {}
         };
@@ -33,9 +38,6 @@ class CustomerSuccess extends Component{
         this.createSocket();
     }
 
-    /***
-     * createSocket
-     */
     createSocket = () => {
         let sio = io('/cs', {
             forceNew: true,
@@ -83,7 +85,7 @@ class CustomerSuccess extends Component{
             status: 1,
             active: chatActive === null,
             messageLists: [],
-            pageNum: 1,
+            pageNum: 2,
             isLoading: false,
             hasMoreHistoryChat: true
         };
@@ -178,21 +180,10 @@ class CustomerSuccess extends Component{
 
     };
 
-    /***
-     * reconnect
-     */
     socketReconnect = () => {};
 
-    /***
-     * error
-     */
     socketError = () => {};
 
-    /***
-     *
-     * customerSuccessConnect Socket Connected Server Handle
-     *
-     */
     customerSuccessConnect = () => {
         let status = this.state.status;
 
@@ -204,12 +195,6 @@ class CustomerSuccess extends Component{
             });
         }
     };
-
-    /***
-     *
-     * customerSuccessConectErr socket connect server Error handle
-     *
-     */
 
     customerSuccessConnectErr = () => {
         if (notifyKey === "") {
@@ -257,8 +242,8 @@ class CustomerSuccess extends Component{
 
         if (msg !== '') {
 
-            let d = new Date(),
-                messageEvent = 'cs.message';
+            let d = new Date();
+            let messageEvent = 'cs.message';
 
             chatLists[cid].messageLists.push({
                 msgAvatar: avatar,
@@ -376,9 +361,10 @@ class CustomerSuccess extends Component{
         });
     };
 
+
     render(){
 
-        let {status, avatar, csid, socket, bgThemeImg, bgThemeOpacity, chatLists, chatActive} = this.state;
+        let {status, avatar, csid, socket, bgThemeImg, bgThemeOpacity, chatLists, chatActive, menuType, historyChat, menuSetting} = this.state;
         let bgStyle = {};
 
         if (bgThemeImg && status === 1) {
@@ -391,7 +377,7 @@ class CustomerSuccess extends Component{
         }
 
         return (
-            <div className={"uuchat-customerSuccess " + ((status !== 1) ? " off" : "") +(bgThemeImg ? " theme" : "")}
+            <div className={"uuchat-customerSuccess " + ((status !== 1) ? " off " : "") +(bgThemeImg[1] ? "theme" : "")}
                  style={bgStyle}>
                     <Header customerSuccess={this} />
                     <Row className="customerSuccess-main" style={{background: 'rgba(255, 255, 255, '+bgThemeOpacity+')'}}>
@@ -400,9 +386,10 @@ class CustomerSuccess extends Component{
                         </Col>
                         <Col xs={24} sm={11} md={11} lg={12} xl={12}>
                             <div className="customerSuccess-content">
-                            {
-                                chatActive.cid ?
-                                    <div>
+                                {
+                                    (menuType === 1)
+                                    && chatActive.cid
+                                    && <div>
                                         <ChatMessage
                                             socket={socket && socket}
                                             csid={csid}
@@ -420,14 +407,22 @@ class CustomerSuccess extends Component{
                                             rateFeedBack={this.rateFeedBack}
                                         />
                                     </div>
-                                    :
-                                    <ChatEmpty />
-                            }
+                                }
+                                {
+                                    (menuType === 1) && !chatActive.cid && <ChatEmpty />
+                                }
+                                {
+                                    (menuType === 2) && <ChatHistory historyChat={historyChat} csid={csid} />
+                                }
+                                {
+                                    (menuType === 3) && <MenuSetting menu={menuSetting} customerSuccess={this} />
+                                }
                             </div>
                         </Col>
                         <Col xs={24} sm={6} md={6} lg={6} xl={6}>
                             <div className="customerSuccess-right">
-                                { chatActive.cid && <ChatUser info={chatLists[chatActive.cid].info} />}
+                                {menuType === 1 && chatActive.cid && <ChatUser info={chatLists[chatActive.cid].info} />}
+                                {menuType === 2 && historyChat.cid && <ChatUser info={historyChat.chatsArr.info} />}
                             </div>
                         </Col>
                     </Row>

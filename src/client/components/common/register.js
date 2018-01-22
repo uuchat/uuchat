@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
-import { Form, Input, Checkbox, Icon, Button, message } from 'antd';
+import { Form, Input, Checkbox, Icon, Button } from 'antd';
 import {Base64DecodeUnicode} from './utils';
+import Tips from './tips';
 import '../../static/css/register.css';
 
 const FormItem = Form.Item;
@@ -36,6 +37,14 @@ class RegisterForm extends Component {
         e.preventDefault();
         let {token} = this.state;
         this.props.form.validateFieldsAndScroll((err, values) => {
+            if (!values.agreement) {
+                this.props.form.setFields({
+                    agreement: {
+                        errors: [new Error('Please agree to the agreement')]
+                    }
+                });
+                return false;
+            }
             if (!err) {
                fetch('/register/'+token, {
                     credentials: 'include',
@@ -56,11 +65,11 @@ class RegisterForm extends Component {
                         localStorage.setItem('uuchat.avatar', d.msg.photo);
                         window.location.href = "/chat";
                     } else {
-                        message.error(d.msg, 4);
+                        Tips.error(d.msg);
                     }
                 })
                 .catch(function(e){
-                    message.error(e, 4);
+                    Tips.error(e);
                 });
             }
         });
@@ -84,7 +93,7 @@ class RegisterForm extends Component {
         inputReadOnly && (readOnly.readonly='true');
 
         return (
-            <Form onSubmit={this.handleSubmit} layout="vertical" autocomplete="off">
+            <Form onSubmit={this.handleSubmit} layout="vertical">
                 <FormItem
                     label="Email address"
                     hasFeedback

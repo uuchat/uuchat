@@ -32,7 +32,7 @@ class ChatMessageItem extends Component{
     };
     timeCalculation = (t) => {
         let currentTimes = (new Date().getTime()) / 1000;
-        let oldTimes = (new Date(t).getTime()) / 1000;
+        let oldTimes = t.getTime() / 1000;
         let diffTimes = currentTimes - oldTimes;
         let str = '';
 
@@ -48,20 +48,22 @@ class ChatMessageItem extends Component{
 
     };
     timeFomat = (t) => {
-        let str = '';
-        let h = t.getHours();
-        let m = t.getMinutes();
 
-        m = m > 9 ? m : '0' + m;
+        let year = t.getFullYear();
+        let month = t.getMonth() + 1;
+        let day = t.getDate();
+        let hour = t.getHours();
+        let minu = t.getMinutes();
 
-        str += h + ':' + m;
-        str += (h <= 12) ? ' AM' : ' PM';
+        month = month > 9 ? month : '0' + month;
+        day   = day > 9 ? day : '0' + day;
+        minu  = minu > 9 ? minu : '0' + minu;
 
-        return str;
+        return day + '/' + month + '/' + year + ' ' + hour + ':' + minu;
     };
     showEmailDetail = (e) => {
 
-        let list = document.querySelector('.chat-message');
+        let list = document.querySelector('.chat-message') || document.querySelector('.chat-history');
         let pos = {};
 
         if ( e.pageY <= list.offsetHeight/2+80) {
@@ -70,12 +72,10 @@ class ChatMessageItem extends Component{
             pos.top = e.pageY - 250 + 'px';
         }
 
-
         this.setState({
             showUserDetail: true,
             showEmailDetailY: pos
         });
-
 
     };
     hideEmailDetail = (e) => {
@@ -90,6 +90,7 @@ class ChatMessageItem extends Component{
         }
         return <div className={"avatar-color avatar-icon-"+cIndex} >{cid.substr(0, 1).toUpperCase()}</div>;
     };
+
     render() {
         let {ownerAvatar, ownerType, time, ownerText, shortSetting, cid} = this.props;
         let {showUserDetail, showEmailDetailY} = this.state;
@@ -160,11 +161,7 @@ class ChatMessageItem extends Component{
             );
         }
 
-        return (
-            <div>
-                {messages}
-            </div>
-        );
+        return messages;
 
     }
 

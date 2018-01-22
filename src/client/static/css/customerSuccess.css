@@ -137,7 +137,7 @@
 .customerSuccess-left li.active,
 .customerSuccess-left li:hover{
     cursor:pointer;
-    background-color: #eff1f5;
+    background-color: rgba(0, 0, 0, 0.1);
 }
 .customerSuccess-left li:hover .chat-close{
     display: block;
@@ -186,70 +186,63 @@
 }
 .avatar-icon-0,
 .avatar-icon-1,
-.history-header-0 .ant-modal-header,
-.history-header-1 .ant-modal-header{
+.history-header-0,
+.history-header-1{
     background-color:#1abc9c;
 }
 .avatar-icon-2,
-.history-header-2 .ant-modal-header{
+.history-header-2{
     background-color:#2ecc71;
 }
 .avatar-icon-3,
-.history-header-3 .ant-modal-header{
+.history-header-3{
     background-color:#3498db;
 }
 .avatar-icon-4,
-.history-header-4 .ant-modal-header{
+.history-header-4{
     background-color:#9b59b6;
 }
 .avatar-icon-5,
-.history-header-5 .ant-modal-header{
+.history-header-5{
     background-color:#16a085;
 }
 .avatar-icon-6,
-.history-header-6 .ant-modal-header{
+.history-header-6{
     background-color:#27ae60;
 }
 .avatar-icon-7,
-.history-header-7 .ant-modal-header{
+.history-header-7{
     background-color:#2980b9;
 }
 .avatar-icon-8,
-.history-header-8 .ant-modal-header{
+.history-header-8{
     background-color:#8e44ad;
 }
 .avatar-icon-9,
-.history-header-9 .ant-modal-header{
+.history-header-9{
     background-color:#f1c40f;
 }
 .avatar-icon-10,
-.history-header-10 .ant-modal-header{
+.history-header-10{
     background-color:#e67e22;
 }
 .avatar-icon-11,
-.history-header-11 .ant-modal-header{
+.history-header-11{
     background-color:#e74c3c;
 }
 .avatar-icon-12,
-.history-header-12 .ant-modal-header{
+.history-header-12{
     background-color:#f39c12;
 }
 .avatar-icon-13,
-.history-header-13 .ant-modal-header{
+.history-header-13{
     background-color:#d35400;
 }
 .avatar-icon-14,
 .avatar-icon-15,
-.history-header-14 .ant-modal-header,
-.history-header-15 .ant-modal-header{
+.history-header-14,
+.history-header-15{
     background-color:#c0392b;
-}
-.history-header .ant-modal-header{
-    border-radius: 2px 2px 0 0;
-}
-.history-header .ant-modal-title,
-.history-header .ant-modal-close{
-    color: #fff;
 }
 /* contact list */
 .customerSuccess-left .chat-avatar img{
@@ -327,6 +320,7 @@
 }
 /* chat messages contents */
 .customer-content{
+    position: relative;
     width:100%;
     background-color: #fdfdfd;
 }
@@ -538,10 +532,58 @@
 .marked-tag.marked-0{
     background-color: #a5a5a7;
 }
+/* history chat */
+.chat-history{
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 900;
+    width: 100%;
+    height: calc(88vh);
+}
+.chat-history-header{
+    padding: 0 30px;
+    height: 50px;
+    line-height: 50px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+    font-size: 16px;
+}
+.chat-history-header.colorful{
+    border: none;
+    color: #fff;
+}
+.chat-history .message-lists{
+    padding: 0 20px;
+    height: calc(88vh - 52px);
+    max-height: calc(88vh);
+}
 /* setting */
+
+.menu-setting{
+    padding: 10px 20px;
+    height: calc(88vh);
+    background-color: #fff;
+    overflow-y: auto;
+}
+.menu-setting .menu-header{
+    height: 50px;
+    margin-bottom: 10px;
+    line-height: 50px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 16px;
+}
+.menu-account{
+    padding: 30px 0;
+}
 .customerSuccess-setting li{
     margin-bottom: 5px;
     font-size: 16px;
+}
+.customerSuccess-setting .account.Account,
+.customerSuccess-setting .password.Password,
+.customerSuccess-setting .shortcuts.Shortcuts,
+.customerSuccess-setting .theme.Theme {
+    background-color: rgba(0, 0, 0, 0.1);
 }
 .account-item{
     padding: 5px 0;
@@ -550,6 +592,9 @@
     line-height: 20px;
     color: #222;
     font-weight: bold;
+}
+.account-footer{
+    margin-top: 20px;
 }
 .avatar-box{
     position: relative;
@@ -580,12 +625,19 @@
     border-radius: 3px;
     cursor: pointer;
 }
-.change-passwd p{
+.menu-password h4{
     margin-top: 10px;
-    line-height: 20px;
+    line-height: 30px;
     font-weight: bold;
+    font-size: 14px;
+}
+.menu-password-footer{
+    margin-top: 20px;
 }
 /* theme settings */
+.theme-setting{
+    margin: 20px auto;
+}
 .theme-setting h4{
     margin-bottom: 0;
     padding-top: 10px;
@@ -624,7 +676,7 @@
     box-shadow: 0 1px 1px 2px rgba(0, 0, 0, 0.3);
 }
 .theme-background{
-    margin: 15px 0;
+    margin: 15px auto;
     padding: 5px;
     height: 300px;
     overflow: auto;
@@ -634,9 +686,9 @@
 .theme-background span{
     position: relative;
     display: inline-block;
-    margin: 0 3px;
-    width: 153px;
-    height: 118px;
+    margin: 3px;
+    width: 24%;
+    height: 116px;
     border-radius: 4px;
     background: #039be5;
     background-size: cover;
@@ -675,6 +727,9 @@
     font-size: 16px;
     color: #000;
     text-align: center;
+}
+.theme-footer{
+    margin-top: 20px;
 }
     /* online customer lists */
 .online-item{
@@ -1089,6 +1144,42 @@
     font-size: 14px;
 }
 
+.user-contact{
+    padding: 10px;
+    margin-top: 10px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+.user-contact a{
+    text-decoration: none;
+}
+.email-body{
+    padding: 10px;
+    background-color: #f8fafc;
+}
+.email-subject{
+    padding: 5px 0;
+    margin: 5px 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.email-modal .ant-modal-body{
+    padding: 0;
+}
+.email-subject input{
+    border: 1px solid #f8fafc;
+    width: 100%;
+    background-color: #f8fafc;
+}
+.email-subject input:focus{
+    outline: none;
+    border: none;
+}
+
+.email-content{
+    border: 1px solid #f8fafc;
+    height: 260px;
+}
+
 .chat-empty{
     position: relative;
     z-index: 10;
@@ -1180,7 +1271,7 @@
     color: #000;
 }
 .theme .customerSuccess-left li:hover{
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(0, 0, 0, 0.1);
 }
 .theme .customerSuccess-main{
     background: rgba(255, 255, 255, 0.7);

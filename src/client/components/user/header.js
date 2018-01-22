@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Row, Col, notification, Modal } from 'antd';
+import { Row, Col, notification } from 'antd';
 
 class Header extends Component{
 
     statusToggle = () => {
         let state = this.props.customerSuccess.state;
         let status = state.status;
-        let stat = 1;
+        let statusType = 1;
 
         if (status === 3) {
             this.props.customerSuccess.createSocket();
@@ -14,12 +14,12 @@ class Header extends Component{
         } else {
 
             if (status === 1) {
-                stat = 2;
+                statusType = 2;
             }
 
-            state.socket.emit('cs.changeOnOff', stat, function(isToggle){});
+            state.socket.emit('cs.changeOnOff', statusType, function(isToggle){});
             this.props.customerSuccess.setState({
-                status: stat
+                status: statusType
             });
         }
     };
@@ -31,29 +31,21 @@ class Header extends Component{
     loginOut = (e) => {
         e.preventDefault();
         let { socket } = this.props.customerSuccess.state;
-        Modal.confirm({
-            title: 'Login out',
-            content: 'Do you comfirm login out?',
-            cancelText: 'No',
-            okText: 'Yes',
-            onOk: function(){
-                fetch('/logout', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    }
-                })
-                    .then((res)=>res.json())
-                    .then(function(d){
-                        if (d.code === 200){
-                            socket.emit('cs.logout',function(type){});
-                            socket.close();
-                            window.location.href = '/';
-                        }
-                    })
-                    .catch(function(e){});
+        fetch('/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
             }
-        });
+        })
+        .then((res)=>res.json())
+        .then(function(d){
+            if (d.code === 200){
+                socket.emit('cs.logout',function(type){});
+                socket.close();
+                window.location.href = '/';
+            }
+        })
+        .catch(function(e){});
     };
 
     render() {
@@ -77,7 +69,7 @@ class Header extends Component{
                         <div className="user-avatar-box">
                             {chatActive.cid && <div className="m-menu" onClick={this.chatListShow}></div>}
                             <img src={ avatar ? '/'+ avatar : require('../../static/images/contact.png')} alt="avatar" title="avatar" />&nbsp;&nbsp;
-                            <a className="logout" onClick={this.loginOut}>
+                            <a className="logout" onClick={this.loginOut} href="javascript:;">
                                 LOGOUT &nbsp;{name || csEmail}
                             </a>
                         </div>

@@ -13,10 +13,10 @@ class ChatMessageShortcut extends Component{
         this.toggleSet(true);
     };
     shortcutFetch = () => {
-        let _self = this,
-            shortKey = this.refs.shortKey.refs.input.value,
-            shortValue = this.refs.shortValue.refs.input.value,
-            bodyData = 'csid='+(localStorage.getItem('uuchat.csid') || '')+'&shortcut='+shortKey+'&msg='+shortValue;
+        let _self = this;
+        let shortKey = this.refs.shortKey.input.value;
+        let shortValue = this.refs.shortValue.textAreaRef.value;
+        let bodyData = 'csid='+(localStorage.getItem('uuchat.csid') || '')+'&shortcut='+shortKey+'&msg='+shortValue;
 
         if (shortKey.replace(/^\s$/g, '') === '') {
             _self.toggleSet(false);
