@@ -62,6 +62,7 @@ module.exports = {
     searchJS: resolveApp('src/client/views/customerSuccess/search.js'),
     registerHtml: resolveApp('src/client/views/register/index.html'),
     registerJS: resolveApp('src/client/views/register/index.js'),
+    resetPasswordJS: resolveApp('src/client/views/resetPassword/index.js'),
     yarnLockFile: resolveApp('yarn.lock'),
     testsSetup: resolveApp('src/setupTests.js'),
     appNodeModules: resolveApp('node_modules'),

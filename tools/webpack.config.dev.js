@@ -43,6 +43,11 @@ module.exports = {
             paths.registerJS,
             hotMiddlewareScript
         ],
+        'resetPassword': [
+            require.resolve('./polyfills'),
+            paths.resetPasswordJS,
+            hotMiddlewareScript
+        ]
     },
     output: {
         path: paths.appBuild,
@@ -141,6 +146,12 @@ module.exports = {
             filename: 'register.ejs',
             template: paths.registerHtml,
             chunks: ['register']
+        }),
+        new HtmlWebpackPlugin({
+            inject: true,
+            filename: 'resetPassword.ejs',
+            template: paths.registerHtml,
+            chunks: ['resetPassword']
         }),
         new CopyWebpackPlugin(base.copyWebpackPlugin),
         new webpack.DefinePlugin(env.stringFiled),

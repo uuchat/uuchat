@@ -68,6 +68,9 @@ module.exports = {
         'register': [
             paths.registerJS
         ],
+        'resetPassword': [
+            paths.resetPasswordJS
+        ]
     },
     output: {
         path: paths.appBuild,
@@ -207,6 +210,13 @@ module.exports = {
             filename: 'register.ejs',
             template: paths.registerHtml,
             chunks: ['vendor', 'register'],
+            minify: minify
+        }),
+        new HtmlWebpackPlugin({
+            inject: true,
+            filename: 'resetPassword.ejs',
+            template: paths.registerHtml,
+            chunks: ['vendor', 'resetPassword'],
             minify: minify
         }),
         new CopyWebpackPlugin(base.copyWebpackPlugin),
