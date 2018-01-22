@@ -1,0 +1,39 @@
+.uu-tips-message{
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    z-index: 1010;
+    width: 520px;
+    line-height: 20px;
+    padding:15px 50px;
+    border-radius: 3px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    font-size: 16px;
+    color: #fff;
+}
+.uu-tips-message .anticon{
+    position: absolute;
+    top: 17px;
+    left: 15px;
+    margin-right: 10px;
+}
+.uu-tips-message.message-error{
+    background-color: #ec515d;
+}
+.uu-tips-message.message-success{
+    background-color: #00c38d;
+}
+.uu-tips-message .uu-tips-close{
+    position: absolute;
+    right: 15px;
+    top: 12px;
+    display: inline-block;
+    padding: 0 10px;
+    text-decoration: underline;
+    cursor: pointer;
+    height: 25px;
+    line-height: 25px;
+}
