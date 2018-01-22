@@ -4,6 +4,10 @@
     <meta charset="UTF-8">
     <title></title>
     <style type="text/css">
+        .uu-email-message{
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.1);
+        }
         .fl{
             display: inline-block;
             float:left;
@@ -11,6 +15,17 @@
         .fr{
             display: inline-block;
             float:right;
+        }
+        .message-body{
+            max-width: 750px;
+            width: 100%;
+            height:auto;
+            margin:0 auto;
+            padding: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+            box-shadow: 0 0 5px 1px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
         }
         .message-lists .message-item{
             margin: 10px 0;
@@ -102,34 +117,36 @@
     </style>
 </head>
 <body>
-<div style="max-width: 600px;width: 100%;height:auto;margin:0 auto;">
-    <div class="message-lists">
-        <%
-            var imgReg = /^content\/upload\//g, str='';
-            messages.forEach(function(item){
-        %>
-        <div class="message-item">
-            <p class='msg-time-<%=item.type %>'><%=item.createdAt %></p>
-            <div class="message-avatar <%=(item.type===0||item.type===4)?'fl':'fr' %>">
-                <img src="https://uuchat.io/static/images/contact.png" alt="avatar" title="avatar" />
+<div class="uu-email-message">
+    <div class="message-body">
+        <div class="message-lists">
+            <%
+                var imgReg = /^content\/upload\//g, str='';
+                messages.forEach(function(item){
+            %>
+            <div class="message-item">
+                <p class='msg-time-<%=item.type %>'><%=item.createdAt %></p>
+                <div class="message-avatar <%=(item.type===0||item.type===4)?'fl':'fr' %>">
+                    <img src="https://uuchat.io/static/images/contact.png" alt="avatar" title="avatar" />
+                </div>
+                <div class="message-content <%=(item.type===0||item.type===4)?'fl':'fr' %>">
+                    <%
+                        if (imgReg.test(item.msg)) {
+                            var msg = item.msg.split('|');
+                            str = '<a href="'+relativeUrl+msg[1]+'" target="_blank"><img width="'+msg[2]+'" height="'+msg[3]+'" src="'+relativeUrl+msg[0]+'" alt="" /></a>';
+                        } else {
+                            str = item.msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
+                                return '<a href="' + match + '" target="_blank">' + match + '</a>';
+                            });
+                        }
+                    %>
+                    <div><%-str %></div>
+                </div>
             </div>
-            <div class="message-content <%=(item.type===0||item.type===4)?'fl':'fr' %>">
-                <%
-                    if (imgReg.test(item.msg)) {
-                        var msg = item.msg.split('|');
-                        str = '<a href="'+relativeUrl+msg[1]+'" target="_blank"><img width="'+msg[2]+'" height="'+msg[3]+'" src="'+relativeUrl+msg[0]+'" alt="" /></a>';
-                    } else {
-                        str = item.msg.replace(/#/gi, "<br />").replace(/((https?|ftp|file|http):\/\/[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*)/g, function (match) {
-                            return '<a href="' + match + '" target="_blank">' + match + '</a>';
-                        });
-                    }
-                %>
-                <div><%-str %></div>
-            </div>
+            <%
+                })
+            %>
         </div>
-        <%
-            })
-        %>
     </div>
 </div>
 </body>
