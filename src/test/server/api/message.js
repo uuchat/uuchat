@@ -78,7 +78,7 @@ describe('api', function () {
             });
         });
 
-        describe('POST /messages/customer/:cid/cs/:csid/reply', function () {
+        describe('POST /messages/customer/:cid/cs/:csid/email', function () {
 
             describe('should response with message data', function () {
                 it('should response with success', function (done) {
