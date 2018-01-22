@@ -1,6 +1,7 @@
 "use strict";
 
 var logger = require('./logger'),
+    utils = require('./utils'),
     _ = require('lodash'),
     authentication = require('./services/authentication'),
     nconf = require('nconf');
@@ -30,11 +31,7 @@ Emailer.send = function (mailOptions, callback) {
 
 Emailer.invited = function (email, callback) {
     var name = nconf.get("app:name");
-    var domain = nconf.get('app:domain');
-    if (_.isEmpty(domain)) {
-        domain = nconf.get('app:ssl') ? 'https://' : 'http://';
-        domain += nconf.get('app:address') + ':' + nconf.get('app:port');
-    }
+    var domain = utils.getDomain();
     var from = nconf.get('mail:auth:user');
     var sessionBase64 = authentication.generateInvitation(email);
 
