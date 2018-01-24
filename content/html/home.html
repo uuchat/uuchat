@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <title>UUChat</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="static/css/bootstrap.3.3.7.min.css">
     <link href="https://fonts.googleapis.com/css?family=Ubuntu:300" rel="stylesheet">
     <link rel="stylesheet" href="static/css/home.css">
 </head>
@@ -54,6 +54,7 @@
                     </div>
                 </div>
             </div>
+            <img width="100%" class="theme2-bg" src="static/img/theme2.svg" alt="">
         </div>
     </section>
 
@@ -103,11 +104,18 @@
 </div>
 
 <script>
+
     window.onload = function() {
         document.querySelector('#uu-mobie-label').addEventListener('click', function () {
             this.classList.toggle('active');
             document.querySelector('.mobie-menu-list').classList.toggle('active');
         }, false);
+        var img = new Image();
+        img.src = 'static/img/theme2.jpg';
+
+        img.onload = function () {
+            document.querySelector('.theme2-bg').src = img.src;
+        };
     };
     ;(function(u, c, h){
         u.UUCHAT = (function(){

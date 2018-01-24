@@ -30,6 +30,7 @@ ul, li{
     position: fixed;
     left: 0;
     top: 0;
+    z-index: 2000;
     width: 100%;
     background: #fff;
     box-shadow: 0 10px 2px -15px rgba(0, 0, 0, 0.5);
@@ -140,10 +141,16 @@ ul, li{
     text-align: center;
 }
 .main{
+    position: relative;
     margin-top: 60px;
-    height: 65vh;
-    background: rgba(13, 149, 232, 0.01) url(../img/theme2.jpg) no-repeat center top;
-    background-size: cover;text-align: center;color: #fff;
+    height: 65vh;;
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+}
+.main .theme2-bg{
+    -webkit-transition: all 0.5s linear;
+    transition: all 0.5s linear;
 }
 .main .uu-btn{
     margin: 0 5px;
@@ -169,6 +176,8 @@ ul, li{
     color: #408AF8;
 }
 .mask{
+    position: absolute;
+    z-index: 1000;
     display: flex;
     align-items: center;
     padding: 20px 0;
@@ -264,6 +273,9 @@ ul, li{
     }
     .main{
         background: #39afef;
+    }
+    .main img{
+        display: none;
     }
     .mask{
         background: rgba(255, 255, 255, 0);
