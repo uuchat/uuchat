@@ -240,7 +240,7 @@ customerSuccessController.loginConsole = function (req, res, next) {
 
         return res.json({
             code: 200,
-            msg: _.pick(user, ['csid', 'name', 'displayName', 'email', 'photo', 'timezone'])
+            msg: _.pick(user, ['csid', 'name', 'displayName', 'email', 'photo', 'timezone', 'background', 'opacity'])
         });
     });
 };
