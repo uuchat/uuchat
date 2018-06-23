@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var models = require('../models');
 var logger = require('../logger');
+var Op = require('sequelize').Op;
 
 var Message = module.exports;
 
@@ -65,8 +66,7 @@ Message.delete = function (condition, callback) {
 
 Message.listLastTen = function (cid, csid, fn) {
     var params = {cid: cid, csid: csid};
-    if(_.isEmpty(csid)) {
-        //csid = {$eq: null};
+    if (_.isEmpty(csid)) {
         params = {cid: cid};
     }
 
@@ -110,7 +110,7 @@ Message.offlineMessageCidList = function (size, callback) {
     models.Message.findAll({
         attributes: ['cid'],
         where: {
-            csid: {$eq: null}
+            csid: {[Op.eq]: null}
         },
         group: ['cid'],
         limit: size || 5
@@ -128,7 +128,7 @@ Message.listOfflineMessageByCid = function (cid, callback) {
         attributes: ['msg', 'type', 'createdAt'],
         where: {
             cid: cid,
-            csid: {$eq: null}
+            csid: {[Op.eq]: null}
         },
         order: [['createdAt', 'DESC']],
         limit: 20
@@ -218,6 +218,18 @@ Message.getLatestMessage = function (condition, attributes, callback) {
 
     }, function (err) {
         logger.error(err);
+
+        return callback(err);
+    });
+};
+
+Message.rawQuery = function (sql, params, callback) {
+    models.sequelize.query(sql, {replacements: params, type: models.sequelize.QueryTypes.SELECT}).then(function (data) {
+        if (!data || !data.length) return callback(null, {});
+
+        return callback(null, data);
+
+    }, function (err) {
 
         return callback(err);
     });

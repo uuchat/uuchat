@@ -54,18 +54,17 @@ messageController.list = function (req, res, next) {
     return Message.list(condition, order, pageSize, pageNum, function (err, messages) {
         if (err) return next(err);
 
-        if(pageNum){
-            return res.json({code: 200, msg: _.reverse(messages)});
-        }
+        if(pageNum) return res.json({code: 200, msg: _.reverse(messages)});
 
-        var condition = {cid: cid};
+        condition = {cid: cid};
 
         CustomerSession.findOne(condition, function (err, customerSession) {
 
             if (err) return next(err);
 
             var customer = _.pick(customerSession, ['cid', 'ip', 'url', 'platform', 'browser', 'version', 'os', 'email']);
-            customer.host = url.parse(customer.url).host || '';
+
+            customer.host = url.parse(customer.url || '').host || '';
 
             return res.json({code: 200, msg: _.reverse(messages), customer: customer});
         });

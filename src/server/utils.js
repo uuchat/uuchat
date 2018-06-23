@@ -70,6 +70,10 @@ utils.getDaysInMonth = function (year, month) {
     return [31, (isLeapYear(year) ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][month];
 };
 
+utils.UTCFormat = function (date) {
+    return date.toISOString().replace('T', ' ').replace('Z', ' +00:00');
+};
+
 
 utils.getIP = function (req) {
     var ip = req.headers['x-forwarded-for'] ||

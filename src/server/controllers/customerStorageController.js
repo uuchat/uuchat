@@ -3,6 +3,8 @@
 var _ = require('lodash');
 var utils = require('../utils');
 var CustomerStorage = require('../database/customerStorage');
+var sequelize = require('sequelize');
+var Op = sequelize.Op;
 
 var customerStorageController = module.exports;
 
@@ -64,6 +66,7 @@ customerStorageController.create = function (req, res, next) {
 
     customerStorage.browser = req.useragent.browser || '';
     customerStorage.bv = req.useragent.version || '';
+    customerStorage.platform = req.useragent.platform || '';
     customerStorage.os = req.useragent.os || '';
 
     CustomerStorage.findOne(_.pick(customerStorage, ['cid']), function(err, storage){
@@ -134,17 +137,17 @@ customerStorageController.list = function (req, res, next) {
     if (req.query.lastTimeStart || req.query.lastTimeEnd) {
         condition.lastTime = {};
 
-        if (req.query.lastTimeStart) condition.lastTime['$gte'] = req.query.lastTimeStart;
-        if (req.query.lastTimeEnd) condition.lastTime ['$lte'] = req.query.lastTimeEnd;
+        if (req.query.lastTimeStart) condition.lastTime[Op.gte] = req.query.lastTimeStart;
+        if (req.query.lastTimeEnd) condition.lastTime [Op.lte] = req.query.lastTimeEnd;
     }
 
-    if (req.query.country) condition.country = req.query.country;
+    if (req.query.country) condition.country = req.query.country.toUpperCase();
 
     var order = [['createdAt', 'DESC']];
     if (req.query.sortField) order = [[req.query.sortField, req.query.sortOrder === 'ascend' ? 'ASC' : 'DESC']];
 
     var pageNum = utils.parsePositiveInteger(req.query.pageNum);
-    var pageSize = 10;
+    var pageSize = utils.parsePositiveInteger(req.query.pageSize) || 10;
 
     CustomerStorage.listAndCount(condition, order, pageSize, pageNum, function (err, data) {
         if (err) return next(err);

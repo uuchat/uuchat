@@ -236,7 +236,7 @@ customerSuccessController.loginConsole = function (req, res, next) {
 
         if (err) return next(err);
 
-        createCSSocket(req, user);
+        //createCSSocket(req, user);
 
         return res.json({
             code: 200,

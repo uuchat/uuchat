@@ -49,6 +49,7 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.STRING(32),
                 comment: 'browser version'
             },
+            platform: DataTypes.STRING(64),
             os: DataTypes.STRING(64)
         }, {
             tableName: 'customer_storage',

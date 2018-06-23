@@ -3,6 +3,8 @@
 var async = require('async');
 var Rate = require('../database/rate');
 var utils = require('../utils');
+var sequelize = require('sequelize');
+var Op = sequelize.Op;
 
 var rateController = module.exports;
 
@@ -80,8 +82,8 @@ rateController.search = function (req, res, next) {
     if (req.query.createdAtStart || req.query.createdAtEnd) {
         condition.createdAt = {};
 
-        if (req.query.createdAtStart) condition.createdAt["$gte"] = req.query.createdAtStart;
-        if (req.query.createdAtEnd) condition.createdAt["$lte"] = req.query.createdAtEnd;
+        if (req.query.createdAtStart) condition.createdAt[Op.gte] = req.query.createdAtStart;
+        if (req.query.createdAtEnd) condition.createdAt[Op.lte] = req.query.createdAtEnd;
     }
 
     var order = [['createdAt', 'DESC']];

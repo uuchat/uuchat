@@ -1,7 +1,6 @@
 "use strict";
 
 var async = require('async');
-var nconf = require('nconf');
 var _ = require('lodash');
 var Feedback = require('../database/feedback');
 var FeedbackMeta = require('../database/feedbackMeta');

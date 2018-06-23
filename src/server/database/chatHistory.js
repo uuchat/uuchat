@@ -170,3 +170,16 @@ ChatHistory.count = function (options, callback) {
         return callback(err);
     });
 };
+
+ChatHistory.findAll = function (options, callback) {
+
+    options = options || {};
+
+    models.ChatHistory.findAll(options).then(function (data) {
+
+        return callback(null, models.getPlainArray(data));
+    }, function (err) {
+
+        return callback(err);
+    });
+};

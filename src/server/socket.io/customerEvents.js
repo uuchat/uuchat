@@ -109,6 +109,12 @@ SocketCustomerEvents.message = function(cid, msg, fn) {
     sendMessage(false, cid, msg, fn);
 };
 
+SocketCustomerEvents.timeout = function(cid) {
+    var csid = customerList.get(cid).csid;
+    var customerSuccess = customerSuccessList.get(csid);
+    customerSuccess.socket.emit('c.timeout', cid);
+};
+
 function sendMessage(isOfflineMessage, cid, msg, fn){
     if (_.isUndefined(msg) || _.isNull(msg) || msg.length === 0) {
         winston.info("message is empty!");

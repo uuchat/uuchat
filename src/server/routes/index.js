@@ -62,6 +62,8 @@ function messageRoutes(app, middleware, controllers) {
     app.get('/messages/customer/:cid', controllers.messageController.list);
     app.options('/messages/customer/:cid/cs/:csid', cors(middleware.corsOptionsDelegate));
     app.get('/messages/customer/:cid/cs/:csid', cors(middleware.corsOptionsDelegate), controllers.messageController.list);
+    app.get('/rnmessages/customer/:cid/cs/:csid', controllers.messageController.list);
+    app.get('/messages/customer/:cid/rncs/:csid', controllers.messageController.list);
     app.post('/messages/customer/:cid/cs/:csid', controllers.messageController.create);
     app.post('/messages/customer/:cid/cs/:csid/email', controllers.messageController.replyEmail);
 
@@ -72,6 +74,7 @@ function messageRoutes(app, middleware, controllers) {
     app.options('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate));
     app.post('/messages/customer/:cid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage);
     app.post('/messages/customer/:cid/cs/:csid/image', cors(middleware.corsOptionsDelegate), middleware.uploadImage);
+    app.post('/rnmessages/customer/:cid/cs/:csid/image', middleware.uploadImage);
 }
 
 function rateRoutes(app, middleware, controllers) {
@@ -100,9 +103,19 @@ function consoleRoutes(app, middleware, controllers) {
 
     app.post('/console/login', controllers.customerSuccessController.loginConsole);
     app.get('/console/numbers', controllers.consoleController.getNumbers);
-    app.get('/console/monthly', controllers.consoleController.getMonthlyData);
+    app.get('/console/chart/chat', controllers.consoleController.getChatData);
+    app.get('/console/chart/rate', controllers.consoleController.getRateData);
     app.get('/console/rates/report/month/:month', controllers.consoleController.getMonthlyRateReport);
     app.get('/console/rates/cs/:csid/month/:month', controllers.consoleController.getMonthlyRateList);
+
+    app.post('/console/faqs', controllers.faqController.create);
+    app.delete('/console/faqs/:uuid', controllers.faqController.delete);
+    app.patch('/console/faqs/:uuid', controllers.faqController.update);
+    app.get('/console/faqs/collections', controllers.faqController.getCollectionList);
+    app.post('/console/faqs/collections', controllers.faqController.createCollection);
+    app.delete('/console/faqs/collections/:collection_id', controllers.faqController.deleteCollection);
+    app.patch('/console/faqs/collections/:collection_id', controllers.faqController.updateCollection);
+    app.get('/console/faqs/collection/:collection_id', controllers.faqController.getFAQList);
 }
 
 function shortcutRoutes(app, middleware, controllers) {
@@ -123,6 +136,12 @@ function feedbackRoutes(app, middleware, controllers) {
     app.post('/feedbackmetas/classes/:classid/properties', controllers.feedbackMetaController.createProperty);
 }
 
+function faqRoutes(app, middleware, controllers) {
+    app.get('/faqs/collections', controllers.faqController.getCollections);
+    app.get('/faqs/collection/:collection_id/issues', controllers.faqController.getIssues);
+    app.get('/faqs/:uuid/answer', controllers.faqController.getAnswer);
+}
+
 module.exports = function (app, middleware, callback) {
     var router = express.Router();
 
@@ -135,9 +154,15 @@ module.exports = function (app, middleware, callback) {
     consoleRoutes(router, middleware, controllers);
     shortcutRoutes(router, middleware, controllers);
     feedbackRoutes(router, middleware, controllers);
+    faqRoutes(router, middleware, controllers);
+
+    router.get('/test', function (req, res, next) {
+        return res.status(200).json({code: 200, msg: 'test successful'});
+    });
 
     router.use(function (err, req, res, next) {
         logger.error(err);
+
         switch (err.message) {
             case 'Not allowed by CORS':
                 logger.error("cors error");

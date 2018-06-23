@@ -1,11 +1,11 @@
 "use strict";
 
 var async = require('async');
-var nconf = require('nconf');
 var _ = require('lodash');
 var Shortcut = require('../cache/shortcut');
 var SocketAdapter = require('../socket.io/socketAdapter');
 var utils = require('../utils');
+var Op = require('sequelize').Op;
 
 var shortcutController = module.exports;
 
@@ -106,7 +106,7 @@ shortcutController.listAll = function (req, res, next) {
     if (!csid) return res.json({code: 9000, msg: 'csid_null'});
 
     var condition = {
-        $or: [
+        [Op.or]: [
             getCondition(''),
             getCondition(csid)
         ]

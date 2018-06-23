@@ -18,10 +18,7 @@ var Sockets = module.exports;
 Sockets.init = function (server) {
     winston.info("start init socket.io!");
     var socketIO = require('socket.io');
-    io = new socketIO({
-        "pingInterval": nconf.get('socket.io:pingInterval'),
-        "pingTimeout": nconf.get('socket.io:pingTimeout')
-    });
+    io = new socketIO();
 
     sessionStore = server.sessionStore();
 
@@ -34,7 +31,9 @@ Sockets.init = function (server) {
     }
 
     io.listen(server, {
-        transports: nconf.get('socket.io:transports')
+        "pingInterval": nconf.get('socket.io:pingInterval'),
+        "pingTimeout": nconf.get('socket.io:pingTimeout'),
+        "transports": nconf.get('socket.io:transports')
     });
 
     Sockets.server = io;
@@ -127,6 +126,10 @@ function listening() {
 
         socket.on('c.offlineMsg', function(cid, msg, fn) {
             customerEvents.offlineMessage(cid, msg, fn);
+        });
+
+        socket.on('c.timeout', function(cid) {
+            customerEvents.timeout(cid);
         });
 
         socket.on('c.rate', function(cid, value, fn) {
