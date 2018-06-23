@@ -94,13 +94,23 @@ class Login extends Component{
         let { getFieldDecorator } = this.props.form;
         return (
             <div className="login-section">
-                <div className="login-header"><a href="/"></a></div>
+                <div className="login-header"><a href="/"> </a></div>
                 <div className="login-body">
                     <Form onSubmit={this.handleSubmit} className="login-form">
                         <FormItem>
                              {
                                 getFieldDecorator('userName', {
-                                    rules: [{type: 'email', message: 'The input is not valid Email!'},{ required: true, message: 'Please input your email!' }]
+                                    rules: [{type: 'email', message: 'The input is not valid Email!'},
+                                        {
+                                            validator (rule, values, callback) {
+                                                if (values && values.indexOf(' ') > -1) {
+                                                    return callback('The input cannot contain whitepsaces.');
+                                                } else {
+                                                    callback();
+                                                }
+                                            }
+                                        },
+                                        { required: true, message: 'Please input your email!' }]
                                 })(
                                     <Input size="large" prefix={<Icon type="mail" style={{ fontSize: 18 }} />} placeholder="Email Address" />
                                 )

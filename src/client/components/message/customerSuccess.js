@@ -54,6 +54,7 @@ class CustomerSuccess extends Component{
         sio.on('cs.dispatch', this.csDispatch);
         sio.on('cs.need.login', this.csNeedLogin);
         sio.on('c.message', this.cMessage);
+        sio.on('c.timeout', this.deleteChat);
         sio.on('c.disconnect', this.cDisconnect);
         sio.on('cs.customer.offline', this.csCustomerOffline);
         sio.on('cs.shortcut', this.csShortcuts);
@@ -262,7 +263,7 @@ class CustomerSuccess extends Component{
 
             socket.emit(messageEvent, cid, msg, function (success) {
                 if (success) {
-                    document.querySelector('.t-' + d.getTime()).className += ' done';
+                   document.querySelector('.t-' + d.getTime()).className += ' done';
                 }
             });
 
@@ -322,7 +323,19 @@ class CustomerSuccess extends Component{
 
     csShortcuts = (action, shortcut) => {
         shortcut.action = action;
-        localStorage.setItem('newShortcut', JSON.stringify(shortcut));
+        let shortList = JSON.parse(localStorage.getItem('shortcutList'));
+        let hasExist = false;
+
+        if (action === 'INSERT') {
+            for (let i = 0, l = shortList.length; i < l; i++) {
+                if (shortList[i].shortcut === shortcut.shortcut) {
+                    hasExist = true;
+                    break;
+                }
+            }
+        }
+
+        !hasExist && localStorage.setItem('newShortcut', JSON.stringify(shortcut));
     };
 
     rateFeedBack = () => {

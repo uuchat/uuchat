@@ -49,7 +49,7 @@ class ChatSearch extends Component{
             isViewMore: false
         };
     }
-    componentWillMount() {
+    componentDidMount() {
         let search = window.location.href;
         let content = '';
 

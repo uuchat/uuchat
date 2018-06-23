@@ -12,7 +12,6 @@ class ChatSend extends Component{
     constructor(props){
         super(props);
         this.state = {
-            isSendReady: false,
             isEmojiShow: false,
             isShowProcess: false,
             isShortShow: false,
@@ -55,8 +54,7 @@ class ChatSend extends Component{
             this.props.sendMessage(cutStr(msg, 256));
             this.setState({
                 isEmojiShow: false,
-                textereaValue: "",
-                isSendReady: true
+                textereaValue: ""
             });
         }
 
@@ -95,7 +93,7 @@ class ChatSend extends Component{
 
         if (keyCode === 9 || keyCode === 13) {
             if (document.querySelector('.short-list .on')) {
-                this.insertToCursorPosition(val.replace(new RegExp(shortcutWord, 'g'), ' '), document.querySelector('.short-list .on .key-value').innerHTML+' ');
+                this.insertToCursorPosition(val.replace(new RegExp(shortcutWord, 'g'), ''), document.querySelector('.short-list .on .key-value').innerHTML+' ');
             }
             this.setState({
                 isShortShow: false
@@ -189,11 +187,11 @@ class ChatSend extends Component{
             let sel = document.selection.createRange();
             sel.text = s2;
         } else if (typeof obj.selectionStart === 'number' && typeof obj.selectionEnd === 'number') {
-            let startPos = obj.selectionStart,
-                endPos = obj.selectionEnd,
-                cursorPos = startPos,
-                tmpStr = s1,
-                s3 = tmpStr.substring(0, startPos) + s2 + tmpStr.substring(endPos, tmpStr.length);
+            let startPos = obj.selectionStart;
+            let endPos = obj.selectionEnd;
+            let cursorPos = startPos;
+            let tmpStr = s1;
+            let s3 = tmpStr.substring(0, startPos) + s2 + tmpStr.substring(endPos, tmpStr.length);
 
             this.setState({
                 textereaValue: s3
@@ -241,7 +239,7 @@ class ChatSend extends Component{
 
     render(){
         let {sendMessage, cid, csid} = this.props;
-        let {percent, isShowProcess, isEmojiShow, isSendReady, textereaValue, isShortShow, matchText} = this.state;
+        let {percent, isShowProcess, isEmojiShow, textereaValue, isShortShow, matchText} = this.state;
         let _self = this;
         let props = {
                 name: 'image',
@@ -291,7 +289,7 @@ class ChatSend extends Component{
                     <div className="tool-box tool-emoji">
                         <Icon onClick={this.emojiBtnHandle} className={"emoji-icon "+(isEmojiShow ? 'active' : '')} />
                         {
-                            isEmojiShow &&  <EmojiPicker addEmojiHandle={this.addEmojiHandle} />
+                            isEmojiShow &&  <EmojiPicker addEmojiHandle={this.addEmojiHandle} onChange={this.addEmojiHandle} />
                         }
                     </div>
                     <div className="tool-box">
@@ -308,7 +306,7 @@ class ChatSend extends Component{
                 <Input.TextArea
                     className="chat-textarea"
                     onPressEnter={this.sendMessage}
-                    placeholder={isSendReady ? "" : "Enter message.Type ;to bring up shortcuts."}
+                    placeholder="Enter message.Type ; to bring up shortcuts."
                     onChange={this.textChangeHandle}
                     onKeyUp={this.onKeyup}
                     onKeyDown={this.onKeyDown}

@@ -9,7 +9,7 @@ export default (loader, collection) => (
             this.state = { Component: AsyncComponent.Component };
         }
 
-        componentWillMount() {
+        componentDidMount() {
             if (!this.state.Component) {
                 loader().then((Component) => {
                     AsyncComponent.Component = Component;

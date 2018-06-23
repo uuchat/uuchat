@@ -78,7 +78,7 @@ class Login extends Component{
         let { getFieldDecorator } = this.props.form;
         return (
             <div className="login-section">
-                <div className="login-header"><a href="/"></a></div>
+                <div className="login-header"><a href="/"> </a></div>
                 <div className="login-body">
                     <Form onSubmit={this.handleSubmit} className="login-form">
                         <FormItem>

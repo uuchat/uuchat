@@ -32,7 +32,7 @@ class ChatHistory extends Component{
 
     }
 
-    componentWillUpdate(nextProps, nextState) {
+    UNSAFE_componentWillUpdate(nextProps, nextState) {
 
         let {cid, chatsArr} = nextProps.historyChat;
         let {historyChatLists} = this.state;

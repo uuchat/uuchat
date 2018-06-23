@@ -98,7 +98,7 @@ class Theme extends Component {
         } else if (type === 'photo') {
             photoLists.map((i) => {
                 lists.push(<span data-value={'photo::'+i.big} style={{backgroundImage: 'url('+i.thumb+')'}}>{
-                    <a  target="_blank" href={"https://unsplash.com/@"+i.username+"?utm_source=uuchat&utm_medium=referral&utm_campaign=api-credit"}>{i.name}</a>
+                    <a  target="_blank" href={"https://unsplash.com/@"+i.username+"?utm_source=uuchat&utm_medium=referral&utm_campaign=api-credit"} rel="noopener noreferrer">{i.name}</a>
                 }</span>);
             });
         } else if (type === 'system') {
@@ -116,7 +116,7 @@ class Theme extends Component {
                     </div>
                     <div className="menu-item">
                         <img src="../../static/images/pictures.jpg" alt="" data-type="photo" onClick={this.backgroundTypeSelect}/>
-                        <h3>Photos by <a href="https://unsplash.com/?utm_source=uuchat&utm_medium=referral&utm_campaign=api-credit" target="_blank">Unsplash</a></h3>
+                        <h3>Photos by <a href="https://unsplash.com/?utm_source=uuchat&utm_medium=referral&utm_campaign=api-credit" target="_blank" rel="noopener noreferrer">Unsplash</a></h3>
                     </div>
                     <div className="menu-item">
                         <img src="../../static/images/systems.png" alt="" data-type="system" onClick={this.backgroundTypeSelect}/>
