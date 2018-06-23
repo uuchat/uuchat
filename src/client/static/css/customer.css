@@ -37,7 +37,7 @@
     position: fixed;
     right: 20px;
     bottom: 80px;
-    z-index:1999;
+    z-index:2999;
     width: 400px;
     background-color: #fff;
     border-radius: 10px 10px 5px 5px;
@@ -302,18 +302,6 @@
     background-color: #e9eaeb;
     border-radius: 0 0 10px 10px;
 }
-.chat-console  .chat-send .send-pre{
-    padding: 16px 0px;
-    font-size: 13px;
-    line-height: 16px;
-    display: block;
-    width: 100%;
-    height: 100%;
-    line-height: 16px;
-    visibility:hidden;
-    white-space: pre-wrap;
-    word-wrap: break-word;
-}
 .chat-console  .chat-send-text{
     position: absolute;
     left: 0;
@@ -343,7 +331,6 @@
     white-space: pre-wrap;
     overflow:hidden;
     background-color: #e9eaeb;
-    border-top: 1px solid transparent;
     border-radius: 0 0 5px 5px;
     -webkit-transition: background-color .2s ease,box-shadow .2s ease;
     transition: background-color .2s ease,box-shadow .2s ease;
@@ -385,34 +372,61 @@
 }
 .chat-console .emoji-lists{
     position: absolute;
-    bottom: 41px;
-    right: 0;
-    padding: 5px;
-    width: 220px;
+    bottom: 43px;
+    right: 20px;
+    width: 360px;
     height: 170px;
-    overflow-y: auto;
-    border-radius: 5px 0 0 0;
-    border:1px solid #e8e8e8;
+    border-radius: 6px;
+    border:1px solid rgba(0, 0, 0, 0.1);
     background-color: #fff;
-    border-bottom: none;
+    box-shadow: 0 1px 15px 1px rgba(0,0,0,.12);
+}
+.chat-console .emoji-lists .emoji-picker-lists{
+    padding: 5px;
+    width: 360px;
+    height: 165px;
+    overflow-y: auto;
+    text-align: left;
+}
+.chat-console .emoji-lists .emoji-picker-lists::-webkit-scrollbar{
+    display: none;
+}
+.chat-console .emoji-lists .arrow{
+    display: inline-block;
+    position: absolute;
+    bottom: -20px;
+    right: 17px;
+    border-left: 8px solid transparent;
+    border-top: 10px solid #fff;
+    border-right: 8px solid transparent;
+    border-bottom: 10px solid transparent;
 }
 .chat-console  .emoji-lists.emoji-lists-hidden{
     display: none;
 }
+.chat-console  .emoji-lists .emoji-title{
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+}
 .chat-console .emoji-lists .emoji-item{
     display: inline-block;
-    float: left;
-    width: 25px;
-    height: 25px;
-    line-height: 25px;
+    margin: 3px 7px;
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
     text-align: center;
     cursor: pointer;
-    font-size: 18px;
+    font-size: 22px;
     font-family: "Apple Color Emoji","Segoe UI Emoji","NotoColorEmoji","Segoe UI Symbol","Android Emoji","EmojiSymbols";
     color: #1f8ceb;
+    overflow: hidden;
 }
 .chat-console .emoji-lists .emoji-item:hover{
-    font-size: 20px;
+    font-size: 28px;
 }
 .chat-console  .chat-upload{
     display: none;
@@ -601,6 +615,103 @@
 }
 .chat-main .email-notify.error .email-error{
     display: block;
+}
+.chat-main .sys-msg{
+    overflow-x: hidden;
+}
+.chat-main .sys-msg a{
+    text-decoration: underline;
+    color: #1f8ceb;
+}
+.chat-main .sys-msg a:hover{
+    opacity: 0.8;
+}
+.chat-main .sys-msg .sys-msg-item{
+    display: inline-block;
+    padding: 8px;
+    margin-bottom: 12px;
+    background: #f2f2f2;
+    border-radius: 4px;
+    overflow: hidden;
+    -webkit-font-smoothing: antialiased;
+}
+.chat-main .sys-msg{
+    padding-bottom: 12px;
+}
+.chat-main .sys-msg .sys-faq{
+    display: inline-block;
+    padding: 4px 16px;
+    margin: 8px;
+    border: 1px solid #777777;
+    border-radius: 100%;
+    color: #1f8ceb;
+    text-align: center;
+    cursor: pointer;
+}
+.chat-main .sys-msg .sys-faq:hover{
+    background: #1f8ceb;
+    color: #ffffff;
+}
+.chat-main .sys-msg .sys-msg-no{
+    display: inline-block;
+    background: #d7d7d7;
+    padding: 12px;
+    color: #212121;
+}
+.chat-main .sys-msg .sys-collection-item{
+    display: inline-block;
+    padding: 8px 4px;
+    width: 30%;
+    height: 38px;
+    margin: 1%;
+    border: 1px solid #9E9E9E;
+    color: #1f8ceb;
+    cursor: pointer;
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-decoration: none;
+    border-radius: 4px;
+}
+.chat-main .sys-msg .sys-collection-item:hover{
+    background: #1f8ceb;
+    color: #ffffff;
+}
+.chat-main .sys-msg .sys-issue-item{
+    display: inline-block;
+    margin-bottom: 8px;
+    padding: 4px 8px;
+    color: #1f8ceb;
+    font-weight: bold;
+    cursor: pointer;
+    border: 1px solid #f2f2f2;
+    -webkit-transition: padding 0.3s linear;
+    transition: padding 0.3s linear;
+}
+.chat-main .sys-msg .sys-issue-back{
+    vertical-align: bottom;
+    color: #616161;
+}
+.chat-main .sys-msg .issue-arrow{
+    font-size: 18px;
+    font-style: normal;
+}
+.chat-main .sys-msg .sys-issue-item:hover{
+    padding-left: 16px;
+    background: #f2f2f2;
+}
+.chat-main .sys-issue-btn span{
+    display: inline-block;
+    padding: 16px;
+    margin-right: 16px;
+    border: 1px solid #bdbdbd;
+    color: #1f8ceb;
+    border-radius: 100%;
+    cursor: pointer;
+}
+.chat-main .sys-issue-btn span:hover{
+    background: #1f8ceb;
+    color: #ffffff;
 }
 @media screen and (max-height:768px){
     .chat-console .chat-body{

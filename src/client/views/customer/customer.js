@@ -65,7 +65,7 @@
                 var xhr = new XMLHttpRequest() || new ActiveXObjcet('Microsoft.XMLHTTP');
 
                 xhr.onreadystatechange = function() {
-                    if (xhr.readyState == 4) {
+                    if (xhr.readyState === 4) {
                         var status = xhr.status;
                         if (status >= 200 && status < 300) {
                             var response = '';
@@ -89,7 +89,7 @@
                 xhr.upload.onprogress = params.progress;
                 params.error && (xhr.onerror = params.error);
 
-                if (params.type == 'GET') {
+                if (params.type === 'GET') {
                     xhr.open(params.type, params.url + '?' + params.data, true);
                     options.beforeSend && options.beforeSend(xhr);
                     xhr.send(null);
@@ -212,6 +212,61 @@
             } else {
                 obj.value += s2;
             }
+        },
+        autoTextarea: function (elem, extra, maxHeight) {
+            extra = extra || 0;
+
+            var minHeight = parseFloat(getStyle('height'));
+
+            function getStyle(name) {
+                if (elem.currentStyle) {
+                    var val = elem.currentStyle[name];
+
+                    if (name === 'height' && val.search(/px/i) !== 1) {
+                        var rect = elem.getBoundingClientRect();
+                        return rect.bottom - rect.top -
+                            parseFloat(getStyle('paddingTop')) -
+                            parseFloat(getStyle('paddingBottom')) + 'px';
+                    }
+
+                    return val;
+                } else {
+                    return getComputedStyle(elem, null)[name];
+                }
+            }
+
+            function change() {
+                var  height;
+                var  padding = 0;
+                var  style = elem.style;
+
+                if (elem._length === elem.value.length){
+                    return;
+                }
+
+                elem._length = elem.value.length;
+                elem.style.height = minHeight + 'px';
+                U.$('.chat-send-text').style.height = minHeight + 'px';
+                if (elem.scrollHeight > minHeight) {
+                    if (maxHeight && elem.scrollHeight > maxHeight) {
+                        height = maxHeight - padding;
+                        style.overflowY = 'auto';
+                    } else {
+                        height = elem.scrollHeight - padding;
+                        style.overflowY = 'hidden';
+                    }
+
+                    style.height = height + extra + 'px';
+                    elem.currHeight = parseInt(style.height);
+                    U.$('.chat-send-text').style.height = height + extra + 'px';
+                }
+            }
+
+            this.addEvent(elem, 'propertychange', change);
+            this.addEvent(elem, 'input', change);
+            this.addEvent(elem, 'focus', change);
+
+            change();
         }
     };
 
@@ -219,7 +274,7 @@
         domain: (win.UUCHAT && win.UUCHAT.domain) || '',
         socket: null,
         timeStart: U.dateISOFomat(new Date()).getTime(),
-        timeOutSeconds: 2700000,
+        timeOutSeconds: 2700 * 1000,
         timeOutTimer: null,
         msgPageNum: 1,
         isLoadingMsg: false,
@@ -290,10 +345,11 @@
             CHAT.socket.on('cs.action.rate', this.socketActionRate);
 
             U.addEvent(window, 'offline', function(){
-                CHAT.socket && CHAT.socket.close();
+                CHAT.socket && (CHAT.socket = null);
             });
             U.addEvent(window, 'online', function(){
-                CHAT.socket ? CHAT.socket.open() : CHAT.createSocket();
+                CHAT.socket && (CHAT.socket = null);
+                CHAT.createSocket();
             });
         },
         template: function(){
@@ -311,7 +367,6 @@
         tempSend: function(){
             var str = '<div class="chat-send">';
             str += '<div class="chat-send-text">';
-            str += '<pre class="send-pre"> </pre>';
             str += '<textarea placeholder="Input text and Press Enter" class="chat-send-area" maxlength="256" type="text"></textarea>';
             str += '<div class="chat-send-btns">';
             str += this.tempEmoji();
@@ -325,11 +380,15 @@
         },
         tempEmoji: function(){
 
-            var str = '<div class="emoji-lists emoji-lists-hidden">';
-            for (var i = 0, l = CHATemo.length; i < l; i++) {
-                str += '<span class="emoji-item" title="'+CHATemo[i].name+'">'+CHATemo[i].text+' </span>';
+            var str = '<div class="emoji-lists emoji-lists-hidden"><i class="arrow"></i><div class="emoji-picker-lists">';
+
+            for (var key in ChatEmojis) {
+                str += '<span class="emoji-title">'+key+'</span>';
+                for (var i = 0, l = ChatEmojis[key].length; i < l; i++) {
+                    str += '<span class="emoji-item" title="'+ChatEmojis[key][i].name+'">'+ChatEmojis[key][i].text+' </span>';
+                }
             }
-            str +='</div>';
+            str +='</div></div>';
             return str;
         },
         tempEmail: function(){
@@ -357,12 +416,40 @@
 
             return str;
         },
+        tempSystemMsg: function (msg, type) {
+
+            var sysMsg = U.$('.sys-msg');
+            var chatMsg =  U.$('.chat-msg');
+            var sysMsgStr = '<div class="sys-msg">';
+
+            if (sysMsg) {
+                (type === 'INITIALIZE') && (sysMsg.innerHTML = '');
+                sysMsg.innerHTML += this.tempSystemMsgItem(msg);
+            } else {
+                sysMsgStr += this.tempSystemMsgItem(msg);
+                chatMsg.innerHTML += sysMsgStr;
+            }
+
+            if (type === 'FAQ') {
+                sysMsgStr = '<div class="sys-msg-btn">';
+                sysMsgStr += '<span class="sys-faq sys-faq-yes">YES, <br /> I want</span>';
+                sysMsgStr += '<span class="sys-faq sys-faq-no">No, I just <br /> browing</span>';
+                sysMsgStr += '</div>';
+
+                sysMsg.innerHTML += sysMsgStr;
+            }
+
+            chatMsg.scrollTop = chatMsg.scrollHeight;
+        },
+        tempSystemMsgItem: function (msg) {
+            return '<div class="sys-msg-item">' + msg + '</div>';
+        },
         tempMsgItem: function(type, msg, t){
             var str = '';
             var cls = '';
             var name = '';
-            var hour = '';
-            var minute = '';
+            var hour;
+            var minute;
             var isOld = false;
 
             if (typeof t === 'number') {
@@ -469,7 +556,7 @@
                         var msg = data[i];
                         if (msg.type !== 3 && msg.type !== 4) {
                             diffTime = msg.createdAt.split('T')[0];
-                            if (curTime != diffTime) {
+                            if (curTime !== diffTime) {
                                 curTime = diffTime;
                                 msgList += CHAT.msgHistoryTime(msg.createdAt);
                             }
@@ -485,9 +572,7 @@
         },
         msgHistoryTime: function (time) {
 
-            var dateStr = '';
-
-            dateStr = time.split('T')[0];
+            var dateStr = time.split('T')[0];
             U.$('.time-'+dateStr) && U.$('.time-'+dateStr).parentNode.removeChild(U.$('.time-'+dateStr));
 
             return '<p class="chat-time time-'+dateStr+'"><i>'+dateStr.split('-').reverse().join('/')+'</i></p>';
@@ -620,6 +705,37 @@
                     CHAT.rateSend(target);
                     return false;
                 }
+
+                if (classNames.indexOf('sys-faq-no') > -1) {
+                    CHAT.renderFAQFish();
+                    return false;
+                }
+
+                if (classNames.indexOf('sys-faq-yes') > -1 || classNames.indexOf('sys-issue-back') > -1) {
+                    CHAT.getFAQData(CHAT.domain + '/faqs/collections', CHAT.renderFAQCollections);
+                    return false;
+                }
+
+                if (classNames.indexOf('sys-collection-item') > -1) {
+                    CHAT.getFAQData(CHAT.domain + '/faqs/collection/' + target.getAttribute('data-id') + '/issues', CHAT.renderIssue);
+                    return false;
+                }
+
+                if (classNames.indexOf('sys-issue-item') > -1) {
+                    CHAT.getFAQData(CHAT.domain + '/faqs/' + target.getAttribute('data-id') + '/answer/', CHAT.renderAnswer);
+                    return false;
+                }
+
+                if (classNames.indexOf('sys-answer-go') > -1) {
+                    CHAT.getFAQData(CHAT.domain + '/faqs/collections', CHAT.renderFAQCollections);
+                    return false;
+                }
+
+                if (classNames.indexOf('sys-answer-leave') > -1) {
+                    CHAT.renderFAQFish();
+                    return false;
+                }
+
             }
 
             function msgMainMouseOverHandle(event) {
@@ -648,19 +764,68 @@
             var resendMsg = obj.parentNode.innerHTML.replace('<span class="resend-btn" title="Click to resend">!</span>', '');
             CHAT.socketEmitMessage(U.cutStr(resendMsg, 256));
         },
+        getFAQData: function (url, cb) {
+            U.ajax({
+                url: url,
+                type: 'GET',
+                success: function (d) {
+                    var d = JSON.parse(d);
+                    if (d.code === 200) {
+                        cb && cb(d.msg);
+                    }
+                }
+            });
+        },
+        renderFAQ: function () {
+            CHAT.tempSystemMsg("Question, feedback? Let us know on below!", "");
+            CHAT.tempSystemMsg("Search FAQ quickly?", "FAQ");
+        },
+        renderFAQCollections: function (arr) {
+            if (arr.length <= 0) {
+                CHAT.renderFAQFish();
+                return false;
+            }
+            var str = '<div class="sys-collection-list">';
+            str += CHAT.tempSystemMsgItem("Got it, What would you like to know more about?");
+            for (var i = 0, l = arr.length; i < l; i++) {
+                str += '<a class="sys-collection-item" data-id="'+arr[i].collection_id+'" title="'+arr[i].collection+'">' + arr[i].collection + '</a>';
+            }
+            str += '</div>';
+            U.$('.sys-msg').innerHTML = str;
+        },
+        renderIssue: function (arr) {
+            var str = '<div class="sys-issue-list">';
+            str += CHAT.tempSystemMsgItem("Hey there! we found some links that may be helpful");
+            for (var i = 0, l = arr.length; i < l; i++) {
+                str += '<p><span class="sys-issue-item" data-id="'+arr[i].uuid+'">' + (i + 1) + '.' + arr[i].issue + '</span></p>';
+            }
+            str += '<p><span class="sys-issue-item sys-issue-back"><i class="issue-arrow">&#139;</i> Back</span></p>';
+            str += '</div>';
+            U.$('.sys-msg').innerHTML = str;
+        },
+        renderAnswer: function (answer) {
+            var str = '<div class="sys-issue-list">';
+            str += CHAT.tempSystemMsgItem(CHAT.msgFilter(answer));
+            str += '<div class="sys-issue-btn">';
+            str += '<span class="sys-answer-go">Go on!</span>';
+            str += '<span class="sys-answer-leave">Leave!</span>';
+            str += '</div>';
+            str += '</div>';
+            U.$('.sys-msg').innerHTML = str;
+        },
+        renderFAQFish: function () {
+            U.$('.sys-msg') && (U.$('.sys-msg').innerHTML = '<div class="sys-msg-no">Thanks for you visit!</div>');
+        },
         notifyEmail: function (action) {
-
             var notify = U.$('.email-notify');
-
             if (action === 'send') {
                 send();
             } else if(action === 'focus') {
                 focus();
             }
-
             function send() {
                 var email = U.$('.email-input').value.replace(/^\s$/g, '');
-                if (email == '' || !/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)) {
+                if (email === '' || !/^[0-9a-z_A-Z.\\-]+@(([0-9a-zA-Z]+)[.]){1,2}[a-z]{2,3}$/g.test(email)) {
                     U.addClass(U.$('.email-notify'), 'error');
                     return false;
                 }
@@ -682,6 +847,7 @@
                         var d = JSON.parse(d);
                         if (d.code === 200) {
                             notify.innerHTML = "<h4>You'll be notified here and by email</h4><h5>"+email+"</h5>";
+                            CHAT.renderFAQ();
                         }
                     }
                 });
@@ -725,7 +891,8 @@
                 var timeNow = U.dateISOFomat(new Date()).getTime();
                 if(timeNow - CHAT.timeStart > CHAT.timeOutSeconds){
                     clearInterval(CHAT.timeOutTimer);
-                    CHAT.socket && CHAT.socket.close();
+                    CHAT.socket && CHAT.socket.emit('c.timeout', CHAT.cid);
+                    CHAT.chatState = 3;
                 }
             }, 5000);
         },
@@ -734,6 +901,7 @@
         },
         socketDisconnect: function(){
             clearInterval(CHAT.timeOutTimer);
+            CHAT.chatState = 3;
             U.$('.chat-name').innerHTML = CHAT.csName;
         },
         socketSelectSuccess: function (data) {
@@ -748,7 +916,6 @@
 
                 if (tg.tagName.toLowerCase() === 'span') {
                     U.insertToCursorPosition(U.$('.chat-send-area'), U.$('.chat-send-area').value, tg.innerHTML);
-                    U.$('.send-pre').innerHTML += tg.innerHTML;
                 }
             });
             U.addEvent(U.$('.emoji-lists'), 'mouseleave', function(e){
@@ -760,7 +927,7 @@
                 var _self = this;
                 var data = new FormData();
                 var fileName = e.target.files[0];
-                var fileSize = 0;
+                var fileSize;
                 var imgUploadUrl = CHAT.domain+'/messages/customer/'+CHAT.cid+'/cs/'+CHAT.csid+'/image?f=c';
 
                 if(!fileName){
@@ -827,37 +994,28 @@
 
             this.msgScroll();
 
+            U.autoTextarea(U.$('.chat-send-area'));
+
             U.addEvent(U.$('.chat-send-area'), 'keydown', function(e){
                 var e = e || win.event;
-                var val = '';
-                var _self = this;
                 var keyCode = e.keyCode ? e.keyCode : e.which;
+                var val = this.value.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;");
 
-                setTimeout(function () {
-                    val = _self.value.replace(/>/g, "&gt;").replace(/^\s$/g, "").replace(/</g, "&lt;");
+                if (13 === keyCode) {
 
-                    if (val.length > 0 && !/^(&nbsp;)*$/g.test(val)) {
-                        U.$('.send-pre').innerHTML = val;
-                    } else {
-                        _self.value = '';
-                        U.$('.send-pre').innerHTML = '';
+                    if (val && !/^#*$/g.test(val)) {
+                        CHAT.socketSendMessage(val);
+                        U.addClass(U.$('.emoji-lists'), 'emoji-lists-hidden');
+                        this.focus();
+                        this.value = '';
+
+                        U.$('.chat-send-text').style.height = '50px';
+                        U.$('.chat-send-area').style.height = '50px';
                     }
 
-                    if (13 === keyCode) {
-                        if (val && !/^#*$/g.test(val)) {
-                            CHAT.socketSendMessage(val);
-                            U.addClass(U.$('.emoji-lists'), 'emoji-lists-hidden');
-                        }
-                        _self.value = '';
-                        U.$('.send-pre').innerHTML = '';
-                        e.returnValue && (e.returnValue = false);
-                        e.preventDefault && e.preventDefault();
-                    }
-                }, 10);
-
-            });
-            U.addEvent(U.$('.chat-send-area'), 'blur', function(e){
-                U.$('.send-pre').innerHTML = this.value.replace(/^\s$/g, '');
+                    e.returnValue && (e.returnValue = false);
+                    e.preventDefault && e.preventDefault();
+                }
             });
 
             function showUploadImageTips(text) {
@@ -932,7 +1090,6 @@
                     }
                 };
             }
-
             if (CHAT.chatState === 3) {
                 CHAT.socket.emit('c.offlineMsg', CHAT.cid, msg, function(success){
                     if ( /^content\/upload\//g.test(msg)) {
@@ -941,24 +1098,29 @@
                         U.addClass(U.$('.t-'+d), 'done');
                     }
 
+                    var currentTime = U.dateISOFomat(new Date()).getTime();
+
                     if (!U.$('.email-notify')) {
                         CHAT.msgTranslate({
                             type: 1,
                             msg: "save typically replies in a few hours",
-                            time: U.dateISOFomat(new Date()).getTime()
+                            time: currentTime
                         });
                         CHAT.msgTranslate({
                             type: 1,
                             msg: "Give them a way to reach you: ",
-                            time: U.dateISOFomat(new Date()).getTime()
+                            time: currentTime
                         });
                         CHAT.msgTranslate({
                             type: 8,
                             msg: 'Offline email',
-                            time: U.dateISOFomat(new Date()).getTime()
+                            time: currentTime
                         });
-                    }
 
+                        if (CHAT.email) {
+                            CHAT.renderFAQ();
+                        }
+                    }
                 });
                 return false;
             }
@@ -1028,10 +1190,237 @@
     CHAT.init();
 
 })(window, document);
-var CHATemo=[{name:"grinning-smile-eyes",text:"\ud83d\ude01",code:"U+1F601"},{name:"tears-of-joy",text:"\ud83d\ude02",code:"U+1F602"},{name:"smiling-open-mouth",text:"\ud83d\ude03",code:"U+1F603"},{name:"smiling-mouth-eyes",text:"\ud83d\ude04",code:"U+1F604"},{name:"smiling-cold-sweat",text:"\ud83d\ude05",code:"U+1F605"},{name:"smiling-closed-eyes",text:"\ud83d\ude06",code:"U+1F606"},{name:"winking",text:"\ud83d\ude09",code:"U+1F609"},{name:"smiling-eyes",text:"\ud83d\ude0a",code:"U+1F60A"},{name:"delicious-food",
-    text:"\ud83d\ude0b",code:"U+1F60B"},{name:"relieved",text:"\ud83d\ude0c",code:"U+1F60C"},{name:"heart-shaped",text:"\ud83d\ude0d",code:"U+1F60D"},{name:"smirking",text:"\ud83d\ude0f",code:"U+1F60F"},{name:"unamused",text:"\ud83d\ude12",code:"U+1F612"},{name:"cold-sweat",text:"\ud83d\ude13",code:"U+1F613"},{name:"pensive",text:"\ud83d\ude14",code:"U+1F614"},{name:"confounded",text:"\ud83d\ude16",code:"U+1F616"},{name:"throwing-kiss",text:"\ud83d\ude18",code:"U+1F618"},{name:"kissing-closed-eyes",text:"\ud83d\ude1a",
-    code:"U+1F61A"},{name:"stuck-out-tongue",text:"\ud83d\ude1c",code:"U+1F61C"},{name:"tightly-closed-eyes",text:"\ud83d\ude1d",code:""},{name:"disappointed",text:"\ud83d\ude1e",code:"U+1F61E"},{name:"angry",text:"\ud83d\ude20",code:"U+1F620"},{name:"pouting",text:"\ud83d\ude21",code:"U+1F621"},{name:"crying",text:"\ud83d\ude22",code:"U+1F622"},{name:"persevering",text:"\ud83d\ude23",code:"U+1F623"},{name:"look-of-triumph",text:"\ud83d\ude24",code:"U+1F624"},{name:"disappointed-relieved",text:"\ud83d\ude25",
-    code:"U+1F625"},{name:"fearful",text:"\ud83d\ude28",code:"U+1F628"},{name:"weary",text:"\ud83d\ude29",code:"U+1F629"},{name:"sleepy",text:"\ud83d\ude2a",code:"U+1F62A"},{name:"tired",text:"\ud83d\ude2b",code:"U+1F62B"},{name:"loudly-crying ",text:"\ud83d\ude2d",code:"U+1F62D"},{name:"mouth-cold-sweat",text:"\ud83d\ude30",code:"U+1F630"},{name:"screaming-in-fear",text:"\ud83d\ude31",code:"U+1F631"},{name:"astonished",text:"\ud83d\ude32",code:"U+1F632"},{name:"flushed",text:"\ud83d\ude33",code:"U+1F633"},
-    {name:"dizzy",text:"\ud83d\ude35",code:"U+1F635"},{name:"medical-mask",text:"\ud83d\ude37",code:"U+1F637"},{name:"hands-in-celebration",text:"\ud83d\ude4c",code:"U+1F64C"},{name:"folded-hands",text:"\ud83d\ude4f",code:"U+1F64F"},{name:"raised-first",text:"\u270a\ufe0f",code:"U+270A"},{name:"raised-hand",text:"\u270b\ufe0f",code:"U+270B"},{name:"victory-hand",text:"\u270c\ufe0f",code:"U+270C"},{name:"ok-hand-sign",text:"\ud83d\udc4c",code:"U+1F44C"},{name:"waving-hand-sign",text:"\ud83d\udc4b",code:"U+1F44B"},{name:"thumbs-up-sign",
-        text:"\ud83d\udc4d",code:"U+1F44D"},{name:"clapping-hands-sign",text:"\ud83d\udc4f",code:"U+1F44F"},{name:"kiss-mark",text:"\ud83d\udc8b",code:"U+1F48B"}];
+var ChatEmojis = {
+    people: [
+        {name: 'grinning-smile-eyes', text: '😁'},
+        {name: 'tears-of-joy', text: '😂'},
+        {name: 'smiling-open-mouth', text: '😃'},
+        {name: 'smiling-mouth-eyes', text: '😄'},
+        {name: 'smiling-cold-sweat', text: '😅'},
+        {name: 'smiling-closed-eyes', text: '😆'},
+        {name: 'winking', text: '😉', code: 'U+1F609'},
+        {name: 'smiling-eyes', text: '😊'},
+        {name: 'delicious-food', text: '😋'},
+        {name: 'relieved', text: '😌'},
+        {name: 'heart-shaped', text: '😍'},
+        {name: 'smirking', text: '😏'},
+        {name: 'unamused', text: '😒'},
+        {name: 'cold-sweat', text: '😓'},
+        {name: 'pensive', text: '😔'},
+        {name: 'confounded', text: '😖'},
+        {name: 'throwing-kiss', text: '😘'},
+        {name: 'kissing-closed-eyes', text: '😚'},
+        {name: 'stuck-out-tongue', text: '😜'},
+        {name: 'tightly-closed-eyes', text: '😝'},
+        {name: 'disappointed', text: '😞'},
+        {name: 'angry', text: '😠'},
+        {name: 'pouting', text: '😡'},
+        {name: 'crying', text: '😢'},
+        {name: 'persevering', text: '😣'},
+        {name: 'look-of-triumph', text: '😤'},
+        {name: 'disappointed-relieved', text: '😥'},
+        {name: 'fearful', text: '😨'},
+        {name: 'weary', text: '😩'},
+        {name: 'sleepy', text: '😪'},
+        {name: 'tired', text: '😫'},
+        {name: 'loudly-crying ', text: '😭'},
+        {name: 'mouth-cold-sweat', text: '😰'},
+        {name: 'screaming-in-fear', text: '😱'},
+        {name: 'astonished', text: '😲'},
+        {name: 'flushed', text: '😳'},
+        {name: 'dizzy', text: '😵'},
+        {name: 'medical-mask', text: '😷'},
+        {name: 'hands-in-celebration', text: '🙌'},
+        {name: 'folded-hands', text: '🙏'},
+        {name: 'raised-first', text: '✊'},
+        {name: 'raised-hand', text: '✋'},
+        {name: 'victory-hand', text: '✌️'},
+        {name: 'ok-hand-sign', text: '👌'},
+        {name: 'waving-hand-sign', text: '👋'},
+        {name: 'thumbs-up-sign', text: '👍'},
+        {name: 'clapping-hands-sign', text: '👏'}
+    ],
+    nature: [
+        {name: 'dog', text: '🐶'},
+        {name: 'wolf', text: '🐺'},
+        {name: 'cat', text: '🐱'},
+        {name: 'mouse', text: '🐭'},
+        {name: 'hamster', text: '🐹'},
+        {name: 'rabbit', text: '🐰'},
+        {name: 'frog', text: '🐸'},
+        {name: 'tiger', text: '🐯'},
+        {name: 'koala', text: '🐨'},
+        {name: 'bear', text: '🐻'},
+        {name: 'pig', text: '🐷'},
+        {name: 'cow', text: '🐮'},
+        {name: 'boar', text: '🐗'},
+        {name: 'monkey-face', text: '🐵'},
+        {name: 'monkey', text: '🐒'},
+        {name: 'horse', text: '🐴'},
+        {name: 'sheep', text: '🐑'},
+        {name: 'elephant', text: '🐘'},
+        {name: 'panda-face', text: '🐼'},
+        {name: 'penguin', text: '🐧'},
+        {name: 'bird', text: '🐦'},
+        {name: 'baby-chick', text: '🐤'},
+        {name: 'hatched-chick', text: '🐥'},
+        {name: 'hatching-chick', text: '🐣'},
+        {name: 'chicken', text: '🐔'},
+        {name: 'snake', text: '🐍'},
+        {name: 'turtle', text: '🐢'},
+        {name: 'bug', text: '🐛'},
+        {name: 'bee', text: '🐝'},
+        {name: 'ant', text: '🐜'},
+        {name: 'beetle', text: '🐞'},
+        {name: 'snail', text: '🐌'},
+        {name: 'lion-face', text: '🦁'},
+        {name: 'unicorn-face', text: '🦄'},
+        {name: 'spider', text: '🕷'},
+        {name: 'cherry-blossom', text: '🌸'},
+        {name: 'tulip', text: '🌷'},
+        {name: 'four-leaf-clover', text: '🍀'},
+        {name: 'rose', text: '🌹'},
+        {name: 'sunflower', text: '🌻'},
+        {name: 'hibiscus', text: '🌺'},
+        {name: 'maple-leaf', text: '🍁'},
+        {name: 'leaves', text: '🍃'},
+        {name: 'first-quarter-moon', text: '🌓'},
+        {name: 'moon', text: '🌔'},
+        {name: 'full-moon', text: '🌕'},
+        {name: 'earth-asia', text: '🌏'},
+        {name: 'volcano', text: '🌋'},
+        {name: 'milky-way', text: '🌌'},
+        {name: 'stars', text: '🌠'},
+        {name: 'sun-behind-large-cloud', text: '🌥'},
+        {name: 'cloud-with-rain', text: '🌧'},
+        {name: 'cloud-with-lightning', text: '🌩'}
+    ],
+    objects: [
+        {name: 'bamboo', text: '🎍'},
+        {name: 'gift-heart', text: '💝'},
+        {name: 'dolls', text: '🎎'},
+        {name: 'school-satchel', text: '🎒'},
+        {name: 'mortar-board', text: '🎓'},
+        {name: 'flags', text: '🎏'},
+        {name: 'fireworks', text: '🎆'},
+        {name: 'sparkler', text: '🎇'},
+        {name: 'wind-chime', text: '🎐'},
+        {name: 'ghost', text: '👻'},
+        {name: 'gift', text: '🎁'},
+        {name: 'alarm-clock', text: '⏰'},
+        {name: 'closed-lock-with-key', text: '🔐'},
+        {name: 'pill', text: '💊'},
+        {name: 'date', text: '📅'},
+        {name: 'books', text: '📚'},
+        {name: 'basketball', text: '🏀'},
+        {name: 'football', text: '🏈'},
+        {name: 'beer', text: '🍺'},
+        {name: 'game-die', text: '🎲'},
+        {name: 'tea', text: '🍵'},
+        {name: 'lollipop', text: '🍭'},
+        {name: 'studio-microphone', text: '🎙'},
+        {name: 'oil-drum', text: '🛢'},
+        {name: 'apple', text: '🍎'},
+        {name: 'green-apple', text: '🍏'},
+        {name: 'tangerine', text: '🍊'},
+        {name: 'cherries', text: '🍒'},
+        {name: 'grapes', text: '🍇'},
+        {name: 'watermelon', text: '🍉'},
+        {name: 'strawberry', text: '🍓'},
+        {name: 'peach', text: '🍑'},
+        {name: 'tomato', text: '🍅'},
+        {name: 'desktop-computer', text: '🖥'},
+        {name: 'printer', text: '🖨'},
+        {name: 'trackball', text: '🖲'},
+        {name: 'computer-mouse', text: '🖱'},
+        {name: 'framed-picture', text: '🖼'}
+    ],
+    places: [
+        {name: 'house', text: '🏠'},
+        {name: 'school', text: '🏫'},
+        {name: 'office', text: '🏢'},
+        {name: 'hospital', text: '🏥'},
+        {name: 'bus', text: '🚌'},
+        {name: 'taxi', text: '🚗'},
+        {name: 'car', text: '🚕'},
+        {name: 'truck', text: '🚚'},
+        {name: 'police-car', text: '🚓'},
+        {name: 'ambulance', text: '🚑'},
+        {name: 'fire-engine', text: '🚒'},
+        {name: 'passenger-ship', text: '🛳'},
+        {name: 'small-airplane', text: '🛩'},
+        {name: 'national-park', text: '🕌'},
+        {name: 'mosque', text: '🏞'},
+        {name: 'cityscape', text: '🏙'},
+        {name: 'synagogue', text: '🕍'},
+        {name: 'department-store', text: '🏬'},
+        {name: 'city-sunrise', text: '🌇'},
+        {name: 'city-sunset', text: '🌆'},
+        {name: 'tent', text: '⛺'},
+        {name: 'factory', text: '🏭'},
+        {name: 'sunrise', text: '🌅'},
+        {name: 'statue-of-liberty', text: '🗽'},
+        {name: 'bridge-at-night', text: '🌉'},
+        {name: 'carousel-horse', text: '🎠'},
+        {name: 'ferris-wheel', text: '🎡'},
+        {name: 'fountain', text: '⛲'},
+        {name: 'roller-coaster', text: '🎢'},
+        {name: 'ticket', text: '🎫'},
+        {name: 'barber', text: '💈'},
+        {name: 'traffic-light', text: '🚥'},
+        {name: 'construction', text: '🚧'},
+        {name: 'beginner', text: '🔰'},
+        {name: 'fuelpump', text: '⛽'},
+        {name: 'round-pushpin', text: '📍'},
+        {name: 'triangular-flag-on-post', text: '🚩'}
+    ],
+    symbols: [
+        {name: 'keycap-ten', text: '🔟'},
+        {name: '1234', text: '🔢'},
+        {name: 'symbols', text: '🔣'},
+        {name: 'capital-abcd', text: '🔠'},
+        {name: 'abc', text: '🔤'},
+        {name: 'arrow-up-small', text: '🔼'},
+        {name: 'arrow-down-small', text: '🔽'},
+        {name: 'rewind', text: '⏪'},
+        {name: 'fast-forward', text: '⏩'},
+        {name: 'arrow-double-up', text: '⏫'},
+        {name: 'arrow-double-down', text: '⏬'},
+        {name: 'pause-button', text: '⏸'},
+        {name: 'stop-button', text: '⏹'},
+        {name: 'record-button', text: '⏺'},
+        {name: 'arrows-clockwise', text: '🔃'},
+        {name: 'ok', text: '🆗'},
+        {name: 'restroom', text: '🚻'},
+        {name: 'mens', text: '🚹'},
+        {name: 'womens', text: '🚺'},
+        {name: 'wc', text: '🚾'},
+        {name: 'no-entry-sign', text: '🚫'},
+        {name: 'sos', text: '🆘'},
+        {name: 'no-entry', text: '⛔'},
+        {name: 'negative-squared-cross-mark', text: '❎'},
+        {name: 'white-check-mark', text: '✅'},
+        {name: 'heart-decoration', text: '💟'},
+        {name: 'vs', text: '🆚'},
+        {name: 'x', text: '❌'},
+        {name: 'exclamation', text: '❗'},
+        {name: 'question', text: '❓'},
+        {name: 'o', text: '⭕'},
+        {name: 'om', text: '🕉'},
+        {name: 'menorah', text: '🕎'},
+        {name: 'place-of-worship', text: '🛐'},
+        {name: 'clock12', text: '🕛'},
+        {name: 'clock1', text: '🕐'},
+        {name: 'clock2', text: '🕑'},
+        {name: 'clock3', text: '🕒'},
+        {name: 'clock4', text: '🕓'},
+        {name: 'clock5', text: '🕔'},
+        {name: 'clock6', text: '🕕'},
+        {name: 'clock7', text: '🕖'},
+        {name: 'clock8', text: '🕗'},
+        {name: 'clock9', text: '🕘'},
+        {name: 'clock10', text: '🕙'},
+        {name: 'clock11', text: '🕚'}
+    ]
+};
 

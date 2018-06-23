@@ -1038,13 +1038,16 @@
     bottom: 30px;
     z-index: 30;
     padding: 10px;
-    width: 380px;
+    width: 390px;
     height: 200px;
     background-color: #fff;
     border-radius: 4px;
     box-shadow: 0 0 2px 2px #ccc;
 }
-
+.send-tools .tool-emoji .emoji-group{
+    height: 180px;
+    overflow-y: auto;
+}
 .send-tools .emoji-picker .emoji-caret{
     position: absolute;
     left: 20px;
@@ -1065,6 +1068,14 @@
     border-top-color: #fff;
 }
 
+.send-tools .emoji-picker .emoji-title{
+    display: block;
+    height: 30px;
+    line-height: 30px;
+    color: rgba(0, 0, 0, 0.2);
+    text-transform: uppercase;
+    font-size: 14px;
+}
 
 .send-tools .tool-box .upload-icon{
     font-size: 20px;
@@ -1088,6 +1099,7 @@
     padding: 0 5px;
 }
 .chat-text .chat-textarea{
+    padding: 6px;
     height:calc(10vh);
     resize: none;
     border-radius: 2px;

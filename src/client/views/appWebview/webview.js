@@ -1,13 +1,239 @@
-var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{text:"\ud83d\ude04"},{text:"\ud83d\ude05"},{text:"\ud83d\ude06"},{text:"\ud83d\ude09"},{text:"\ud83d\ude0a"},
-    {text:"\ud83d\ude0b"},{text:"\ud83d\ude0c"},{text:"\ud83d\ude0d"},{text:"\ud83d\ude0f"},{text:"\ud83d\ude12"},{text:"\ud83d\ude13"},{text:"\ud83d\ude14"},{text:"\ud83d\ude16"},{text:"\ud83d\ude18"},
-    {text:"\ud83d\ude1a"},{text:"\ud83d\ude1c"},{text:"\ud83d\ude1d"},{text:"\ud83d\ude1e"},{text:"\ud83d\ude20"},{text:"\ud83d\ude21"},{text:"\ud83d\ude22"},{text:"\ud83d\ude23"},{text:"\ud83d\ude24"},
-    {text:"\ud83d\ude25"},{text:"\ud83d\ude28"},{text:"\ud83d\ude29"},{text:"\ud83d\ude2a"},{text:"\ud83d\ude2b"},{text:"\ud83d\ude2d"},{text:"\ud83d\ude30"},{text:"\ud83d\ude31"},{text:"\ud83d\ude32"},
-    {text:"\ud83d\ude33"},{text:"\ud83d\ude35"},{text:"\ud83d\ude37"},{text:"\ud83d\ude4c"},{text:"\ud83d\ude4f"},{text:"\u270a\ufe0f"},{text:"\u270b\ufe0f"},{text:"\u270c\ufe0f"},{text:"\ud83d\udc4c"},
-    {text:"\ud83d\udc4b"},{text:"\ud83d\udc4d"},{text:"\ud83d\udc4f"},{text:"\ud83d\udc8b"}];
-
+var ChatEmojis = {
+    people: [
+        {name: 'grinning-smile-eyes', text: '😁'},
+        {name: 'tears-of-joy', text: '😂'},
+        {name: 'smiling-open-mouth', text: '😃'},
+        {name: 'smiling-mouth-eyes', text: '😄'},
+        {name: 'smiling-cold-sweat', text: '😅'},
+        {name: 'smiling-closed-eyes', text: '😆'},
+        {name: 'winking', text: '😉', code: 'U+1F609'},
+        {name: 'smiling-eyes', text: '😊'},
+        {name: 'delicious-food', text: '😋'},
+        {name: 'relieved', text: '😌'},
+        {name: 'heart-shaped', text: '😍'},
+        {name: 'smirking', text: '😏'},
+        {name: 'unamused', text: '😒'},
+        {name: 'cold-sweat', text: '😓'},
+        {name: 'pensive', text: '😔'},
+        {name: 'confounded', text: '😖'},
+        {name: 'throwing-kiss', text: '😘'},
+        {name: 'kissing-closed-eyes', text: '😚'},
+        {name: 'stuck-out-tongue', text: '😜'},
+        {name: 'tightly-closed-eyes', text: '😝'},
+        {name: 'disappointed', text: '😞'},
+        {name: 'angry', text: '😠'},
+        {name: 'pouting', text: '😡'},
+        {name: 'crying', text: '😢'},
+        {name: 'persevering', text: '😣'},
+        {name: 'look-of-triumph', text: '😤'},
+        {name: 'disappointed-relieved', text: '😥'},
+        {name: 'fearful', text: '😨'},
+        {name: 'weary', text: '😩'},
+        {name: 'sleepy', text: '😪'},
+        {name: 'tired', text: '😫'},
+        {name: 'loudly-crying ', text: '😭'},
+        {name: 'mouth-cold-sweat', text: '😰'},
+        {name: 'screaming-in-fear', text: '😱'},
+        {name: 'astonished', text: '😲'},
+        {name: 'flushed', text: '😳'},
+        {name: 'dizzy', text: '😵'},
+        {name: 'medical-mask', text: '😷'},
+        {name: 'hands-in-celebration', text: '🙌'},
+        {name: 'folded-hands', text: '🙏'},
+        {name: 'raised-first', text: '✊'},
+        {name: 'raised-hand', text: '✋'},
+        {name: 'victory-hand', text: '✌️'},
+        {name: 'ok-hand-sign', text: '👌'},
+        {name: 'waving-hand-sign', text: '👋'},
+        {name: 'thumbs-up-sign', text: '👍'},
+        {name: 'clapping-hands-sign', text: '👏'}
+    ],
+    nature: [
+        {name: 'dog', text: '🐶'},
+        {name: 'wolf', text: '🐺'},
+        {name: 'cat', text: '🐱'},
+        {name: 'mouse', text: '🐭'},
+        {name: 'hamster', text: '🐹'},
+        {name: 'rabbit', text: '🐰'},
+        {name: 'frog', text: '🐸'},
+        {name: 'tiger', text: '🐯'},
+        {name: 'koala', text: '🐨'},
+        {name: 'bear', text: '🐻'},
+        {name: 'pig', text: '🐷'},
+        {name: 'cow', text: '🐮'},
+        {name: 'boar', text: '🐗'},
+        {name: 'monkey-face', text: '🐵'},
+        {name: 'monkey', text: '🐒'},
+        {name: 'horse', text: '🐴'},
+        {name: 'sheep', text: '🐑'},
+        {name: 'elephant', text: '🐘'},
+        {name: 'panda-face', text: '🐼'},
+        {name: 'penguin', text: '🐧'},
+        {name: 'bird', text: '🐦'},
+        {name: 'baby-chick', text: '🐤'},
+        {name: 'hatched-chick', text: '🐥'},
+        {name: 'hatching-chick', text: '🐣'},
+        {name: 'chicken', text: '🐔'},
+        {name: 'snake', text: '🐍'},
+        {name: 'turtle', text: '🐢'},
+        {name: 'bug', text: '🐛'},
+        {name: 'bee', text: '🐝'},
+        {name: 'ant', text: '🐜'},
+        {name: 'beetle', text: '🐞'},
+        {name: 'snail', text: '🐌'},
+        {name: 'lion-face', text: '🦁'},
+        {name: 'unicorn-face', text: '🦄'},
+        {name: 'spider', text: '🕷'},
+        {name: 'cherry-blossom', text: '🌸'},
+        {name: 'tulip', text: '🌷'},
+        {name: 'four-leaf-clover', text: '🍀'},
+        {name: 'rose', text: '🌹'},
+        {name: 'sunflower', text: '🌻'},
+        {name: 'hibiscus', text: '🌺'},
+        {name: 'maple-leaf', text: '🍁'},
+        {name: 'leaves', text: '🍃'},
+        {name: 'first-quarter-moon', text: '🌓'},
+        {name: 'moon', text: '🌔'},
+        {name: 'full-moon', text: '🌕'},
+        {name: 'earth-asia', text: '🌏'},
+        {name: 'volcano', text: '🌋'},
+        {name: 'milky-way', text: '🌌'},
+        {name: 'stars', text: '🌠'},
+        {name: 'sun-behind-large-cloud', text: '🌥'},
+        {name: 'cloud-with-rain', text: '🌧'},
+        {name: 'cloud-with-lightning', text: '🌩'}
+    ],
+    objects: [
+        {name: 'bamboo', text: '🎍'},
+        {name: 'gift-heart', text: '💝'},
+        {name: 'dolls', text: '🎎'},
+        {name: 'school-satchel', text: '🎒'},
+        {name: 'mortar-board', text: '🎓'},
+        {name: 'flags', text: '🎏'},
+        {name: 'fireworks', text: '🎆'},
+        {name: 'sparkler', text: '🎇'},
+        {name: 'wind-chime', text: '🎐'},
+        {name: 'ghost', text: '👻'},
+        {name: 'gift', text: '🎁'},
+        {name: 'alarm-clock', text: '⏰'},
+        {name: 'closed-lock-with-key', text: '🔐'},
+        {name: 'pill', text: '💊'},
+        {name: 'date', text: '📅'},
+        {name: 'books', text: '📚'},
+        {name: 'basketball', text: '🏀'},
+        {name: 'football', text: '🏈'},
+        {name: 'beer', text: '🍺'},
+        {name: 'game-die', text: '🎲'},
+        {name: 'tea', text: '🍵'},
+        {name: 'lollipop', text: '🍭'},
+        {name: 'studio-microphone', text: '🎙'},
+        {name: 'oil-drum', text: '🛢'},
+        {name: 'apple', text: '🍎'},
+        {name: 'green-apple', text: '🍏'},
+        {name: 'tangerine', text: '🍊'},
+        {name: 'cherries', text: '🍒'},
+        {name: 'grapes', text: '🍇'},
+        {name: 'watermelon', text: '🍉'},
+        {name: 'strawberry', text: '🍓'},
+        {name: 'peach', text: '🍑'},
+        {name: 'tomato', text: '🍅'},
+        {name: 'desktop-computer', text: '🖥'},
+        {name: 'printer', text: '🖨'},
+        {name: 'trackball', text: '🖲'},
+        {name: 'computer-mouse', text: '🖱'},
+        {name: 'framed-picture', text: '🖼'}
+    ],
+    places: [
+        {name: 'house', text: '🏠'},
+        {name: 'school', text: '🏫'},
+        {name: 'office', text: '🏢'},
+        {name: 'hospital', text: '🏥'},
+        {name: 'bus', text: '🚌'},
+        {name: 'taxi', text: '🚗'},
+        {name: 'car', text: '🚕'},
+        {name: 'truck', text: '🚚'},
+        {name: 'police-car', text: '🚓'},
+        {name: 'ambulance', text: '🚑'},
+        {name: 'fire-engine', text: '🚒'},
+        {name: 'passenger-ship', text: '🛳'},
+        {name: 'small-airplane', text: '🛩'},
+        {name: 'national-park', text: '🕌'},
+        {name: 'mosque', text: '🏞'},
+        {name: 'cityscape', text: '🏙'},
+        {name: 'synagogue', text: '🕍'},
+        {name: 'department-store', text: '🏬'},
+        {name: 'city-sunrise', text: '🌇'},
+        {name: 'city-sunset', text: '🌆'},
+        {name: 'tent', text: '⛺'},
+        {name: 'factory', text: '🏭'},
+        {name: 'sunrise', text: '🌅'},
+        {name: 'statue-of-liberty', text: '🗽'},
+        {name: 'bridge-at-night', text: '🌉'},
+        {name: 'carousel-horse', text: '🎠'},
+        {name: 'ferris-wheel', text: '🎡'},
+        {name: 'fountain', text: '⛲'},
+        {name: 'roller-coaster', text: '🎢'},
+        {name: 'ticket', text: '🎫'},
+        {name: 'barber', text: '💈'},
+        {name: 'traffic-light', text: '🚥'},
+        {name: 'construction', text: '🚧'},
+        {name: 'beginner', text: '🔰'},
+        {name: 'fuelpump', text: '⛽'},
+        {name: 'round-pushpin', text: '📍'},
+        {name: 'triangular-flag-on-post', text: '🚩'}
+    ],
+    symbols: [
+        {name: 'keycap-ten', text: '🔟'},
+        {name: '1234', text: '🔢'},
+        {name: 'symbols', text: '🔣'},
+        {name: 'capital-abcd', text: '🔠'},
+        {name: 'abc', text: '🔤'},
+        {name: 'arrow-up-small', text: '🔼'},
+        {name: 'arrow-down-small', text: '🔽'},
+        {name: 'rewind', text: '⏪'},
+        {name: 'fast-forward', text: '⏩'},
+        {name: 'arrow-double-up', text: '⏫'},
+        {name: 'arrow-double-down', text: '⏬'},
+        {name: 'pause-button', text: '⏸'},
+        {name: 'stop-button', text: '⏹'},
+        {name: 'record-button', text: '⏺'},
+        {name: 'arrows-clockwise', text: '🔃'},
+        {name: 'ok', text: '🆗'},
+        {name: 'restroom', text: '🚻'},
+        {name: 'mens', text: '🚹'},
+        {name: 'womens', text: '🚺'},
+        {name: 'wc', text: '🚾'},
+        {name: 'no-entry-sign', text: '🚫'},
+        {name: 'sos', text: '🆘'},
+        {name: 'no-entry', text: '⛔'},
+        {name: 'negative-squared-cross-mark', text: '❎'},
+        {name: 'white-check-mark', text: '✅'},
+        {name: 'heart-decoration', text: '💟'},
+        {name: 'vs', text: '🆚'},
+        {name: 'x', text: '❌'},
+        {name: 'exclamation', text: '❗'},
+        {name: 'question', text: '❓'},
+        {name: 'o', text: '⭕'},
+        {name: 'om', text: '🕉'},
+        {name: 'menorah', text: '🕎'},
+        {name: 'place-of-worship', text: '🛐'},
+        {name: 'clock12', text: '🕛'},
+        {name: 'clock1', text: '🕐'},
+        {name: 'clock2', text: '🕑'},
+        {name: 'clock3', text: '🕒'},
+        {name: 'clock4', text: '🕓'},
+        {name: 'clock5', text: '🕔'},
+        {name: 'clock6', text: '🕕'},
+        {name: 'clock7', text: '🕖'},
+        {name: 'clock8', text: '🕗'},
+        {name: 'clock9', text: '🕘'},
+        {name: 'clock10', text: '🕙'},
+        {name: 'clock11', text: '🕚'}
+    ]
+};
 !function(t){"use strict";var e=t.HTMLCanvasElement&&t.HTMLCanvasElement.prototype,o=t.Blob&&function(){try{return Boolean(new Blob)}catch(t){return!1}}(),n=o&&t.Uint8Array&&function(){try{return 100===new Blob([new Uint8Array(100)]).size}catch(t){return!1}}(),r=t.BlobBuilder||t.WebKitBlobBuilder||t.MozBlobBuilder||t.MSBlobBuilder,a=/^data:((.*?)(;charset=.*?)?)(;base64)?,/,i=(o||r)&&t.atob&&t.ArrayBuffer&&t.Uint8Array&&function(t){var e,i,l,u,c,f,b,d,B;if(!(e=t.match(a)))throw new Error("invalid data URI");for(i=e[2]?e[1]:"text/plain"+(e[3]||";charset=US-ASCII"),l=!!e[4],u=t.slice(e[0].length),c=l?atob(u):decodeURIComponent(u),f=new ArrayBuffer(c.length),b=new Uint8Array(f),d=0;d<c.length;d+=1)b[d]=c.charCodeAt(d);return o?new Blob([n?b:f],{type:i}):((B=new r).append(f),B.getBlob(i))};t.HTMLCanvasElement&&!e.toBlob&&(e.mozGetAsFile?e.toBlob=function(t,o,n){var r=this;setTimeout(function(){t(n&&e.toDataURL&&i?i(r.toDataURL(o,n)):r.mozGetAsFile("blob",o))})}:e.toDataURL&&i&&(e.toBlob=function(t,e,o){var n=this;setTimeout(function(){t(i(n.toDataURL(e,o)))})})),"function"==typeof define&&define.amd?define(function(){return i}):"object"==typeof module&&module.exports?module.exports=i:t.dataURLtoBlob=i}(window);
 
-;(function (win, doc) {
+;(function (win, doc, ChatEmojis, undefined) {
 
     var LIB = {
         $: function (el) {
@@ -111,7 +337,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             var defaultOptions = {
                 type: 'GET',
                 url: '',
-                data: '',
+                data: 'v='+(new Date()).getTime(),
                 beforeSend: null,
                 success: function (d) {},
                 error: function (e) {},
@@ -126,7 +352,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             xhr = new XMLHttpRequest();
 
             xhr.onreadystatechange = function () {
-                if (xhr.readyState == 4 && xhr.status == 200) {
+                if (xhr.readyState === 4 && xhr.status === 200) {
 
                     var response = '';
                     var type = xhr.getResponseHeader('Content-type');
@@ -141,14 +367,14 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
                     defaultOptions.success(response);
 
-                } else if(xhr.readyState == 4 && xhr.status !== 200){
+                } else if(xhr.readyState === 4 && xhr.status !== 200){
                     defaultOptions.error(xhr.status);
                 }
             };
             xhr.upload.onprogress = defaultOptions.progress;
             xhr.onerror = defaultOptions.error;
 
-            if (defaultOptions.type == 'GET') {
+            if (defaultOptions.type === 'GET') {
                 xhr.open(defaultOptions.type, defaultOptions.url + '?' + defaultOptions.data, true);
                 defaultOptions.beforeSend && defaultOptions.beforeSend(xhr);
                 xhr.send(null);
@@ -233,6 +459,8 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
                 setTimeout(function () {
                     var message = e.target.innerHTML.replace(/<\/?[^>]*>/g, '').replace(/&nbsp;/ig, '').replace(/ /ig, '');
+                    var sel = window.getSelection();
+                    UCM.lastEditRange = sel.getRangeAt(0);
                     if (message.length > 0) {
                         UCM.chatStatus(true);
                     } else {
@@ -244,8 +472,13 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             });
 
             LIB.addEvent(emojiBtn, 'click', function (e) {
+                edit.focus();
                 LIB.toggleClass(LIB.$('.emoji-picker'), 'show');
                 UCM.resizeBodyHeight();
+                if (window.getSelection) {
+                    var sel = window.getSelection();
+                    UCM.lastEditRange = sel.getRangeAt(0);
+                }
             });
 
             LIB.addEvent(LIB.$('.body'), 'click', function (e) {
@@ -276,7 +509,10 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 if (classes === 'reconnect-btn') {
                     LIB.$('.body').innerHTML = '<div class="reconnect-mask"><i></i></div>';
                     UCM.socketInit();
+                    return false;
                 }
+
+                FAQ.eventListener(target);
 
             });
 
@@ -301,6 +537,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                         if (d.code === 200) {
                             localStorage.setItem('offlineEmail', email);
                             LIB.$('.offline-email').innerHTML = "<h4>You'll be notified here and by email</h4><h5>"+email+"</h5>";
+                            FAQ.init(LIB.$('.body')).greeting();
                         }
                     }
                 });
@@ -386,6 +623,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             this.value = '';
         },
         chatClock: function () {
+            var _self = this;
             clearInterval(this.clockTimer);
             this.clockTimer = setInterval(function () {
 
@@ -393,6 +631,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
 
                 if (nowTime - UCM.startTime > UCM.maxTimes) {
                     clearInterval(UCM.clockTimer);
+                    _self.socket.emit('c.timeout', _self.cid);
                     UCM.isCustomerSuccessOnline = false;
                 }
 
@@ -424,6 +663,9 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                      LIB.addClass(LIB.$('.msg-'+time), 'success');
                      if (!LIB.$('.offline-email')) {
                          emailTemp();
+                         if (localStorage.getItem('offlineEmail')) {
+                             FAQ.init(LIB.$('.body')).greeting();
+                         }
                      }
                 });
             } else {
@@ -607,15 +849,18 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
         },
         emojiCreate: function () {
             var emojis = '';
-            for (var i = 0, l = EMOJI.length; i < l; i++) {
-                emojis += '<span>'+EMOJI[i].text+'</span>';
+            for (var key in ChatEmojis) {
+                emojis += '<span class="emoji-title">'+key+'</span>';
+                for (var i = 0, l = ChatEmojis[key].length; i < l; i++) {
+                    emojis += '<span>'+ChatEmojis[key][i].text+'</span>';
+                }
             }
+
             LIB.$('.emoji-picker').innerHTML = emojis;
         },
         emojiPicker: function () {
             LIB.addEvent(LIB.$('.emoji-picker'), 'click', function (e) {
                  if (e.target.tagName.toUpperCase() === 'SPAN') {
-                     LIB.$('.input-text').focus();
                      LIB.insertToCursorPosition(UCM.lastEditRange, e.target.innerHTML);
                      LIB.addClass(LIB.$('.input-text'), 'activation');
                      UCM.chatStatus(true);
@@ -698,8 +943,9 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
                 sy: 0,
                 ex: 0,
                 ey: 0
-            }, isLoadingChatHistory = false, pageNum = 1;
-
+            };
+            var isLoadingChatHistory = false;
+            var pageNum = 1;
 
             LIB.addEvent(LIB.$('.body'), 'touchstart', function (e) {
                if (e.touches[0]) {
@@ -801,7 +1047,7 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             });
         },
         socketSendUserId: function () {
-            if (this.userId !='') {
+            if (this.userId !=='') {
                 var userIdCreateTimes = window.localStorage.getItem('userIdCreateTimes') || null,
                     currentTimes = (new Date()).getTime();
 
@@ -867,8 +1113,110 @@ var EMOJI=[{text:"\ud83d\ude01"},{text:"\ud83d\ude02"},{text:"\ud83d\ude03"},{te
             });
         }
     };
+    
+    var FAQ = {
+        container: null,
+        faqSection: null,
+        init: function (containerDiv) {
+            this.container = containerDiv;
+            this.container.innerHTML += '<div class="faq-section"></div>';
+            this.faqSection = LIB.$('.faq-section');
+            return this;
+        },
+        eventListener: function (target) {
+                var tagClass = target.className;
+                var dataId = target.getAttribute('data-id');
+
+                this.faqSection = LIB.$('.faq-section');
+
+                switch (tagClass) {
+                    case 'toggle-on':
+                        FAQ.getFAQData(UCM.domain + '/faqs/collections', FAQ.renderCollections);
+                        break;
+                    case 'toggle-off':
+                        FAQ.renderLeave();
+                        break;
+                    case 'faq-collection-item':
+                        FAQ.getFAQData(UCM.domain + '/faqs/collection/'+dataId+'/issues', FAQ.renderIssues);
+                        break;
+                    case 'faq-issue-item':
+                        FAQ.getFAQData(UCM.domain + '/faqs/'+dataId+'/answer', FAQ.renderAnswers);
+                        break;
+                    default:
+                }
+        },
+        getFAQData: function (url, cb) {
+            LIB.ajax({
+                type: 'GET',
+                url: url,
+                success: function (d) {
+                    var d = JSON.parse(d);
+                    if (d.code === 200) {
+                        cb && cb(d.msg);
+                    }
+                }
+            });
+        },
+        renderLeave: function () {
+            this.faqSection.innerHTML = this.titleTemp('Thank you for visit?');
+        },
+        renderCollections: function (arr) {
+            if (arr.length <= 0) {
+                FAQ.renderLeave();
+                return false;
+            }
+            var str = FAQ.titleTemp('Got it, What would you like to know more about?');
+
+            str += '<div class="faq-collection-list">';
+
+            for (var i = 0, l = arr.length; i < l; i++) {
+                str += FAQ.collectionItem(arr[i].collection, arr[i].collection_id);
+            }
+
+            str += '</div>';
+            FAQ.faqSection.innerHTML = str;
+        },
+        renderIssues: function (issues) {
+            var str = FAQ.titleTemp('Hey there!we found some links that may be helpful.');
+
+            str += '<ul class="faq-issue-list">';
+            for (var i = 0, l = issues.length; i < l; i++) {
+                str += FAQ.issueItem(issues[i].issue, issues[i].uuid);
+            }
+            str += '</div>';
+
+            FAQ.faqSection.innerHTML = str;
+        },
+        renderAnswers: function (answerStr) {
+
+            var str = FAQ.titleTemp(UCM.filterMessage(answerStr));
+            str += FAQ.toggleButton('Go on', 'Leave');
+
+            FAQ.faqSection.innerHTML = str;
+        },
+        greeting: function () {
+
+            var str = this.titleTemp('Question, feedback? Let us know on below!');
+            str += this.titleTemp('search FAQ quickly?');
+            str += FAQ.toggleButton('YES, <br/> I want', 'NO, I just <br/> browsing');
+
+            this.faqSection.innerHTML = str;
+        },
+        titleTemp: function (msg) {
+            return '<div class="faq-title">'+msg+'</div>';
+        },
+        collectionItem: function (title, id) {
+           return '<span class="faq-collection-item" data-id="'+id+'">'+title+'</span>';
+        },
+        issueItem: function (issue, uuid) {
+            return '<li class="faq-issue-item" data-id="'+uuid+'">' + issue + '</li>';
+        },
+        toggleButton: function (onText, offText) {
+            return '<div class="faq-toggle"><span class="toggle-on">'+onText+'</span><span class="toggle-off">' + offText + '</span></div>';
+        }
+    };
 
     UCM.init();
 
-})(window, document);
+})(window, document, ChatEmojis);
 

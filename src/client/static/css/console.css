@@ -217,3 +217,33 @@
     padding: 16px 8px;
     word-break: break-all;
 }
+
+.switchtheme {
+    width: 100%;
+    position: fixed;
+    bottom: 10px;
+    height: 100px;
+    *background-color: #fff;
+    *border-top: solid 1px #f8f8f8;
+    *display: flex;
+    *justify-content: space-between;
+    align-items: center;
+    overflow: hidden;
+    z-index: 9;
+    transition: all 0.3s;
+}
+.switchtheme span {
+    white-space: nowrap;
+    overflow: hidden;
+    font-size: 12px;
+}
+.switchtheme :global .anticon {
+    min-width: 14px;
+    margin-right: 4px;
+    font-size: 14px;
+}
+
+.ant-menu-dark .ant-menu-submenu-selected{
+    background-color: transparent;
+    color: #1890ff;
+}
