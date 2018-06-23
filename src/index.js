@@ -23,7 +23,7 @@ var compress = require('compression');
 var ejs = require('ejs');
 
 var middleware = require('./server/middleware');
-var model = require('./server/models');
+var models = require('./server/models');
 
 var utils = require('./server/utils');
 var logger = require('./server/logger');
@@ -82,7 +82,7 @@ module.exports.listen = function () {
     async.waterfall([
         function (next) {
             //initial database
-            model.init(next);
+            models.init(next);
         },
         function (next) {
             setupExpress(app, next);
