@@ -44,8 +44,7 @@ class CustomerSearchForm extends Component {
     };
 
     render() {
-        const { form: { getFieldDecorator } } = this.props;
-
+        const { form: { getFieldDecorator }, handleExport } = this.props;
         const ColProps = {
             xs: 24,
             sm: 12,
@@ -62,7 +61,7 @@ class CustomerSearchForm extends Component {
             <Row gutter={24}>
                 <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
                     {getFieldDecorator('country')(
-                        <Input size="large"
+                        <Input size="normal"
                                placeholder="search country"
                                suffix={<Icon type="search" />}
                                onPressEnter={this.handleSubmit}/>
@@ -71,7 +70,7 @@ class CustomerSearchForm extends Component {
                 <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }} sm={{ span: 12 }}>
                     {getFieldDecorator('lastTime')(
                         <RangePicker style={{ width: '100%' }}
-                                     size="large"
+                                     size="normal"
                                      placeholder={['last screen start', 'last screen end']}
                                      onChange={this.handleChange.bind(null, 'lastTime')}/>
                     )}
@@ -83,6 +82,7 @@ class CustomerSearchForm extends Component {
                         <div>
                             <Button style={{ marginLeft: 8 }} type="primary" className="margin-right"
                                     onClick={ this.handleSubmit }>Search</Button>
+                            <Button style={{ marginLeft: 8 }} onClick={ handleExport }>Export</Button>
                             <Button style={{ marginLeft: 8 }} onClick={ this.handleReset }>Reset</Button>
                         </div>
                     </div>

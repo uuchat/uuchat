@@ -3,7 +3,8 @@ import moment from 'moment';
 import { Breadcrumb, Button, DatePicker, Row, Col, Radio } from 'antd';
 import Tips from '../../common/tips';
 import AsyncComponent from '../../common/asyncComponent.js';
-import { fetchAsync } from '../common/utils';
+import { fetchAsync, formatDate } from '../common/utils';
+import { saveCSV } from '../common/fileExport';
 
 const RateExpandedTable = AsyncComponent(() => import ('./rateExpandedTable').then(component => component.default));
 
@@ -49,7 +50,7 @@ export default class Rates extends Component {
         }
     };
 
-    componentWillMount() {
+    UNSAFE_componentWillMount() {
         const location = this.props.location;
         if (location.state) this.setState({month: location.state.month});
     }
@@ -74,6 +75,31 @@ export default class Rates extends Component {
         window.location.href = "#/" + e.target.value;
     };
 
+    handleExport = () => {
+        const { dataSource } = this.state;
+
+        let ds = [];
+
+        dataSource.forEach(function(item){
+            item.rates.forEach(function(rate){
+                let exp = {};
+                 Object.assign(exp, item);
+                 Object.assign(exp, rate);
+
+                delete exp.rates;
+                delete exp.key;
+
+                ds.push(exp);
+            });
+        });
+
+        const options = {
+            filename: 'uuchat_rates_'+ formatDate(new Date(), 'yyyyMMdd_hhmmss')
+        };
+
+        saveCSV(ds, options);
+    };
+
     render() {
         let { dataSource,sortedInfo, month } = this.state;
         sortedInfo = sortedInfo || {};
@@ -85,6 +111,7 @@ export default class Rates extends Component {
                 <Row type="flex" justify="space-between">
                     <Col span={4}>
                         <Breadcrumb separator=">">
+                            <Breadcrumb.Item>Data</Breadcrumb.Item>
                             <Breadcrumb.Item>Rate Report</Breadcrumb.Item>
                         </Breadcrumb>
                     </Col>
@@ -106,12 +133,13 @@ export default class Rates extends Component {
                 <div className="content-body">
                     <div className="table-deals">
                         <div className="table-search">
-                            <MonthPicker size="large"
+                            <MonthPicker size="normal"
                                     onChange={ this.handleMonthPickerChange }
                                     defaultValue={ defaultPickerMonth }
                                     placeholder="Select month"/>
                         </div>
                         <div className="table-operations">
+                            <Button onClick={ this.handleExport }>Export</Button>
                             <Button onClick={this.clearSorters}>Clear sorters</Button>
                         </div>
                     </div>

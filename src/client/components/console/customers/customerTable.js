@@ -12,7 +12,7 @@ export default class CustomerTable extends Component {
 
         Modal.info({
             title: getCustomerName(record.cid) + ' screen list',
-            width: '600px',
+            width: '640px',
             content: <ScreenList uuid={ record.uuid }/>,
             maskClosable: true,
             onOk() {
@@ -57,6 +57,11 @@ export default class CustomerTable extends Component {
                 title: 'country', dataIndex: 'country', key: 'country',
                 sorter: true,
                 sortOrder: sorter.columnKey === 'country' && sorter.order
+            },
+            {
+                title: 'platform', dataIndex: 'platform', key: 'platform',
+                sorter: true,
+                sortOrder: sorter.columnKey === 'platform' && sorter.order
             }
         ];
 

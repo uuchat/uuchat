@@ -5,28 +5,26 @@ import { sortFilterByProps, formatDate } from '../common/utils';
 
 export default class FeedbackTable extends Component {
 
-    renderFeedbackDetail = (text, record) => {
-        var feedback = JSON.parse(text);
+    renderFeedbackDetail = (feedback, record) => {
+            const children = [];
 
-        const children = [];
+            feedback.forEach(function (item, index) {
+                if (record.class === 'contact_us') {
+                    children.push(
+                        <Alert message={item.suggest} type="success"/>
+                    );
+                } else {
+                    children.push(
+                        <Alert message={item.desc} description={item.content} type="success"/>
+                    );
+                }
+            });
 
-        feedback.forEach(function (item, index) {
-            if (record.class === 'contact_us') {
-                children.push(
-                    <Alert message={item.suggest} type="success"/>
-                );
-            } else {
-                children.push(
-                    <Alert message={item.desc} description={item.content} type="success"/>
-                );
-            }
-        });
-
-        return (
-            <div>
-                {children}
-            </div>
-        );
+            return (
+                <div>
+                    {children}
+                </div>
+            );
     };
 
     render() {
@@ -38,33 +36,38 @@ export default class FeedbackTable extends Component {
                 dataIndex: 'class',
                 key: 'class',
                 sorter: (a, b) => sortFilterByProps(a, b, 'class'),
-                sortOrder: sorter.columnKey === 'class' && sorter.order
+                sortOrder: sorter.columnKey === 'class' && sorter.order,
+                width: '8%'
             },
             {
                 title: 'email',
                 dataIndex: 'email',
                 key: 'email',
                 sorter: (a, b) => sortFilterByProps(a, b, 'email'),
-                sortOrder: sorter.columnKey === 'email' && sorter.order
+                sortOrder: sorter.columnKey === 'email' && sorter.order,
+                width: '20%'
             },
             {
                 title: 'name',
                 dataIndex: 'name',
                 key: 'name',
                 sorter: (a, b) => sortFilterByProps(a, b, 'name'),
-                sortOrder: sorter.columnKey === 'name' && sorter.order
+                sortOrder: sorter.columnKey === 'name' && sorter.order,
+                width: '10%'
             },
             {
                 title: 'createTime', dataIndex: 'createdAt', key: 'createdAt',
                 sorter: (a, b) => sortFilterByProps(a, b, 'createdAt'),
                 sortOrder: sorter.columnKey === 'createdAt' && sorter.order,
-                render: (value) => formatDate(value)
+                render: (value) => formatDate(value),
+                width: '12%'
             },
             {
                 title: 'feedback',
                 dataIndex: 'feedback',
                 key: 'feedback',
-                render: this.renderFeedbackDetail
+                render: this.renderFeedbackDetail,
+                width: '50å%'
             }
         ];
         return (

@@ -55,7 +55,7 @@ export default class Feedbacks extends Component {
 
             this.setState(st);
         } catch (e) {
-            Tips.error(e, 4);
+            Tips.error(e.message, 4);
         }
     };
 
@@ -102,7 +102,7 @@ export default class Feedbacks extends Component {
                             <Select
                                 showSearch
                                 style={{ width: 200 }}
-                                size="large"
+                                size="normal"
                                 placeholder="Select type"
                                 allowClear={ true }
                                 optionFilterProp="children"

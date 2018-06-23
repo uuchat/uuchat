@@ -46,12 +46,14 @@ export default class ScreenList extends Component {
         const columns = [
             {
                 title: 'time', dataIndex: 'time', key: 'time',
+                width: '30%',
                 sorter: (a, b) => sortFilterByProps(a, b, 'time'),
                 sortOrder: sorter.columnKey === 'time' && sorter.order,
                 render: (value) => formatDate(value)
             },
             {
                 title: 'screen', dataIndex: 'screen', key: 'screen',
+                width: '70%',
                 sorter: (a, b) => sortFilterByProps(a, b, 'time'),
                 sortOrder: sorter.columnKey === 'screen' && sorter.order
             }

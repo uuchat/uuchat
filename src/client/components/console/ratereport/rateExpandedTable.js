@@ -51,7 +51,7 @@ export default class RateExpandedTable extends Component {
 
         const expandedRowRender = (record) => {
             const expanderColumns = [
-                {title: 'rate', dataIndex: 'rate', key: 'rate'},
+                {title: 'rate star', dataIndex: 'rate', key: 'rate'},
                 {title: 'count', dataIndex: 'count', key: 'count'}
             ];
 

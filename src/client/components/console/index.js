@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { HashRouter as Router, Route, Switch } from 'react-router-dom';
-import { Layout, Menu, Icon, Button } from 'antd';
+import { Layout, Menu, Icon } from 'antd';
 import UpgradeNote from './upgradenote/upgradeNote';
 import RateList from './ratelist/rateList';
-import AsyncComponent from '../common/asyncComponent.js';
-import { fetchAsync } from './common/utils';
+import AsyncComponent from '../common/asyncComponent';
+import { fetchAsync, getHashPath } from './common/utils';
 import Tips from '../common/tips';
 
 const Dashboard = AsyncComponent(() => import ('./dashboard/dashboard').then(module => module.default));
@@ -16,37 +16,32 @@ const RateDetails = AsyncComponent(() => import ('./ratereport/rateDetails').the
 const Shortcuts = AsyncComponent(() => import ('./shortcuts/shortcuts').then(module => module.default));
 const Feedbacks = AsyncComponent(() => import ('./feedbacks/feedbacks').then(module => module.default));
 const FeedbackSetting = AsyncComponent(() => import ('./feedbacks/feedbackSetting').then(module => module.default));
+const FAQ = AsyncComponent(() => import ('./faqs').then(module => module.default));
 
-const { Header, Content, Footer, Sider } = Layout;
+const { Content, Footer, Sider } = Layout;
 const SubMenu = Menu.SubMenu;
 
 export default class Console extends Component {
 
     state = {
-        collapsed: false,
+        collapsed: true,
         mode: 'inline',
         current: "dashboard",
         csid: localStorage['uuchat.csid'] || '',
-        name: localStorage['uuchat.name'] || '',
-        displayName: localStorage['uuchat.displayName'] || '',
         avatar: localStorage['uuchat.avatar'] || ''
     };
 
-    toggle = () => {
-        this.setState({
-            collapsed: !this.state.collapsed
-        });
-    };
-
     handleClick = (e) => {
-        this.setState({
-            current: e.key
-        });
+        this.setState({ current: e.key });
+
         window.location.href = "#/" + e.key;
     };
 
     handleHeaderClick = (e) => {
         switch (e.key) {
+            case "chat":
+                window.location.href = '/chat';
+                break;
             case "logout":
                 this.logout();
                 break;
@@ -73,29 +68,22 @@ export default class Console extends Component {
         }
     };
 
+    componentDidMount() {
+        let current = getHashPath();
+        current = current.charAt(0) === "/" ? current.substr(1) : current;
+        if (current) this.setState({current: current});
+    }
+
     render() {
 
-        let { collapsed, mode, current, name, avatar } = this.state;
+        let { collapsed, mode, current, avatar } = this.state;
 
         let userTitle = (<span style={{ fontSize: 12 }}>
             <img className="user-avatar"
                  src={ (avatar !=='null' && avatar) ? '/' + avatar : require('../../static/images/contact.png')}
                  alt="avatar"
                  title="avatar"/>
-            { name } &nbsp;
-            <Icon style={{color: '#108ee9'}} type="down"/>
         </span>);
-
-        const menuList = [
-            {key: 'dashboard', type: 'laptop', text: 'Dashboard'},
-            {key: 'operators', type: 'team', text: 'Operators'},
-            {key: 'customers', type: 'user', text: 'customers'},
-            {key: 'transcripts', type: 'database', text: 'Transcripts'},
-            {key: 'rates', type: 'star-o', text: 'Rate Report'},
-            //{key: 'rateList', type: 'star-o', text: 'Rate List'},
-            {key: 'shortcuts', type: 'tags-o', text: 'Shortcuts'},
-            {key: 'feedbacks', type: 'setting', text: 'Feedbacks'}
-        ];
 
         const routeList = [
             {path: "/", component: Dashboard},
@@ -108,13 +96,14 @@ export default class Console extends Component {
             {path: "/shortcuts", component: Shortcuts},
             {path: "/rates/:csid", component: RateDetails},
             {path: "/feedbacks", component: Feedbacks},
-            {path: "/feedbackSetting", component: FeedbackSetting}
+            {path: "/feedbackSetting", component: FeedbackSetting},
+            {path: "/faqs", component: FAQ}
         ];
 
         return (
             <div>
                 <UpgradeNote />
-                <Layout>
+                <Layout style={{ minHeight: '100vh' }}>
                     <Sider
                         breakpoint="lg"
                         collapsible
@@ -125,58 +114,50 @@ export default class Console extends Component {
                             <a href="#/">
                                 <img src="/static/img/uuchat_logo.svg" alt="logo"></img>
                             </a>
-                            <h1>UUChat</h1>
                         </div>
                         <Menu
                             theme="dark"
                             onClick={this.handleClick}
                             mode={ mode }
                             defaultOpenKeys={["dashboard"]}
-                            selectedKeys={ [current] }
+                            selectedKeys={[current]}
                             >
-                            {
-                                menuList.map((item, index) =>
-                                        <Menu.Item key={item.key}>
-                                      <span>
-                                        <Icon type={item.type}/>
-                                        <span className="nav-text">{item.text}</span>
-                                      </span>
-                                        </Menu.Item>
-                                )
-                            }
+                                <SubMenu key="boardParent" title={<span><Icon type="laptop" /><span>Data</span></span>}>
+                                    <Menu.Item key='dashboard'><span><span className="nav-text">Dashboard</span></span></Menu.Item>
+                                </SubMenu>
+                                <SubMenu key="data" title={<span><Icon type="database" /><span>Data</span></span>}>
+                                    <Menu.Item key='customers'><span><Icon type='user'/><span className="nav-text">Customers</span></span></Menu.Item>
+                                    <Menu.Item key='transcripts'><span><Icon type='message'/><span className="nav-text">Transcripts</span></span></Menu.Item>
+                                    <Menu.Item key='rates'><span><Icon type='star-o'/><span className="nav-text">Rate Report</span></span></Menu.Item>
+                                </SubMenu>
+                                <SubMenu key="setting" title={<span><Icon type="setting" /><span>Setting</span></span>}>
+                                    <Menu.Item key='operators'><span><Icon type='team'/><span className="nav-text">Agents</span></span></Menu.Item>
+                                    <Menu.Item key='faqs'><span><Icon type='question-circle-o'/><span className="nav-text">FAQ</span></span></Menu.Item>
+                                    <Menu.Item key='shortcuts'><span><Icon type='tags-o'/><span className="nav-text">Shortcuts</span></span></Menu.Item>
+                                </SubMenu>
+                                <SubMenu key="feedbacksParent" title={<span><Icon type="form" /><span>Setting</span></span>}>
+                                    <Menu.Item key='feedbacks'><span><span className="nav-text">Feedbacks</span></span></Menu.Item>
+                                </SubMenu>
                         </Menu>
+                        <div className="switchtheme" id="sessionMenu">
+                            <Menu
+                                theme="dark"
+                                mode={ mode }
+                                getPopupContainer={() => document.getElementById('sessionMenu')}
+                                onClick={this.handleHeaderClick}>
+                                <SubMenu key="chatParent" title={(<Icon type=''><img style={{ height: '30px', width: '30px', marginLeft: '-8px' }} src={require('../../static/images/chat_pure.png')} alt=""/></Icon>) } >
+                                    <Menu.Item key='chat'>
+                                            Launch chat
+                                    </Menu.Item>
+                                </SubMenu>
+                                <SubMenu key="userParent" title={ userTitle } >
+                                    <Menu.Item key="whatIsNew"> <Icon style={{fontSize: 18, color: '#8fc9fb'}} type="bell"/> What's new </Menu.Item>
+                                    <Menu.Item key="logout"> <Icon style={{fontSize: 18, color: '#d4572f'}} type="poweroff"/> Sign out </Menu.Item>
+                                </SubMenu>
+                            </Menu>
+                        </div>
                     </Sider>
                     <Layout>
-                        <Header style={{ background: '#fff', padding: 0, height: '47px', lineHeight: '47px' }}>
-                            <Icon
-                                className="sideTrigger"
-                                type={this.state.collapsed ? 'menu-unfold' : 'menu-fold'}
-                                onClick={this.toggle}
-                                />
-                            <div style={{ float: 'right' }}>
-                                <div style={{ display: 'inline-block' }}>
-                                    <Button type="primary" onClick={(e)=> window.location.href='/chat'}>
-                                        launch chat
-                                    </Button>
-                                    <span style={{ borderLeft: '1px solid #a7def1',width: '1px',marginLeft: '20px' }}>
-                                    </span>
-                                </div>
-                                <div className="rightWarpper">
-                                    <Menu mode="horizontal" onClick={this.handleHeaderClick}>
-                                        <SubMenu title={ userTitle }>
-                                            <Menu.Item key="whatIsNew">
-                                                <Icon style={{fontSize: 18, color: '#8fc9fb'}} type="bell"/>
-                                                What's new
-                                            </Menu.Item>
-                                            <Menu.Item key="logout">
-                                                <Icon style={{fontSize: 18, color: '#d4572f'}} type="poweroff"/>
-                                                Sign out
-                                            </Menu.Item>
-                                        </SubMenu>
-                                    </Menu>
-                                </div>
-                            </div>
-                        </Header>
                         <Content style={{ margin: '0 16px' }}>
                             <Router>
                                 <div style={{ height: '100%'}}>
@@ -190,7 +171,7 @@ export default class Console extends Component {
                         </Content>
 
                         <Footer style={{ textAlign: 'center' }}>
-                            uuchat ©2017 Built with ♥ in shenzhen.
+                            uuchat ©2018 Built with ♥ in shenzhen.
                         </Footer>
                     </Layout>
                 </Layout>

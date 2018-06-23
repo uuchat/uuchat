@@ -9,13 +9,8 @@ const Option = Select.Option;
 class RateSearchForm extends Component {
 
     state = {
-        csSource: [],
         calendarFooterValue: '7days'
     };
-
-    componentWillReceiveProps(nextProps) {
-        nextProps.csSource && this.setState({csSource: nextProps.csSource});
-    }
 
     handleChange = (key, values) => {
         let fields = this.props.form.getFieldsValue();
@@ -91,9 +86,8 @@ class RateSearchForm extends Component {
     };
 
     render() {
-        const { filter, form: { getFieldDecorator } } = this.props;
-        const { csSource, calendarFooterValue } = this.state;
-
+        const { filter, csSource, form: { getFieldDecorator } } = this.props;
+        const { calendarFooterValue } = this.state;
 
         const initialCreatedAt = filter.createdAt;
 
@@ -136,7 +130,7 @@ class RateSearchForm extends Component {
                         <Select
                             showSearch
                             style={{ width: '100%' }}
-                            size="large"
+                            size="normal"
                             placeholder="Select Rate"
                             optionFilterProp="children"
                             onChange={ this.handleChange.bind(null, 'rate') }
@@ -151,7 +145,7 @@ class RateSearchForm extends Component {
                         <Select
                             showSearch
                             style={{ width: '100%' }}
-                            size="large"
+                            size="normal"
                             placeholder="Select Email"
                             optionFilterProp="children"
                             onChange={ this.handleChange.bind(null, 'csid') }
@@ -163,7 +157,7 @@ class RateSearchForm extends Component {
                 </Col>
                 <Col {...ColProps} xl={{ span: 6 }} md={{ span: 8 }} sm={{ span: 12 }}>
                     {getFieldDecorator('createdAt', {initialValue: initialCreatedAt})(
-                        <RangePicker style={{ width: '100%' }} size="large"
+                        <RangePicker style={{ width: '100%' }} size="normal"
                                      renderExtraFooter={renderCalendarFooter}
                                      onChange={this.handleChange.bind(null, 'createdAt')}/>
                     )}

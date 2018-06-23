@@ -42,7 +42,7 @@ export default class CustomerSuccessTable extends Component {
             },
             {
                 title: 'createTime', dataIndex: 'createdAt', key: 'createdAt',
-                sorter: (a, b) => sortFilterByProps(a, b, 'createAt'),
+                sorter: (a, b) => sortFilterByProps(a, b, 'createdAt'),
                 sortOrder: sorter.columnKey === 'createdAt' && sorter.order,
                 render: (value) => formatDate(value)
             },

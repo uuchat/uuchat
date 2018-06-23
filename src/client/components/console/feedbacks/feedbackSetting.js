@@ -261,7 +261,7 @@ export default class FeedbackSetting extends Component {
 
                         <p>
                             Success create feedback static page, link is:&nbsp;
-                            <a target="_blank" href={this.state.pageUrl}>{classid}</a>
+                            <a target="_blank" href={this.state.pageUrl} rel="noopener noreferrer">{classid}</a>
                         </p>
                     </div>
                 </div>

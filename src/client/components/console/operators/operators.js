@@ -117,7 +117,7 @@ export default class Operators extends Component {
 
             this.setState(st);
         } catch (e) {
-            Tips.error(e, 4);
+            Tips.error(e.message, 4);
         }
     };
 
@@ -146,7 +146,7 @@ export default class Operators extends Component {
 
             this.getDataSource();
         } catch (e) {
-            Tips.error(e, 4);
+            Tips.error(e.message, 4);
         }
     };
 
@@ -239,7 +239,8 @@ export default class Operators extends Component {
         return (
             <div>
                 <Breadcrumb separator=">">
-                    <Breadcrumb.Item>Operators</Breadcrumb.Item>
+                    <Breadcrumb.Item>Setting</Breadcrumb.Item>
+                    <Breadcrumb.Item>Agents</Breadcrumb.Item>
                 </Breadcrumb>
 
                 <div className="content-body">

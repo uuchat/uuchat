@@ -84,7 +84,7 @@ export default class Shortcuts extends Component {
 
             this.getDataSource();
         } catch (e) {
-            Tips.error(e, 4);
+            Tips.error(e.message, 4);
         }
     };
 
@@ -116,7 +116,7 @@ export default class Shortcuts extends Component {
 
                 this.getDataSource();
             } catch (e) {
-                Tips.error(e, 4);
+                Tips.error(e.message, 4);
             } finally {
                 form.resetFields();
                 this.setState({visible: false});
@@ -197,6 +197,7 @@ export default class Shortcuts extends Component {
         return (
             <div>
                 <Breadcrumb separator=">">
+                    <Breadcrumb.Item>Setting</Breadcrumb.Item>
                     <Breadcrumb.Item>Shortcuts</Breadcrumb.Item>
                 </Breadcrumb>
 
