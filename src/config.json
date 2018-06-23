@@ -14,6 +14,7 @@
   "database": {
     "dialect": "sqlite",
     "storage": "content/data/uuchat.db",
+    "operatorsAliases": false,
     "logging": false
   },
   "socket.io": {
