@@ -104,7 +104,7 @@
     "webpack-parallel-uglify-plugin": "^1.1.0"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=6.11.5"
   },
   "babel": {
     "presets": [
