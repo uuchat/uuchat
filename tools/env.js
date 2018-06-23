@@ -1,10 +1,10 @@
 'use strict';
 
 
-var REACT_APP = /^REACT_APP_/i;
+const REACT_APP = /^REACT_APP_/i;
 
 function getClientEnvironment(publicUrl) {
-    var raw = Object
+    let raw = Object
         .keys(process.env)
         .filter(key => REACT_APP.test(key))
         .reduce((env, key) => {
@@ -18,7 +18,7 @@ function getClientEnvironment(publicUrl) {
             'socketIO': "<%- socketIO %>",
             'momentMinJS': "<%- momentMinJS %>"
         });
-    var stringFiled = {
+    let stringFiled = {
         'process.env': Object
             .keys(raw)
             .reduce((env, key) => {

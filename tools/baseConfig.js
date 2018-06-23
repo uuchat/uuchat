@@ -1,17 +1,17 @@
 'use strict';
 
-var nconf = require('nconf');
-var path = require('path');
-var paths = require('./paths');
-var UglifyJS = require("uglify-js");
-var CleanCSS = require('clean-css');
-var _ = require('lodash');
+const nconf = require('nconf');
+const path = require('path');
+const paths = require('./paths');
+const UglifyJS = require("uglify-js");
+const CleanCSS = require('clean-css');
+const _ = require('lodash');
 
 nconf.argv().env().file({
     file: path.join(__dirname, '../src/config.json')
 });
 
-var defaultConfig = {
+const defaultConfig = {
     externals: {
         'react': 'React',
         'react-dom': 'ReactDOM',
@@ -46,7 +46,7 @@ var defaultConfig = {
             from: paths.storageJS,
             to: paths.appBuild + '/storage.js',
             transform: function (content, absoluteFrom) {
-                var code = (content + '').replace(/'..\/..'\+/g, '');
+                let code = (content + '').replace(/'..\/..'\+/g, '');
                 return minify(code);
             }
         },
@@ -54,7 +54,7 @@ var defaultConfig = {
             from: paths.customerJS,
             to: paths.appBuild + '/static/js/uuchat.js',
             transform: function (content, absoluteFrom) {
-                var code = (content + '').replace(/'..\/..'\+/g, '');
+                let code = (content + '').replace(/'..\/..'\+/g, '');
                 return minify(code);
             }
         },
@@ -62,7 +62,7 @@ var defaultConfig = {
             from: paths.customerLoaderJS,
             to: paths.appBuild + '/static/js/loader.js',
             transform: function (content, absoluteFrom) {
-                var code = (content + '');
+                let code = (content + '');
                 return minify(code);
             }
         },
@@ -70,11 +70,11 @@ var defaultConfig = {
             from: paths.customerHtml,
             to: paths.appBuild + '/customer.html',
             transform: function (content, absoluteFrom) {
-                var result = content + '';
+                let result = content + '';
                 if (nconf.get('app:ssl')) {
                     result = result.replace(/https:\/\/(uuchat.io)/g, "https://$1");
                 }
-                var result = result.replace(/uuchat.io/g,
+                result = result.replace(/uuchat.io/g,
                     nconf.get('app:address') + ':' + nconf.get('app:port'));
                 return result;
             }
@@ -111,8 +111,8 @@ var defaultConfig = {
             to: paths.appBuild + '/app/webview.js',
             force: true,
             transform: function (content, absoluteFrom) {
-                var code = (content + ''),
-                    domain = nconf.get('app:domain');
+                let code = (content + '');
+                let domain = nconf.get('app:domain');
 
                 if (_.isEmpty(domain)) {
                     code = code.replace(/https:\/\/(uuchat.io)/g, 'http://'+nconf.get('app:address')+':'+nconf.get('app:port'));
@@ -131,7 +131,7 @@ function cleanCSS(content) {
     if (process.env.NODE_ENV === 'development') {
         return content + '';
     } else {
-        var result = new CleanCSS({}).minify((content + ''));
+        let result = new CleanCSS({}).minify((content + ''));
         return result.styles;
     }
 }
@@ -140,7 +140,7 @@ function minify(code) {
     if (process.env.NODE_ENV === 'development') {
         return code;
     } else {
-        var result = UglifyJS.minify(code, {fromString: true});
+        let result = UglifyJS.minify(code, {fromString: true});
         if (result.error) {
             result = UglifyJS.minify(code);
         }

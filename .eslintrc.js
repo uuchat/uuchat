@@ -61,7 +61,10 @@ module.exports = {
         "import/newline-after-import": 2,
         "import/no-duplicates": 2,
         "import/no-unresolved": 2,
-        "import/unambiguous": 2
+        "import/unambiguous": 2,
+        "jsx-a11y/href-no-hash": [0],
+        "jsx-a11y/anchor-has-content": 0,
+        "jsx-a11y/heading-has-content": 0
     },
     "globals": {
         "lodash": true,

@@ -1,25 +1,25 @@
 'use strict';
 
-var webpack = require('webpack');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
-var CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
-var InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
-var CopyWebpackPlugin = require('copy-webpack-plugin');
-var WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
-var getClientEnvironment = require('./env');
-var paths = require('./paths');
-var base = require('./baseConfig');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const getClientEnvironment = require('./env');
+const paths = require('./paths');
+const base = require('./baseConfig');
+const HtmlInterpolatePlugin = require('./htmlInterpolatePlugin');
 
-var publicPath = '/';
-var publicUrl = '';
-var env = getClientEnvironment(publicUrl);
-var hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
+const publicPath = '/';
+const publicUrl = '';
+const env = getClientEnvironment(publicUrl);
+const hotMiddlewareScript = 'webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000&reload=true';
 
 process.env.NODE_ENV = 'development';
 
 process.noDeprecation = true;
 
 module.exports = {
+    mode: "development",
     context: __dirname,
     devtool: 'cheap-module-source-map',
     entry: {
@@ -29,22 +29,18 @@ module.exports = {
             hotMiddlewareScript
         ],
         'console': [
-            require.resolve('./polyfills'),
             paths.consoleIndexJS,
             hotMiddlewareScript
         ],
         'search': [
-            require.resolve('./polyfills'),
             paths.searchJS,
             hotMiddlewareScript
         ],
         'register': [
-            require.resolve('./polyfills'),
             paths.registerJS,
             hotMiddlewareScript
         ],
         'resetPassword': [
-            require.resolve('./polyfills'),
             paths.resetPasswordJS,
             hotMiddlewareScript
         ]
@@ -121,7 +117,6 @@ module.exports = {
         ]
     },
     plugins: [
-        new InterpolateHtmlPlugin(env.raw),
         new HtmlWebpackPlugin({
             favicon: paths.appIco,
             filename: 'app.ejs',
@@ -153,11 +148,11 @@ module.exports = {
             template: paths.registerHtml,
             chunks: ['resetPassword']
         }),
+        new HtmlInterpolatePlugin(env.raw),
         new CopyWebpackPlugin(base.copyWebpackPlugin),
         new webpack.DefinePlugin(env.stringFiled),
         new webpack.HotModuleReplacementPlugin(),
-        new CaseSensitivePathsPlugin(),
-        new WatchMissingNodeModulesPlugin(paths.appNodeModules)
+        new CaseSensitivePathsPlugin()
     ],
     node: base.node
 };

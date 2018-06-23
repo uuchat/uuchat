@@ -2,18 +2,18 @@
 
 process.env.NODE_ENV = 'production';
 
-var chalk = require('chalk');
-var fs = require('fs-extra');
-var path = require('path');
-var url = require('url');
-var webpack = require('webpack');
-var config = require('./webpack.config.prod');
-var paths = require('./paths');
-var checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
-var FileSizeReporter = require('react-dev-utils/FileSizeReporter');
-var measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
-var printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
-var useYarn = fs.existsSync(paths.yarnLockFile);
+const chalk = require('chalk');
+const fs = require('fs-extra');
+const path = require('path');
+const url = require('url');
+const webpack = require('webpack');
+const config = require('./webpack.config.prod');
+const paths = require('./paths');
+const checkRequiredFiles = require('react-dev-utils/checkRequiredFiles');
+const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
+const measureFileSizesBeforeBuild = FileSizeReporter.measureFileSizesBeforeBuild;
+const printFileSizesAfterBuild = FileSizeReporter.printFileSizesAfterBuild;
+const useYarn = fs.existsSync(paths.yarnLockFile);
 
 if (!checkRequiredFiles([paths.appHtml, paths.appIndexJS])) {
     process.exit(1);
@@ -22,7 +22,6 @@ if (!checkRequiredFiles([paths.appHtml, paths.appIndexJS])) {
 measureFileSizesBeforeBuild(paths.appBuild).then(previousFileSizes => {
     fs.emptyDirSync(paths.appBuild);
     build(previousFileSizes);
-    copyPublicFolder();
 });
 
 function printErrors(summary, errors) {
@@ -36,14 +35,13 @@ function printErrors(summary, errors) {
 
 function build(previousFileSizes) {
 
-    var sTime = new Date().getTime();
+    let sTime = new Date().getTime();
 
     console.log('Creating an optimized production build...');
 
-    var compiler = webpack(config);
+    let compiler = webpack(config);
 
     compiler.apply(new webpack.ProgressPlugin({profile: true}));
-    //compiler.apply(new webpack.ProgressPlugin(profileDetail));
 
     statsOutput(compiler);
 
@@ -71,10 +69,10 @@ function build(previousFileSizes) {
         printFileSizesAfterBuild(stats, previousFileSizes, paths.appBuild);
         console.log();
 
-        var appPackage = require(paths.appPackageJson);
-        var publicUrl = paths.publicUrl;
-        var publicPath = config.output.publicPath;
-        var publicPathname = url.parse(publicPath).pathname;
+        let appPackage = require(paths.appPackageJson);
+        let publicUrl = paths.publicUrl;
+        let publicPath = config.output.publicPath;
+        let publicPathname = url.parse(publicPath).pathname;
         if (publicUrl && publicUrl.indexOf('.github.io/') !== -1) {
             // "homepage": "http://user.github.io/project"
             console.log('The project was built assuming it is hosted at ' + chalk.green(publicPathname) + '.');
@@ -146,53 +144,25 @@ function build(previousFileSizes) {
 
 
 function statsOutput(compiler) {
-    var output = 'stats.json';
-    var options = {
+    let output = 'stats.json';
+    let options = {
         chunkModules: true,
         exclude: [/node_modules[\\\/]react/]
     };
 
     compiler.plugin('emit', function onEmit (compilation, done) {
-        var result;
+        let result;
 
         compilation.assets[output] = {
             size: function getSize () {
                 return result && result.length || 0;
             },
             source: function getSource () {
-                var stats = compilation.getStats().toJson(options);
-                var result = JSON.stringify(stats);
+                let stats = compilation.getStats().toJson(options);
+                let result = JSON.stringify(stats);
                 return result;
             }
         };
         done();
     })
-}
-
-function profile(percentage, msg, current, active, modulepath) {
-    if (process.stdout.isTTY && percentage < 1) {
-        process.stdout.cursorTo(0);
-        modulepath = modulepath ? ' …' + modulepath.substr(modulepath.length - 30) : '';
-        current = current ? ' ' + current : '';
-        active = active ? ' ' + active : '';
-        process.stdout.write((percentage * 100).toFixed(0) + '% ' + msg + current + active + modulepath + ' ');
-        process.stdout.clearLine(1)
-    } else if (percentage === 1) {
-        process.stdout.write('\n');
-        console.log('webpack: done.');
-    }
-}
-
-function profileDetail(percentage, msg, current, active, modulepath) {
-    //test for package
-    if ("react".indexOf(modulepath) >= 0 || "react-dom".indexOf(modulepath) >= 0){
-        console.log((percentage * 100) + '%', msg + current + modulepath + ' ');
-    }
-}
-
-function copyPublicFolder() {
-    fs.copySync(paths.appPublic, paths.appBuild, {
-        dereference: true,
-        filter: file => file !== paths.appHtml
-    });
 }
